@@ -1,0 +1,729 @@
+import 'package:Ebozor/app/routes.dart';
+import 'package:Ebozor/data/cubits/category/fetch_category_cubit.dart';
+import 'package:Ebozor/ui/theme/theme.dart';
+import 'package:Ebozor/utils/app_icon.dart';
+import 'package:Ebozor/utils/constant.dart';
+import 'package:Ebozor/utils/extensions/extensions.dart';
+import 'package:Ebozor/utils/sliver_grid_delegate_with_fixed_cross_axis_count_and_fixed_height.dart';
+import 'package:Ebozor/utils/ui_utils.dart';
+import 'package:Ebozor/data/model/category_model.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
+
+import 'package:Ebozor/utils/ApiService/api.dart';
+import 'package:Ebozor/utils/cloudState/cloud_state.dart';
+import 'package:Ebozor/utils/touch_manager.dart';
+import 'package:Ebozor/data/cubits/category/fetch_sub_categories_cubit.dart';
+import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
+import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
+import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
+import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
+import 'package:Ebozor/ui/screens/item/add_item_screen/widgets/category.dart';
+
+int screenStack = 0;
+
+class SelectCategoryScreen extends StatefulWidget {
+  const SelectCategoryScreen({super.key});
+
+  static Route route(RouteSettings settings) {
+    Map<String, dynamic> apiParameters =
+        settings.arguments as Map<String, dynamic>;
+    return BlurredRouter(
+      builder: (context) {
+        return const SelectCategoryScreen();
+      },
+    );
+  }
+
+  @override
+  CloudState<SelectCategoryScreen> createState() =>
+      _SelectCategoryScreenState();
+}
+
+class _SelectCategoryScreenState extends CloudState<SelectCategoryScreen> {
+  late final ScrollController controller = ScrollController();
+
+  @override
+  void initState() {
+    controller.addListener(pageScrollListen);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void pageScrollListen() {
+    if (controller.isEndReached()) {
+      if (context.read<FetchCategoryCubit>().hasMoreData()) {
+        context.read<FetchCategoryCubit>().fetchCategoriesMore();
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnnotatedRegion(
+      value: UiUtils.getSystemUiOverlayStyle(
+          context: context, statusBarColor: context.color.secondaryColor),
+      child: SafeArea(
+        child: Scaffold(
+          appBar: UiUtils.buildAppBar(context,
+              showBackButton: true,
+              title: "adListing".translate(context), onBackPress: () {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }),
+          body: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            controller: controller,
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: BlocBuilder<FetchCategoryCubit, FetchCategoryState>(
+                  builder: (context, state) {
+                if (state is FetchCategoryFailure) {
+                  return Text(state.errorMessage);
+                }
+                if (state is FetchCategoryInProgress) {
+                  return Center(child: UiUtils.progress());
+                }
+
+                if (state is FetchCategorySuccess) {
+                  return Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      Center(
+                        child: Text("What are you listing ?")
+                            .size(context.font.large)
+                            .bold(weight: FontWeight.w700)
+                            .color(context.color.textColorDark),
+                      ),
+                      const SizedBox(height: 5),
+                      Center(
+                        child: Text(
+                          "Choose the category that your ad fits into",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: context.color.textDefaultColor.withOpacity(0.7),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+                      
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 15,
+                          crossAxisSpacing: 15,
+                          childAspectRatio: 1.0, 
+                        ),
+                        itemBuilder: (context, index) {
+                          CategoryModel category = state.categories[index];
+
+                          return GestureDetector(
+                             onTap: () {
+                              if (category.children!.isEmpty &&
+                                  category.subcategoriesCount == 0) {
+                                if (TouchManager.canProcessTouch()) {
+                                  addCloudData("breadCrumb", [category]);
+                                  List<CategoryModel>? breadCrumbList =
+                                      getCloudData("breadCrumb")
+                                          as List<CategoryModel>?;
+
+                                  screenStack++;
+                                  Navigator.pushNamed(
+                                    context,
+                                    Routes.addItemDetails,
+                                    arguments: <String, dynamic>{
+                                      "breadCrumbItems": breadCrumbList
+                                    },
+                                  ).then((value) {
+                                    List<CategoryModel> bcd =
+                                        getCloudData("breadCrumb");
+                                    addCloudData("breadCrumb", bcd);
+                                    //}
+                                  });
+                                  Future.delayed(Duration(seconds: 1), () {
+                                    // Notify that touch processing is complete
+                                    TouchManager.touchProcessed();
+                                  });
+                                }
+                              } else {
+                                if (TouchManager.canProcessTouch()) {
+                                  addCloudData("breadCrumb", [category]);
+
+                                  screenStack++;
+                                  Navigator.pushNamed(context,
+                                      Routes.selectNestedCategoryScreen,
+                                      arguments: {
+                                        "current": category,
+                                      });
+                                  Future.delayed(Duration(seconds: 1), () {
+                                    // Notify that touch processing is complete
+                                    TouchManager.touchProcessed();
+                                  });
+                                }
+                              }
+                            },
+                             child: Container(
+                                decoration: BoxDecoration(
+                                  color: context.color.secondaryColor, // Assuming secondaryColor is white/card bg
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: context.color.borderColor.withOpacity(0.5),
+                                    width: 1,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.03),
+                                      blurRadius: 5,
+                                      spreadRadius: 1,
+                                      offset: const Offset(0, 2)
+                                    )
+                                  ]
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 35,
+                                      width: 35,
+                                      child: UiUtils.imageType(
+                                        category.url ?? "",
+                                        color: context.color.territoryColor, // Red/Primary Color
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                                      child: Text(
+                                        category.name ?? "",
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: context.color.textColorDark,
+                                          height: 1.2
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                             ),
+                          );
+                        },
+                        itemCount: state.categories.length,
+                      ),
+                      if (state.isLoadingMore) UiUtils.progress()
+                    ],
+                  );
+                }
+                return Container();
+              }),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SelectNestedCategory extends StatefulWidget {
+  const SelectNestedCategory({
+    super.key,
+    required this.current,
+  });
+
+  final CategoryModel current;
+
+  static Route route(RouteSettings settings) {
+    Map<String, dynamic> arguments = settings.arguments as Map<String, dynamic>;
+    return BlurredRouter(
+      builder: (context) {
+        return SelectNestedCategory(
+          current: arguments['current'],
+        );
+      },
+    );
+  }
+
+  @override
+  CloudState<SelectNestedCategory> createState() =>
+      _SelectNestedCategoryState();
+}
+
+class _SelectNestedCategoryState extends CloudState<SelectNestedCategory> {
+  late final ScrollController controller = ScrollController();
+
+  @override
+  void initState() {
+    getSubCategories();
+
+    if (widget.current.children!.isEmpty) {
+      controller.addListener(pageScrollListen);
+    }
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void getSubCategories() {
+    if (widget.current.children!.isEmpty) {
+      context
+          .read<FetchSubCategoriesCubit>()
+          .fetchSubCategories(categoryId: widget.current.id!);
+    }
+  }
+
+  void pageScrollListen() {
+    if (controller.isEndReached()) {
+      if (context.read<FetchSubCategoriesCubit>().hasMoreData()) {
+        context
+            .read<FetchSubCategoriesCubit>()
+            .fetchSubCategories(categoryId: widget.current.id!);
+      }
+    }
+  }
+
+  void _onBreadCrumbItemTap(
+    List<CategoryModel> dataList,
+    int index,
+  ) {
+    int popTimes = (dataList.length - 1) - index;
+    int current = index;
+    int length = dataList.length;
+
+    ///This is to remove other items from breadcrumb items
+    for (int i = length - 1; i >= current + 1; i--) {
+      dataList.removeAt(i);
+    }
+
+    //This will pop to the screen
+    for (int i = 0; i < popTimes; i++) {
+      Navigator.pop(context);
+    }
+    setState(() {});
+  }
+
+  List<CategoryModel> breadCrumbData = [];
+
+  @override
+  Widget build(BuildContext context) {
+    breadCrumbData = getCloudData('breadCrumb');
+    return AnnotatedRegion(
+      value: UiUtils.getSystemUiOverlayStyle(
+          context: context, statusBarColor: context.color.secondaryColor),
+      child: PopScope(
+        canPop: true,
+        onPopInvoked: (didPop) async {
+          return;
+        },
+        child: SafeArea(
+          child: Scaffold(
+            appBar: UiUtils.buildAppBar(context,
+                showBackButton: true, title: "adListing".translate(context)),
+            body: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("selectTheCategory".translate(context))
+                      .size(context.font.large)
+                      .bold(weight: FontWeight.w600)
+                      .color(context.color.textColorDark),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  SizedBox(
+                    height: 20,
+                    width: context.screenWidth,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              await Future.delayed(
+                                const Duration(milliseconds: 5),
+                                () {
+                                  for (int i = 0;
+                                      i < breadCrumbData.length;
+                                      i++) {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                              );
+                            },
+                            child: UiUtils.getSvg(
+                              AppIcons.homeDark,
+                              color: context.color.textDefaultColor,
+                            ),
+                          ),
+                          const Text(" > ").color(context.color.territoryColor),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                bool isNotLast =
+                                    (breadCrumbData.length - 1) != index;
+
+                                return Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        _onBreadCrumbItemTap(
+                                            breadCrumbData, index);
+                                      },
+                                      child: Text(breadCrumbData[index].name!)
+                                          .firstUpperCaseWidget()
+                                          .color(
+                                            isNotLast
+                                                ? context.color.territoryColor
+                                                : context.color.textColorDark,
+                                          ),
+                                    ),
+
+                                    ///if it is not last
+                                    if (isNotLast)
+                                      const Text(" > ")
+                                          .color(context.color.territoryColor)
+                                  ],
+                                );
+                              },
+                              itemCount: getCloudData("breadCrumb").length),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 18,
+                  ),
+                  widget.current.children!.isNotEmpty
+                      ? Expanded(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              CategoryModel category =
+                                  widget.current.children![index];
+
+                              return GestureDetector(
+                                onTap: () {
+                                  if (widget.current.children![index].children!
+                                          .isEmpty &&
+                                      widget.current.children![index]
+                                              .subcategoriesCount ==
+                                          0) {
+                                    if (TouchManager.canProcessTouch()) {
+                                      screenStack++;
+                                      Navigator.pushNamed(
+                                        context,
+                                        Routes.addItemDetails,
+                                        arguments: <String, dynamic>{
+                                          "breadCrumbItems": breadCrumbData
+                                            ..add(
+                                                widget.current.children![index])
+                                        },
+                                      ).then((value) {
+                                        screenStack--;
+
+                                        List<CategoryModel> bcd =
+                                            getCloudData("breadCrumb");
+
+                                        bcd.remove(
+                                            widget.current.children![index]);
+                                        addCloudData("breadCrumb", bcd);
+                                      });
+
+                                      Future.delayed(Duration(seconds: 1), () {
+                                        // Notify that touch processing is complete
+                                        TouchManager.touchProcessed();
+                                      });
+                                    }
+                                  } else {
+                                    if (TouchManager.canProcessTouch()) {
+                                      List<CategoryModel> cloudData =
+                                          getCloudData("breadCrumb")
+                                              as List<CategoryModel>;
+                                      cloudData.add(category);
+                                      setCloudData("breadCrumb", cloudData);
+
+                                      screenStack++;
+                                      Navigator.pushNamed(
+                                        context,
+                                        Routes.selectNestedCategoryScreen,
+                                        arguments: {
+                                          /*  "breadCrumbItems": breadCrumbData
+                                    ..add(widget.children[index]),*/
+                                          "current":
+                                              widget.current.children![index],
+                                        },
+                                      ).then((value) {
+                                        if (value == true) {
+                                          screenStack--;
+
+                                          breadCrumbData.remove(
+                                              widget.current.children![index]);
+                                          List<CategoryModel> bcd =
+                                              getCloudData("breadCrumb");
+                                          bcd.remove(
+                                              widget.current.children![index]);
+                                          addCloudData("breadCrumb", bcd);
+                                        }
+                                      });
+                                      Future.delayed(Duration(seconds: 1), () {
+                                        // Notify that touch processing is complete
+                                        TouchManager.touchProcessed();
+                                      });
+                                    }
+                                  }
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: Constant.borderWidth,
+                                      color: context.color.borderColor,
+                                    ),
+                                    color: context.color.secondaryColor,
+                                  ),
+                                  height: 56,
+                                  alignment: AlignmentDirectional.centerStart,
+                                  width: double.infinity,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(category.name!)
+                                              .color(
+                                                  context.color.textColorDark)
+                                              .firstUpperCaseWidget()
+                                              .bold(weight: FontWeight.w600),
+                                        ),
+                                        Container(
+                                          width: 32,
+                                          height: 32,
+                                          decoration: BoxDecoration(
+                                              color: context.color.primaryColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          child: Icon(
+                                            Icons.arrow_forward_ios_sharp,
+                                            color: context.color.textColorDark,
+                                            size: 12,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            itemCount: widget.current.children!.length,
+                          ),
+                        )
+                      : fetchSubCategoriesData(),
+                ],
+              ),
+            ),
+            // Add more widgets or content for your Scaffold here
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget fetchSubCategoriesData() {
+    return BlocBuilder<FetchSubCategoriesCubit, FetchSubCategoriesState>(
+      builder: (context, state) {
+        if (state is FetchSubCategoriesInProgress) {
+          return shimmerEffect();
+        }
+
+        if (state is FetchSubCategoriesFailure) {
+          if (state.errorMessage is ApiException) {
+            if (state.errorMessage == "no-internet") {
+              return NoInternet(
+                onRetry: () {
+                  context
+                      .read<FetchSubCategoriesCubit>()
+                      .fetchSubCategories(categoryId: widget.current.id!);
+                },
+              );
+            }
+          }
+
+          return const SomethingWentWrong();
+        }
+
+        if (state is FetchSubCategoriesSuccess) {
+          if (state.categories.isEmpty) {
+            return NoDataFound(
+              onTap: () {
+                context
+                    .read<FetchSubCategoriesCubit>()
+                    .fetchSubCategories(categoryId: widget.current.id!);
+              },
+            );
+          }
+          return Column(
+            children: [
+              ListView.builder(
+                controller: controller,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  CategoryModel category = state.categories[index];
+
+                  return GestureDetector(
+                    onTap: () {
+                      if (state.categories[index].children!.isEmpty &&
+                          state.categories[index].subcategoriesCount == 0) {
+                        screenStack++;
+
+                        Navigator.pushNamed(
+                          context,
+                          Routes.addItemDetails,
+                          arguments: <String, dynamic>{
+                            "breadCrumbItems": breadCrumbData
+                              ..add(state.categories[index])
+                          },
+                        ).then((value) {
+                          screenStack--;
+
+                          List<CategoryModel> bcd = getCloudData("breadCrumb");
+
+                          bcd.remove(state.categories[index]);
+                          addCloudData("breadCrumb", bcd);
+                        });
+                      } else {
+                        if (TouchManager.canProcessTouch()) {
+                          List<CategoryModel> cloudData =
+                              getCloudData("breadCrumb") as List<CategoryModel>;
+                          cloudData.add(category);
+                          setCloudData("breadCrumb", cloudData);
+
+                          screenStack++;
+                          Navigator.pushNamed(
+                            context,
+                            Routes.selectNestedCategoryScreen,
+                            arguments: {
+                              "current": state.categories[index],
+                            },
+                          ).then((value) {
+                            if (value == true) {
+                              screenStack--;
+
+                              breadCrumbData.remove(state.categories[index]);
+                              List<CategoryModel> bcd =
+                                  getCloudData("breadCrumb");
+                              bcd.remove(state.categories[index]);
+                              addCloudData("breadCrumb", bcd);
+                            }
+                          });
+                          Future.delayed(Duration(seconds: 1), () {
+                            // Notify that touch processing is complete
+                            TouchManager.touchProcessed();
+                          });
+                        }
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          width: Constant.borderWidth,
+                          color: context.color.borderColor,
+                        ),
+                        color: context.color.secondaryColor,
+                      ),
+                      height: 56,
+                      alignment: AlignmentDirectional.centerStart,
+                      width: double.infinity,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(category.name!)
+                                  .color(context.color.textColorDark)
+                                  .firstUpperCaseWidget()
+                                  .bold(weight: FontWeight.w600),
+                            ),
+                            Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                  color: context.color.primaryColor,
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: Icon(
+                                Icons.arrow_forward_ios_sharp,
+                                color: context.color.textColorDark,
+                                size: 12,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                itemCount: state.categories.length,
+              ),
+              if (state.isLoadingMore) UiUtils.progress()
+            ],
+          );
+        }
+
+        return Container();
+      },
+    );
+  }
+
+  Widget shimmerEffect() {
+    return Expanded(
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        /*   padding: const EdgeInsets.symmetric(
+          vertical: 10 + defaultPadding,
+          //horizontal: defaultPadding,
+        ),*/
+        itemCount: 15,
+        separatorBuilder: (context, index) {
+          return Container();
+        },
+        itemBuilder: (context, index) {
+          return Shimmer.fromColors(
+            baseColor: Theme.of(context).colorScheme.shimmerBaseColor,
+            highlightColor: Theme.of(context).colorScheme.shimmerHighlightColor,
+            child: Container(
+              padding: EdgeInsets.all(5),
+              width: double.maxFinite,
+              height: 56,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border:
+                      Border.all(color: context.color.borderColor.darken(30))),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
