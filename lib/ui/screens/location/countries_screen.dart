@@ -613,7 +613,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                           Padding(
                             padding: const EdgeInsets.all(16),
                             child: Center(
-                              child: UiUtils.progress(
+                               child: UiUtils.progress(
                                 normalProgressColor:
                                     context.color.territoryColor,
                               ),

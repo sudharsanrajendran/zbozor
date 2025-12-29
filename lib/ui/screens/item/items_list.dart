@@ -1380,9 +1380,39 @@ class ItemsListState extends State<ItemsList> {
                 ),
               );
             }
+            List<ItemModel> displayItems = state.itemModel;
+            if (_showVerifiedOnly) {
+              displayItems = displayItems.where((item) => item.user?.isVerified == 1).toList();
+            }
+
+            if (displayItems.isEmpty && _showVerifiedOnly && state.itemModel.isNotEmpty) {
+               // Show message if filter hides everything? Or just "No Data Found" (reusing existing widget might be confusing if it triggers refetch)
+               // For now, let's just let it show empty or maybe a specific message.
+               // Re-using NoDataFound is okay, but user might think there are NO items at all.
+               // Let's stick to showing empty list or the standard NoDataFound logic if the result is truly empty.
+            }
+            
+            if (displayItems.isEmpty) {
+                 return Center(
+                    child: NoDataFound(
+                      onTap: () {
+                         // If empty due to filter, maybe just reset filter? 
+                         // But for now, standard retry.
+                        context
+                            .read<FetchItemFromCategoryCubit>()
+                            .fetchItemFromCategory(
+                            categoryId: int.parse(
+                              widget.categoryId,
+                            ),
+                            search: searchController.text.toString());
+                      },
+                    ),
+                  );
+            }
+
             return Column(
               children: [
-                Expanded(child: mainChildren(state.itemModel)
+                Expanded(child: mainChildren(displayItems)
                   /* isList
                   ? ListView.builder(
                       shrinkWrap: true,

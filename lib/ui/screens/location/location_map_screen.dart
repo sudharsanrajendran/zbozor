@@ -316,7 +316,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                       child: Icon(
                         Icons.location_on,
                         size: 45,
-                        color: Colors.red,
+                        color: context.color.territoryColor,
                       ),
                     ),
                   ),
@@ -351,7 +351,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                             hintText: "Search",
                             hintStyle: TextStyle(color: context.color.textLightColor),
                             border: InputBorder.none,
-                            prefixIcon: Icon(Icons.location_on_outlined, color: Colors.red),
+                            prefixIcon: Icon(Icons.location_on_outlined, color: context.color.territoryColor),
                             contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 14)
                         ),
                       ),
@@ -382,9 +382,9 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                     _getCurrentLocation();
                   },
                   buttonTitle: "Reset",
-                  textColor: Colors.red,
+                  textColor: context.color.textDefaultColor,
                   buttonColor: context.color.secondaryColor,
-                  border: BorderSide(color: Colors.red),
+                  border: BorderSide(color: context.color.textDefaultColor),
                   radius: 8,
                 ),
                 const SizedBox(height: 12),
@@ -424,7 +424,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                   },
                   buttonTitle: "Apply",
                   textColor: Colors.white,
-                  buttonColor: Colors.red, // Matching image red color
+                  buttonColor: context.color.territoryColor, // Matching image red color
                   radius: 8,
                 ),
               ],

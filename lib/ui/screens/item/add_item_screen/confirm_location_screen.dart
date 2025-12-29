@@ -80,7 +80,7 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
   CameraPosition? _cameraPosition;
   final Set<Marker> _markers = Set();
   late GoogleMapController _mapController;
-  var markerMove;
+  var markerMove = false;
   bool _openedAppSettings = false;
 
   @override

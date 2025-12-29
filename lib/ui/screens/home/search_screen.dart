@@ -148,7 +148,7 @@ class SearchScreenState extends State<SearchScreen>
       insertSearchQuery(searchController.text);
       setState(() {});
     } else {
-      context.read<SearchItemCubit>().clearSearch();
+      if (filter == null) context.read<SearchItemCubit>().clearSearch();
     }
   }
 
@@ -446,7 +446,7 @@ class SearchScreenState extends State<SearchScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               buildHistoryItemList(),
-              if (searchController.text.isNotEmpty)
+              if (searchController.text.isNotEmpty || filter != null)
                 searchItemsWidget()
               //else
               //  popularItemsWidget(),

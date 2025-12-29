@@ -53,7 +53,7 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
   CameraPosition? _cameraPosition;
   final Set<Marker> _markers = Set();
   Set<Circle> circles = Set.from([]);
-  var markerMove;
+  var markerMove = false;
   bool _openedAppSettings = false;
   String currentLocation = '';
   double? latitude, longitude;
@@ -273,8 +273,8 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
               },
                       buttonTitle: "reset".translate(context),
                       height: 43,
-                      border: BorderSide(color: context.color.territoryColor),
-                      textColor: context.color.territoryColor,
+                      border: BorderSide(color: context.color.textDefaultColor),
+                      textColor: context.color.textDefaultColor,
                       buttonColor: context.color.secondaryColor)),
               const SizedBox(width: 16),
               Expanded(
@@ -285,7 +285,7 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
               },
                       buttonTitle: "apply".translate(context),
                       height: 43,
-                      textColor: context.color.secondaryColor,
+                      textColor: context.color.buttonColor,
                       buttonColor: context.color.territoryColor)),
             ],
           ),
@@ -507,7 +507,7 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                                       Icons.location_on_outlined,
                                                       size: 20,
                                                       color: context
-                                                          .color.territoryColor),
+                                                          .color.textDefaultColor),
                                                 ),
                                                 SizedBox(
                                                   width: 10.rw(context),
@@ -605,8 +605,9 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                         // Adjust the opacity as needed
                                         borderRadius: BorderRadius.circular(10),
                                       ),
-                                      child: const Icon(
+                                      child: Icon(
                                         Icons.my_location_sharp,
+                                        color: context.color.territoryColor,
                                         // Change the icon color if needed
                                       ),
                                     ),
