@@ -301,6 +301,33 @@ class ItemsListState extends State<ItemsList> {
 
 
 
+  void _onResetTap() {
+    setState(() {
+      searchController.clear();
+      previousSearchQuery = "";
+      filter = null;
+      _currentCategoryIds = [widget.categoryId];
+      _isAllFieldsSelected = true;
+
+      context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
+          categoryId: int.parse(widget.categoryId),
+          search: "",
+          filter: ItemFilterModel(
+              country: HiveUtils.getCountryName() ?? "",
+              areaId: HiveUtils.getAreaId() != null // Restore Area ID if exists
+                  ? int.parse(HiveUtils.getAreaId().toString())
+                  : null,
+              city: HiveUtils.getCityName() ?? "",
+              state: HiveUtils.getStateName() ?? "",
+              categoryId: widget.categoryId,
+              radius: HiveUtils.getNearbyRadius() ?? null,
+              latitude: HiveUtils.getLatitude() ?? null,
+              longitude: HiveUtils.getLongitude() ?? null
+          ));
+    });
+  }
+
+
   Widget _buildFilterChips() {
     return Container(
       color: context.color.secondaryColor,
@@ -310,54 +337,9 @@ class ItemsListState extends State<ItemsList> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           children: [
-            // Filters Badge Button
-            GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    Routes.filterScreen,
-                    arguments: {
-                      "update": getFilterValue,
-                      "from": "itemsList",
-                      "categoryIds": _currentCategoryIds
-                    },
-
-                  ).then((value) {
-                    if (value == true && filter != null) {
-                      ItemFilterModel updatedFilter =
-                      filter!.copyWith(categoryId: widget.categoryId);
-
-                      context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
-                        categoryId: int.parse(widget.categoryId),
-                        search: searchController.text,
-                        filter: updatedFilter,
-                      );
-                      setState(() {});
-                    }
-                  });
-                },
-                child: Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: context.color.primaryColor,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: context.color.borderColor),
-                  ),
-                  child: Row(
-                    children: [
-                      UiUtils.getSvg(AppIcons.filterByIcon,
-                          color: context.color.textDefaultColor,
-                          height: 16,
-                          width: 16),
-                      const SizedBox(width: 6),
-                    ],
-                  ),
-                )),
-            const SizedBox(width: 8),
-
-            // Dynamic Chips
+            // Dynamic Chips - Show ALL items in chain
             ...List.generate(_currentChain.length, (index) {
+              if (index == 2) return const SizedBox.shrink();
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: _buildDynamicChip(index),
@@ -370,6 +352,27 @@ class ItemsListState extends State<ItemsList> {
                 isActive: _isAllFieldsSelected,
                 onTap: _onAllFieldsTap
             ),
+
+            const SizedBox(width: 8),
+
+            // Reset Button
+            GestureDetector(
+                onTap: _onResetTap,
+                child: Container(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: context.color.primaryColor,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: context.color.borderColor),
+                  ),
+                  child: Text("Reset", style: TextStyle(
+                          color: context.color.textDefaultColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold)),
+                )),
+
+
           ],
         ),
       ),
@@ -380,7 +383,7 @@ class ItemsListState extends State<ItemsList> {
     CategoryModel currentModel = _currentChain[chainIndex];
     return _buildChip(
       label: currentModel.name ?? "",
-      isActive: !_isAllFieldsSelected, // Inactive if All Fields is selected
+      isActive: true, // Always show as active/visible
       onTap: () {
         if (_isAllFieldsSelected) {
           _restoreSelection(chainIndex);
@@ -797,7 +800,7 @@ class ItemsListState extends State<ItemsList> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isSelected
-                  ? context.color.blackColor
+                  ? context.color.textDefaultColor
                   : context.color.borderColor,
               width: isSelected ? 2 : 1,
             ),
@@ -816,7 +819,7 @@ class ItemsListState extends State<ItemsList> {
                   style: TextStyle(
                     fontSize: 12,
                     color: isSelected
-                        ? context.color.blackColor
+                        ? context.color.textDefaultColor
                         : context.color.textDefaultColor,
                     fontWeight: isSelected
                         ? FontWeight.w700
@@ -834,8 +837,6 @@ class ItemsListState extends State<ItemsList> {
 
   void _updateSelection(int chainIndex, CategoryModel newSelection) {
     final oldId = _currentChain.length > chainIndex ? _currentChain[chainIndex].id : -1;
-    // If selection is same AND All Fields is NOT selected, then no change.
-    // If All Fields IS selected, we must proceed to deactivate it and restore this selection.
     if (oldId == newSelection.id && !_isAllFieldsSelected) return;
 
     setState(() {
@@ -844,7 +845,6 @@ class ItemsListState extends State<ItemsList> {
       // 1. Save History for the OLD item being replaced
       if (_currentChain.length > chainIndex) {
          int currentOldId = _currentChain[chainIndex].id!;
-         // If there are children (tail), save them
          if (_currentChain.length > chainIndex + 1) {
             _selectionHistory[currentOldId] = List.from(_currentChain.sublist(chainIndex + 1));
          }
@@ -857,60 +857,76 @@ class ItemsListState extends State<ItemsList> {
         _currentChain.add(newSelection);
       }
 
-      // 3. Truncate any existing children (since we changed the parent)
-      if (_currentChain.length > chainIndex + 1) {
-        _currentChain.removeRange(chainIndex + 1, _currentChain.length);
+      // 3. Handle Child Slots 
+      // Only add placeholder if the new selection HAS subcategories
+      if ((newSelection.subcategoriesCount ?? 0) > 0) {
+          if (_currentChain.length > chainIndex + 1) {
+             _currentChain[chainIndex + 1] = CategoryModel(
+              id: -1, // Dummy ID
+              name: "All", // Placeholder Name
+              url: "",
+              children: [],
+              subcategoriesCount: 0
+            );
+          } else {
+             _currentChain.add(CategoryModel(
+              id: -1, // Dummy ID
+              name: "All", // Placeholder Name
+              url: "",
+              children: [],
+              subcategoriesCount: 0
+            ));
+          }
+      } else {
+         // If no subcategories, truncate immediately after this item
+         if (_currentChain.length > chainIndex + 1) {
+             _currentChain.removeRange(chainIndex + 1, _currentChain.length);
+         }
       }
+      
+      // Also ensure we clean up anything after the placeholder if we set one
+      if ((newSelection.subcategoriesCount ?? 0) > 0) {
+         if (_currentChain.length > chainIndex + 2) {
+           _currentChain.removeRange(chainIndex + 2, _currentChain.length);
+         }
+      }
+
 
       // 4. Restore History for the NEW item (if we visited it before)
       if (_selectionHistory.containsKey(newSelection.id)) {
+         // Apply history
+         // First, define if we should overwrite the placeholder or append?
+         // If history exists, it means we went deeper. 
+         // So we replace the placeholder with the history.
+         
+         // Remove placeholder first
+         if (_currentChain.length > chainIndex + 1 && _currentChain[chainIndex+1].id == -1) {
+             _currentChain.removeAt(chainIndex + 1);
+         }
          _currentChain.addAll(_selectionHistory[newSelection.id]!);
       }
 
       // 5. Re-calculate categoryIds chain
-      // Note: We use widget.categoryIds[0] as the Root Base if chainIndex 0 starts from Level 1
       List<String> newIds = [];
       if (widget.categoryIds.isNotEmpty) newIds.add(widget.categoryIds[0]);
       
-      // Add current chain IDs
       for (var cat in _currentChain) {
-        newIds.add(cat.id.toString());
+        if (cat.id != -1) {
+           newIds.add(cat.id.toString());
+        }
       }
-      // Note: If original widget.categoryIds had more depth, we are replacing it dynamically.
-      // But we must assume widget.categoryIds[0] is the only fixed Root Context.
-      // Actually, my previous logic `List<String> newIds = [_currentCategoryIds[0]];` 
-      // relied on `_currentCategoryIds[0]` being preserved.
-      // Here, `widget.categoryIds[0]` is safer/constant.
-      
-      // Let's stick to using widget.categoryIds[0] as ROOT.
-      // But verify if widget.categoryIds is empty (e.g. from Search? Not PropertyFilter).
-      // This flow is for PropertyFilter mostly.
-      
-       if (newIds.isEmpty && _currentChain.isNotEmpty) {
-           // Fallback if no root is passed? Should not happen in this flow.
-           // Maybe _currentChain[0] is root?
-           // No, Rent is Level 1.
-           // We'll stick to newIds logic.
-       }
-       
-       // Just to be safe, if we duplicated the Root ID?
-       // `widget.categoryIds` might be `[PropertyID, RentID...]`.
-       // `_currentChain` starts with Rent. 
-       // So `newIds` = `[PropertyID, RentID, ResID...]`. Correct.
-       
-       // Wait, what if widget.categoryIds comes as `[PropertyID]` only?
-       // `newIds` = `[PropertyID, RentID...]`. Correct.
-       
-       // What if `_currentChain` contains Property (Level 0)?
-       // No, `accumulatedModels` logic in PropertyScreen added Tab(Rent) as first item.
-       // So Chain starts at Level 1.
-       
-       _currentCategoryIds = newIds;
+      _currentCategoryIds = newIds;
 
       // 6. Trigger API refresh
-      // Fetch using the LAST item in the chain (Most specific filter)
+      int fetchId;
+      if (_currentChain.last.id == -1) {
+         fetchId = _currentChain.length > 1 ? _currentChain[_currentChain.length - 2].id! : int.tryParse(widget.categoryId) ?? 0;
+      } else {
+         fetchId = _currentChain.last.id!;
+      }
+
       context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
-          categoryId: _currentChain.last.id!,
+          categoryId: fetchId,
           search: searchController.text
       );
     });
@@ -1025,7 +1041,7 @@ class ItemsListState extends State<ItemsList> {
           Constant.itemFilter = null;
         },
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: context.color.backgroundColor,
           appBar: UiUtils.buildAppBar(
 
               context,

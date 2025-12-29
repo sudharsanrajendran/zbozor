@@ -40,14 +40,27 @@ class ChatSocketService {
 
 
     _socket!.on("typing:start", (data) {
-  final myId = HiveUtils.getUserId();
-  if (data["userId"].toString() == myId) return;
-  isOtherUserTyping.value = true;
-});
+      final myId = HiveUtils.getUserId();
+      if (data["userId"].toString() == myId) return;
+      isOtherUserTyping.value = true;
+    });
 
-_socket!.on("typing:stop", (data) {
-  isOtherUserTyping.value = false;
-});
+    _socket!.on("typing:stop", (data) {
+      isOtherUserTyping.value = false;
+    });
+
+    // Added generic typing listener as per user snippet reference
+    _socket!.on("typing", (data) {
+       final myId = HiveUtils.getUserId();
+       if (data is Map && data["userId"].toString() == myId) return;
+       // Assuming 'typing' event means start typing or carries state
+       // If data has a boolean or similar, we could use it. 
+       // For now, treat it as 'start' if we receive it. 
+       isOtherUserTyping.value = true;
+       
+       // Auto reset after a few seconds if no stop received? 
+       // For now let's rely on stop event or subsequent logic.
+    });
 
 
 

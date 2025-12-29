@@ -24,7 +24,9 @@ class NoInternet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Flexible(
-                  child: UiUtils.getSvg(AppIcons.no_internet)),
+                  child: UiUtils.getAdaptiveSvg(
+                      context, AppIcons.no_internet,
+                      color: context.color.territoryColor)),
               Text("noInternet".translate(context))
                   .size(context.font.extraLarge)
                   .color(context.color.territoryColor),

@@ -40,8 +40,10 @@ class _SellerIntroVerificationScreenState
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
-          child: UiUtils.getSvg(
+          child: UiUtils.getAdaptiveSvg(
+            context,
             AppIcons.userVerificationIcon,
+            color: context.color.territoryColor,
           ),
         ),
         Text("userVerification".translate(context))

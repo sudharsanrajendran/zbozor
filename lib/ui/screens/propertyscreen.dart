@@ -303,7 +303,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected
-                            ? context.color.blackColor
+                            ? context.color.textDefaultColor
                             : context.color.borderColor,
                         width: isSelected ? 2 : 1,
                       ),
@@ -317,8 +317,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                           width: 30,
                           child: UiUtils.imageType(
                             subCat.url ?? "",
-                            color: isSelected
-                                ? context.color.blackColor
+                                color: isSelected
+                                ? context.color.textDefaultColor
                                 : context.color.textDefaultColor,
                             fit: BoxFit.contain,
                           ),
@@ -337,7 +337,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                             style: TextStyle(
                               fontSize: 12,
                               color: isSelected
-                                  ? context.color.blackColor
+                                  ? context.color.textDefaultColor
                                   : context.color.textDefaultColor,
                               fontWeight:
                               isSelected ? FontWeight.w600 : FontWeight.normal,
@@ -418,7 +418,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                       : context.color.backgroundColor,
                   side: BorderSide(
                     color: isSelected
-                        ? context.color.blackColor
+                        ? context.color.textDefaultColor
                         : context.color.borderColor,
                   ),
 
@@ -427,7 +427,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   ),
                   labelStyle: TextStyle(
                     color: isSelected
-                        ? context.color.blackColor
+                        ? context.color.textDefaultColor
                         : context.color.textDefaultColor,
                   ),
                   onPressed: () {

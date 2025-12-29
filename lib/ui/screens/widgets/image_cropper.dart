@@ -1,5 +1,6 @@
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 import 'package:Ebozor/utils/extensions/extensions.dart';
@@ -17,12 +18,20 @@ class CropImage {
       return null;
     }
 
+    // Force system UI to be visible to prevent safe area overlap
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: _context!.color.territoryColor,
+      statusBarIconBrightness: Brightness.light,
+    ));
+
     CroppedFile? croppedFile = await ImageCropper().cropImage(
       sourcePath: filePath,
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Cropper',
           toolbarColor: _context!.color.territoryColor,
+          statusBarColor: _context!.color.territoryColor,
           toolbarWidgetColor: Colors.white,
           hideBottomControls: false,
           activeControlsWidgetColor: _context!.color.territoryColor,

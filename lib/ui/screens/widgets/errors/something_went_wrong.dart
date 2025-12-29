@@ -14,8 +14,10 @@ class SomethingWentWrong extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: UiUtils.getSvg(
+      child: UiUtils.getAdaptiveSvg(
+        context,
         AppIcons.somethingWentWrong,
+        color: context.color.territoryColor,
       ),
     );
   }
@@ -33,8 +35,10 @@ class NoChatFound extends StatelessWidget {
         children: [
           Container(
             height: 300,
-            child: UiUtils.getSvg(
+            child: UiUtils.getAdaptiveSvg(
+              context,
               AppIcons.no_chat_found,
+              color: context.color.territoryColor,
             ),
           ),
           const SizedBox(

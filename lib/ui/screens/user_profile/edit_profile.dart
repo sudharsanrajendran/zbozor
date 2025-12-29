@@ -739,20 +739,24 @@ class UserProfileScreenState extends State<UserProfileScreen> {
           return SafeArea(
             child: Wrap(
               children: <Widget>[
-                ListTile(
-                    leading: const Icon(Icons.photo_library),
-                    title: Text("gallery".translate(context)),
+                SafeArea(
+                  child: ListTile(
+                      leading: const Icon(Icons.photo_library),
+                      title: Text("gallery".translate(context)),
+                      onTap: () {
+                        _imgFromGallery(ImageSource.gallery);
+                        Navigator.of(context).pop();
+                      }),
+                ),
+                SafeArea(
+                  child: ListTile(
+                    leading: const Icon(Icons.photo_camera),
+                    title: Text("camera".translate(context)),
                     onTap: () {
-                      _imgFromGallery(ImageSource.gallery);
+                      _imgFromGallery(ImageSource.camera);
                       Navigator.of(context).pop();
-                    }),
-                ListTile(
-                  leading: const Icon(Icons.photo_camera),
-                  title: Text("camera".translate(context)),
-                  onTap: () {
-                    _imgFromGallery(ImageSource.camera);
-                    Navigator.of(context).pop();
-                  },
+                    },
+                  ),
                 ),
                 if (fileUserimg != null && widget.from == 'login')
                   ListTile(

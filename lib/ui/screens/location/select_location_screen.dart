@@ -57,7 +57,7 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
       Placemark placemark = placemarks[0];
       setState(() {
         _currentLocation =
-        'Current location: ${placemark.subLocality}, ${placemark.locality}, ${placemark.administrativeArea}, ${placemark.country}';
+            'Current location: ${placemark.subLocality != null && placemark.subLocality!.isNotEmpty ? placemark.subLocality : placemark.locality}, ${placemark.administrativeArea}, ${placemark.country}';
         _isLocationFetched = true;
       });
     }

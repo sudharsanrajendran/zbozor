@@ -190,7 +190,11 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
       formatedAddress = AddressComponent(
           area: placeMark.subLocality,
           areaId: null,
-          city: placeMark.locality,
+          city: (Platform.isIOS &&
+                  placeMark.subLocality != null &&
+                  placeMark.subLocality!.isNotEmpty)
+              ? placeMark.subLocality
+              : placeMark.locality,
           country: placeMark.country,
           state: placeMark.administrativeArea);
 

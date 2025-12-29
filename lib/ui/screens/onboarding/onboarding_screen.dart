@@ -243,8 +243,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 SizedBox(
                                   width: context.screenWidth,
                                   height: 221.rh(context),
-                                  child: SvgPicture.asset(
-                                      slidersList[currentPageIndex]['svg']),
+                                  child: UiUtils.getAdaptiveSvg(
+                                      context, slidersList[currentPageIndex]['svg'],
+                                      color: context.color.territoryColor),
                                 ),
                                 SizedBox(
                                   height: 39.rh(context),

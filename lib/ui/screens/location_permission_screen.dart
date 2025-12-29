@@ -103,7 +103,11 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
         } else {
           HiveUtils.setLocation(
             area: placemark.subLocality,
-            city: placemark.locality!,
+            city: (Platform.isIOS &&
+                    placemark.subLocality != null &&
+                    placemark.subLocality!.isNotEmpty)
+                ? placemark.subLocality!
+                : placemark.locality!,
             state: placemark.administrativeArea!,
             country: placemark.country!,
             latitude: latitude,
@@ -157,7 +161,11 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
         } else {
           HiveUtils.setLocation(
             area: placemark.subLocality,
-            city: placemark.locality!,
+            city: (Platform.isIOS &&
+                    placemark.subLocality != null &&
+                    placemark.subLocality!.isNotEmpty)
+                ? placemark.subLocality!
+                : placemark.locality!,
             state: placemark.administrativeArea!,
             country: placemark.country!,
             latitude: position.latitude,
@@ -187,7 +195,9 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
             children: [
               Container(
                   height: 300,
-                  child: UiUtils.getSvg(AppIcons.locationAccessIcon)),
+                  child: UiUtils.getAdaptiveSvg(
+                      context, AppIcons.locationAccessIcon,
+                      color: context.color.territoryColor)),
 
               const SizedBox(height: 19),
               Text(

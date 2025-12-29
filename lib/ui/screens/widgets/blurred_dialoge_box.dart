@@ -17,6 +17,7 @@ class BlurredDialogBox extends StatelessWidget implements BlurDialoge {
   final VoidCallback? onCancel;
   final String? svgImagePath;
   final Color? svgImageColor;
+  final bool? useAdaptiveColor;
   final Future<dynamic> Function()? onAccept;
   final String? title;
   final Widget content;
@@ -45,6 +46,7 @@ class BlurredDialogBox extends StatelessWidget implements BlurDialoge {
     this.showCancleButton,
     this.svgImagePath,
     this.svgImageColor,
+    this.useAdaptiveColor,
     this.barrierDismissable,
     this.isAcceptContainesPush,
     this.divider,
@@ -107,10 +109,16 @@ class BlurredDialogBox extends StatelessWidget implements BlurDialoge {
                         child: SizedBox(
                             // width: 87 / 2,
                             // height: 87 / 2,
-                            child: UiUtils.getSvg(
-                          svgImagePath!,
-                          color: svgImageColor,
-                        )),
+                            child: (useAdaptiveColor == true)
+                                ? UiUtils.getAdaptiveSvg(
+                                    context,
+                                    svgImagePath!,
+                                    color: svgImageColor,
+                                  )
+                                : UiUtils.getSvg(
+                                    svgImagePath!,
+                                    color: svgImageColor,
+                                  )),
                       ),
                       const SizedBox(
                         height: 20,

@@ -165,13 +165,22 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
       List<Placemark> placemarks = await placemarkFromCoordinates(
           latLng?.latitude ?? latitude!,
           latLng?.longitude ?? longitude!);
-
+      
       if (placemarks.isNotEmpty) {
+
+
+
+
+
+
+
         Placemark placeMark = placemarks.first;
         formatedAddress = AddressComponent(
             area: placeMark.subLocality,
             areaId: null,
-            city: placeMark.locality,
+            city: (placeMark.locality != null && placeMark.locality!.isNotEmpty)
+                ? placeMark.locality
+                : placeMark.subLocality,
             country: placeMark.country,
             state: placeMark.administrativeArea);
             

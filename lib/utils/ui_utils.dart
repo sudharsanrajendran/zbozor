@@ -31,6 +31,8 @@ import 'package:Ebozor/utils/network_to_localsvg.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
 import 'dart:ui' as ui;
 
+import 'package:path/path.dart';
+
 class UiUtils {
   static SvgPicture getSvg(String path,
       {Color? color, BoxFit? fit, double? width, double? height}) {
@@ -41,6 +43,41 @@ class UiUtils {
       fit: fit ?? BoxFit.contain,
       width: width,
       height: height,
+    );
+  }
+
+  static Widget getAdaptiveSvg(BuildContext context, String assetPath,
+      {Color? color, double? width, double? height, BoxFit? fit}) {
+    return FutureBuilder<String>(
+      future: rootBundle.loadString(assetPath),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          String svgString = snapshot.data!;
+          // Replace specific green color #32a16b with provided color
+          if (color != null) {
+            String hexColor =
+                '#${color.value.toRadixString(16).substring(2)}';
+            // Ensure hex is 6 chars for SVG
+            if (hexColor.length > 7) {
+               // This handles if alpha is included but we want RGB for SVG usually
+               // But context.color might have alpha. 
+               // Standard SVG hex is #RRGGBB.
+               // We will assume opaque colors for now or minimal alpha usage.
+            }
+            
+            svgString = svgString.replaceAll(
+                RegExp(r'#32a16b', caseSensitive: false), hexColor);
+          }
+
+          return SvgPicture.string(
+            svgString,
+            width: width,
+            height: height,
+            fit: fit ?? BoxFit.contain,
+          );
+        }
+        return SizedBox(width: width, height: height);
+      },
     );
   }
 
@@ -231,8 +268,16 @@ class UiUtils {
         delegates: const LottieDelegates(values: []),
       );
     } else {
-      return CircularProgressIndicator(
-        color: normalProgressColor,
+      return SizedBox(
+        width: width ?? 70,
+        height: height ?? 70,
+        child: Builder(builder: (context) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: normalProgressColor ?? context.color.territoryColor,
+            ),
+          );
+        }),
       );
     }
   }

@@ -14,6 +14,8 @@ class HomeRepository {
         if (state != null && state != "") 'state': state,
       };
 
+
+
       Map<String, dynamic> response = await Api.get(
           url: Api.getFeaturedSectionApi, queryParameters: parameters);
       List<HomeScreenSection> homeScreenDataList =
@@ -51,6 +53,8 @@ class HomeRepository {
         if (longitude != null && longitude != "") 'longitude': longitude,
         "sort_by": "new-to-old"
       };
+
+
 
       Map<String, dynamic> response =
           await Api.get(url: Api.getItemApi, queryParameters: parameters);

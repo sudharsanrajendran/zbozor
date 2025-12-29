@@ -85,7 +85,7 @@ it will call API in background without showing the process and when data availab
   static const String maintenanceModeLottieFile = "maintenancemode.json";
 
   static const bool useLottieProgress =
-      true; //if you don't want to use lottie progress then set it to false'
+      false; //if you don't want to use lottie progress then set it to false'
 
   ///Other settings
   static const String notificationChannel = "basic_channel"; //

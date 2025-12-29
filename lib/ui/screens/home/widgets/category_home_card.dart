@@ -29,7 +29,7 @@ class CategoryHomeCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
           decoration: BoxDecoration(
-            color: const Color(0xFFFFFFFF),
+            color: context.color.secondaryColor,
               borderRadius: BorderRadius.circular(5),
           ),
           child: Column(
@@ -38,10 +38,11 @@ class CategoryHomeCard extends StatelessWidget {
             Flexible(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: UiUtils.imageType(
-                  url,
-                  fit: isFullImage ? BoxFit.contain : BoxFit.cover,
-                ),
+                  child: UiUtils.imageType(
+                    url,
+                    fit: isFullImage ? BoxFit.contain : BoxFit.cover,
+                    color: context.color.territoryColor,
+                  ),
               ),
             ),
 

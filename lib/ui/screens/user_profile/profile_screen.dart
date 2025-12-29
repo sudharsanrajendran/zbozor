@@ -645,7 +645,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   onTap: () {
                     logOutConfirmWidget();
                   },
-                  color: context.color.textDefaultColor,
+                  color: context.color.territoryColor,
                 ),
             ]),
         body: SingleChildScrollView(
@@ -1391,6 +1391,8 @@ class _ProfileScreenState extends State<ProfileScreen>
             },
             cancelTextColor: context.color.textColorDark,
             svgImagePath: AppIcons.logoutIcon,
+            svgImageColor: context.color.territoryColor,
+            useAdaptiveColor: true,
             content: Text("confirmLogOutMsg".translate(context))));
   }
 }

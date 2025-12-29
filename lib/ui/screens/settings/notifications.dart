@@ -1,4 +1,5 @@
 import 'package:Ebozor/ui/theme/theme.dart';
+import 'package:Ebozor/utils/app_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -52,7 +53,9 @@ class NotificationsState extends State<Notifications> {
   void initState() {
     super.initState();
     AdHelper.loadInterstitialAd();
-    context.read<FetchNotificationsCubit>().fetchNotifications();
+    if (HiveUtils.isUserAuthenticated()) {
+      context.read<FetchNotificationsCubit>().fetchNotifications();
+    }
     _pageScrollController.addListener(_pageScroll);
   }
 
@@ -80,7 +83,46 @@ class NotificationsState extends State<Notifications> {
         title: "notifications".translate(context),
         showBackButton: true,
       ),
-      body: BlocBuilder<FetchNotificationsCubit, FetchNotificationsState>(
+      body: !HiveUtils.isUserAuthenticated()
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 300,
+                    child: UiUtils.getAdaptiveSvg(
+                      context,
+                      AppIcons.no_data_found,
+                      color: context.color.territoryColor,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text("loginIsRequiredForAccessingThisFeatures"
+                          .translate(context))
+                      .size(context.font.larger)
+                      .centerAlign(),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  MaterialButton(
+                    elevation: 0,
+                    color: context.color.territoryColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    onPressed: () {
+                      Navigator.pushNamed(context, Routes.login,
+                          arguments: {"popToCurrent": true});
+                    },
+                    child: Text("loginNow".translate(context)).color(
+                      context.color.buttonColor ?? Colors.white,
+                    ),
+                  )
+                ],
+              ),
+            )
+          : BlocBuilder<FetchNotificationsCubit, FetchNotificationsState>(
           builder: (context, state) {
         if (state is FetchNotificationsInProgress) {
           return buildNotificationShimmer();

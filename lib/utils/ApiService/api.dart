@@ -57,6 +57,11 @@ class Api {
     }
   }
 
+  // Debug helper
+  static void printDebug(String message) {
+    print("**** API DEBUG: $message");
+  }
+
 //Place API
   static const String _placeApiBaseUrl =
       "https://maps.googleapis.com/maps/api/place/";
@@ -298,6 +303,10 @@ class Api {
         ),
       );
 
+      printDebug("POST Request URL: ${((useBaseUrl ?? true) ? Constant.baseUrl : "") + url}");
+      printDebug("POST Parameters: ${formData.fields}");
+      printDebug("POST Response: ${response.data}");
+
       var resp = response.data;
 
       if (resp['error'] ?? false) {
@@ -404,6 +413,10 @@ class Api {
           ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url,
           queryParameters: queryParameters,
           options: Options(headers: headers()));
+
+      printDebug("GET Request URL: ${((useBaseUrl ?? true) ? Constant.baseUrl : "") + url}");
+      printDebug("GET Parameters: $queryParameters");
+      printDebug("GET Response: ${response.data}");
 
       if (response.data['error'] == true) {
 /* if(kDebugMode&&response.data?['details']!=null){

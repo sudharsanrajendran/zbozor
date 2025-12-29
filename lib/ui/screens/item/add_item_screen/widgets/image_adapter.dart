@@ -21,6 +21,6 @@ class ImageAdapter extends StatelessWidget {
         fit: BoxFit.cover,
       );
     }
-    return Container();
+    return SafeArea(child: Container());
   }
 }

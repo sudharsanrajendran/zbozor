@@ -139,7 +139,7 @@ class Constant {
     SystemSetting.interstitialAdiOSAd: "interstitial_ad_id_ios",
     SystemSetting.nativeAdStatus: "native_ad_status",
     SystemSetting.nativeAndroidAd: "native_app_id_android",
-    SystemSetting.nativeAdiOSAd: "native_app_id_android",
+    SystemSetting.nativeAdiOSAd: "native_app_id_ios",
     SystemSetting.playStoreLink: "play_store_link",
     SystemSetting.appStoreLink: "app_store_link",
     SystemSetting.defaultLatitude: "default_latitude",

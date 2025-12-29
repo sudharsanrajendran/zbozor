@@ -147,12 +147,8 @@ class _ChatScreenState extends State<ChatScreen>
     controller.addListener(() {
       if (controller.text.isNotEmpty) {
         showRecordButton = false;
-        // Optional: Emit typing start
-        // socketService.typingStart(widget.itemOfferId);
       } else {
         showRecordButton = true;
-        // Optional: Emit typing stop
-        // socketService.typingStop(widget.itemOfferId);
       }
       setState(() {});
     });

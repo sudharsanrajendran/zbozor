@@ -78,24 +78,42 @@ class HomeScreenState extends State<HomeScreen>
       GlobalKey<RefreshIndicatorState>();
 
   Future<void> _refreshData() async {
-    // context.read<SliderCubit>().fetchSlider(context);
-    // context.read<FetchCategoryCubit>().fetchCategories();
-    context.read<FetchHomeScreenCubit>().fetch(
-        city: HiveUtils.getCityName(),
-        areaId: HiveUtils.getAreaId(),
-        country: HiveUtils.getCountryName(),
-        state: HiveUtils.getStateName());
-    context.read<FetchHomeAllItemsCubit>().fetch(
-        city: HiveUtils.getCityName(),
-        areaId: HiveUtils.getAreaId(),
-        radius: HiveUtils.getNearbyRadius(),
-        longitude: HiveUtils.getLongitude(),
-        latitude: HiveUtils.getLatitude(),
-        country: HiveUtils.getCountryName(),
-        state: HiveUtils.getStateName());
+
+    try {
+      var city = HiveUtils.getCityName();
+      var areaId = HiveUtils.getAreaId();
+      var country = HiveUtils.getCountryName();
+      var state = HiveUtils.getStateName();
+      var radius = HiveUtils.getNearbyRadius();
+      var longitude = HiveUtils.getLongitude();
+      var latitude = HiveUtils.getLatitude();
+
+
+
+
+      context.read<FetchHomeScreenCubit>().fetch(
+          city: city,
+          areaId: areaId,
+          country: country,
+          state: state);
+
+
+      context.read<FetchHomeAllItemsCubit>().fetch(
+          city: city,
+          areaId: areaId,
+          radius: radius,
+          longitude: longitude,
+          latitude: latitude,
+          country: country,
+          state: state);
+    } catch (e, st) {
+
+    }
+  
     if (HiveUtils.isUserAuthenticated()) {
       context.read<FetchNotificationsCubit>().fetchNotifications();
     }
+
   }
 
   @override

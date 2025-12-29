@@ -80,6 +80,8 @@ class ItemRepository {
         if (page != null) Api.page: page
       };
 
+      print("**** ItemRepository: fetchMyItems parameters: $parameters");
+
       if (parameters['status'] == "") parameters.remove('status');
       Map<String, dynamic> response = await Api.get(
         url: Api.getMyItemApi,
@@ -161,6 +163,9 @@ class ItemRepository {
       Api.categoryId: categoryId,
       Api.page: page,
     };
+
+    print("**** ItemRepository: fetchItemFromCatId: filter=$filter");
+    print("**** ItemRepository: fetchItemFromCatId: initial parameters: $parameters");
 
     if (filter != null) {
       parameters.addAll(filter.toMap());

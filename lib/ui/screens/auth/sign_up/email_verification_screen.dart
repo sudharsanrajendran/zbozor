@@ -5,6 +5,7 @@ import 'package:Ebozor/data/cubits/auth/authentication_cubit.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
+import 'package:Ebozor/utils/ui_utils.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -123,7 +124,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Flexible(child: SvgPicture.asset(AppIcons.verificationMail)),
+                      Flexible(
+                          child: UiUtils.getAdaptiveSvg(
+                              context, AppIcons.verificationMail,
+                              color: context.color.territoryColor)),
                       Text("youHaveGotEmail".translate(context))
                           .size(context.font.extraLarge)
                           .bold(weight: FontWeight.w600),

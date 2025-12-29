@@ -534,23 +534,37 @@ class MainActivityState extends State<MainActivity>
                         },
                       );
                     },
-                    child:SizedBox(
-                      width: 72.rw(context),   // ⬅️ WIDTH INCREASED
-                      height: 72,              // ⬅️ HEIGHT INCREASED
+                    child:SizedBox(// ⬅️ HEIGHT INCREASED
                       child: Center(
                         child: state is FetchUserPackageLimitInProgress
                             ? const CircularProgressIndicator(strokeWidth: 2)
                             : !svgLoaded
                             ? const SizedBox.shrink()
                             : SizedBox(               // ⬅️ ICON SIZE CONTROL
-                          width: 60,
-                          height: 60,
-                          child:Image.asset("assets/plusimage.png")
-                        ),
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: context.color.territoryColor,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: context.color.territoryColor.withOpacity(0.4),
+                                  //blurRadius: 8,
+                                  //offset: const Offset(0, 4),
+                                )
+                              ]
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
                       ),
                     ),
 
-                  );
+                  ));
                 },
               ),
             ),
