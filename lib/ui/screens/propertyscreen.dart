@@ -8,6 +8,9 @@ import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:Ebozor/app/routes.dart';
+import 'package:Ebozor/utils/constant.dart';
+import 'package:Ebozor/utils/app_icon.dart';
+import 'package:flutter/services.dart'; // For TextInputFormatter
 
 class PropertyFilterScreen extends StatefulWidget {
   final List<CategoryModel> categoryList; // Expecting [Rent, Sale]
@@ -30,7 +33,7 @@ class PropertyFilterScreen extends StatefulWidget {
 class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   int _selectedTabIndex = 0; // 0 for Rent, 1 for Sale (assuming order)
   CategoryModel? _selectedPropertyType; // e.g. Residential
-  CategoryModel? _selectedSubCategory; // e.g. Apartment
+  final List<CategoryModel> _subCategoryPath = []; // Dynamic path: [Apartment, 1 Room, ...]
 
   // We need a separate cubit to fetch children of the selected property type (e.g. Residential -> Apartments)
   late final FetchSubCategoriesCubit _subCategoryCubit;
@@ -38,9 +41,17 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   // We need another cubit to fetch Property Types (Residential/Commercial) if the Tab doesn't have them (e.g. Sale)
   late final FetchSubCategoriesCubit _propertyTypesCubit;
 
+  // Filter State
+  TextEditingController minController = TextEditingController();
+  TextEditingController maxController = TextEditingController();
+  RangeValues _priceRangeValues = const RangeValues(0, 1000000); // 0 to 1M default
+  String postedOn = Constant.postedSince[0].value; // Default "All Time"
+
   @override
   void initState() {
     super.initState();
+
+    
     _subCategoryCubit = FetchSubCategoriesCubit();
     _propertyTypesCubit = FetchSubCategoriesCubit();
     // Default selection logic
@@ -51,6 +62,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   void dispose() {
     _subCategoryCubit.close();
     _propertyTypesCubit.close();
+    minController.dispose();
+    maxController.dispose();
     super.dispose();
   }
 
@@ -68,10 +81,13 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     }
   }
 
+// ... (skipping lines)
+
   void _onPropertyTypeSelected(CategoryModel propertyType) {
+    
     setState(() {
       _selectedPropertyType = propertyType;
-      _selectedSubCategory = null; // Reset sub-sub category
+      _subCategoryPath.clear(); // Reset all subcategories
     });
 
     // If this property type has children already loaded, we don't need to fetch.
@@ -145,6 +161,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         const SizedBox(height: 24),
                         _buildSubCategories(),
                       ],
+                      // Recursively build all subsequent category levels
+                      ..._buildDynamicCategoryLevels(),
                     ],
                   ),
                 ),
@@ -175,7 +193,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     _onPropertyTypeSelected(category.children!.first);
                   } else {
                     _selectedPropertyType = null;
-                    _selectedSubCategory = null;
+                    _subCategoryPath.clear();
                     // Fetch if empty
                     _propertyTypesCubit.fetchSubCategories(categoryId: category.id!);
                   }
@@ -362,7 +380,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     // Check if we have children locally first
     if (_selectedPropertyType?.children != null &&
         _selectedPropertyType!.children!.isNotEmpty) {
-      return _buildSubCategoryChips(_selectedPropertyType!.children!);
+      // Pass Level 0 to identify this is the first level of dynamic categories
+      return _buildDynamicSubCategoryChips(0, _selectedPropertyType!.children!); 
     }
 
     // Otherwise use BlocBuilder to listen to fetched children
@@ -375,25 +394,66 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
           }
           if (state is FetchSubCategoriesSuccess) {
             if (state.categories.isEmpty) return const SizedBox.shrink();
-            return _buildSubCategoryChips(state.categories);
+            return _buildDynamicSubCategoryChips(0, state.categories);
           }
           if (state is FetchSubCategoriesFailure) {
-            // Can show retry here or fail silently
             return const SizedBox.shrink();
           }
-          // Initial or other states
           return const SizedBox.shrink();
         },
       ),
     );
   }
 
-  Widget _buildSubCategoryChips(List<CategoryModel> subCats) {
+  /// Builds a LIST of widgets for sequential levels:
+  /// Level 1 (if Level 0 selected) -> Level 2 (if Level 1 selected) -> ...
+  List<Widget> _buildDynamicCategoryLevels() {
+    List<Widget> levels = [];
+    
+    // Iterate through the CURRENT path to show the NEXT level for each selection
+    for (int i = 0; i < _subCategoryPath.length; i++) {
+      CategoryModel currentSelection = _subCategoryPath[i];
+      if (currentSelection.children != null && currentSelection.children!.isNotEmpty) {
+        levels.add(const SizedBox(height: 24));
+        // The children of path[i] constitute level i+1
+        levels.add(_buildDynamicSubCategoryChips(i + 1, currentSelection.children!));
+      }
+    }
+    return levels;
+  }
+
+  /// Generic widget to build a row of chips for a specific level
+  Widget _buildDynamicSubCategoryChips(int levelIndex, List<CategoryModel> subCats) {
+    // Determine which item is currently selected at this level (if any)
+    CategoryModel? currentlySelectedAtThisLevel;
+    if (_subCategoryPath.length > levelIndex) {
+      currentlySelectedAtThisLevel = _subCategoryPath[levelIndex];
+    }
+    
+    // Title logic: 
+    // If level 0, use PropertyType name. 
+    // If level > 0, use the name of the parent (which is at levelIndex - 1)
+    String titleName = "";
+    if (levelIndex == 0) {
+      titleName = _selectedPropertyType?.name ?? "";
+    } else {
+      titleName = _subCategoryPath[levelIndex - 1].name ?? "";
+    }
+
+    // Customize suffix using a Map configuration
+    // You can add more static mappings here easily
+    Map<String, String> suffixMap = {
+      'apartment': 'Rooms',
+    };
+
+    // Default to 'Categories' if not found in map
+    String suffix = suffixMap[titleName.toLowerCase()] ?? 'Categories';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "${_selectedPropertyType?.name} Categories",
+          "$titleName $suffix", 
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -402,20 +462,17 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         ),
         const SizedBox(height: 12),
 
-        /// 🔥 Horizontal scroll – single row
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: subCats.map((child) {
-              bool isSelected = _selectedSubCategory?.id == child.id;
+              bool isSelected = currentlySelectedAtThisLevel?.id == child.id;
 
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: ActionChip(
                   label: Text(child.name ?? ""),
-                  backgroundColor: isSelected
-                      ? context.color.backgroundColor
-                      : context.color.backgroundColor,
+                  backgroundColor: context.color.backgroundColor,
                   side: BorderSide(
                     color: isSelected
                         ? context.color.textDefaultColor
@@ -423,16 +480,28 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   ),
 
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5), // 👈 change value
+                    borderRadius: BorderRadius.circular(5), 
                   ),
                   labelStyle: TextStyle(
-                    color: isSelected
-                        ? context.color.textDefaultColor
-                        : context.color.textDefaultColor,
+                    color: context.color.textDefaultColor,
                   ),
+                  // 🔥 CORE SELECTION LOGIC
                   onPressed: () {
                     setState(() {
-                      _selectedSubCategory = child;
+                      // 1. If we are changing a selection at an existing level, 
+                      // discard everything deeper than this level.
+                      if (_subCategoryPath.length > levelIndex) {
+                        // We are re-selecting at this level.
+                        // Remove this level and everything after it.
+                        // e.g. Path [A, B, C]. User clicks D at level 0.
+                        // Path becomes [D].
+                        // e.g. Path [A, B, C]. User clicks E at level 1 (replacing B).
+                        // Path becomes [A, E].
+                        _subCategoryPath.removeRange(levelIndex, _subCategoryPath.length);
+                      }
+                      
+                      // 2. Add the new selection
+                      _subCategoryPath.add(child);
                     });
                   },
                 ),
@@ -443,7 +512,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       ],
     );
   }
-
 
   Widget _buildBottomButton() {
     return Container(
@@ -465,16 +533,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   }
 
   void _onShowResults() {
-    // 1. Root Category (Property)
-    // 2. Tab (Property for Rent / Sale)
-    // 3. Type (Residential / Commercial)
-    // 4. SubType (Apartment / Villa)
-
     List<String> accumulatedIds = [...widget.categoryIds];
-    List<CategoryModel> accumulatedModels = []; // We need this for the chips!
-
-    // We don't have the parent models of widget.categoryList here easily without fetching or passing them.
-    // However, we have the current selections.
+    List<CategoryModel> accumulatedModels = [];
 
     if (_currentTabCategory != null) {
       accumulatedIds.add(_currentTabCategory!.id.toString());
@@ -484,20 +544,25 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       accumulatedIds.add(_selectedPropertyType!.id.toString());
       accumulatedModels.add(_selectedPropertyType!);
     }
-    if (_selectedSubCategory != null) {
-      accumulatedIds.add(_selectedSubCategory!.id.toString());
-      accumulatedModels.add(_selectedSubCategory!);
+    
+    // Add all dynamically selected sub, nested, etc. categories
+    for (var cat in _subCategoryPath) {
+      accumulatedIds.add(cat.id.toString());
+      accumulatedModels.add(cat);
     }
 
-    // Determine the "final" category to show in the header or as main context
-    // Usually the most specific one.
-    CategoryModel targetCat = _selectedSubCategory ?? _selectedPropertyType ?? _currentTabCategory ?? widget.categoryList[0];
+    CategoryModel targetCat;
+    if (_subCategoryPath.isNotEmpty) {
+      targetCat = _subCategoryPath.last;
+    } else {
+      targetCat = _selectedPropertyType ?? _currentTabCategory ?? widget.categoryList[0];
+    }
 
     Navigator.pushNamed(context, Routes.itemsList, arguments: {
       'catID': targetCat.id.toString(),
       'catName': targetCat.name,
-      "categoryIds": accumulatedIds, // Passing the full chain IDs
-      "selectedCategoryChain": accumulatedModels // Passing the full chain Models
+      "categoryIds": accumulatedIds,
+      "selectedCategoryChain": accumulatedModels
     });
   }
 }

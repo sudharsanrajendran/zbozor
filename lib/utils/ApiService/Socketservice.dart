@@ -16,7 +16,8 @@ class ChatSocketService {
   Timer? _typingResetTimer;
 
   bool get isConnected => _socket?.connected ?? false;
-  final ValueNotifier<String?> typingUserId = ValueNotifier(null);
+  // Map contains { 'userId': String, 'userName': String }
+  final ValueNotifier<Map<String, String>?> typingStatus = ValueNotifier(null);
 
   /// Connect socket safely
   void socketconnect() {
@@ -40,40 +41,36 @@ class ChatSocketService {
     );
 
 
-    // Generic typing listener as per user snippet reference
-    _socket!.on("typing:start", (data) {
-      print("🔥 Received typing:start: $data"); // Debug print
-      if (data is Map) { // Removed strict userId check for debugging, or maybe logic depends on it
-         final myId = HiveUtils.getUserId();
-         // If server sends userId, check strict equality. 
-         // If not, we might need to rely on offerId or just pass it through if we can't identify user.
-         // Let's keep the check if userId exists, but print first.
-         
-         if (data["userId"] != null && data["userId"].toString() == myId) return;
+    // Generic typing listener based on server logic: "typing" event with boolean payload
+    _socket!.on("typing", (data) {
+      print("🔥 Received typing event: $data");
+      if (data is Map) {
+        final isTyping = data['typing'] ?? false;
+        final userId = data['user_id']?.toString();
+        final userName = data['user_name']?.toString() ?? "User";
+        final myId = HiveUtils.getUserId();
 
-         // If userId is present, set it. Use a fallback if needed? 
-         // For now, let's just log and see what we get. 
-         if (data["userId"] != null) {
-            typingUserId.value = data["userId"].toString();
-         } else {
-             // If NO userId is in packet, we can't set typingUserId correctly for the basic logic using userId.
-             // But maybe correct logic is matched by OfferId? 
-             // The chat screen checks: if (typingUserId == widget.userId).
-             // If we don't get userId, this logic fails.
-             print("🔥 typing:start data missing userId");
-         }
+        // Ignore our own typing events if they bounce back
+        if (userId == myId) return;
 
-        _typingResetTimer?.cancel();
-        _typingResetTimer = Timer(const Duration(seconds: 5), () {
-          typingUserId.value = null;
-        });
+        if (isTyping) {
+          if (userId != null) {
+            typingStatus.value = {'userId': userId, 'userName': userName};
+            
+            // Auto-reset timer in case we miss the stop event
+            _typingResetTimer?.cancel();
+            _typingResetTimer = Timer(const Duration(seconds: 9), () {
+              if (typingStatus.value?['userId'] == userId) {
+                 typingStatus.value = null;
+              }
+            });
+          }
+        } else {
+          // If typing is false, clear the status
+           typingStatus.value = null;
+           _typingResetTimer?.cancel();
+        }
       }
-    });
-
-    _socket!.on("typing:stop", (data) {
-      print("🔥 Received typing:stop: $data");
-      typingUserId.value = null;
-      _typingResetTimer?.cancel();
     });
 
 
@@ -85,10 +82,16 @@ class ChatSocketService {
     _socket!.on("message", _onMessageReceived);
 
     _socket!.onConnect((_) {
-      print("🔥 Socket Connected");
+      print("🔥 Socket Connected: ${_socket?.id}");
       _startPresencePing();
+      if (_currentOfferId != null) {
+         print("🔥 Re-emitting join on connect: {offerId: $_currentOfferId}");
+         _socket?.emit("join", {"offerId": _currentOfferId});
+      }
     });
 
+    _socket!.onConnectError((data) => print("🔥 Socket Connect Error: $data"));
+    _socket!.onError((data) => print("🔥 Socket Error: $data"));
     _socket!.onDisconnect((_) {
       print("🔥 Socket Disconnected");
       _stopPresencePing();
@@ -125,9 +128,17 @@ class ChatSocketService {
     ChatMessageHandler.addchat(chat);
   }
 
+  int? _currentOfferId;
+
   /// Join a specific offer room
   void joinOffer(int offerId) {
-    if (_socket == null || !_socket!.connected) socketconnect();
+    _currentOfferId = offerId;
+    if (_socket == null || !_socket!.connected) {
+      print("🔥 Cannot join offer $offerId immediately - Socket connecting/disconnected");
+      socketconnect();
+      // The onConnect listener will handle the join now
+      return; 
+    }
     print("🔥 Emitting join: {offerId: $offerId}");
     _socket?.emit("join", {"offerId": offerId});
   }
@@ -149,12 +160,23 @@ class ChatSocketService {
   }
 
   void typingStart(int offerId) {
-  _socket?.emit("typing:start", {"offerId": offerId});
-}
+    if (_socket == null || !_socket!.connected) {
+      print("🔥 Cannot emit typing:start - Socket disconnected or null");
+      socketconnect();
+      return; 
+    }
+    print("🔥 Emitting typing:start: {offerId: $offerId}");
+    _socket?.emit("typing:start", {"offerId": offerId});
+  }
 
-void typingStop(int offerId) {
-  _socket?.emit("typing:stop", {"offerId": offerId});
-}
+  void typingStop(int offerId) {
+     if (_socket == null || !_socket!.connected) {
+       print("🔥 Cannot emit typing:stop - Socket disconnected or null");
+       return;
+     }
+    print("🔥 Emitting typing:stop: {offerId: $offerId}");
+    _socket?.emit("typing:stop", {"offerId": offerId});
+  }
 
 
 

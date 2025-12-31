@@ -20,10 +20,14 @@ class CategoryRepository {
       Map<String, dynamic> response =
           await Api.get(url: Api.getCategoriesApi, queryParameters: parameters);
 
+
       List<CategoryModel> modelList = (response['data']['data'] as List).map(
         (e) {
           return CategoryModel.fromJson(e);
+
         },
+
+
       ).toList();
       return DataOutput(
           total: response['data']['total'] ?? 0, modelList: modelList);

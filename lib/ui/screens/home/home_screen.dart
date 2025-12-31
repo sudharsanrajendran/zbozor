@@ -276,7 +276,7 @@ class HomeScreenState extends State<HomeScreen>
                     return SizedBox.shrink();
                   },
                 ),
-                const AllItemsWidget(),
+             //   const AllItemsWidget(),
                 const SizedBox(
                   height: 30,
                 )

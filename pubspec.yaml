@@ -54,7 +54,7 @@ dependencies:
   google_sign_in: ^6.2.2
   sign_in_with_apple: ^6.1.1
   geolocator: ^13.0.1
-  flutter_svg: ^2.0.9
+  flutter_svg: ^2.2.3
   #uni_links: ^0.5.1
   #google_maps_webservice: ^0.0.19
   google_mobile_ads: ^5.1.2

@@ -343,7 +343,9 @@ class ItemRepository {
   }
 
   Future<void> itemTotalClick(int id) async {
-    await Api.post(url: Api.setItemTotalClickApi, parameter: {Api.itemId: id});
+    Map response = await Api.post(url: Api.setItemTotalClickApi, parameter: {Api.itemId: id});
+    print("*************** homeproperty itemTotalClick response ***************");
+    print(response);
   }
 
   Future<Map> makeAnOfferItem(int id, double? amount) async {

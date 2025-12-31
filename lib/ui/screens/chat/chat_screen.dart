@@ -132,7 +132,7 @@ class _ChatScreenState extends State<ChatScreen>
     context.read<LoadChatMessagesCubit>().load(itemOfferId: widget.itemOfferId);
 
 
-    if (!_socketService.isConnected) _socketService.socketconnect();
+    // if (!_socketService.isConnected) _socketService.socketconnect(); // Removed redundant call
     _socketService.joinOffer(widget.itemOfferId);
 
     currentlyChatItemId = widget.itemId;
@@ -623,15 +623,15 @@ class _ChatScreenState extends State<ChatScreen>
 
 
                           //// typing status showing
-                          ValueListenableBuilder<String?>(
-                            valueListenable: _socketService.typingUserId,
-                            builder: (context, typingUserId, child) {
-                              if (typingUserId == widget.userId) {
+                          ValueListenableBuilder<Map<String, String>?>(
+                            valueListenable: _socketService.typingStatus,
+                            builder: (context, typingStatus, child) {
+                              if (typingStatus != null && typingStatus['userId'] == widget.userId) {
                                 return Padding(
                                   padding: const EdgeInsets.only(
                                       bottom: 5.0, left: 10, right: 10),
                                   child: Text(
-                                    "userIsTyping".translate(context),
+                                    "${widget.userName} ${"isTyping".translate(context)} ...",
                                     style: TextStyle(
                                       color: context.color.textDefaultColor,
                                       fontSize: 12,

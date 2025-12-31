@@ -630,50 +630,35 @@ class FilterScreenState extends State<FilterScreen> {
       child: Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: Container(
-          height: 55,
+          height: 50,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-              color: context.color.secondaryColor,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: context.color.borderColor.darken(30),
-                width: 1,
-              )),
-          child: Padding(
-            padding: const EdgeInsetsDirectional.only(start: 14.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                UiUtils.getSvg(AppIcons.locationIcon,
-                    color: context.color.textDefaultColor),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.only(start: 10.0),
-                    child: /*(city != "" && city != null)
-                        ? Text(
-                            "${area != null && area != "" ? '$area,' : ''}$city, $_state, $country",
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: true,
-                          )*/
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.location_on_outlined, color: Colors.grey),
+              const SizedBox(width: 10),
+              Expanded(
+                child: [area, city, _state, country]
+                        .where((element) =>
+                            element != null && element.isNotEmpty)
+                        .join(", ")
+                        .isNotEmpty
+                    ? Text(
                         [area, city, _state, country]
-                                .where((element) =>
-                                    element != null && element.isNotEmpty)
-                                .join(", ")
-                                .isNotEmpty
-                            ? Text(
-                                [area, city, _state, country]
-                                    .where((element) =>
-                                        element != null && element.isNotEmpty)
-                                    .join(", "),
-                                overflow: TextOverflow.ellipsis,
-                                softWrap: true,
-                              )
-                            : Text("allCities".translate(context)).color(context
-                                .color.textDefaultColor
-                                .withOpacity(0.5)),
-                  ),
-                ),
-              ],
-            ),
+                            .where((element) =>
+                                element != null && element.isNotEmpty)
+                            .join(", "),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: Colors.grey.shade600),
+                      )
+                    : Text("allCities".translate(context))
+                        .color(Colors.grey.shade400),
+              ),
+            ],
           ),
         ),
       ),
@@ -698,41 +683,34 @@ class FilterScreenState extends State<FilterScreen> {
       child: Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: Container(
-          height: 55,
-          width: double.infinity,
+          height: 50,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-              color: context.color.secondaryColor,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: context.color.borderColor.darken(30),
-                width: 1,
-              )),
-          child: Padding(
-            padding: const EdgeInsetsDirectional.only(start: 14.0),
-            child: Row(
-              children: [
-                categoryList.isNotEmpty
-                    ? UiUtils.getImage(categoryList[0].url!,
-                        height: 20, width: 20, fit: BoxFit.contain)
-                    : UiUtils.getSvg(AppIcons.categoryIcon,
-                        color: context.color.textDefaultColor),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.only(start: 15.0),
-                    child: categoryList.isNotEmpty
-                        ? Text("${categoryList.map((e) => e.name).join(' - ')}",
-                            maxLines: 1, overflow: TextOverflow.ellipsis)
-                        : Text("allInClassified".translate(context)).color(
-                            context.color.textDefaultColor.withOpacity(0.5)),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsetsDirectional.only(end: 14.0),
-                  child: UiUtils.getSvg(AppIcons.downArrow,
-                      color: context.color.textDefaultColor),
-                ),
-              ],
-            ),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Row(
+            children: [
+              categoryList.isNotEmpty
+                  ? UiUtils.getImage(categoryList[0].url!,
+                      height: 20, width: 20, fit: BoxFit.contain)
+                  : /*UiUtils.getSvg(AppIcons.categoryIcon,
+                      color: Colors.grey)*/
+                   Icon(Icons.grid_view, color: Colors.grey, size: 20),
+              
+              const SizedBox(width: 10),
+              
+              Expanded(
+                child: categoryList.isNotEmpty
+                    ? Text("${categoryList.map((e) => e.name).join(' - ')}",
+                        maxLines: 1, overflow: TextOverflow.ellipsis)
+                        .color(Colors.grey.shade600)
+                    : Text("allInClassified".translate(context)).color(
+                        Colors.grey.shade400),
+              ),
+              Icon(Icons.keyboard_arrow_down, color: Colors.black54),
+            ],
           ),
         ),
       ),
@@ -763,92 +741,48 @@ class FilterScreenState extends State<FilterScreen> {
   }
 
   Widget budgetOption() {
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              minMaxTFF(
-                "minLbl".translate(context),
-              )
-            ],
-          ),
+      children: [
+        Row(
+          children: [
+            Expanded(child: minMaxTFFProperty("minLbl".translate(context))),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text("To".translate(context)).color(context.color.textDefaultColor),
+            ),
+            Expanded(child: minMaxTFFProperty("maxLbl".translate(context))),
+          ],
         ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              minMaxTFF("maxLbl".translate(context)),
-            ],
-          ),
+        const SizedBox(height: 10),
+        RangeSlider(
+          values: _priceRangeValues,
+          min: 0,
+          max: 1000000, 
+          activeColor: const Color(0xFFE52D2D),
+          inactiveColor: const Color(0xFFE52D2D).withOpacity(0.2),
+          onChanged: (RangeValues values) {
+            setState(() {
+              _priceRangeValues = values;
+              minController.text = values.start.round().toString();
+              maxController.text = values.end.round().toString();
+            });
+          },
         ),
       ],
     );
   }
 
-  //// min and max input boc for flutter
-  Widget minMaxTFF(String minMax) {
-    return Container(
-        /*  padding: EdgeInsetsDirectional.only(
-            end: minMax == "minLbl".translate(context) ? 5 :),*/
-        alignment: AlignmentDirectional.center,
-        decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            color: Theme.of(context).colorScheme.secondaryColor),
-        child: TextFormField(
-            controller: (minMax == "minLbl".translate(context))
-                ? minController
-                : maxController,
-            onChanged: ((value) {
-              bool isEmpty = value.trim().isEmpty;
-              if (minMax == "minLbl".translate(context)) {
-                if (isEmpty && searchbody.containsKey(Api.minPrice)) {
-                  searchbody.remove(Api.minPrice);
-                } else {
-                  searchbody[Api.minPrice] = value;
-                }
-              } else {
-                if (isEmpty && searchbody.containsKey(Api.maxPrice)) {
-                  searchbody.remove(Api.maxPrice);
-                } else {
-                  searchbody[Api.maxPrice] = value;
-                }
-              }
-            }),
-            textInputAction: TextInputAction.done,
-            decoration: InputDecoration(
-                isDense: true,
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide:
-                        BorderSide(color: context.color.territoryColor)),
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                        color: context.color.borderColor.darken(30))),
-                labelStyle: TextStyle(
-                    color: context.color.textDefaultColor.withOpacity(0.5)),
-                hintText: "00",
-                label: Text(
-                  minMax,
-                ),
-                prefixText: '${Constant.currencySymbol} ',
-                prefixStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.territoryColor),
-                fillColor: Theme.of(context).colorScheme.secondaryColor,
-                border: const OutlineInputBorder()),
-            keyboardType: TextInputType.number,
-            style:
-                TextStyle(color: Theme.of(context).colorScheme.territoryColor),
 
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly]));
-  }
 
   postedSinceUpdate(String value) {
+    if (value == Constant.postedSince[0].value &&
+        searchbody.containsKey(Api.postedSince)) {
+      searchbody[Api.postedSince] = "";
+    } else {
+      searchbody[Api.postedSince] = value;
+    }
+
     setState(() {
       postedOn = value;
     });
@@ -857,8 +791,6 @@ class FilterScreenState extends State<FilterScreen> {
   Widget postedSinceOption(BuildContext context) {
     int index =
         Constant.postedSince.indexWhere((item) => item.value == postedOn);
-
-
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, Routes.postedSinceFilterScreen,
@@ -866,56 +798,36 @@ class FilterScreenState extends State<FilterScreen> {
               "list": Constant.postedSince,
               "postedSince": postedOn,
               "update": postedSinceUpdate
-            }).then((value) {});
+            });
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: Container(
-          height: 55,
-          width: double.infinity,
+          height: 50,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-              color: context.color.secondaryColor,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: context.color.borderColor.darken(30),
-                width: 1,
-              )),
-          child: Padding(
-            padding: const EdgeInsetsDirectional.only(start: 14.0),
-            child: Row(
-              children: [
-                UiUtils.getSvg(AppIcons.sinceIcon,
-                    color: context.color.textDefaultColor),
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(start: 15.0),
-                  child: Text(Constant.postedSince[index].status)
-                      .color(context.color.textDefaultColor.withOpacity(0.5)),
-                ),
-                Spacer(),
-                Padding(
-                  padding: EdgeInsetsDirectional.only(end: 14.0),
-                  child: UiUtils.getSvg(AppIcons.downArrow,
-                      color: context.color.textDefaultColor),
-                ),
-              ],
-            ),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Row(
+            children: [
+               Icon(Icons.calendar_today_outlined, color: Colors.black54, size: 20),
+               const SizedBox(width: 10),
+              Expanded(
+                child: Text(Constant.postedSince[index].status)
+                    .color(Colors.grey.shade600),
+              ),
+              Icon(Icons.keyboard_arrow_down, color: Colors.black54),
+            ],
           ),
         ),
       ),
     );
   }
 
-  void onClickPosted(String val) {
-    if (val == Constant.postedSince[0].value &&
-        searchbody.containsKey(Api.postedSince)) {
-      searchbody[Api.postedSince] = "";
-    } else {
-      searchbody[Api.postedSince] = val;
-    }
 
-    postedOn = val;
-    setState(() {});
-  }
+
 }
 
 class PostedSinceItem {

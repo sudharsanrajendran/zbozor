@@ -194,38 +194,28 @@ class _CategoryListState extends State<SubCategoryScreenOne>
 
                         return ListTile(
                           onTap: () {
-                            if (widget.categoryList[index].children!
-                                .isEmpty &&
-                                widget.categoryList[index]
-                                    .subcategoriesCount ==
-                                    0) {
+                            if (widget.categoryList[index].children!.isEmpty &&
+                                widget.categoryList[index].subcategoriesCount == 0) {
                               Navigator.pushNamed(
                                   context, Routes.itemsList,
                                   arguments: {
-                                    'catID': widget.categoryList[index].id
-                                        .toString(),
-                                    'catName':
-                                    widget.categoryList[index].name,
+                                    'catID': widget.categoryList[index].id.toString(),
+                                    'catName': widget.categoryList[index].name,
                                     "categoryIds": [
                                       ...widget.categoryIds,
-                                      widget.categoryList[index].id
-                                          .toString()
+                                      widget.categoryList[index].id.toString()
                                     ]
                                   });
                             } else {
                               Navigator.pushNamed(
                                   context, Routes.subCategoryScreen,
                                   arguments: {
-                                    "categoryList": widget
-                                        .categoryList[index].children,
-                                    "catName":
-                                    widget.categoryList[index].name,
-                                    "catId":
-                                    widget.categoryList[index].id,
+                                    "categoryList": widget.categoryList[index].children,
+                                    "catName": widget.categoryList[index].name,
+                                    "catId": widget.categoryList[index].id,
                                     "categoryIds": [
                                       ...widget.categoryIds,
-                                      widget.categoryList[index].id
-                                          .toString()
+                                      widget.categoryList[index].id.toString()
                                     ]
                                   });
                             }
@@ -335,15 +325,15 @@ class _CategoryListState extends State<SubCategoryScreenOne>
 
                   return ListTile(
                     onTap: () {
-                      if (state.categories[index].children!.isEmpty &&
-                          state.categories[index].subcategoriesCount == 0) {
+                      if ((category.children?.isEmpty ?? true) &&
+                          (category.subcategoriesCount == 0)) {
                         Navigator.pushNamed(context, Routes.itemsList,
                             arguments: {
-                              'catID': state.categories[index].id.toString(),
-                              'catName': state.categories[index].name,
+                              'catID': category.id.toString(),
+                              'catName': category.name,
                               "categoryIds": [
                                 ...widget.categoryIds,
-                                state.categories[index].id.toString()
+                                category.id.toString()
                               ]
                             });
                       } else {
