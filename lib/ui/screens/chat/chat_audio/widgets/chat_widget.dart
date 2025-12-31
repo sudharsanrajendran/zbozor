@@ -195,6 +195,13 @@ class ChatMessageState extends State<ChatMessage>
     super.build(context);
 
     bool isDark = context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark;
+    bool isSelf = widget.senderId.toString() == HiveUtils.getUserId();
+    Color msgTextColor = isSelf
+        ? (isDark ? Colors.black : Colors.white)
+        : Colors.black; // Other: Always Black
+    Color bubbleColor = isSelf
+        ? (isDark ? Colors.white : Colors.green)
+        : (isDark ? Colors.white : Colors.grey.shade200); // Other: Always Light
 
     return GestureDetector(
       onLongPress: () {
@@ -227,12 +234,8 @@ class ChatMessageState extends State<ChatMessage>
                     BoxConstraints(maxWidth: context.screenWidth * 0.74),
                 decoration: BoxDecoration(
                     color: selectedMessage == true
-                        ? (widget.senderId.toString() == HiveUtils.getUserId()
-                            ? Colors.redAccent
-                            : Colors.redAccent)
-                        : (widget.senderId.toString() == HiveUtils.getUserId()
-                            ? Color(0xffDCF8C6) // this is self message color
-                            : Colors.grey.shade200), // this is sender message color
+                        ? Colors.redAccent
+                        : bubbleColor,
                     borderRadius: BorderRadius.circular(8)),
                 child: Wrap(
                   runAlignment: WrapAlignment.end,
@@ -246,13 +249,17 @@ class ChatMessageState extends State<ChatMessage>
                             ? RecordMessage(
                                 url: widget.audio ?? "",
                                 isSentByMe: widget.senderId.toString() == HiveUtils.getUserId(),
+                                textColor: msgTextColor,
                               )
                             : Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   if (widget.file != "")
-                                    AttachmentMessage(url: widget.file!),
+                                    AttachmentMessage(
+                                      url: widget.file!,
+                                      textColor: msgTextColor,
+                                    ),
                                   //This is preview builder for image
                                   ValueListenableBuilder(
                                       valueListenable: _linkAddNotifier,
@@ -283,9 +290,7 @@ class ChatMessageState extends State<ChatMessage>
                                   SelectableText.rich(
                                     TextSpan(
                                       style: TextStyle(
-                                          color: (isDark && widget.senderId.toString() != HiveUtils.getUserId())
-                                              ? context.color.buttonColor
-                                              : context.color.textDefaultColor),
+                                          color: msgTextColor),
                                       children: _replaceLink().map((data) {
                                         //This will add link to msg
                                         if (_isLink(data)) {
@@ -314,32 +319,22 @@ class ChatMessageState extends State<ChatMessage>
                                                   text:
                                                       text.replaceAll("*", ""),
                                                   style: TextStyle(
-                                                      color: (isDark && widget.senderId.toString() != HiveUtils.getUserId())
-                                                          ? context.color.buttonColor
-                                                          : context.color.textDefaultColor,
+                                                      color: msgTextColor,
                                                       fontWeight: FontWeight.w800));
                                             }
 
                                             return TextSpan(
                                                 text: text,
                                                 style: TextStyle(
-                                                    color: (isDark && widget.senderId.toString() != HiveUtils.getUserId())
-                                                        ? context.color.buttonColor
-                                                        : context.color.textDefaultColor)); // this colors it chat text color
+                                                    color: msgTextColor));
                                           }).toList(),
                                           style: TextStyle(
-                                              color: widget.senderId.toString() == HiveUtils.getUserId()
-                                                  ? context.color.secondaryColor
-                                                  : context.color.textColorDark),
+                                              color: msgTextColor),
                                         );
                                       }).toList(),
                                     ),
                                     style: TextStyle(
-                                        color: (isDark &&
-                                                widget.senderId.toString() !=
-                                                    HiveUtils.getUserId())
-                                            ? context.color.buttonColor
-                                            : context.color.textDefaultColor),
+                                        color: msgTextColor),
                                   ),
                                 ],
                               ),
@@ -417,10 +412,9 @@ class ChatMessageState extends State<ChatMessage>
                       .toString()
                       .formatDate(format: "hh:mm aa"), //
                   style: TextStyle(
-                      color: widget.senderId.toString() != HiveUtils.getUserId()
-                          ? context.color.textLightColor
-                          : context.color
-                              .textLightColor), // this is time showing colors
+                      color: isSelf
+                          ? context.color.textLightColor.withOpacity(0.7)
+                          : context.color.textLightColor), // this is time showing colors
                 ).size(context.font.smaller),
               ),
             ],

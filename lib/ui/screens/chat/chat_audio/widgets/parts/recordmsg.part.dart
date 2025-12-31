@@ -3,7 +3,8 @@ part of "../chat_widget.dart";
 class RecordMessage extends StatefulWidget {
   final String url;
   final bool isSentByMe;
-  const RecordMessage({super.key, required this.url, required this.isSentByMe});
+  final Color textColor;
+  const RecordMessage({super.key, required this.url, required this.isSentByMe, required this.textColor});
 
   @override
   State<RecordMessage> createState() => _RecordMessageState();
@@ -70,17 +71,11 @@ class _RecordMessageState extends State<RecordMessage> {
             child: Icon( //play icon
               size: 30,
               isPlaying ? Icons.pause : Icons.play_arrow,
-              color: widget.isSentByMe
-                  ? Colors.black38
-                  : Colors.black38,
+              color: widget.textColor,
             )),
         Slider( // slider
-          activeColor: widget.isSentByMe
-              ? Colors.black
-              : Colors.black,
-          inactiveColor: widget.isSentByMe
-              ? Colors.black
-              : Colors.black,
+          activeColor: widget.textColor,
+          inactiveColor: widget.textColor.withOpacity(0.4),
           value: position.toDouble(),
           onChanged: (v) {
             audioPlayer.seek(Duration(seconds: v.toInt()));
@@ -90,9 +85,7 @@ class _RecordMessageState extends State<RecordMessage> {
           max: durationChanged.toDouble(),
         ),
         if ((durationChanged - position) != 0)
-          Text((durationChanged - position).toString()).color(widget.isSentByMe
-              ? Colors.black38
-              : Colors.black38)
+          Text((durationChanged - position).toString()).color(widget.textColor)
       ],
     );
   }

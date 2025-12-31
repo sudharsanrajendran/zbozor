@@ -115,60 +115,35 @@ class _AddMoreDetailsScreenState extends CloudState<AddMoreDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: UiUtils.buildAppBar(context,
-            showBackButton: true, title: "AdDetails".translate(context)),
-        bottomNavigationBar: Container(
-          color: Colors.transparent,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-            child: UiUtils.buildButton(
-              context,
-              onPressed: () {
-                if (_formKey.currentState?.validate() ?? false) {
-                  Map itemDetailsScreenData = getCloudData("item_details");
-                  itemDetailsScreenData['custom_fields'] =
-                      json.encode(AbstractField.fieldsData);
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      appBar: UiUtils.buildAppBar(context,
+          showBackButton: true, title: "AdDetails".translate(context)),
+      bottomNavigationBar: Container(
+        color: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+          child: UiUtils.buildButton(
+            context,
+            onPressed: () {
+              if (_formKey.currentState?.validate() ?? false) {
+                Map itemDetailsScreenData = getCloudData("item_details");
+                itemDetailsScreenData['custom_fields'] =
+                    json.encode(AbstractField.fieldsData);
 
-                  itemDetailsScreenData.addAll(AbstractField.files);
+                itemDetailsScreenData.addAll(AbstractField.files);
 
-                  addCloudData("with_more_details", itemDetailsScreenData);
-// itemDetailsScreenData
-                  screenStack++;
-                  Navigator.pushNamed(
-                    context,
-                    Routes.confirmLocationScreen,
-                    arguments: {
-                      "isEdit": widget.isEdit == true,
-                      "mainImage": widget.mainImage,
-                      "otherImage": widget.otherImage
-                    },
-                  ).then((value) {
-                    screenStack--;
-
-                    if (value == "success") {
-                      screenStack = 0;
-                    }
-                  });
-                }
-              },
-              height: 48.rh(context),
-              fontSize: context.font.large,
-              buttonTitle: "next".translate(context),
-            ),
-          ),
-        ),
-        body: BlocConsumer<FetchCustomFieldsCubit, FetchCustomFieldState>(
-          listener: (context, state) {
-            if (state is FetchCustomFieldSuccess) {
-              if (state.fields.isEmpty) {
-                Navigator.pushNamed(context, Routes.confirmLocationScreen,
-                    arguments: {
-                      "mainImage": widget.mainImage,
-                      "otherImage": widget.otherImage,
-                      "isEdit": widget.isEdit,
-                    }).then((value) {
+                addCloudData("with_more_details", itemDetailsScreenData);
+                screenStack++;
+                Navigator.pushNamed(
+                  context,
+                  Routes.confirmLocationScreen,
+                  arguments: {
+                    "isEdit": widget.isEdit == true,
+                    "mainImage": widget.mainImage,
+                    "otherImage": widget.otherImage
+                  },
+                ).then((value) {
                   screenStack--;
 
                   if (value == "success") {
@@ -176,20 +151,45 @@ class _AddMoreDetailsScreenState extends CloudState<AddMoreDetailsScreen> {
                   }
                 });
               }
-            }
-          },
-          builder: (context, state) {
-            if (state is FetchCustomFieldFail) {
-              return Center(
-                child: Text(state.error.toString()),
-              );
-            }
+            },
+            height: 48.rh(context),
+            fontSize: context.font.large,
+            buttonTitle: "next".translate(context),
+          ),
+        ),
+      ),
+      body: BlocConsumer<FetchCustomFieldsCubit, FetchCustomFieldState>(
+        listener: (context, state) {
+          if (state is FetchCustomFieldSuccess) {
+            if (state.fields.isEmpty) {
+              Navigator.pushNamed(context, Routes.confirmLocationScreen,
+                  arguments: {
+                    "mainImage": widget.mainImage,
+                    "otherImage": widget.otherImage,
+                    "isEdit": widget.isEdit,
+                  }).then((value) {
+                screenStack--;
 
-            return Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                physics: const BouncingScrollPhysics(),
+                if (value == "success") {
+                  screenStack = 0;
+                }
+              });
+            }
+          }
+        },
+        builder: (context, state) {
+          if (state is FetchCustomFieldFail) {
+            return Center(
+              child: Text(state.error.toString()),
+            );
+          }
+
+          return SafeArea(
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(18.0),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -199,7 +199,7 @@ class _AddMoreDetailsScreenState extends CloudState<AddMoreDetailsScreen> {
                           .size(context.font.large)
                           .bold(weight: FontWeight.w600),
                       ...moreDetailDynamicFields.map(
-                            (field) {
+                        (field) {
                           field.stateUpdater(setState);
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 9.0),
@@ -211,9 +211,9 @@ class _AddMoreDetailsScreenState extends CloudState<AddMoreDetailsScreen> {
                   ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

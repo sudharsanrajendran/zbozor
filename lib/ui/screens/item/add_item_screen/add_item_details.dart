@@ -67,6 +67,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
   List<dynamic> mixedItemImageList = [];
   List<int> deleteItemImageList = [];
   final GlobalKey<FormState> _formKey = GlobalKey();
+  bool isJob = false;
 
   //Text Controllers
   final TextEditingController adTitleController = TextEditingController();
@@ -101,6 +102,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
     AbstractField.files.clear();
     if (widget.isEdit == true) {
       item = getCloudData('edit_request') as ItemModel;
+      isJob = item?.category?.name?.toLowerCase().contains("job") ?? false;
 
       clearCloudData("item_details");
       clearCloudData("with_more_details");
@@ -137,6 +139,8 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
           updateSlug();
         }
       });
+    
+     isJob = widget.breadCrumbItems?.any((element) => element.name?.toLowerCase().contains("job") ?? false) ?? false;
     }
 
     _pickTitleImage.listener((p0) {
@@ -207,6 +211,9 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                   ///File to
 
                   if (_formKey.currentState?.validate() ?? false) {
+                    if (isJob) {
+                      adPriceController.text = "0";
+                    }
                     List<File>? galleryImages = mixedItemImageList
                         .where((element) => element != null && element is File)
                         .map((element) => element as File)
@@ -367,7 +374,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                       SizedBox(
                         height: 18.rh(context),
                       ),
-                      Text("adTitle".translate(context)),
+                      Text(isJob ? "Job Title" : "adTitle".translate(context)),
                       SizedBox(
                         height: 10.rh(context),
                       ),
@@ -377,7 +384,9 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                         validator: CustomTextFieldValidator.nullCheck,
                         action: TextInputAction.next,
                         capitalization: TextCapitalization.sentences,
-                        hintText: "adTitleHere".translate(context),
+                        hintText: isJob
+                            ? "Job Title Here"
+                            : "adTitleHere".translate(context),
                         hintTextStyle: TextStyle(
                             color:
                                 context.color.textDefaultColor.withOpacity(0.5),
@@ -460,49 +469,53 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                           titleImageListener(),
                         ],
                       ),
-                      SizedBox(
-                        height: 10.rh(context),
-                      ),
-                      Row(
-                        children: [
-                          Text("otherPictures".translate(context)),
-                          const SizedBox(
-                            width: 3,
-                          ),
-                          Text("max5Images".translate(context))
-                              .italic()
-                              .size(context.font.small),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10.rh(context),
-                      ),
-                      itemImagesListener(),
-                      SizedBox(
-                        height: 10.rh(context),
-                      ),
-                      Text("price".translate(context)),
-                      SizedBox(
-                        height: 10.rh(context),
-                      ),
-                      CustomTextFormField(
-                        controller: adPriceController,
-                        action: TextInputAction.next,
-                        prefix: Text("${Constant.currencySymbol} "),
-                        // controller: _priceController,
-                        formaters: [
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'^\d+\.?\d*')),
-                        ],
-                        isReadOnly: false,
-                        keyboard: TextInputType.number,
-                        validator: CustomTextFieldValidator.nullCheck,
-                        hintText: "00",
-                        hintTextStyle: TextStyle(
-                            color:
-                                context.color.textDefaultColor.withOpacity(0.5),
-                            fontSize: context.font.large),
-                      ),
+                      if (!isJob) ...[
+                        SizedBox(
+                          height: 10.rh(context),
+                        ),
+                        Row(
+                          children: [
+                            Text("otherPictures".translate(context)),
+                            const SizedBox(
+                              width: 3,
+                            ),
+                            Text("max5Images".translate(context))
+                                .italic()
+                                .size(context.font.small),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10.rh(context),
+                        ),
+                        itemImagesListener(),
+                      ],
+                      if (!isJob) ...[
+                        SizedBox(
+                          height: 10.rh(context),
+                        ),
+                        Text("price".translate(context)),
+                        SizedBox(
+                          height: 10.rh(context),
+                        ),
+                        CustomTextFormField(
+                          controller: adPriceController,
+                          action: TextInputAction.next,
+                          prefix: Text("${Constant.currencySymbol} "),
+                          // controller: _priceController,
+                          formaters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d+\.?\d*')),
+                          ],
+                          isReadOnly: false,
+                          keyboard: TextInputType.number,
+                          validator: CustomTextFieldValidator.nullCheck,
+                          hintText: "00",
+                          hintTextStyle: TextStyle(
+                              color: context.color.textDefaultColor
+                                  .withOpacity(0.5),
+                              fontSize: context.font.large),
+                        ),
+                      ],
                       SizedBox(
                         height: 10.rh(context),
                       ),
@@ -526,25 +539,27 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                                 context.color.textDefaultColor.withOpacity(0.5),
                             fontSize: context.font.large),
                       ),
-                      SizedBox(
-                        height: 10.rh(context),
-                      ),
-                      Text("videoLink".translate(context)),
-                      SizedBox(
-                        height: 10.rh(context),
-                      ),
-                      CustomTextFormField(
-                        controller: adAdditionalDetailsController,
-                        validator: CustomTextFieldValidator.url,
-                        // prefix: Text("${Constant.currencySymbol} "),
-                        // controller: _videoLinkController,
-                        // isReadOnly: widget.properyDetails != null,
-                        hintText: "http://example.com/video.mp4",
-                        hintTextStyle: TextStyle(
-                            color:
-                                context.color.textDefaultColor.withOpacity(0.5),
-                            fontSize: context.font.large),
-                      ),
+                      if (!isJob) ...[
+                        SizedBox(
+                          height: 10.rh(context),
+                        ),
+                        Text("videoLink".translate(context)),
+                        SizedBox(
+                          height: 10.rh(context),
+                        ),
+                        CustomTextFormField(
+                          controller: adAdditionalDetailsController,
+                          validator: CustomTextFieldValidator.url,
+                          // prefix: Text("${Constant.currencySymbol} "),
+                          // controller: _videoLinkController,
+                          // isReadOnly: widget.properyDetails != null,
+                          hintText: "http://example.com/video.mp4",
+                          hintTextStyle: TextStyle(
+                              color: context.color.textDefaultColor
+                                  .withOpacity(0.5),
+                              fontSize: context.font.large),
+                        ),
+                      ],
                       SizedBox(
                         height: 15.rh(context),
                       ),

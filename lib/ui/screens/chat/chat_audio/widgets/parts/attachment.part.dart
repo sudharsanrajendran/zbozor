@@ -2,7 +2,8 @@ part of "../chat_widget.dart";
 
 class AttachmentMessage extends StatefulWidget {
   final String url;
-  const AttachmentMessage({super.key, required this.url});
+  final Color textColor;
+  const AttachmentMessage({super.key, required this.url, required this.textColor});
 
   @override
   State<AttachmentMessage> createState() => _AttachmentMessageState();
@@ -153,11 +154,12 @@ class _AttachmentMessageState extends State<AttachmentMessage> {
                     ],
                   ),
                 ] else ...[
-                  Text(getExtentionOfFile().toString().toUpperCase()),
+                  Text(getExtentionOfFile().toString().toUpperCase())
+                      .color(widget.textColor),
                   Icon(
                     Icons.download,
                     size: 14,
-                    color: context.color.territoryColor,
+                    color: widget.textColor,
                   )
                 ]
               ],
@@ -175,7 +177,7 @@ class _AttachmentMessageState extends State<AttachmentMessage> {
               padding: const EdgeInsets.all(4.0),
               child: Text(getFileName().toString()).setMaxLines(
                 lines: 1,
-              ),
+              ).color(widget.textColor),
             ),
           ),
         ),

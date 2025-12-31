@@ -13,9 +13,10 @@ class ChatSocketService {
 
   IO.Socket? _socket;
   Timer? _presenceTimer;
+  Timer? _typingResetTimer;
 
   bool get isConnected => _socket?.connected ?? false;
-  final ValueNotifier<bool> isOtherUserTyping = ValueNotifier(false);
+  final ValueNotifier<String?> typingUserId = ValueNotifier(null);
 
   /// Connect socket safely
   void socketconnect() {
@@ -39,27 +40,40 @@ class ChatSocketService {
     );
 
 
+    // Generic typing listener as per user snippet reference
     _socket!.on("typing:start", (data) {
-      final myId = HiveUtils.getUserId();
-      if (data["userId"].toString() == myId) return;
-      isOtherUserTyping.value = true;
+      print("🔥 Received typing:start: $data"); // Debug print
+      if (data is Map) { // Removed strict userId check for debugging, or maybe logic depends on it
+         final myId = HiveUtils.getUserId();
+         // If server sends userId, check strict equality. 
+         // If not, we might need to rely on offerId or just pass it through if we can't identify user.
+         // Let's keep the check if userId exists, but print first.
+         
+         if (data["userId"] != null && data["userId"].toString() == myId) return;
+
+         // If userId is present, set it. Use a fallback if needed? 
+         // For now, let's just log and see what we get. 
+         if (data["userId"] != null) {
+            typingUserId.value = data["userId"].toString();
+         } else {
+             // If NO userId is in packet, we can't set typingUserId correctly for the basic logic using userId.
+             // But maybe correct logic is matched by OfferId? 
+             // The chat screen checks: if (typingUserId == widget.userId).
+             // If we don't get userId, this logic fails.
+             print("🔥 typing:start data missing userId");
+         }
+
+        _typingResetTimer?.cancel();
+        _typingResetTimer = Timer(const Duration(seconds: 5), () {
+          typingUserId.value = null;
+        });
+      }
     });
 
     _socket!.on("typing:stop", (data) {
-      isOtherUserTyping.value = false;
-    });
-
-    // Added generic typing listener as per user snippet reference
-    _socket!.on("typing", (data) {
-       final myId = HiveUtils.getUserId();
-       if (data is Map && data["userId"].toString() == myId) return;
-       // Assuming 'typing' event means start typing or carries state
-       // If data has a boolean or similar, we could use it. 
-       // For now, treat it as 'start' if we receive it. 
-       isOtherUserTyping.value = true;
-       
-       // Auto reset after a few seconds if no stop received? 
-       // For now let's rely on stop event or subsequent logic.
+      print("🔥 Received typing:stop: $data");
+      typingUserId.value = null;
+      _typingResetTimer?.cancel();
     });
 
 

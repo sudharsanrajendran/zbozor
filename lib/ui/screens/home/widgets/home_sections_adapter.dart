@@ -111,7 +111,9 @@ class _ItemCardState extends State<ItemCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 /// IMAGE
-                Flexible(
+                /// IMAGE
+                SizedBox(
+                  height: imageHeight,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(18),

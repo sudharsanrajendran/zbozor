@@ -369,14 +369,28 @@ class ItemRepository {
     };
 
     if (filter != null) {
+      if (filter.radius != null) {
+        // User requested to remove ONLY area and area_id when radius is present
+        parameters.remove('area');
+        parameters.remove('area_id');
+      }
+      
+      // Keep existing logic for explicit null areaId check if needed, 
+      // though the above block handles it if radius is set.
       if (filter.areaId == null) {
         parameters.remove('area_id');
       }
-      parameters.remove('area');
+      // removing area anyway if it might be null/empty from toMap? 
+      // The original code had: parameters.remove('area');
+      // We'll keep it safe by ensuring we don't send conflicting data if not handled above
+      
       if (filter.customFields != null) {
         parameters.addAll(filter.customFields!);
       }
     }
+
+    // Clean up parameters: remove keys with null or empty string values
+    parameters.removeWhere((key, value) => value == null || value == "");
 
     print("/////////////seach param below///////////");
     print(parameters);

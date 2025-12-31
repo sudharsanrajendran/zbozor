@@ -530,93 +530,61 @@ class LoginScreenState extends State<LoginScreen> {
         height: context.screenHeight - 50,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: AlignmentDirectional.topEnd,
-                child: FittedBox(
-                  fit: BoxFit.none,
-                  child: MaterialButton(
-                    onPressed: () {
-                      //HiveUtils.setUserIsNotNew();
-                      HiveUtils.setUserSkip();
-                      HelperUtils.killPreviousPages(context, Routes.main,
-                          {"from": "login", "isSkipped": true});
-                      /*Navigator.pushReplacementNamed(
-                        context,
-                        Routes.main,
-                        arguments: {
-                          "from": "login",
-                          "isSkipped": true,
-                        },
-                      );*/
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: AlignmentDirectional.topEnd,
+                  child: FittedBox(
+                    fit: BoxFit.none,
+                    child: MaterialButton(
+                      onPressed: () {
+                        //HiveUtils.setUserIsNotNew();
+                        HiveUtils.setUserSkip();
+                        HelperUtils.killPreviousPages(context, Routes.main,
+                            {"from": "login", "isSkipped": true});
+                        /*Navigator.pushReplacementNamed(
+                          context,
+                          Routes.main,
+                          arguments: {
+                            "from": "login",
+                            "isSkipped": true,
+                          },
+                        );*/
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      color: context.color.forthColor.withOpacity(0.102),
+                      elevation: 0,
+                      height: 28,
+                      minWidth: 64,
+                      child: Text("skip".translate(context))
+                          .color(context.color.forthColor),
                     ),
-                    color: context.color.forthColor.withOpacity(0.102),
-                    elevation: 0,
-                    height: 28,
-                    minWidth: 64,
-                    child: Text("skip".translate(context))
-                        .color(context.color.forthColor),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 66,
-              ),
-              Text("welcomeback".translate(context))
-                  .size(context.font.extraLarge)
-                  .color(context.color.textDefaultColor),
-              const SizedBox(
-                height: 8,
-              ),
-              if (Constant.mobileAuthentication == "1" ||
-                  Constant.emailAuthentication == "1")
-                mobileOrEmailLogin(),
-              const SizedBox(
-                height: 68,
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  if (Constant.mobileAuthentication == "1" ||
-                      Constant.emailAuthentication == "1")
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("dontHaveAcc".translate(context))
-                            .color(context.color.textColorDark.brighten(50)),
-                        const SizedBox(
-                          width: 12,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, Routes.signupMainScreen);
-                          },
-                          child: Text("signUp".translate(context))
-                              .underline()
-                              .color(context.color.territoryColor),
-                        )
-                      ],
-                    ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  if (Constant.googleAuthentication == "1" ||
-                      Constant.appleAuthentication == "1")
-                    googleAndAppleLogin(),
-                  if (Constant.mobileAuthentication == "0" ||
-                      Constant.emailAuthentication == "0") ...[
-                    if ((Constant.googleAuthentication == "1") ||
-                        (Constant.appleAuthentication == "1" &&
-                            Platform.isIOS)) ...[
-                      const SizedBox(
-                        height: 65,
-                      ),
+                const SizedBox(
+                  height: 66,
+                ),
+                Text("welcomeback".translate(context))
+                    .size(context.font.extraLarge)
+                    .color(context.color.textDefaultColor),
+                const SizedBox(
+                  height: 8,
+                ),
+                if (Constant.mobileAuthentication == "1" ||
+                    Constant.emailAuthentication == "1")
+                  mobileOrEmailLogin(),
+                const SizedBox(
+                  height: 68,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (Constant.mobileAuthentication == "1" ||
+                        Constant.emailAuthentication == "1")
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -635,14 +603,48 @@ class LoginScreenState extends State<LoginScreen> {
                                 .color(context.color.territoryColor),
                           )
                         ],
-                      )
+                      ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    if (Constant.googleAuthentication == "1" ||
+                        Constant.appleAuthentication == "1")
+                      googleAndAppleLogin(),
+                    if (Constant.mobileAuthentication == "0" ||
+                        Constant.emailAuthentication == "0") ...[
+                      if ((Constant.googleAuthentication == "1") ||
+                          (Constant.appleAuthentication == "1" &&
+                              Platform.isIOS)) ...[
+                        const SizedBox(
+                          height: 65,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("dontHaveAcc".translate(context))
+                                .color(context.color.textColorDark.brighten(50)),
+                            const SizedBox(
+                              width: 12,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, Routes.signupMainScreen);
+                              },
+                              child: Text("signUp".translate(context))
+                                  .underline()
+                                  .color(context.color.territoryColor),
+                            )
+                          ],
+                        )
+                      ],
                     ],
                   ],
-                ],
-              ),
-              /* const Spacer(),
-              termAndPolicyTxt()*/
-            ],
+                ),
+                /* const Spacer(),
+                termAndPolicyTxt()*/
+              ],
+            ),
           ),
         ),
       ),

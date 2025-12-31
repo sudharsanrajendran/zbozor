@@ -786,6 +786,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
   }
 
   Widget customFields() {
+
+
     return Padding(
       padding: const EdgeInsets.only(top: 10.0),
       child: Wrap(
@@ -795,6 +797,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
               if (model.customFields![index].type != "textbox") {
                 return SizedBox(
                   width: (context.screenWidth / 2) - (sidePadding / 2) - 5,
+
+
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -1664,6 +1668,16 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
     }
   }
 
+
+
+
+
+
+
+
+
+
+
   void safetyTipsBottomSheet() {
     List<SafetyTipsModel>? tipsList =
     context.read<FetchSafetyTipsListCubit>().getList();
@@ -2188,13 +2202,16 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Text("${Constant.currencySymbol} ${model.price.toString()}")
-              .size(context.font.larger)
-              .color(context.color.territoryColor)
-              .bold(),
-        ),
+        (model.price == 0.0 || model.price == 0)
+            ? SizedBox.shrink()
+            : Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Text(
+                        "${Constant.currencySymbol} ${model.price.toString()}")
+                    .size(context.font.larger)
+                    .color(context.color.territoryColor)
+                    .bold(),
+              ),
         if (model.status != null && isAddedByMe)
           Container(
             padding: const EdgeInsets.fromLTRB(18, 4, 18, 4),
@@ -2205,12 +2222,11 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             child: Text(
               _getStatusText(model.status)!,
             ).size(context.font.normal).color(
-              _getStatusTextColor(model.status),
-            ),
+                  _getStatusTextColor(model.status),
+                ),
           )
-
-        //TODO: change color according to status - confirm,pending,etc..
       ],
+
     );
   }
 

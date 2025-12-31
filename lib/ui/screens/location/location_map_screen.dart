@@ -14,6 +14,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/app/routes.dart';
+import 'package:Ebozor/utils/google_geocoding_helper.dart';
 
 class LocationMapScreen extends StatefulWidget {
   const LocationMapScreen({super.key});
@@ -162,28 +163,36 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
 
   getLocationFromLatitudeLongitude({LatLng? latLng}) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          latLng?.latitude ?? latitude!,
-          latLng?.longitude ?? longitude!);
+      if (Platform.isIOS) {
+        var googleAddress = await GoogleGeocodingHelper.getAddress(
+            latLng?.latitude ?? latitude!, latLng?.longitude ?? longitude!);
+        if (googleAddress != null) {
+          formatedAddress = AddressComponent(
+              area: googleAddress['area'],
+              areaId: null,
+              city: googleAddress['city'],
+              country: googleAddress['country'],
+              state: googleAddress['state']);
+        }
+      } else {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+            latLng?.latitude ?? latitude!, latLng?.longitude ?? longitude!);
+
+        if (placemarks.isNotEmpty) {
+          Placemark placeMark = placemarks.first;
+          formatedAddress = AddressComponent(
+              area: placeMark.subLocality,
+              areaId: null,
+              city: (placeMark.locality != null &&
+                      placeMark.locality!.isNotEmpty)
+                  ? placeMark.locality
+                  : placeMark.subLocality,
+              country: placeMark.country,
+              state: placeMark.administrativeArea);
+        }
+      }
       
-      if (placemarks.isNotEmpty) {
-
-
-
-
-
-
-
-        Placemark placeMark = placemarks.first;
-        formatedAddress = AddressComponent(
-            area: placeMark.subLocality,
-            areaId: null,
-            city: (placeMark.locality != null && placeMark.locality!.isNotEmpty)
-                ? placeMark.locality
-                : placeMark.subLocality,
-            country: placeMark.country,
-            state: placeMark.administrativeArea);
-            
+      if (formatedAddress != null) {
          String addressString = "";
          if (formatedAddress!.area != null && formatedAddress!.area!.isNotEmpty) {
            addressString += "${formatedAddress!.area}, ";
@@ -197,13 +206,11 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
          if (formatedAddress!.country != null) {
            addressString += "${formatedAddress!.country}";
          }
-         if (formatedAddress!.country != null) {
-           addressString += "${formatedAddress!.country}";
-         }
          if (!searchFocusNode.hasFocus) {
            searchController.text = addressString;
          }
       }
+
       setState(() {});
     } catch (e) {
       // Handle error
@@ -391,6 +398,14 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                 UiUtils.buildButton(
                   context,
                   onPressed: () {
+                    print("DEBUG: LocationMapScreen Apply Button Pressed");
+                    print("DEBUG: Selected Location Details:");
+                    print("City: ${formatedAddress?.city}");
+                    print("State: ${formatedAddress?.state}");
+                    print("Country: ${formatedAddress?.country}");
+                    print("Area: ${formatedAddress?.area}");
+                    print("Coordinates: $latitude, $longitude");
+
                     if (from == "addItem") {
                        if (formatedAddress != null) {
                          Navigator.pop(context, {

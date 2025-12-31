@@ -96,25 +96,53 @@ class ChatTile extends StatelessWidget {
           child: Row(
             children: [
               // 1. Large User Avatar
-              Container(
-                 width: 50,
-                 height: 50,
-                 decoration: BoxDecoration(
-                   shape: BoxShape.circle,
-                   image: DecorationImage(
-                     image: NetworkImage(profilePicture),
-                     fit: BoxFit.cover,
-                     onError: (exception, stackTrace) {
-                        // Fallback logic handled by placeholder usually, but here simple
-                     } 
+              // 1. Stack for Avatar (Item Image + User Image)
+              Stack(
+                children: [
+                   // Large Circle: Item/Ad Image
+                   Container(
+                     width: 50,
+                     height: 50,
+                     decoration: BoxDecoration(
+                       shape: BoxShape.circle,
+                       image: DecorationImage(
+                         image: NetworkImage(itemPicture), // Big Image = Item Image
+                         fit: BoxFit.cover,
+                         onError: (exception, stackTrace) {},
+                       ),
+                       border: Border.all(color: Colors.transparent)
+                     ),
+                     child: itemPicture.isEmpty
+                        ? CircleAvatar(
+                             radius: 25,
+                             backgroundColor: context.color.territoryColor,
+                            child: SvgPicture.asset(AppIcons.profile, colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn))
+                          )
+                        : null,
+                   ),
+                   
+                   // Small Circle: User/Profile Image (Badge)
+                   Positioned(
+                     bottom: 0,
+                     right: 0,
+                     child: Container(
+                       width: 20, // Smaller size for badge
+                       height: 20,
+                       decoration: BoxDecoration(
+                         shape: BoxShape.circle,
+                         border: Border.all(color: context.color.secondaryColor, width: 1.5), // Border to separate from bg
+                         image: DecorationImage(
+                           image: NetworkImage(profilePicture), // Small Image = User Profile
+                           fit: BoxFit.cover,
+                           onError: (exception, stackTrace) {},
+                         ),
+                         color: Colors.grey[300] // Fallback color
+                       ),
+                         child: profilePicture.isEmpty ? 
+                            Icon(Icons.person, size: 12, color: Colors.grey[600]) : null,
+                     ),
                    )
-                 ),
-                 child: profilePicture.isEmpty ? 
-                    CircleAvatar(
-                        radius: 25,
-                        backgroundColor: context.color.territoryColor,
-                        child: SvgPicture.asset(AppIcons.profile, colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn))
-                    ) : null,
+                ],
               ),
               
               const SizedBox(width: 15),

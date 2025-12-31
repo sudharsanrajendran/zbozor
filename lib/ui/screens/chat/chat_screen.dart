@@ -42,6 +42,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 int totalMessageCount = 0;
@@ -176,6 +177,7 @@ class _ChatScreenState extends State<ChatScreen>
   @override
   void dispose() {
     notificationStreamSubsctription.cancel();
+    _typingTimer?.cancel();
     super.dispose();
   }
 
@@ -339,9 +341,70 @@ class _ChatScreenState extends State<ChatScreen>
 
 
   Timer? _typingTimer;
+  bool _isTyping = false;
 
+  void _showAttachmentBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.color.secondaryColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (context) {
+        return Wrap(
+          children: [
+            ListTile(
+              leading: Icon(Icons.camera_alt, color: context.color.textDefaultColor),
+              title: Text("Camera".translate(context)).color(context.color.textDefaultColor),
+              onTap: () {
+                Navigator.pop(context);
+                _getFromCamera();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_library, color: context.color.textDefaultColor),
+              title: Text("Gallery".translate(context)).color(context.color.textDefaultColor),
+              onTap: () {
+                Navigator.pop(context);
+                _getFromGallery();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  @override
+  Future<void> _getFromCamera() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      int size = await image.length();
+      messageAttachment = PlatformFile(
+        name: image.name,
+        size: size,
+        path: image.path,
+      );
+      showRecordButton = false;
+      setState(() {});
+    }
+  }
+
+  Future<void> _getFromGallery() async {
+    FilePickerResult? pickedAttachment = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png'],
+    );
+    if (pickedAttachment != null) {
+      messageAttachment = pickedAttachment.files.first;
+      showRecordButton = false;
+      setState(() {});
+    }
+  }
   Widget build(BuildContext context) {
     var chatBackground = "assets/chat_background/chat_background.svg";
     var attachmentMIME = "";
@@ -351,7 +414,6 @@ class _ChatScreenState extends State<ChatScreen>
     }
 
     return PopScope(
-      canPop: true,
       onPopInvoked: (didPop) {
 
         currentlyChatingWith = "";
@@ -413,14 +475,16 @@ class _ChatScreenState extends State<ChatScreen>
                                     ),
                                   )),
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(messageAttachment?.name ?? ""),
-                                Text(HelperUtils.getFileSizeString(
-                                  bytes: messageAttachment!.size,
-                                ).toString()),
-                              ],
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(messageAttachment?.name ?? ""),
+                                  Text(HelperUtils.getFileSizeString(
+                                    bytes: messageAttachment!.size,
+                                  ).toString()),
+                                ],
+                              ),
                             )
                           ],
                         ),
@@ -431,7 +495,7 @@ class _ChatScreenState extends State<ChatScreen>
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child:
-                          AttachmentMessage(url: messageAttachment!.path!),
+                          AttachmentMessage(url: messageAttachment!.path!, textColor: context.color.textDefaultColor,),
                         ),
                       ),
                     ],
@@ -439,10 +503,20 @@ class _ChatScreenState extends State<ChatScreen>
                       height: 10,
                     ),
                   ],
-                  BottomAppBar(
+                  Container(
+                    width: double.infinity,
                     padding: const EdgeInsetsDirectional.all(15),
-                    elevation: 5,
-                    color: context.color.secondaryColor,
+                    decoration: BoxDecoration(
+                      color: context.color.secondaryColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          spreadRadius: 1,
+                          blurRadius: 3,
+                          offset: const Offset(0, -1),
+                        ),
+                      ],
+                    ),
                     child: Directionality(
                       textDirection: Directionality.of(context),
                       child: widget.status == "review" ||
@@ -549,25 +623,26 @@ class _ChatScreenState extends State<ChatScreen>
 
 
                           //// typing status showing
-                          ValueListenableBuilder<bool>(
-                            valueListenable: _socketService.isOtherUserTyping,
-                            builder: (context, isTyping, _) {
-                              if (!isTyping) return const SizedBox();
-
-                              return Padding(
-                                padding: const EdgeInsets.only(left: 12, bottom: 4),
-                                child: Text(
-                                  "${widget.userName} is typing...",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontStyle: FontStyle.italic,
-                                    color: context.color.textLightColor,
+                          ValueListenableBuilder<String?>(
+                            valueListenable: _socketService.typingUserId,
+                            builder: (context, typingUserId, child) {
+                              if (typingUserId == widget.userId) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(
+                                      bottom: 5.0, left: 10, right: 10),
+                                  child: Text(
+                                    "userIsTyping".translate(context),
+                                    style: TextStyle(
+                                      color: context.color.textDefaultColor,
+                                      fontSize: 12,
+                                      fontStyle: FontStyle.italic,
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              }
+                              return const SizedBox.shrink();
                             },
                           ),
-
                           SizedBox(
                             height: 8,
                           ),
@@ -578,14 +653,25 @@ class _ChatScreenState extends State<ChatScreen>
                                 Expanded(
                                   child: TextField(
                                     controller: controller,
-                                    onChanged: (value){
-                                      _socketService.typingStart(widget.itemOfferId);
-
-                                      _typingTimer?.cancel();
-                                      _typingTimer = Timer(const Duration(seconds: 1), () {
-                                        _socketService.typingStop(widget.itemOfferId);
-                                      });
-
+                                    onChanged: (value) {
+                                      if (value.isNotEmpty) {
+                                        if (!_isTyping) {
+                                          _socketService.typingStart(widget.itemOfferId);
+                                          _isTyping = true;
+                                        }
+                                        _typingTimer?.cancel();
+                                        _typingTimer = Timer(const Duration(milliseconds: 2000), () {
+                                          _socketService.typingStop(widget.itemOfferId);
+                                          _isTyping = false;
+                                        });
+                                      } else {
+                                        // If text is empty, send stop immediately
+                                        _typingTimer?.cancel();
+                                        if (_isTyping) {
+                                          _socketService.typingStop(widget.itemOfferId);
+                                          _isTyping = false;
+                                        }
+                                      }
                                     },
                                     cursorColor:
                                     context.color.territoryColor,
@@ -600,25 +686,9 @@ class _ChatScreenState extends State<ChatScreen>
                                       suffixIconColor:
                                       context.color.textLightColor,
                                       suffixIcon: IconButton(
-                                        onPressed: () async {
+                                        onPressed: () {
                                           if (messageAttachment == null) {
-                                            FilePickerResult?
-                                            pickedAttachment =
-                                            await FilePicker.platform
-                                                .pickFiles(
-                                              allowMultiple: false,
-                                              type: FileType.custom,
-                                              allowedExtensions: [
-                                                'jpg',
-                                                'jpeg',
-                                                'png'
-                                              ],
-                                            );
-                                            messageAttachment =
-                                                pickedAttachment
-                                                    ?.files.first;
-                                            showRecordButton = false;
-                                            setState(() {});
+                                            _showAttachmentBottomSheet();
                                           } else {
                                             messageAttachment = null;
                                             showRecordButton = true;
@@ -1092,6 +1162,10 @@ class _ChatScreenState extends State<ChatScreen>
                   height: MediaQuery.of(context).size.height,
                   fit: BoxFit.cover,
                   width: MediaQuery.of(context).size.width,
+                  colorFilter: context.color.brightness == Brightness.dark
+                      ? ColorFilter.mode(
+                          Colors.white.withOpacity(0.08), BlendMode.srcIn)
+                      : null,
                 ),
                 BlocListener<DeleteMessageCubit, DeleteMessageState>(
                   listener: (context, state) {

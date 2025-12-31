@@ -88,6 +88,12 @@ class HomeScreenState extends State<HomeScreen>
       var longitude = HiveUtils.getLongitude();
       var latitude = HiveUtils.getLatitude();
 
+      print("DEBUG: HomeScreen Refresh - Using Location:");
+      print("City: $city");
+      print("State: $state");
+      print("Country: $country");
+      print("Lat/Lng: $latitude, $longitude");
+
 
 
 
@@ -270,7 +276,7 @@ class HomeScreenState extends State<HomeScreen>
                     return SizedBox.shrink();
                   },
                 ),
-                // const AllItemsWidget(),
+                const AllItemsWidget(),
                 const SizedBox(
                   height: 30,
                 )
