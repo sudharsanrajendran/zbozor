@@ -134,6 +134,8 @@ class Api {
   static String blockedUsersListApi = "blocked-users";
   static String getPaymentDetailsApi = "payment-transactions";
 
+
+
 //not used API List
 
   static String userPurchasePackageApi = "user-purchase-package";

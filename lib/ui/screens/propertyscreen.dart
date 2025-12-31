@@ -175,6 +175,21 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     );
   }
 
+
+
+
+
+
+
+
+
+
+
+  ///
+  ///
+  ///
+  /// ]\]
+  ///
   Widget _buildTabs() {
     return Container(
       color: context.color.secondaryColor,
@@ -289,6 +304,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     );
   }
 
+
+  //PRPERTY TYPE
   Widget _buildPropertyTypesList(List<CategoryModel> propertyTypes) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

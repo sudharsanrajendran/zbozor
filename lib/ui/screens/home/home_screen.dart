@@ -13,6 +13,7 @@ import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
 import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
 import 'package:Ebozor/data/cubits/favorite/favorite_cubit.dart';
 import 'package:Ebozor/data/cubits/fetch_notifications_cubit.dart';
+import 'package:Ebozor/data/cubits/seller/fetch_verification_request_cubit.dart';
 
 import 'package:Ebozor/data/model/home/home_screen_section.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
@@ -118,6 +119,7 @@ class HomeScreenState extends State<HomeScreen>
   
     if (HiveUtils.isUserAuthenticated()) {
       context.read<FetchNotificationsCubit>().fetchNotifications();
+      context.read<FetchVerificationRequestsCubit>().fetchVerificationRequests();
     }
 
   }
@@ -140,6 +142,7 @@ class HomeScreenState extends State<HomeScreen>
       //fetchApiKeys();
       context.read<GetBuyerChatListCubit>().fetch();
       context.read<BlockedUsersListCubit>().blockedUsersList();
+      context.read<FetchVerificationRequestsCubit>().fetchVerificationRequests();
     }
 
     _scrollController.addListener(() {
@@ -240,8 +243,23 @@ class HomeScreenState extends State<HomeScreen>
                           const HomeSearchField(),
                           const SliderWidget(),
                           const CategoryWidgetHome(),
-                          if(HiveUtils.isUserAuthenticated() && HiveUtils.getUserDetails().isVerified != 1)
-                          const VerificationBanner(),
+
+                          if(HiveUtils.isUserAuthenticated())
+                            BlocBuilder<FetchVerificationRequestsCubit, FetchVerificationRequestState>(
+                              builder: (context, state) {
+                                bool isLocallyVerified = HiveUtils.getUserDetails().isVerified == 1;
+                                bool isRemotelyVerified = false;
+                                
+                                if (state is FetchVerificationRequestSuccess) {
+                                  isRemotelyVerified = state.data.status == "approved";
+                                }
+                                
+                                if (!isLocallyVerified && !isRemotelyVerified) {
+                                  return const VerificationBanner();
+                                }
+                                return const SizedBox.shrink();
+                              },
+                            ),
                           ...List.generate(state.sections.length, (index) {
                             HomeScreenSection section = state.sections[index];
                             if (state.sections.isNotEmpty) {

@@ -21,13 +21,24 @@ class SellerVerificationFieldRepository {
     }
   }
 
+
+
+  ///////////verificatipon request funtioan
   Future<Map> sendVerificationField(
       {required Map<String, dynamic> data}) async {
     try {
       Map response =
           await Api.post(url: Api.sendVerificationRequestApi, parameter: data);
 
+      print("///////////verification respnse");
+
+      print("verification resquest data:\n${data}");
+      print("${response}");
+      print("///////////verification respnse");
       return response;
+
+
+
     } catch (e) {
       rethrow;
     }
