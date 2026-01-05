@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-
-
 import 'package:Ebozor/data/helper/designs.dart';
 import 'package:Ebozor/ui/screens/chat/chat_audio/audio_state.dart';
 import 'package:Ebozor/ui/screens/chat/chat_audio/globals.dart';
@@ -12,14 +10,13 @@ import 'package:Ebozor/utils/extensions/lib/translate.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vibration/vibration.dart';
 
-import 'package:flutter/material.dart';import 'package:Ebozor/ui/theme/theme.dart';
+import 'package:flutter/material.dart';
+import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/utils/extensions/lib/build_context.dart';
 import 'package:Ebozor/utils/extensions/lib/textWidgetExtention.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:record/record.dart';
-
-
 
 class RecordButton extends StatefulWidget {
   const RecordButton(
@@ -291,9 +288,7 @@ class _RecordButtonState extends State<RecordButton> {
 
         if (isCancelled(details.localPosition, context)) {
           // if (await Vibrate.canVibrate) Vibrate.feedback(FeedbackType.heavy);
-          if (await Vibration.hasVibrator() != null) {
-            Vibration.vibrate();
-          }
+          Vibration.vibrate();
           timer?.cancel();
           timer = null;
           //startTime = null;
@@ -316,9 +311,7 @@ class _RecordButtonState extends State<RecordButton> {
           widget.controller.reverse();
 
           //if (await Vibrate.canVibrate) Vibrate.feedback(FeedbackType.heavy);
-          if (await Vibration.hasVibrator() != null) {
-            Vibration.vibrate();
-          }
+          Vibration.vibrate();
           debugPrint(details.localPosition.dy.toString());
           setState(() {
             isLocked = true;
@@ -335,9 +328,7 @@ class _RecordButtonState extends State<RecordButton> {
       },
       onLongPress: () async {
         if (widget.isSending) return;
-        if (await Vibration.hasVibrator() != null) {
-          Vibration.vibrate();
-        }
+        Vibration.vibrate();
         await startRecording();
       },
     );
@@ -348,7 +339,8 @@ class _RecordButtonState extends State<RecordButton> {
     if (await record.hasPermission()) {
       // Start recording to file
       print("record permission");
-      String documentPath = "${(await getApplicationDocumentsDirectory()).path}/";
+      String documentPath =
+          "${(await getApplicationDocumentsDirectory()).path}/";
       await record.start(
         const RecordConfig(
           encoder: AudioEncoder.aacLc,
@@ -375,9 +367,7 @@ class _RecordButtonState extends State<RecordButton> {
 
   Future<void> saveFile() async {
     //if (await Vibrate.canVibrate) Vibrate.feedback(FeedbackType.success);
-    if (await Vibration.hasVibrator() != null) {
-      Vibration.vibrate();
-    }
+    Vibration.vibrate();
     timer?.cancel();
     timer = null;
     startTime = null;

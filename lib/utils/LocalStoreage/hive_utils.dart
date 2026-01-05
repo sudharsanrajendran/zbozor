@@ -73,7 +73,7 @@ class HiveUtils {
         .put(HiveKeys.isProfileCompleted, false);
   }
 
-  static setCurrentTheme(AppTheme theme) {
+  static void setCurrentTheme(AppTheme theme) {
     String newTheme;
     if (theme == AppTheme.light) {
       newTheme = "light";
@@ -189,12 +189,12 @@ class HiveUtils {
 
   static void setLocation(
       {String? city,
-        String? state,
-        String? country,
-        String? area,
-        int? areaId,
-        double? latitude,
-        double? longitude}) async {
+      String? state,
+      String? country,
+      String? area,
+      int? areaId,
+      double? latitude,
+      double? longitude}) async {
     if (Constant.isDemoModeOn) {
       await Hive.box(HiveKeys.userDetailsBox).putAll({
         HiveKeys.city: "Bhuj",
@@ -220,11 +220,11 @@ class HiveUtils {
 
   static void setCurrentLocation(
       {required String city,
-        required String state,
-        required String country,
-        latitude,
-        longitude,
-        String? area}) async {
+      required String state,
+      required String country,
+      latitude,
+      longitude,
+      String? area}) async {
     if (Constant.isDemoModeOn) {
       await Hive.box(HiveKeys.userDetailsBox).putAll({
         HiveKeys.currentLocationCity: "Bhuj",
@@ -255,8 +255,8 @@ class HiveUtils {
   }
 
   static Future<bool> storeLanguage(
-      dynamic data,
-      ) async {
+    dynamic data,
+  ) async {
     Hive.box(HiveKeys.languageBox).put(HiveKeys.currentLanguageKey, data);
     // ..put("language", data);
     return true;
@@ -305,7 +305,7 @@ class HiveUtils {
     return Hive.box(HiveKeys.userDetailsBox).get("notification_total") ?? 0;
   }
 
-  static logoutUser(context,
+  static Future<void> logoutUser(context,
       {required VoidCallback onLogout, bool? isRedirect}) async {
     await Hive.box(HiveKeys.userDetailsBox).clear();
     HiveUtils.setUserIsAuthenticated(false);
@@ -315,7 +315,7 @@ class HiveUtils {
 
     Future.delayed(
       Duration.zero,
-          () {
+      () {
         if (isRedirect ?? true) {
           HelperUtils.killPreviousPages(context, Routes.login, {});
         }

@@ -66,7 +66,7 @@ class LocalAwsomeNotification {
     );
   }
 
-  createNotification({
+  Future<void> createNotification({
     required RemoteMessage notificationData,
     required bool isLocked,
   }) async {
@@ -84,16 +84,14 @@ class LocalAwsomeNotification {
             content: NotificationContent(
               id: isChat ? chatId : Random().nextInt(5000),
               title: notificationData.data["title"],
-               icon: AppIcons.notificatinicon,
+              icon: AppIcons.notificatinicon,
               hideLargeIconOnExpand: true,
               summary: "${notificationData.data['user_name']}",
               locked: isLocked,
               payload: Map.from(notificationData.data),
               autoDismissible: true,
-
               body: notificationData.data["body"],
               wakeUpScreen: true,
-
               notificationLayout: NotificationLayout.MessagingGroup,
               groupKey: notificationData.data["id"],
               channelKey: "Chat Notification",

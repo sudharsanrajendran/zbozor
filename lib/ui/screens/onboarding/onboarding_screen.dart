@@ -8,9 +8,7 @@ import 'package:Ebozor/utils/responsiveSize.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 
 import 'package:Ebozor/data/model/system_settings_model.dart';
@@ -243,8 +241,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 SizedBox(
                                   width: context.screenWidth,
                                   height: 221.rh(context),
-                                  child: UiUtils.getAdaptiveSvg(
-                                      context, slidersList[currentPageIndex]['svg'],
+                                  child: UiUtils.getAdaptiveSvg(context,
+                                      slidersList[currentPageIndex]['svg'],
                                       color: context.color.territoryColor),
                                 ),
                                 SizedBox(
@@ -413,11 +411,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ? null
                       : [
                           BoxShadow(
-                              color:
-                                  context.color.territoryColor.withOpacity(0.3),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
-                              /*spreadRadius: 1*/)
+                            color:
+                                context.color.territoryColor.withOpacity(0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8), /*spreadRadius: 1*/
+                          )
                         ],
                 ),
                 child: MaterialButton(

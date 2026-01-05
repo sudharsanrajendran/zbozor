@@ -112,7 +112,7 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
     setState(() {});
   }
 
-  preFillLocationWhileEdit() async {
+  Future<void> preFillLocationWhileEdit() async {
     latitude = HiveUtils.getLatitude();
     longitude = HiveUtils.getLongitude();
     if (latitude != "" &&
@@ -141,7 +141,8 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
       if (currentLocation == "") {
         Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high);
-        print("DEBUG: Raw Position (preFill) - Lat:${position.latitude}, Lng:${position.longitude}");
+        print(
+            "DEBUG: Raw Position (preFill) - Lat:${position.latitude}, Lng:${position.longitude}");
         _cameraPosition = CameraPosition(
           target: LatLng(position.latitude, position.longitude),
           zoom: 14.4746,
@@ -182,7 +183,7 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
     setState(() {});
   }
 
-  getLocationFromLatitudeLongitude({LatLng? latLng}) async {
+  Future<void> getLocationFromLatitudeLongitude({LatLng? latLng}) async {
     try {
       if (Platform.isIOS) {
         var googleAddress = await GoogleGeocodingHelper.getAddress(
@@ -314,10 +315,10 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
   void applyOnPressed() {
     print("DEBUG: applyOnPressed function ENTERED");
     if (formatedAddress == null) {
-        print("DEBUG: ERROR - formatedAddress is NULL. Cannot apply location.");
-        return; 
+      print("DEBUG: ERROR - formatedAddress is NULL. Cannot apply location.");
+      return;
     }
-    
+
     print("DEBUG: Apply Pressed - Applying Location:");
     print("City: ${formatedAddress!.city}");
     print("State: ${formatedAddress!.state}");
@@ -429,7 +430,8 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                         decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            color: context.color.backgroundColor),
+                                            color:
+                                                context.color.backgroundColor),
                                         height: context.screenHeight * 0.6,
                                         child: GoogleMap(
                                             onCameraMove: (position) {
@@ -437,13 +439,13 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                             },
                                             onCameraIdle: () async {
                                               if (markerMove == false) {
-                                                if (LatLng(
-                                                        latitude!, longitude!) ==
+                                                if (LatLng(latitude!,
+                                                        longitude!) ==
                                                     LatLng(
                                                         _cameraPosition!
                                                             .target.latitude,
-                                                        _cameraPosition!
-                                                            .target.longitude)) {
+                                                        _cameraPosition!.target
+                                                            .longitude)) {
                                                 } else {
                                                   getLocationFromLatitudeLongitude();
                                                 }
@@ -456,7 +458,8 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                             markers: _markers,
                                             zoomControlsEnabled: false,
                                             minMaxZoomPreference:
-                                                const MinMaxZoomPreference(0, 16),
+                                                const MinMaxZoomPreference(
+                                                    0, 16),
                                             compassEnabled: true,
                                             indoorViewEnabled: true,
                                             mapToolbarEnabled: true,
@@ -464,14 +467,15 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                             mapType: MapType.normal,
                                             gestureRecognizers:
                                                 getMapGestureRecognizers(),
-                                            onMapCreated:
-                                                (GoogleMapController controller) {
+                                            onMapCreated: (GoogleMapController
+                                                controller) {
                                               Future.delayed(const Duration(
                                                       milliseconds: 500))
                                                   .then((value) {
                                                 mapController = (controller);
                                                 mapController.animateCamera(
-                                                  CameraUpdate.newCameraPosition(
+                                                  CameraUpdate
+                                                      .newCameraPosition(
                                                     _cameraPosition!,
                                                   ),
                                                 );
@@ -489,11 +493,12 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                                 ));
                                                 latitude = latLng.latitude;
                                                 longitude = latLng.longitude;
-          
+
                                                 getLocationFromLatitudeLongitude(
                                                     latLng: latLng);
                                                 _addCircle(
-                                                    LatLng(latitude!, longitude!),
+                                                    LatLng(
+                                                        latitude!, longitude!),
                                                     radius); // Get location details
                                               });
                                               /* initialCameraPosition: CameraPosition(
@@ -510,11 +515,12 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                       /* margin:
                                           EdgeInsets.symmetric(horizontal: 18),*/
                                       decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           color: context.color.secondaryColor),
                                       child: Padding(
-                                        padding:
-                                            const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 0, 0, 0),
                                         child: Padding(
                                             padding: const EdgeInsets.all(10.0),
                                             child: Row(
@@ -529,13 +535,15 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                                         .color.territoryColor
                                                         .withOpacity(0.15),
                                                     borderRadius:
-                                                        BorderRadius.circular(5),
+                                                        BorderRadius.circular(
+                                                            5),
                                                   ),
                                                   child: Icon(
-                                                      Icons.location_on_outlined,
+                                                      Icons
+                                                          .location_on_outlined,
                                                       size: 20,
-                                                      color: context
-                                                          .color.textDefaultColor),
+                                                      color: context.color
+                                                          .textDefaultColor),
                                                 ),
                                                 SizedBox(
                                                   width: 10.rw(context),
@@ -543,12 +551,14 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                                 Expanded(
                                                   child: Text(
                                                     [
-                                                      if (formatedAddress!.area !=
+                                                      if (formatedAddress!
+                                                                  .area !=
                                                               null &&
                                                           formatedAddress!
                                                               .area!.isNotEmpty)
                                                         formatedAddress!.area,
-                                                      if (formatedAddress!.city !=
+                                                      if (formatedAddress!
+                                                                  .city !=
                                                               null &&
                                                           formatedAddress!
                                                               .city!.isNotEmpty)
@@ -557,7 +567,8 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                                                   .state !=
                                                               null &&
                                                           formatedAddress!
-                                                              .state!.isNotEmpty)
+                                                              .state!
+                                                              .isNotEmpty)
                                                         formatedAddress!.state,
                                                       if (formatedAddress!
                                                                   .country !=
@@ -644,14 +655,15 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                           await Geolocator.getCurrentPosition(
                                         desiredAccuracy: LocationAccuracy.high,
                                       );
-          
-                                      _markers.clear(); // Clear existing markers
+
+                                      _markers
+                                          .clear(); // Clear existing markers
                                       _markers.add(Marker(
                                         markerId: MarkerId('selectedLocation'),
                                         position: LatLng(position.latitude,
                                             position.longitude),
                                       ));
-          
+
                                       _cameraPosition = CameraPosition(
                                         target: LatLng(position.latitude,
                                             position.longitude),

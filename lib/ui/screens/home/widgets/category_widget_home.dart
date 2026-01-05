@@ -1,10 +1,5 @@
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/category/fetch_category_cubit.dart';
-import 'package:Ebozor/ui/screens/main_activity.dart';
-import 'package:Ebozor/ui/theme/theme.dart';
-import 'package:Ebozor/utils/app_icon.dart';
-import 'package:Ebozor/utils/extensions/extensions.dart';
-import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -46,7 +41,6 @@ class CategoryWidgetHome extends StatelessWidget {
                 childAspectRatio: 0.95,
               ),
               itemBuilder: (context, index) {
-
                 // ❌ MORE CATEGORY REMOVED
                 // if (index == state.categories.length) {
                 //   return moreCategory(context);

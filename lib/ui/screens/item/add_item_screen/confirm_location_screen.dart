@@ -111,7 +111,7 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
     }
   }
 
-  preFillLocationWhileEdit() async {
+  Future<void> preFillLocationWhileEdit() async {
     if (widget.isEdit!) {
       ItemModel itemModel = getCloudData('edit_request') as ItemModel;
 
@@ -187,7 +187,7 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
     setState(() {});
   }
 
-  getLocationFromLatitudeLongitude({LatLng? latLng}) async {
+  Future<void> getLocationFromLatitudeLongitude({LatLng? latLng}) async {
     try {
       await setLocaleIdentifier("en_US");
       Placemark? placeMark = (await placemarkFromCoordinates(
@@ -455,7 +455,7 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
                 SizedBox(
                   height: 20,
                 ),
-                  Expanded(
+                Expanded(
                   child: Stack(
                     children: <Widget>[
                       Container(
@@ -469,8 +469,9 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
                                 _cameraPosition = position;
                               },
                               onCameraIdle: () async {
-                                if (markerMove == false) { // Assuming markerMove logic is relevant or can be removed if unused
-                                    getLocationFromLatitudeLongitude();
+                                if (markerMove == false) {
+                                  // Assuming markerMove logic is relevant or can be removed if unused
+                                  getLocationFromLatitudeLongitude();
                                 }
                               },
                               initialCameraPosition: _cameraPosition!,
@@ -485,11 +486,12 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
                               mapType: MapType.normal,
                               scrollGesturesEnabled: true,
                               zoomGesturesEnabled: true,
-                              gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-                              Factory<EagerGestureRecognizer>(
-                                () => EagerGestureRecognizer(),
-                              ),
-                             },
+                              gestureRecognizers: <Factory<
+                                  OneSequenceGestureRecognizer>>{
+                                Factory<EagerGestureRecognizer>(
+                                  () => EagerGestureRecognizer(),
+                                ),
+                              },
                               onMapCreated: (GoogleMapController controller) {
                                 Future.delayed(
                                         const Duration(milliseconds: 500))
@@ -503,13 +505,14 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
                                 });
                               },
                               onTap: (latLng) {
-                                 // Optional tap logic
+                                // Optional tap logic
                               }),
                         ),
                       ),
                       Center(
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 40), // Adjust to align tip of pin
+                          padding: const EdgeInsets.only(
+                              bottom: 40), // Adjust to align tip of pin
                           child: Icon(
                             Icons.location_on,
                             size: 45,

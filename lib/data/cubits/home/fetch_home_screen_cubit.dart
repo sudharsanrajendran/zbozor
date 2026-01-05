@@ -1,8 +1,6 @@
-
 import 'package:Ebozor/data/model/home/home_screen_section.dart';
 import 'package:Ebozor/data/repositories/home/home_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 abstract class FetchHomeScreenState {}
 
@@ -22,13 +20,13 @@ class FetchHomeScreenFail extends FetchHomeScreenState {
   FetchHomeScreenFail(this.error);
 }
 
-class FetchHomeScreenCubit extends Cubit<FetchHomeScreenState>
-   {
+class FetchHomeScreenCubit extends Cubit<FetchHomeScreenState> {
   FetchHomeScreenCubit() : super(FetchHomeScreenInitial());
 
   final HomeRepository _homeRepository = HomeRepository();
 
-  fetch({String? country, String? state, String? city, int? areaId}) async {
+  Future<void> fetch(
+      {String? country, String? state, String? city, int? areaId}) async {
     try {
       emit(FetchHomeScreenInProgress());
       List<HomeScreenSection> homeScreenDataList =

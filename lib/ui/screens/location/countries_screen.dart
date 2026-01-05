@@ -8,8 +8,6 @@ import 'package:Ebozor/data/cubits/location/fetch_countries_cubit.dart';
 import 'package:Ebozor/data/model/location/countriesModel.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
-import 'package:Ebozor/utils/constant.dart';
-import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_keys.dart';
 
 import 'package:flutter/services.dart';
@@ -22,8 +20,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
 
 import 'package:Ebozor/utils/helper_utils.dart';
-import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
-import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
 
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
@@ -162,9 +158,9 @@ class CountriesScreenState extends State<CountriesScreen> {
 
       if (permission == LocationPermission.deniedForever) {
         if (mounted) {
-           HelperUtils.showSnackBarMessage(
-            context, "pleaseEnableLocationServicesManually".translate(context));
-            // You can add logic to open app settings here
+          HelperUtils.showSnackBarMessage(context,
+              "pleaseEnableLocationServicesManually".translate(context));
+          // You can add logic to open app settings here
         }
       } else if (permission == LocationPermission.whileInUse ||
           permission == LocationPermission.always) {
@@ -191,10 +187,10 @@ class CountriesScreenState extends State<CountriesScreen> {
                       'area_id': null,
                       'from': widget.from // Passing 'from' parameter
                     }))).then((value) {
-                      if (value != null && widget.from == "addItem") {
-                        Navigator.pop(context, value);
-                      }
-                    });
+              if (value != null && widget.from == "addItem") {
+                Navigator.pop(context, value);
+              }
+            });
           }
         }
       }
@@ -281,9 +277,8 @@ class CountriesScreenState extends State<CountriesScreen> {
                     color: context.color.secondaryColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Center(
-                    child: Image.asset("assets/seachfiltericon.png")
-                  ),
+                  child:
+                      Center(child: Image.asset("assets/seachfiltericon.png")),
                 ),
               ),
             ],
@@ -613,7 +608,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                           Padding(
                             padding: const EdgeInsets.all(16),
                             child: Center(
-                               child: UiUtils.progress(
+                              child: UiUtils.progress(
                                 normalProgressColor:
                                     context.color.territoryColor,
                               ),

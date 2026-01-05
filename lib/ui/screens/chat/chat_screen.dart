@@ -26,14 +26,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Ebozor/data/cubits/chat/blocked_users_list_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/unblock_user_cubit.dart';
 import 'package:Ebozor/data/model/chat/chated_user_model.dart';
-import 'package:Ebozor/ui/screens/home/home_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/blurred_dialoge_box.dart';
-import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
-import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
-import 'package:Ebozor/utils/extensions/lib/build_context.dart' show CustomContext;
+import 'package:Ebozor/utils/extensions/lib/build_context.dart'
+    show CustomContext;
 import 'package:Ebozor/utils/extensions/lib/textWidgetExtention.dart';
 import 'package:Ebozor/utils/extensions/lib/translate.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
@@ -111,7 +108,7 @@ class _ChatScreenState extends State<ChatScreen>
   final TextEditingController _feedbackController = TextEditingController();
   late final ScrollController _pageScrollController = ScrollController()
     ..addListener(
-          () {
+      () {
         if (_pageScrollController.offset >=
             _pageScrollController.position.maxScrollExtent) {
           if (context.read<LoadChatMessagesCubit>().hasMoreChat()) {
@@ -123,14 +120,12 @@ class _ChatScreenState extends State<ChatScreen>
     );
   final ChatSocketService _socketService = ChatSocketService();
 
-
   @override
   void initState() {
     super.initState();
 
     ChatMessageHandler.flushMessages();
     context.read<LoadChatMessagesCubit>().load(itemOfferId: widget.itemOfferId);
-
 
     // if (!_socketService.isConnected) _socketService.socketconnect(); // Removed redundant call
     _socketService.joinOffer(widget.itemOfferId);
@@ -139,7 +134,8 @@ class _ChatScreenState extends State<ChatScreen>
     currentlyChatingWith = widget.userId;
 
     // Listen for notification permission changes
-    notificationStreamSubsctription = notificationStream.listen((PermissionStatus permissionStatus) {
+    notificationStreamSubsctription =
+        notificationStream.listen((PermissionStatus permissionStatus) {
       isNotificationPermissionGranted = permissionStatus.isGranted;
       if (mounted) setState(() {});
     });
@@ -162,10 +158,6 @@ class _ChatScreenState extends State<ChatScreen>
       }
     });
   }
-
-
-
-
 
   Stream<PermissionStatus> notificationPermission() async* {
     while (true) {
@@ -200,7 +192,7 @@ class _ChatScreenState extends State<ChatScreen>
         return AlertDialog(
           backgroundColor: context.color.secondaryColor,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           title: Center(child: Text("rateSeller".translate(context))),
           content: BlocListener<AddItemReviewCubit, AddItemReviewState>(
             listener: (context, state) {
@@ -237,7 +229,7 @@ class _ChatScreenState extends State<ChatScreen>
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: List.generate(
                           5,
-                              (index) => InkWell(
+                          (index) => InkWell(
                             child: Icon(
                               index < _rating ? Icons.star : Icons.star_border,
                               color: Colors.amber,
@@ -258,17 +250,17 @@ class _ChatScreenState extends State<ChatScreen>
                         decoration: InputDecoration(
                           hintText: 'shareYourExperience'.translate(context),
                           hintStyle:
-                          TextStyle(color: context.color.textLightColor),
+                              TextStyle(color: context.color.textLightColor),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
                             borderSide:
-                            BorderSide(color: context.color.territoryColor),
+                                BorderSide(color: context.color.territoryColor),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
                             borderSide: BorderSide(
                               color:
-                              context.color.textLightColor.withOpacity(0.7),
+                                  context.color.textLightColor.withOpacity(0.7),
                             ),
                           ),
                         ),
@@ -293,11 +285,11 @@ class _ChatScreenState extends State<ChatScreen>
                               height: 39),
                           UiUtils.buildButton(context, showElevation: false,
                               onPressed: () {
-                                context.read<AddItemReviewCubit>().addItemReview(
-                                    itemId: int.parse(widget.itemId),
-                                    rating: _rating,
-                                    review: _feedbackController.text.trim());
-                              },
+                            context.read<AddItemReviewCubit>().addItemReview(
+                                itemId: int.parse(widget.itemId),
+                                rating: _rating,
+                                review: _feedbackController.text.trim());
+                          },
                               fontSize: 12,
                               disabled: _rating < 1,
                               disabledColor: context.color.deactivateColor,
@@ -316,15 +308,14 @@ class _ChatScreenState extends State<ChatScreen>
             ),
           ),
           actions: [
-
             ElevatedButton(
               onPressed: _rating >= 1
                   ? () {
-                context.read<AddItemReviewCubit>().addItemReview(
-                    itemId: int.parse(widget.itemId),
-                    rating: _rating,
-                    review: _feedbackController.text.trim());
-              }
+                      context.read<AddItemReviewCubit>().addItemReview(
+                          itemId: int.parse(widget.itemId),
+                          rating: _rating,
+                          review: _feedbackController.text.trim());
+                    }
                   : null, // Disable button if rating is less than 1
               style: ElevatedButton.styleFrom(
                 backgroundColor: _rating >= 1
@@ -338,7 +329,6 @@ class _ChatScreenState extends State<ChatScreen>
       },
     );
   }
-
 
   Timer? _typingTimer;
   bool _isTyping = false;
@@ -357,16 +347,20 @@ class _ChatScreenState extends State<ChatScreen>
         return Wrap(
           children: [
             ListTile(
-              leading: Icon(Icons.camera_alt, color: context.color.textDefaultColor),
-              title: Text("Camera".translate(context)).color(context.color.textDefaultColor),
+              leading:
+                  Icon(Icons.camera_alt, color: context.color.textDefaultColor),
+              title: Text("Camera".translate(context))
+                  .color(context.color.textDefaultColor),
               onTap: () {
                 Navigator.pop(context);
                 _getFromCamera();
               },
             ),
             ListTile(
-              leading: Icon(Icons.photo_library, color: context.color.textDefaultColor),
-              title: Text("Gallery".translate(context)).color(context.color.textDefaultColor),
+              leading: Icon(Icons.photo_library,
+                  color: context.color.textDefaultColor),
+              title: Text("Gallery".translate(context))
+                  .color(context.color.textDefaultColor),
               onTap: () {
                 Navigator.pop(context);
                 _getFromGallery();
@@ -405,6 +399,7 @@ class _ChatScreenState extends State<ChatScreen>
       setState(() {});
     }
   }
+
   Widget build(BuildContext context) {
     var chatBackground = "assets/chat_background/chat_background.svg";
     var attachmentMIME = "";
@@ -415,7 +410,6 @@ class _ChatScreenState extends State<ChatScreen>
 
     return PopScope(
       onPopInvoked: (didPop) {
-
         currentlyChatingWith = "";
         showDeletebutton.value = false;
 
@@ -452,7 +446,8 @@ class _ChatScreenState extends State<ChatScreen>
                       Container(
                         decoration: BoxDecoration(
                             color: context.color.secondaryColor,
-                            border: Border.all(color: context.color.borderColor, width: 1.5)),
+                            border: Border.all(
+                                color: context.color.borderColor, width: 1.5)),
                         child: Row(
                           children: [
                             Padding(
@@ -494,8 +489,10 @@ class _ChatScreenState extends State<ChatScreen>
                         color: context.color.secondaryColor,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child:
-                          AttachmentMessage(url: messageAttachment!.path!, textColor: context.color.textDefaultColor,),
+                          child: AttachmentMessage(
+                            url: messageAttachment!.path!,
+                            textColor: context.color.textDefaultColor,
+                          ),
                         ),
                       ),
                     ],
@@ -520,285 +517,306 @@ class _ChatScreenState extends State<ChatScreen>
                     child: Directionality(
                       textDirection: Directionality.of(context),
                       child: widget.status == "review" ||
-                          widget.status == "rejected" ||
-                          widget.status == "sold out" ||
-                          widget.status == "inactive"
+                              widget.status == "rejected" ||
+                              widget.status == "sold out" ||
+                              widget.status == "inactive"
                           ? Container(
-                          height: 40,
-                          width: double.maxFinite,
-                          color: context.color.secondaryColor,
-                          alignment: Alignment.center,
-                          child: Text(
-                              "${"thisItemIs".translate(context)} ${widget.status}")
-                              .size(context.font.large))
+                              height: 40,
+                              width: double.maxFinite,
+                              color: context.color.secondaryColor,
+                              alignment: Alignment.center,
+                              child: Text(
+                                      "${"thisItemIs".translate(context)} ${widget.status}")
+                                  .size(context.font.large))
                           : Column(
-                        children: [
-                          BlocProvider(
-                              create: (context) => UnblockUserCubit(),
-                              child: Builder(builder: (context) {
-                                bool isBlocked = context
-                                    .read<BlockedUsersListCubit>()
-                                    .isUserBlocked(
-                                    int.parse(widget.userId));
-                                return BlocConsumer<BlockedUsersListCubit,
-                                    BlockedUsersListState>(
-                                    listener: (context, state) {
-                                      if (state is BlockedUsersListSuccess) {
-                                        isBlocked = context
-                                            .read<BlockedUsersListCubit>()
-                                            .isUserBlocked(
-                                            int.parse(widget.userId));
-                                      }
-                                    }, builder:
-                                    (context, blockedUsersListState) {
-                                  return isBlocked
-                                      ? BlocListener<UnblockUserCubit,
-                                      UnblockUserState>(
-                                      listener:
-                                          (context, unblockState) {
-                                        if (unblockState
-                                        is UnblockUserSuccess) {
-                                          // Remove the unblocked user from the list
-                                          context
-                                              .read<
-                                              BlockedUsersListCubit>()
-                                              .unblockUser(int.parse(
-                                              widget.userId));
-                                          HelperUtils
-                                              .showSnackBarMessage(
-                                              context,
-                                              unblockState
-                                                  .message);
-                                        } else if (unblockState
-                                        is UnblockUserFail) {
-                                          HelperUtils
-                                              .showSnackBarMessage(
-                                              context,
-                                              unblockState.error
-                                                  .toString());
-                                        }
-                                      },
-                                      child: InkWell(
-                                        child: Text(
-                                            "youBlockedThisContact"
-                                                .translate(
-                                                context))
-                                            .color(context
-                                            .color.textColorDark
-                                            .withOpacity(0.7)),
-                                        onTap: () async {
-                                          var unBlock = await UiUtils
-                                              .showBlurredDialoge(
-                                            context,
-                                            dialoge: BlurredDialogBox(
-                                              acceptButtonName:
-                                              "unBlockLbl"
-                                                  .translate(
-                                                  context),
-                                              content: Text(
-                                                "${"unBlockLbl".translate(context)}\t${widget.userName}\t${"toSendMessage".translate(context)}"
-                                                    .translate(
-                                                    context),
-                                              ),
-                                            ),
-                                          );
-                                          if (unBlock == true) {
-                                            Future.delayed(
-                                                Duration.zero, () {
-                                              context
-                                                  .read<
-                                                  UnblockUserCubit>()
-                                                  .unBlockUser(
-                                                blockUserId: int
-                                                    .parse(widget
-                                                    .userId),
-                                              );
-                                            });
-                                          }
-                                        },
-                                      ))
-                                      : SizedBox();
-                                });
-                              })),
-
-
-                          //// typing status showing
-                          ValueListenableBuilder<Map<String, String>?>(
-                            valueListenable: _socketService.typingStatus,
-                            builder: (context, typingStatus, child) {
-                              if (typingStatus != null && typingStatus['userId'] == widget.userId) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      bottom: 5.0, left: 10, right: 10),
-                                  child: Text(
-                                    "${widget.userName} ${"isTyping".translate(context)} ...",
-                                    style: TextStyle(
-                                      color: context.color.textDefaultColor,
-                                      fontSize: 12,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            },
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(bottom: 10),
-                            child: Row(
                               children: [
-                                Expanded(
-                                  child: TextField(
-                                    controller: controller,
-                                    onChanged: (value) {
-                                      if (value.isNotEmpty) {
-                                        if (!_isTyping) {
-                                          _socketService.typingStart(widget.itemOfferId);
-                                          _isTyping = true;
+                                BlocProvider(
+                                    create: (context) => UnblockUserCubit(),
+                                    child: Builder(builder: (context) {
+                                      bool isBlocked = context
+                                          .read<BlockedUsersListCubit>()
+                                          .isUserBlocked(
+                                              int.parse(widget.userId));
+                                      return BlocConsumer<BlockedUsersListCubit,
+                                              BlockedUsersListState>(
+                                          listener: (context, state) {
+                                        if (state is BlockedUsersListSuccess) {
+                                          isBlocked = context
+                                              .read<BlockedUsersListCubit>()
+                                              .isUserBlocked(
+                                                  int.parse(widget.userId));
                                         }
-                                        _typingTimer?.cancel();
-                                        _typingTimer = Timer(const Duration(milliseconds: 2000), () {
-                                          _socketService.typingStop(widget.itemOfferId);
-                                          _isTyping = false;
-                                        });
-                                      } else {
-                                        // If text is empty, send stop immediately
-                                        _typingTimer?.cancel();
-                                        if (_isTyping) {
-                                          _socketService.typingStop(widget.itemOfferId);
-                                          _isTyping = false;
-                                        }
-                                      }
-                                    },
-                                    cursorColor:
-                                    context.color.territoryColor,
-                                    onTap: () {
-                                      showDeletebutton.value = false;
-                                    },
-                                    textInputAction:
-                                    TextInputAction.newline,
-                                    minLines: 1,
-                                    maxLines: null,
-                                    decoration: InputDecoration(
-                                      suffixIconColor:
-                                      context.color.textLightColor,
-                                      suffixIcon: IconButton(
-                                        onPressed: () {
-                                          if (messageAttachment == null) {
-                                            _showAttachmentBottomSheet();
-                                          } else {
-                                            messageAttachment = null;
-                                            showRecordButton = true;
-                                            setState(() {});
-                                          }
-                                        },
-                                        icon: messageAttachment != null
-                                            ? const Icon(Icons.close)
-                                            : Transform.rotate(
-                                          angle: -3.14 / 5.0,
-                                          child: const Icon(
-                                            Icons.attachment,
+                                      }, builder:
+                                              (context, blockedUsersListState) {
+                                        return isBlocked
+                                            ? BlocListener<UnblockUserCubit,
+                                                    UnblockUserState>(
+                                                listener:
+                                                    (context, unblockState) {
+                                                  if (unblockState
+                                                      is UnblockUserSuccess) {
+                                                    // Remove the unblocked user from the list
+                                                    context
+                                                        .read<
+                                                            BlockedUsersListCubit>()
+                                                        .unblockUser(int.parse(
+                                                            widget.userId));
+                                                    HelperUtils
+                                                        .showSnackBarMessage(
+                                                            context,
+                                                            unblockState
+                                                                .message);
+                                                  } else if (unblockState
+                                                      is UnblockUserFail) {
+                                                    HelperUtils
+                                                        .showSnackBarMessage(
+                                                            context,
+                                                            unblockState.error
+                                                                .toString());
+                                                  }
+                                                },
+                                                child: InkWell(
+                                                  child: Text(
+                                                          "youBlockedThisContact"
+                                                              .translate(
+                                                                  context))
+                                                      .color(context
+                                                          .color.textColorDark
+                                                          .withOpacity(0.7)),
+                                                  onTap: () async {
+                                                    var unBlock = await UiUtils
+                                                        .showBlurredDialoge(
+                                                      context,
+                                                      dialoge: BlurredDialogBox(
+                                                        acceptButtonName:
+                                                            "unBlockLbl"
+                                                                .translate(
+                                                                    context),
+                                                        content: Text(
+                                                          "${"unBlockLbl".translate(context)}\t${widget.userName}\t${"toSendMessage".translate(context)}"
+                                                              .translate(
+                                                                  context),
+                                                        ),
+                                                      ),
+                                                    );
+                                                    if (unBlock == true) {
+                                                      Future.delayed(
+                                                          Duration.zero, () {
+                                                        context
+                                                            .read<
+                                                                UnblockUserCubit>()
+                                                            .unBlockUser(
+                                                              blockUserId: int
+                                                                  .parse(widget
+                                                                      .userId),
+                                                            );
+                                                      });
+                                                    }
+                                                  },
+                                                ))
+                                            : SizedBox();
+                                      });
+                                    })),
+
+                                //// typing status showing
+                                ValueListenableBuilder<Map<String, String>?>(
+                                  valueListenable: _socketService.typingStatus,
+                                  builder: (context, typingStatus, child) {
+                                    if (typingStatus != null &&
+                                        typingStatus['userId'] ==
+                                            widget.userId) {
+                                      return Padding(
+                                        padding: const EdgeInsets.only(
+                                            bottom: 5.0, left: 10, right: 10),
+                                        child: Text(
+                                          "${widget.userName} ${"isTyping".translate(context)} ...",
+                                          style: TextStyle(
+                                            color:
+                                                context.color.textDefaultColor,
+                                            fontSize: 12,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                ),
+                                SizedBox(
+                                  height: 8,
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 10),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextField(
+                                          controller: controller,
+                                          onChanged: (value) {
+                                            if (value.isNotEmpty) {
+                                              if (!_isTyping) {
+                                                _socketService.typingStart(
+                                                    widget.itemOfferId);
+                                                _isTyping = true;
+                                              }
+                                              _typingTimer?.cancel();
+                                              _typingTimer = Timer(
+                                                  const Duration(
+                                                      milliseconds: 2000), () {
+                                                _socketService.typingStop(
+                                                    widget.itemOfferId);
+                                                _isTyping = false;
+                                              });
+                                            } else {
+                                              // If text is empty, send stop immediately
+                                              _typingTimer?.cancel();
+                                              if (_isTyping) {
+                                                _socketService.typingStop(
+                                                    widget.itemOfferId);
+                                                _isTyping = false;
+                                              }
+                                            }
+                                          },
+                                          cursorColor:
+                                              context.color.territoryColor,
+                                          onTap: () {
+                                            showDeletebutton.value = false;
+                                          },
+                                          textInputAction:
+                                              TextInputAction.newline,
+                                          minLines: 1,
+                                          maxLines: null,
+                                          decoration: InputDecoration(
+                                            suffixIconColor:
+                                                context.color.textLightColor,
+                                            suffixIcon: IconButton(
+                                              onPressed: () {
+                                                if (messageAttachment == null) {
+                                                  _showAttachmentBottomSheet();
+                                                } else {
+                                                  messageAttachment = null;
+                                                  showRecordButton = true;
+                                                  setState(() {});
+                                                }
+                                              },
+                                              icon: messageAttachment != null
+                                                  ? const Icon(Icons.close)
+                                                  : Transform.rotate(
+                                                      angle: -3.14 / 5.0,
+                                                      child: const Icon(
+                                                        Icons.attachment,
+                                                      ),
+                                                    ),
+                                            ),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    vertical: 6, horizontal: 8),
+                                            border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                borderSide: BorderSide(
+                                                    color: context
+                                                        .color.territoryColor)),
+                                            focusedBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                borderSide: BorderSide(
+                                                    color: context
+                                                        .color.territoryColor)),
+                                            hintText:
+                                                "writeHere".translate(context),
                                           ),
                                         ),
                                       ),
-                                      contentPadding:
-                                      const EdgeInsets.symmetric(
-                                          vertical: 6, horizontal: 8),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(20),
-                                          borderSide: BorderSide(
-                                              color: context
-                                                  .color.territoryColor)),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                          BorderRadius.circular(20),
-                                          borderSide: BorderSide(
-                                              color: context
-                                                  .color.territoryColor)),
-                                      hintText:
-                                      "writeHere".translate(context),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 9.5,
-                                ),
-                                if (showRecordButton)
-                                  RecordButton(
-                                    controller: _recordButtonAnimation,
-                                    callback: (path) {
-                                      //This is adding Chat widget in stream with BlocProvider , because we will need to do api process to store chat message to server, when it will be added to list it's initState method will be called
-                                      ChatMessageHandler.addchat(
-                                        BlocProvider(
-                                          create: (context) =>
-                                              SendMessageCubit(),
-                                          child: ChatMessage(
-                                              key: ValueKey(DateTime.now().toString().toString()),
-                                              message: controller.text,
-                                              senderId: int.parse(HiveUtils.getUserId()!),
-                                              createdAt: DateTime.now().toString(),
-                                              isSentNow: true,
-                                              audio: path,
-                                              itemOfferId: widget.itemOfferId,
-                                              file: "",
-                                              updatedAt: DateTime.now().toString()),
-                                        ),
-                                      );
-                                      totalMessageCount++;
-
-                                      setState(() {});
-                                    },
-                                    isSending: false,
-                                  ),
-                                if (!showRecordButton)
-                                  GestureDetector(
-
-
-                                    onTap: () {
-                                      if (controller.text.trim().isEmpty && messageAttachment == null) return;
-
-
-                                      final text = controller.text.trim();
-                                      _socketService.typingStop(widget.itemOfferId);
-
-
-              //////////////////////////////////////////
-                                      ChatMessageHandler.addchat(ChatMessage(
-                                        key: ValueKey(DateTime.now().millisecondsSinceEpoch),
-                                        message: text,
-                                        senderId: int.parse(HiveUtils.getUserId()!),
-                                        createdAt: DateTime.now().toString(),
-                                        updatedAt: DateTime.now().toString(),
-                                        isSentNow: true,
-                                        audio: "",
-                                        file: messageAttachment?.path ?? "",
-                                        itemOfferId: widget.itemOfferId,
-                                      ));
-                                      _socketService.sendMessage(widget.itemOfferId, text);
-                                      controller.clear();
-                                      messageAttachment = null;
-                                      FocusScope.of(context).unfocus();
-                                      setState(() {});
-                                    },
-                                    child: CircleAvatar(
-                                      radius: 20,
-                                      backgroundColor:
-                                      context.color.territoryColor,
-                                      child: Icon(
-                                        Icons.send,
-                                        color: context.color.buttonColor,
+                                      const SizedBox(
+                                        width: 9.5,
                                       ),
-                                    ),
-                                  )
+                                      if (showRecordButton)
+                                        RecordButton(
+                                          controller: _recordButtonAnimation,
+                                          callback: (path) {
+                                            //This is adding Chat widget in stream with BlocProvider , because we will need to do api process to store chat message to server, when it will be added to list it's initState method will be called
+                                            ChatMessageHandler.addchat(
+                                              BlocProvider(
+                                                create: (context) =>
+                                                    SendMessageCubit(),
+                                                child: ChatMessage(
+                                                    key: ValueKey(DateTime.now()
+                                                        .toString()
+                                                        .toString()),
+                                                    message: controller.text,
+                                                    senderId: int.parse(
+                                                        HiveUtils.getUserId()!),
+                                                    createdAt: DateTime.now()
+                                                        .toString(),
+                                                    isSentNow: true,
+                                                    audio: path,
+                                                    itemOfferId:
+                                                        widget.itemOfferId,
+                                                    file: "",
+                                                    updatedAt: DateTime.now()
+                                                        .toString()),
+                                              ),
+                                            );
+                                            totalMessageCount++;
+
+                                            setState(() {});
+                                          },
+                                          isSending: false,
+                                        ),
+                                      if (!showRecordButton)
+                                        GestureDetector(
+                                          onTap: () {
+                                            if (controller.text
+                                                    .trim()
+                                                    .isEmpty &&
+                                                messageAttachment == null)
+                                              return;
+
+                                            final text = controller.text.trim();
+                                            _socketService
+                                                .typingStop(widget.itemOfferId);
+
+                                            //////////////////////////////////////////
+                                            ChatMessageHandler.addchat(
+                                                ChatMessage(
+                                              key: ValueKey(DateTime.now()
+                                                  .millisecondsSinceEpoch),
+                                              message: text,
+                                              senderId: int.parse(
+                                                  HiveUtils.getUserId()!),
+                                              createdAt:
+                                                  DateTime.now().toString(),
+                                              updatedAt:
+                                                  DateTime.now().toString(),
+                                              isSentNow: true,
+                                              audio: "",
+                                              file:
+                                                  messageAttachment?.path ?? "",
+                                              itemOfferId: widget.itemOfferId,
+                                            ));
+                                            _socketService.sendMessage(
+                                                widget.itemOfferId, text);
+                                            controller.clear();
+                                            messageAttachment = null;
+                                            FocusScope.of(context).unfocus();
+                                            setState(() {});
+                                          },
+                                          child: CircleAvatar(
+                                            radius: 20,
+                                            backgroundColor:
+                                                context.color.territoryColor,
+                                            child: Icon(
+                                              Icons.send,
+                                              color: context.color.buttonColor,
+                                            ),
+                                          ),
+                                        )
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ],
@@ -822,9 +840,9 @@ class _ChatScreenState extends State<ChatScreen>
                         textDirection: Directionality.of(context),
                         child: RotatedBox(
                           quarterTurns:
-                          Directionality.of(context) == TextDirection.rtl
-                              ? 2
-                              : -4,
+                              Directionality.of(context) == TextDirection.rtl
+                                  ? 2
+                                  : -4,
                           child: UiUtils.getSvg(AppIcons.arrowLeft,
                               fit: BoxFit.none,
                               color: context.color.textDefaultColor),
@@ -857,12 +875,12 @@ class _ChatScreenState extends State<ChatScreen>
                                 Widgets.showLoader(context);
 
                                 DataOutput<ItemModel> dataOutput =
-                                await ItemRepository().fetchItemFromItemId(
-                                    int.parse(widget.itemId));
+                                    await ItemRepository().fetchItemFromItemId(
+                                        int.parse(widget.itemId));
 
                                 Future.delayed(
                                   Duration.zero,
-                                      () {
+                                  () {
                                     Widgets.hideLoder(context);
                                     Navigator.pushNamed(
                                         context, Routes.adDetailsScreen,
@@ -910,7 +928,7 @@ class _ChatScreenState extends State<ChatScreen>
                                 ),
                                 Padding(
                                   padding:
-                                  EdgeInsetsDirectional.only(start: 15.0),
+                                      EdgeInsetsDirectional.only(start: 15.0),
                                   child: Text(
                                     Constant.currencySymbol.toString() +
                                         widget.itemPrice
@@ -971,13 +989,13 @@ class _ChatScreenState extends State<ChatScreen>
                             context
                                 .read<BlockedUsersListCubit>()
                                 .addBlockedUser(
-                              BlockedUserModel(
-                                  id: int.parse(widget.userId),
-                                  name: widget.userName,
-                                  profile: widget.profilePicture
-                                // Add other necessary user data
-                              ),
-                            );
+                                  BlockedUserModel(
+                                      id: int.parse(widget.userId),
+                                      name: widget.userName,
+                                      profile: widget.profilePicture
+                                      // Add other necessary user data
+                                      ),
+                                );
                             HelperUtils.showSnackBarMessage(
                                 context, blockState.message);
                           } else if (blockState is BlockUserFail) {
@@ -1031,13 +1049,13 @@ class _ChatScreenState extends State<ChatScreen>
                                     PopupMenuItem(
                                       onTap: () async {
                                         var block =
-                                        await UiUtils.showBlurredDialoge(
+                                            await UiUtils.showBlurredDialoge(
                                           context,
                                           dialoge: BlurredDialogBox(
                                             acceptButtonName:
-                                            "blockLbl".translate(context),
+                                                "blockLbl".translate(context),
                                             title:
-                                            "${"blockLbl".translate(context)}\t${widget.userName}?",
+                                                "${"blockLbl".translate(context)}\t${widget.userName}?",
                                             content: Text(
                                               "blockWarning".translate(context),
                                             ),
@@ -1048,9 +1066,9 @@ class _ChatScreenState extends State<ChatScreen>
                                             context
                                                 .read<BlockUserCubit>()
                                                 .blockUser(
-                                              blockUserId:
-                                              int.parse(widget.userId),
-                                            );
+                                                  blockUserId:
+                                                      int.parse(widget.userId),
+                                                );
                                           });
                                         }
                                       },
@@ -1061,11 +1079,11 @@ class _ChatScreenState extends State<ChatScreen>
                                     PopupMenuItem(
                                       onTap: () async {
                                         var unBlock =
-                                        await UiUtils.showBlurredDialoge(
+                                            await UiUtils.showBlurredDialoge(
                                           context,
                                           dialoge: BlurredDialogBox(
                                             acceptButtonName:
-                                            "unBlockLbl".translate(context),
+                                                "unBlockLbl".translate(context),
                                             content: Text(
                                               "${"unBlockLbl".translate(context)}\t${widget.userName}\t${"toSendMessage".translate(context)}"
                                                   .translate(context),
@@ -1077,14 +1095,14 @@ class _ChatScreenState extends State<ChatScreen>
                                             context
                                                 .read<UnblockUserCubit>()
                                                 .unBlockUser(
-                                              blockUserId:
-                                              int.parse(widget.userId),
-                                            );
+                                                  blockUserId:
+                                                      int.parse(widget.userId),
+                                                );
                                           });
                                         }
                                       },
                                       child: Text(
-                                          "unBlockLbl".translate(context))
+                                              "unBlockLbl".translate(context))
                                           .color(context.color.textColorDark),
                                     ),
                                 ],
@@ -1104,42 +1122,42 @@ class _ChatScreenState extends State<ChatScreen>
                 children: [
                   widget.profilePicture == ""
                       ? CircleAvatar(
-                    backgroundColor: context.color.territoryColor,
-                    child: SvgPicture.asset(
-                      AppIcons.profile,
-                      colorFilter: ColorFilter.mode(
-                          context.color.buttonColor, BlendMode.srcIn),
-                    ),
-                  )
+                          backgroundColor: context.color.territoryColor,
+                          child: SvgPicture.asset(
+                            AppIcons.profile,
+                            colorFilter: ColorFilter.mode(
+                                context.color.buttonColor, BlendMode.srcIn),
+                          ),
+                        )
                       : GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        TransparantRoute(
-                          barrierDismiss: true,
-                          builder: (context) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                color: const Color.fromARGB(69, 0, 0, 0),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              TransparantRoute(
+                                barrierDismiss: true,
+                                builder: (context) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      color: const Color.fromARGB(69, 0, 0, 0),
+                                    ),
+                                  );
+                                },
                               ),
                             );
                           },
+                          child: CustomImageHeroAnimation(
+                            type: CImageType.Network,
+                            image: widget.profilePicture,
+                            child: CircleAvatar(
+                              backgroundImage: CachedNetworkImageProvider(
+                                widget.profilePicture,
+                              ),
+                            ),
+                          ),
                         ),
-                      );
-                    },
-                    child: CustomImageHeroAnimation(
-                      type: CImageType.Network,
-                      image: widget.profilePicture,
-                      child: CircleAvatar(
-                        backgroundImage: CachedNetworkImageProvider(
-                          widget.profilePicture,
-                        ),
-                      ),
-                    ),
-                  ),
                   const SizedBox(
                     width: 10,
                   ),
@@ -1178,7 +1196,8 @@ class _ChatScreenState extends State<ChatScreen>
                     onTap: () {
                       showDeletebutton.value = false;
                     },
-                    child: BlocConsumer<LoadChatMessagesCubit, LoadChatMessagesState>(
+                    child: BlocConsumer<LoadChatMessagesCubit,
+                        LoadChatMessagesState>(
                       listener: (context, state) {
                         if (state is LoadChatMessagesSuccess) {
                           ChatMessageHandler.loadMessages(
@@ -1198,13 +1217,19 @@ class _ChatScreenState extends State<ChatScreen>
                                   Widget? loadingMoreWidget;
                                   if (state is LoadChatMessagesSuccess) {
                                     if (state.isLoadingMore) {
-                                      loadingMoreWidget = Text("loading".translate(context));
+                                      loadingMoreWidget =
+                                          Text("loading".translate(context));
                                     }
                                   }
-                                  if (state is LoadChatMessagesSuccess && state.isLoadingMore) {
-                                    loadingMoreWidget = Text("loading".translate(context));
+                                  if (state is LoadChatMessagesSuccess &&
+                                      state.isLoadingMore) {
+                                    loadingMoreWidget =
+                                        Text("loading".translate(context));
                                   }
-                                  if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
+                                  if (snapshot.connectionState ==
+                                          ConnectionState.active ||
+                                      snapshot.connectionState ==
+                                          ConnectionState.done) {
                                     if ((snapshot.data as List).isEmpty) {
                                       return offerWidget();
                                     }
@@ -1217,10 +1242,12 @@ class _ChatScreenState extends State<ChatScreen>
                                               const SizedBox.shrink(),
                                           Expanded(
                                             child: ListView.builder(
-                                              key: ValueKey('chat_list_${snapshot.data!.length}'),
+                                              key: ValueKey(
+                                                  'chat_list_${snapshot.data!.length}'),
                                               reverse: true,
                                               shrinkWrap: true,
-                                              physics: const AlwaysScrollableScrollPhysics(),
+                                              physics:
+                                                  const AlwaysScrollableScrollPhysics(),
                                               controller: _pageScrollController,
                                               addAutomaticKeepAlives: true,
                                               itemCount: snapshot.data!.length,
@@ -1232,13 +1259,16 @@ class _ChatScreenState extends State<ChatScreen>
                                               (snapshot.data as List)
                                                   .elementAt(index); */
 
-                                                dynamic chat = snapshot.data![index];
+                                                dynamic chat =
+                                                    snapshot.data![index];
 
                                                 return Column(
                                                   mainAxisSize:
-                                                  MainAxisSize.min,
+                                                      MainAxisSize.min,
                                                   children: [
-                                                    if (index == snapshot.data!.length - 1)
+                                                    if (index ==
+                                                        snapshot.data!.length -
+                                                            1)
                                                       offerWidget(),
                                                     chat
                                                   ],
@@ -1298,7 +1328,7 @@ class _ChatScreenState extends State<ChatScreen>
                   /*  Text("yourOffer".translate(context))
                   .color(context.color.textDefaultColor.withOpacity(0.5)),*/
                   Text(Constant.currencySymbol +
-                      widget.itemOfferPrice.toString())
+                          widget.itemOfferPrice.toString())
                       .bold()
                       .size(context.font.larger)
                       .color(context.color.textDefaultColor)
@@ -1311,7 +1341,7 @@ class _ChatScreenState extends State<ChatScreen>
           child: Container(
               height: 71,
               margin:
-              EdgeInsetsDirectional.only(top: 15, bottom: 15, start: 15),
+                  EdgeInsetsDirectional.only(top: 15, bottom: 15, start: 15),
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
                   border: Border.all(
@@ -1328,7 +1358,7 @@ class _ChatScreenState extends State<ChatScreen>
                   Text("offerLbl".translate(context))
                       .color(context.color.textDefaultColor.withOpacity(0.5)),
                   Text(Constant.currencySymbol +
-                      widget.itemOfferPrice.toString())
+                          widget.itemOfferPrice.toString())
                       .bold()
                       .size(context.font.larger)
                       .color(context.color.textDefaultColor)

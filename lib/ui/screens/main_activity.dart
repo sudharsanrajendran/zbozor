@@ -18,7 +18,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,7 +34,6 @@ import 'package:Ebozor/utils/errorFilter.dart';
 
 import 'package:Ebozor/utils/helper_utils.dart';
 
-import 'package:Ebozor/utils/responsiveSize.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/ui/screens/home/search_screen.dart';
 import 'package:Ebozor/ui/screens/item/my_items_screen.dart';
@@ -69,8 +67,8 @@ List<ScrollController> controllerList = [
 //
 class MainActivity extends StatefulWidget {
   final String from;
-   static final GlobalKey<MainActivityState> globalKey =
-       GlobalKey<MainActivityState>();
+  static final GlobalKey<MainActivityState> globalKey =
+      GlobalKey<MainActivityState>();
 
   MainActivity({Key? key, required this.from}) : super(key: globalKey);
 
@@ -476,7 +474,6 @@ class MainActivityState extends State<MainActivity>
     }
   }*/
 
-
   /////// here your bottom navigation handled
   BottomAppBar bottomBar() {
     return BottomAppBar(
@@ -492,14 +489,14 @@ class MainActivityState extends State<MainActivity>
               0,
               AppIcons.homeNav,
               AppIcons.homeNavActive,
-        //      "homeTab".translate(context),
+              //      "homeTab".translate(context),
             ),
 
             buildBottomNavigationbarItem(
               1,
               AppIcons.chatNav,
               AppIcons.chatNavActive,
-         //     "chat".translate(context),
+              //     "chat".translate(context),
             ),
 
             /// CENTER BUTTON
@@ -521,50 +518,53 @@ class MainActivityState extends State<MainActivity>
                   FetchUserPackageLimitState>(
                 builder: (context, state) {
                   return InkWell(
-                    borderRadius: BorderRadius.circular(30),
-                    onTap: () {
-                      UiUtils.checkUser(
-                        context: context,
-                        onNotGuest: () {
-                          context
-                              .read<FetchUserPackageLimitCubit>()
-                              .fetchUserPackageLimit(
-                            packageType: "item_listing",
-                          );
-                        },
-                      );
-                    },
-                    child:SizedBox(// ⬅️ HEIGHT INCREASED
-                      child: Center(
-                        child: state is FetchUserPackageLimitInProgress
-                            ? const CircularProgressIndicator(strokeWidth: 2)
-                            : !svgLoaded
-                            ? const SizedBox.shrink()
-                            : SizedBox(               // ⬅️ ICON SIZE CONTROL
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: context.color.territoryColor,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: context.color.territoryColor.withOpacity(0.4),
-                                  //blurRadius: 8,
-                                  //offset: const Offset(0, 4),
-                                )
-                              ]
-                            ),
-                            child: const Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                      ),
-                    ),
-
-                  ));
+                      borderRadius: BorderRadius.circular(30),
+                      onTap: () {
+                        UiUtils.checkUser(
+                          context: context,
+                          onNotGuest: () {
+                            context
+                                .read<FetchUserPackageLimitCubit>()
+                                .fetchUserPackageLimit(
+                                  packageType: "item_listing",
+                                );
+                          },
+                        );
+                      },
+                      child: SizedBox(
+                        // ⬅️ HEIGHT INCREASED
+                        child: Center(
+                          child: state is FetchUserPackageLimitInProgress
+                              ? const CircularProgressIndicator(strokeWidth: 2)
+                              : !svgLoaded
+                                  ? const SizedBox.shrink()
+                                  : SizedBox(
+                                      // ⬅️ ICON SIZE CONTROL
+                                      child: Container(
+                                        width: 40,
+                                        height: 40,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: context.color.territoryColor,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: context
+                                                    .color.territoryColor
+                                                    .withOpacity(0.4),
+                                                //blurRadius: 8,
+                                                //offset: const Offset(0, 4),
+                                              )
+                                            ]),
+                                        child: const Icon(
+                                          Icons.add,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                        ),
+                      ));
                 },
               ),
             ),
@@ -573,14 +573,14 @@ class MainActivityState extends State<MainActivity>
               2,
               AppIcons.myAdsNav,
               AppIcons.myAdsNavActive,
-          //    "myAdsTab".translate(context),
+              //    "myAdsTab".translate(context),
             ),
 
             buildBottomNavigationbarItem(
               3,
               AppIcons.profileNav,
               AppIcons.profileNavActive,
-           //   "profileTab".translate(context),
+              //   "profileTab".translate(context),
             ),
           ],
         ),
@@ -588,12 +588,11 @@ class MainActivityState extends State<MainActivity>
     );
   }
 
-
   Widget buildBottomNavigationbarItem(
     int index,
     String svgImage,
     String activeSvg,
-  //  String title,
+    //  String title,
   ) {
     return Expanded(
       child: Material(
@@ -607,7 +606,7 @@ class MainActivityState extends State<MainActivity>
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               if (currtab == index) ...{
-                UiUtils.getSvg(activeSvg,color: context.color.territoryColor),
+                UiUtils.getSvg(activeSvg, color: context.color.territoryColor),
               } else ...{
                 UiUtils.getSvg(svgImage,
                     color: context.color.textLightColor.darken(30)),

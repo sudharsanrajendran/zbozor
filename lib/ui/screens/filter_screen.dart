@@ -16,7 +16,6 @@ import 'package:Ebozor/utils/app_icon.dart';
 
 import 'package:Ebozor/data/cubits/custom_field/fetch_custom_fields_cubit.dart';
 
-
 import 'package:Ebozor/utils/ApiService/api.dart';
 
 import 'package:Ebozor/utils/ui_utils.dart';
@@ -86,7 +85,7 @@ class FilterScreenState extends State<FilterScreen> {
 
   late List<CategoryModel> categoryList = widget.categoryList ?? [];
 
-    double _minPrice = 0;
+  double _minPrice = 0;
   double _maxPrice = 1000000; // Default max, can be adjusted
   RangeValues _priceRangeValues = const RangeValues(0, 1000000);
 
@@ -118,16 +117,16 @@ class FilterScreenState extends State<FilterScreen> {
     setDefaultVal(isRefresh: false);
     //clearFieldData();
     getCustomFieldsData();
-    
-         // Initialize slider values
+
+    // Initialize slider values
     double min = double.tryParse(minController.text.replaceAll(',', '')) ?? 0;
-    double max = double.tryParse(maxController.text.replaceAll(',', '')) ?? 1000000;
+    double max =
+        double.tryParse(maxController.text.replaceAll(',', '')) ?? 1000000;
     if (max < min) max = min + 1000;
     _priceRangeValues = RangeValues(min, max);
   }
 
-
-  setCategories() {
+  void setCategories() {
     if (widget.categoryIds != null && widget.categoryIds!.isNotEmpty) {
       selectedCategories.addAll(widget.categoryIds!);
     }
@@ -141,7 +140,7 @@ class FilterScreenState extends State<FilterScreen> {
     }
   }
 
-  getCustomFieldsData() {
+  void getCustomFieldsData() {
     if (Constant.itemFilter == null) {
       AbstractField.fieldsData.clear();
     }
@@ -260,7 +259,9 @@ class FilterScreenState extends State<FilterScreen> {
         return;
       },
       child: Scaffold(
-        backgroundColor: isProperty ? Color(0xFFF9F9F9) : Theme.of(context).colorScheme.primaryColor,
+        backgroundColor: isProperty
+            ? Color(0xFFF9F9F9)
+            : Theme.of(context).colorScheme.primaryColor,
         appBar: UiUtils.buildAppBar(
           context,
           onBackPress: () {
@@ -332,60 +333,63 @@ class FilterScreenState extends State<FilterScreen> {
                 customFields: customFields));
 
             Navigator.pop(context, true);
-          }, 
-          buttonTitle: "applyFilter".translate(context), 
-          radius: 8,
-          buttonColor: isProperty ? Color(0xFFE52D2D) : context.color.territoryColor,
-          textColor: Colors.white
-          ),
+          },
+              buttonTitle: "applyFilter".translate(context),
+              radius: 8,
+              buttonColor:
+                  isProperty ? Color(0xFFE52D2D) : context.color.territoryColor,
+              textColor: Colors.white),
         ),
-        body: isProperty ? propertyFilterBody() : SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          child: Padding(
-            padding: const EdgeInsets.all(
-              20.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Text('locationLbl'.translate(context))
-                    .bold(weight: FontWeight.w600)
-                    .color(context.color.textDefaultColor),
-                const SizedBox(height: 5),
-                locationWidget(context),
-                if (widget.categoryIds == null ||
-                    widget.categoryIds!.isEmpty) ...[
-                  const SizedBox(height: 15),
-                  Text('category'.translate(context))
-                      .bold(weight: FontWeight.w600)
-                      .color(context.color.textDefaultColor),
-                  const SizedBox(height: 5),
-                  categoryWidget(context),
-                  const SizedBox(height: 5),
-                ],
-                //categoryModule(),
-                const SizedBox(
-                  height: 15,
+        body: isProperty
+            ? propertyFilterBody()
+            : SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: Padding(
+                  padding: const EdgeInsets.all(
+                    20.0,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text('locationLbl'.translate(context))
+                          .bold(weight: FontWeight.w600)
+                          .color(context.color.textDefaultColor),
+                      const SizedBox(height: 5),
+                      locationWidget(context),
+                      if (widget.categoryIds == null ||
+                          widget.categoryIds!.isEmpty) ...[
+                        const SizedBox(height: 15),
+                        Text('category'.translate(context))
+                            .bold(weight: FontWeight.w600)
+                            .color(context.color.textDefaultColor),
+                        const SizedBox(height: 5),
+                        categoryWidget(context),
+                        const SizedBox(height: 5),
+                      ],
+                      //categoryModule(),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Text('budgetLbl'.translate(context))
+                          .bold(weight: FontWeight.w600)
+                          .color(context.color.textDefaultColor),
+                      const SizedBox(height: 15),
+                      budgetOption(),
+                      const SizedBox(height: 15),
+                      Text('postedSinceLbl'.translate(context))
+                          .bold(weight: FontWeight.w600)
+                          .color(context.color.textDefaultColor),
+                      const SizedBox(height: 5),
+                      postedSinceOption(context),
+                      const SizedBox(height: 15),
+                      //   customFields()
+                    ],
+                  ),
                 ),
-                Text('budgetLbl'.translate(context))
-                    .bold(weight: FontWeight.w600)
-                    .color(context.color.textDefaultColor),
-                const SizedBox(height: 15),
-                budgetOption(),
-                const SizedBox(height: 15),
-                Text('postedSinceLbl'.translate(context))
-                    .bold(weight: FontWeight.w600)
-                    .color(context.color.textDefaultColor),
-                const SizedBox(height: 5),
-                postedSinceOption(context),
-                const SizedBox(height: 15),
-             //   customFields()
-              ],
-            ),
-          ),
-        ),
+              ),
       ),
     );
   }
@@ -405,7 +409,6 @@ class FilterScreenState extends State<FilterScreen> {
             const SizedBox(height: 10),
             locationWidgetProperty(context),
             const SizedBox(height: 20),
-            
             Text('Price Range')
                 .bold(weight: FontWeight.w600)
                 .color(context.color.textDefaultColor),
@@ -420,13 +423,14 @@ class FilterScreenState extends State<FilterScreen> {
                 Expanded(child: minMaxTFFProperty("maxLbl".translate(context))),
               ],
             ),
-             const SizedBox(height: 10),
+            const SizedBox(height: 10),
             RangeSlider(
               values: _priceRangeValues,
               min: 0,
-              max: 1000000, 
-              activeColor: Color(0xFFE52D2D),
-              inactiveColor: Color(0xFFE52D2D).withOpacity(0.2),
+              max: 1000000,
+              activeColor: context.color.territoryColor,
+              inactiveColor: context.color.textDefaultColor.withOpacity(0.1),
+              divisions: 1000,
               onChanged: (RangeValues values) {
                 setState(() {
                   _priceRangeValues = values;
@@ -435,9 +439,7 @@ class FilterScreenState extends State<FilterScreen> {
                 });
               },
             ),
-
             const SizedBox(height: 20),
-            
             Text('postedSinceLbl'.translate(context))
                 .bold(weight: FontWeight.w600)
                 .color(context.color.textDefaultColor),
@@ -506,22 +508,22 @@ class FilterScreenState extends State<FilterScreen> {
         style: TextStyle(color: Colors.black),
         textAlign: TextAlign.center,
         onChanged: (value) {
-            double? val = double.tryParse(value);
-            if(val != null) {
-              if (minMax == "minLbl".translate(context)) {
-                 if(val <= _priceRangeValues.end) {
-                   setState(() {
-                     _priceRangeValues = RangeValues(val, _priceRangeValues.end);
-                   });
-                 }
-              } else {
-                 if(val >= _priceRangeValues.start) {
-                   setState(() {
-                      _priceRangeValues = RangeValues(_priceRangeValues.start, val);
-                   });
-                 }
+          double? val = double.tryParse(value);
+          if (val != null) {
+            if (minMax == "minLbl".translate(context)) {
+              if (val <= _priceRangeValues.end) {
+                setState(() {
+                  _priceRangeValues = RangeValues(val, _priceRangeValues.end);
+                });
+              }
+            } else {
+              if (val >= _priceRangeValues.start) {
+                setState(() {
+                  _priceRangeValues = RangeValues(_priceRangeValues.start, val);
+                });
               }
             }
+          }
         },
         decoration: InputDecoration(
           border: InputBorder.none,
@@ -557,7 +559,8 @@ class FilterScreenState extends State<FilterScreen> {
         ),
         child: Row(
           children: [
-            Icon(Icons.calendar_today_outlined, color: Colors.black54, size: 20),
+            Icon(Icons.calendar_today_outlined,
+                color: Colors.black54, size: 20),
             const SizedBox(width: 10),
             Expanded(
               child: Text(Constant.postedSince[index].status)
@@ -578,7 +581,9 @@ class FilterScreenState extends State<FilterScreen> {
               .read<FetchCustomFieldsCubit>()
               .getFields()
               .where((field) =>
-                  field.type != "fileinput" && field.type != "textbox" && field.type != "number")
+                  field.type != "fileinput" &&
+                  field.type != "textbox" &&
+                  field.type != "number")
               .map((field) {
             Map<String, dynamic> fieldData = field.toMap();
 
@@ -643,8 +648,8 @@ class FilterScreenState extends State<FilterScreen> {
               const SizedBox(width: 10),
               Expanded(
                 child: [area, city, _state, country]
-                        .where((element) =>
-                            element != null && element.isNotEmpty)
+                        .where(
+                            (element) => element != null && element.isNotEmpty)
                         .join(", ")
                         .isNotEmpty
                     ? Text(
@@ -697,17 +702,15 @@ class FilterScreenState extends State<FilterScreen> {
                       height: 20, width: 20, fit: BoxFit.contain)
                   : /*UiUtils.getSvg(AppIcons.categoryIcon,
                       color: Colors.grey)*/
-                   Icon(Icons.grid_view, color: Colors.grey, size: 20),
-              
+                  Icon(Icons.grid_view, color: Colors.grey, size: 20),
               const SizedBox(width: 10),
-              
               Expanded(
                 child: categoryList.isNotEmpty
                     ? Text("${categoryList.map((e) => e.name).join(' - ')}",
-                        maxLines: 1, overflow: TextOverflow.ellipsis)
+                            maxLines: 1, overflow: TextOverflow.ellipsis)
                         .color(Colors.grey.shade600)
-                    : Text("allInClassified".translate(context)).color(
-                        Colors.grey.shade400),
+                    : Text("allInClassified".translate(context))
+                        .color(Colors.grey.shade400),
               ),
               Icon(Icons.keyboard_arrow_down, color: Colors.black54),
             ],
@@ -749,7 +752,8 @@ class FilterScreenState extends State<FilterScreen> {
             Expanded(child: minMaxTFFProperty("minLbl".translate(context))),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text("To".translate(context)).color(context.color.textDefaultColor),
+              child: Text("To".translate(context))
+                  .color(context.color.textDefaultColor),
             ),
             Expanded(child: minMaxTFFProperty("maxLbl".translate(context))),
           ],
@@ -758,9 +762,10 @@ class FilterScreenState extends State<FilterScreen> {
         RangeSlider(
           values: _priceRangeValues,
           min: 0,
-          max: 1000000, 
-          activeColor: const Color(0xFFE52D2D),
-          inactiveColor: const Color(0xFFE52D2D).withOpacity(0.2),
+          max: 1000000,
+          activeColor: context.color.territoryColor,
+          inactiveColor: context.color.textDefaultColor.withOpacity(0.1),
+          divisions: 1000,
           onChanged: (RangeValues values) {
             setState(() {
               _priceRangeValues = values;
@@ -773,9 +778,7 @@ class FilterScreenState extends State<FilterScreen> {
     );
   }
 
-
-
-  postedSinceUpdate(String value) {
+  void postedSinceUpdate(String value) {
     if (value == Constant.postedSince[0].value &&
         searchbody.containsKey(Api.postedSince)) {
       searchbody[Api.postedSince] = "";
@@ -812,8 +815,9 @@ class FilterScreenState extends State<FilterScreen> {
           ),
           child: Row(
             children: [
-               Icon(Icons.calendar_today_outlined, color: Colors.black54, size: 20),
-               const SizedBox(width: 10),
+              Icon(Icons.calendar_today_outlined,
+                  color: Colors.black54, size: 20),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(Constant.postedSince[index].status)
                     .color(Colors.grey.shade600),
@@ -825,9 +829,6 @@ class FilterScreenState extends State<FilterScreen> {
       ),
     );
   }
-
-
-
 }
 
 class PostedSinceItem {

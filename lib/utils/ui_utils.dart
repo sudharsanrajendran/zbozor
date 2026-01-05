@@ -55,16 +55,15 @@ class UiUtils {
           String svgString = snapshot.data!;
           // Replace specific green color #32a16b with provided color
           if (color != null) {
-            String hexColor =
-                '#${color.value.toRadixString(16).substring(2)}';
+            String hexColor = '#${color.value.toRadixString(16).substring(2)}';
             // Ensure hex is 6 chars for SVG
             if (hexColor.length > 7) {
-               // This handles if alpha is included but we want RGB for SVG usually
-               // But context.color might have alpha. 
-               // Standard SVG hex is #RRGGBB.
-               // We will assume opaque colors for now or minimal alpha usage.
+              // This handles if alpha is included but we want RGB for SVG usually
+              // But context.color might have alpha.
+              // Standard SVG hex is #RRGGBB.
+              // We will assume opaque colors for now or minimal alpha usage.
             }
-            
+
             svgString = svgString.replaceAll(
                 RegExp(r'#32a16b', caseSensitive: false), hexColor);
           }
@@ -81,7 +80,7 @@ class UiUtils {
     );
   }
 
-  static checkUser(
+  static void checkUser(
       {required Function() onNotGuest, required BuildContext context}) {
     if (!HiveUtils.isUserAuthenticated()) {
       _loginBox(context);
@@ -90,7 +89,7 @@ class UiUtils {
     }
   }
 
-  static _loginBox(BuildContext context) {
+  static void _loginBox(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: false,
@@ -305,7 +304,7 @@ class UiUtils {
                 : Brightness.dark);
   }
 
-  static setDefaultLocationValue(
+  static void setDefaultLocationValue(
       {required bool isCurrent,
       required bool isHomeUpdate,
       required BuildContext context}) {
@@ -414,7 +413,6 @@ class UiUtils {
                           overflow: TextOverflow.ellipsis,
                           softWrap: true,
                           //textAlign: TextAlign.center,
-                        
                         )
                             .color(context.color.textDefaultColor)
                             .bold(weight: FontWeight.w600)
@@ -498,7 +496,6 @@ class UiUtils {
           minWidth: autoWidth == true ? null : (width ?? double.infinity),
           height: height ?? 56.rh(context),
           padding: padding,
-
           shape: RoundedRectangleBorder(
               side: border ?? BorderSide.none,
               borderRadius: BorderRadius.circular(radius ?? 16)),

@@ -1,4 +1,3 @@
-import 'package:Ebozor/ui/screens/home/widgets/location_widget.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
@@ -106,7 +105,7 @@ class HomeSearchField extends StatelessWidget {
 
               return GestureDetector(
                 onTap: () {
-                   Navigator.pushNamed(context, Routes.notificationPage);
+                  Navigator.pushNamed(context, Routes.notificationPage);
                 },
                 child: Stack(
                   clipBehavior: Clip.none,
@@ -153,4 +152,3 @@ class HomeSearchField extends StatelessWidget {
     );
   }
 }
-

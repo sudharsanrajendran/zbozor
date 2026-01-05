@@ -59,52 +59,52 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
       if (arguments != null) {
         from = arguments['from'];
         if (arguments.containsKey('latitude') &&
-          arguments.containsKey('longitude') &&
-          arguments['latitude'] != null &&
-          arguments['longitude'] != null) {
-        
-        latitude = arguments['latitude'];
-        longitude = arguments['longitude'];
+            arguments.containsKey('longitude') &&
+            arguments['latitude'] != null &&
+            arguments['longitude'] != null) {
+          latitude = arguments['latitude'];
+          longitude = arguments['longitude'];
 
-        formatedAddress = AddressComponent(
-            area: arguments['area'],
-            areaId: arguments['area_id'],
-            city: arguments['city'],
-            country: arguments['country'],
-            state: arguments['state']);
+          formatedAddress = AddressComponent(
+              area: arguments['area'],
+              areaId: arguments['area_id'],
+              city: arguments['city'],
+              country: arguments['country'],
+              state: arguments['state']);
 
-         String addressString = "";
-         if (formatedAddress!.area != null && formatedAddress!.area!.isNotEmpty) {
-           addressString += "${formatedAddress!.area}, ";
-         }
-         if (formatedAddress!.city != null) {
-           addressString += "${formatedAddress!.city}, ";
-         }
-         if (formatedAddress!.state != null) {
-           addressString += "${formatedAddress!.state}, ";
-         }
-         if (formatedAddress!.country != null) {
-           addressString += "${formatedAddress!.country}";
-         }
-         searchController.text = addressString;
+          String addressString = "";
+          if (formatedAddress!.area != null &&
+              formatedAddress!.area!.isNotEmpty) {
+            addressString += "${formatedAddress!.area}, ";
+          }
+          if (formatedAddress!.city != null) {
+            addressString += "${formatedAddress!.city}, ";
+          }
+          if (formatedAddress!.state != null) {
+            addressString += "${formatedAddress!.state}, ";
+          }
+          if (formatedAddress!.country != null) {
+            addressString += "${formatedAddress!.country}";
+          }
+          searchController.text = addressString;
 
-        _cameraPosition = CameraPosition(
-          target: LatLng(latitude!, longitude!),
-          zoom: 14.4746,
-        );
+          _cameraPosition = CameraPosition(
+            target: LatLng(latitude!, longitude!),
+            zoom: 14.4746,
+          );
 
-        _markers.clear();
-        _markers.add(Marker(
-          markerId: const MarkerId('currentLocation'),
-          position: LatLng(latitude!, longitude!),
-        ));
+          _markers.clear();
+          _markers.add(Marker(
+            markerId: const MarkerId('currentLocation'),
+            position: LatLng(latitude!, longitude!),
+          ));
 
-        setState(() {
-          _isFetchingLocation = false;
-        });
-      } else {
-        _getCurrentLocation();
-      }
+          setState(() {
+            _isFetchingLocation = false;
+          });
+        } else {
+          _getCurrentLocation();
+        }
       } else {
         _getCurrentLocation();
       }
@@ -142,15 +142,13 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
           position: LatLng(latitude!, longitude!),
         ));
 
-        getLocationFromLatitudeLongitude(
-            latLng: LatLng(latitude!, longitude!));
+        getLocationFromLatitudeLongitude(latLng: LatLng(latitude!, longitude!));
 
         if (mapController != null) {
           mapController!.animateCamera(
             CameraUpdate.newCameraPosition(_cameraPosition!),
           );
         }
-
       }
     } catch (e) {
       // Handle error
@@ -161,7 +159,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
     });
   }
 
-  getLocationFromLatitudeLongitude({LatLng? latLng}) async {
+  Future<void> getLocationFromLatitudeLongitude({LatLng? latLng}) async {
     try {
       if (Platform.isIOS) {
         var googleAddress = await GoogleGeocodingHelper.getAddress(
@@ -183,32 +181,33 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
           formatedAddress = AddressComponent(
               area: placeMark.subLocality,
               areaId: null,
-              city: (placeMark.locality != null &&
-                      placeMark.locality!.isNotEmpty)
-                  ? placeMark.locality
-                  : placeMark.subLocality,
+              city:
+                  (placeMark.locality != null && placeMark.locality!.isNotEmpty)
+                      ? placeMark.locality
+                      : placeMark.subLocality,
               country: placeMark.country,
               state: placeMark.administrativeArea);
         }
       }
-      
+
       if (formatedAddress != null) {
-         String addressString = "";
-         if (formatedAddress!.area != null && formatedAddress!.area!.isNotEmpty) {
-           addressString += "${formatedAddress!.area}, ";
-         }
-         if (formatedAddress!.city != null) {
-           addressString += "${formatedAddress!.city}, ";
-         }
-         if (formatedAddress!.state != null) {
-           addressString += "${formatedAddress!.state}, ";
-         }
-         if (formatedAddress!.country != null) {
-           addressString += "${formatedAddress!.country}";
-         }
-         if (!searchFocusNode.hasFocus) {
-           searchController.text = addressString;
-         }
+        String addressString = "";
+        if (formatedAddress!.area != null &&
+            formatedAddress!.area!.isNotEmpty) {
+          addressString += "${formatedAddress!.area}, ";
+        }
+        if (formatedAddress!.city != null) {
+          addressString += "${formatedAddress!.city}, ";
+        }
+        if (formatedAddress!.state != null) {
+          addressString += "${formatedAddress!.state}, ";
+        }
+        if (formatedAddress!.country != null) {
+          addressString += "${formatedAddress!.country}";
+        }
+        if (!searchFocusNode.hasFocus) {
+          searchController.text = addressString;
+        }
       }
 
       setState(() {});
@@ -267,10 +266,13 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
             padding: const EdgeInsets.all(8.0),
             child: InkWell(
               onTap: () => Navigator.pop(context),
-              child: Icon(Icons.arrow_back_ios, color: context.color.textDefaultColor),
-            )
-        ),
-        title: Text("Location", style: TextStyle(color: context.color.textDefaultColor, fontWeight: FontWeight.bold)),
+              child: Icon(Icons.arrow_back_ios,
+                  color: context.color.textDefaultColor),
+            )),
+        title: Text("Location",
+            style: TextStyle(
+                color: context.color.textDefaultColor,
+                fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           Padding(
@@ -280,7 +282,9 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                 searchController.clear();
                 _getCurrentLocation();
               },
-              child: Center(child: Text("Clear All", style: TextStyle(color: context.color.textLightColor))),
+              child: Center(
+                  child: Text("Clear All",
+                      style: TextStyle(color: context.color.textLightColor))),
             ),
           )
         ],
@@ -294,39 +298,38 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
               children: [
                 _cameraPosition == null
                     ? Center(child: UiUtils.progress())
-                      :GoogleMap(
-                    initialCameraPosition: _cameraPosition!,
-                    onMapCreated: _onMapCreated,
-                    // markers: _markers, // No markers for center pin mode
-                    markers: {},
-                    myLocationButtonEnabled: false,
-                    myLocationEnabled: true,
-                    zoomControlsEnabled: true,
-                    mapToolbarEnabled: false,
-                    onCameraMove: (position) {
-                      _cameraPosition = position;
-                    },
-                    onCameraIdle: () {
-                      getLocationFromLatitudeLongitude(
-                        latLng: _cameraPosition!.target
-                      );
-                      latitude = _cameraPosition!.target.latitude;
-                      longitude = _cameraPosition!.target.longitude;
-                    },
-                    onTap: (latLng) {
-                      // Optional: Tap logic if needed, but center pin is primary
-                    },
-                  ),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 40),
-                      child: Icon(
-                        Icons.location_on,
-                        size: 45,
-                        color: context.color.territoryColor,
+                    : GoogleMap(
+                        initialCameraPosition: _cameraPosition!,
+                        onMapCreated: _onMapCreated,
+                        // markers: _markers, // No markers for center pin mode
+                        markers: {},
+                        myLocationButtonEnabled: false,
+                        myLocationEnabled: true,
+                        zoomControlsEnabled: true,
+                        mapToolbarEnabled: false,
+                        onCameraMove: (position) {
+                          _cameraPosition = position;
+                        },
+                        onCameraIdle: () {
+                          getLocationFromLatitudeLongitude(
+                              latLng: _cameraPosition!.target);
+                          latitude = _cameraPosition!.target.latitude;
+                          longitude = _cameraPosition!.target.longitude;
+                        },
+                        onTap: (latLng) {
+                          // Optional: Tap logic if needed, but center pin is primary
+                        },
                       ),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 40),
+                    child: Icon(
+                      Icons.location_on,
+                      size: 45,
+                      color: context.color.territoryColor,
                     ),
                   ),
+                ),
                 Positioned(
                     top: 20,
                     left: 20,
@@ -337,18 +340,19 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
-                                color: context.color.borderColor.withOpacity(0.3),
+                                color:
+                                    context.color.borderColor.withOpacity(0.3),
                                 blurRadius: 10,
-                                offset: const Offset(0, 5)
-                            )
-                          ]
-                      ),
+                                offset: const Offset(0, 5))
+                          ]),
                       child: TextField(
                         controller: searchController,
                         focusNode: searchFocusNode,
                         onChanged: (query) {
-                          if (_searchDebounce?.isActive ?? false) _searchDebounce!.cancel();
-                          _searchDebounce = Timer(const Duration(milliseconds: 1000), () {
+                          if (_searchDebounce?.isActive ?? false)
+                            _searchDebounce!.cancel();
+                          _searchDebounce =
+                              Timer(const Duration(milliseconds: 1000), () {
                             _searchLocation(query);
                           });
                         },
@@ -356,14 +360,15 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                         onSubmitted: _searchLocation,
                         decoration: InputDecoration(
                             hintText: "Search",
-                            hintStyle: TextStyle(color: context.color.textLightColor),
+                            hintStyle:
+                                TextStyle(color: context.color.textLightColor),
                             border: InputBorder.none,
-                            prefixIcon: Icon(Icons.location_on_outlined, color: context.color.territoryColor),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 14)
-                        ),
+                            prefixIcon: Icon(Icons.location_on_outlined,
+                                color: context.color.territoryColor),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 14)),
                       ),
-                    )
-                ),
+                    )),
               ],
             ),
           ),
@@ -407,17 +412,17 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                     print("Coordinates: $latitude, $longitude");
 
                     if (from == "addItem") {
-                       if (formatedAddress != null) {
-                         Navigator.pop(context, {
-                           "area_id": formatedAddress!.areaId,
-                           "area": formatedAddress!.area,
-                           "city": formatedAddress!.city,
-                           "state": formatedAddress!.state,
-                           "country": formatedAddress!.country,
-                           "latitude": latitude,
-                           "longitude": longitude,
-                         });
-                       }
+                      if (formatedAddress != null) {
+                        Navigator.pop(context, {
+                          "area_id": formatedAddress!.areaId,
+                          "area": formatedAddress!.area,
+                          "city": formatedAddress!.city,
+                          "state": formatedAddress!.state,
+                          "country": formatedAddress!.country,
+                          "latitude": latitude,
+                          "longitude": longitude,
+                        });
+                      }
                     } else if (formatedAddress != null) {
                       HiveUtils.setLocation(
                           city: formatedAddress!.city,
@@ -439,7 +444,8 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                   },
                   buttonTitle: "Apply",
                   textColor: Colors.white,
-                  buttonColor: context.color.territoryColor, // Matching image red color
+                  buttonColor:
+                      context.color.territoryColor, // Matching image red color
                   radius: 8,
                 ),
               ],
@@ -458,5 +464,6 @@ class AddressComponent {
   final String? state;
   final String? country;
 
-  AddressComponent({this.area, this.areaId, this.city, this.state, this.country});
+  AddressComponent(
+      {this.area, this.areaId, this.city, this.state, this.country});
 }

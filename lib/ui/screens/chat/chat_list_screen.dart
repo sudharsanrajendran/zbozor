@@ -2,24 +2,20 @@ import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/chat/blocked_users_list_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/get_buyer_chat_users_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/get_seller_chat_users_cubit.dart';
-import 'package:Ebozor/data/cubits/chat/unblock_user_cubit.dart';
 import 'package:Ebozor/data/model/chat/chated_user_model.dart';
 import 'package:Ebozor/ui/screens/chat/chatTile.dart' show ChatTile;
-import 'package:Ebozor/ui/screens/home/home_screen.dart';
 import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
-import 'package:Ebozor/ui/screens/widgets/blurred_dialoge_box.dart';
-import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
-import 'package:Ebozor/ui/screens/widgets/shimmerLoadingContainer.dart' show CustomShimmer;
+import 'package:Ebozor/ui/screens/widgets/shimmerLoadingContainer.dart'
+    show CustomShimmer;
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/utils/app_icon.dart';
-import 'package:Ebozor/utils/extensions/lib/build_context.dart' show CustomContext;
-import 'package:Ebozor/utils/extensions/lib/textWidgetExtention.dart';
+import 'package:Ebozor/utils/extensions/lib/build_context.dart'
+    show CustomContext;
 import 'package:Ebozor/utils/extensions/lib/translate.dart';
-import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -153,10 +149,12 @@ class _ChatListScreenState extends State<ChatListScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
-         // color: isSelected ? context.color.textLightColor : Colors.transparent,
+          // color: isSelected ? context.color.textLightColor : Colors.transparent,
           borderRadius: BorderRadius.circular(5),
           border: Border.all(
-            color: isSelected ? context.color.textColorDark : context.color.borderColor,
+            color: isSelected
+                ? context.color.textColorDark
+                : context.color.borderColor,
           ),
         ),
         child: Text(
@@ -244,13 +242,13 @@ class _ChatListScreenState extends State<ChatListScreen>
                                     chatedUser.item!.price != null
                                 ? chatedUser.item!.price!
                                 : 0.0,
-                            itemAmount: chatedUser.amount??null,
+                            itemAmount: chatedUser.amount ?? null,
                             status: chatedUser.item != null &&
                                     chatedUser.item!.status != null
                                 ? chatedUser.item!.status!
                                 : null,
                             buyerId: chatedUser.buyerId.toString(),
-                            isPurchased: chatedUser.item!.isPurchased??0,
+                            isPurchased: chatedUser.item!.isPurchased ?? 0,
                             alreadyReview:
                                 chatedUser.item!.review == null ? false : true,
                           ),
@@ -335,7 +333,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                                     chatedUser.item!.price != null
                                 ? chatedUser.item!.price!
                                 : 0,
-                            itemAmount: chatedUser.amount??null,
+                            itemAmount: chatedUser.amount ?? null,
                             status: chatedUser.item != null &&
                                     chatedUser.item!.status != null
                                 ? chatedUser.item!.status!

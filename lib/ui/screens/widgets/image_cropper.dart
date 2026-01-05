@@ -19,9 +19,10 @@ class CropImage {
     }
 
     // Force system UI to be visible to prevent safe area overlap
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: _context!.color.territoryColor,
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.black,
       statusBarIconBrightness: Brightness.light,
     ));
 
@@ -31,7 +32,7 @@ class CropImage {
         AndroidUiSettings(
           toolbarTitle: 'Cropper',
           toolbarColor: _context!.color.territoryColor,
-          statusBarColor: _context!.color.territoryColor,
+          statusBarColor: Colors.black, // Set to black to avoid overlap/merging
           toolbarWidgetColor: Colors.white,
           hideBottomControls: false,
           activeControlsWidgetColor: _context!.color.territoryColor,

@@ -254,7 +254,7 @@ class HelperUtils {
     return mobileNumber;
   }
 
-  static showSnackBarMessage(BuildContext? context, String message,
+  static Future<void> showSnackBarMessage(BuildContext? context, String message,
       {int messageDuration = 3,
       MessageType? type,
       bool? isFloating,
@@ -326,12 +326,12 @@ class HelperUtils {
     return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) + suffixes[i];
   }
 
-  static killPreviousPages(BuildContext context, var nextpage, var args) {
+  static void killPreviousPages(BuildContext context, var nextpage, var args) {
     Navigator.of(context)
         .pushNamedAndRemoveUntil(nextpage, (route) => false, arguments: args);
   }
 
-  static goToNextPage(var nextpage, BuildContext bcontext, bool isreplace,
+  static void goToNextPage(var nextpage, BuildContext bcontext, bool isreplace,
       {Map? args}) {
     if (isreplace) {
       Navigator.of(bcontext).pushReplacementNamed(nextpage, arguments: args);

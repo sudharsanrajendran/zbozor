@@ -1,13 +1,9 @@
-
 import 'dart:async';
 import 'package:Ebozor/app/app_theme.dart';
 import 'package:Ebozor/app/routes.dart';
-import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
-import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
 import 'package:Ebozor/data/cubits/system/app_theme_cubit.dart';
 import 'package:Ebozor/data/model/location/statesModel.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
-import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,8 +11,6 @@ import 'package:shimmer/shimmer.dart';
 
 import 'package:Ebozor/utils/ApiService/api.dart';
 
-import 'package:Ebozor/utils/helper_utils.dart';
-import 'package:Ebozor/data/cubits/location/fetch_cities_cubit.dart';
 import 'package:Ebozor/data/cubits/location/fetch_states_cubit.dart';
 
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
@@ -126,7 +120,7 @@ class StatesScreenState extends State<StatesScreen> {
   PreferredSizeWidget appBarWidget() {
     return AppBar(
       systemOverlayStyle:
-      SystemUiOverlayStyle(statusBarColor: context.color.backgroundColor),
+          SystemUiOverlayStyle(statusBarColor: context.color.backgroundColor),
       bottom: PreferredSize(
           preferredSize: Size.fromHeight(58.rh(context)),
           child: Container(
@@ -137,7 +131,7 @@ class StatesScreenState extends State<StatesScreen> {
               decoration: BoxDecoration(
                   border: Border.all(
                       width: context.watch<AppThemeCubit>().state.appTheme ==
-                          AppTheme.dark
+                              AppTheme.dark
                           ? 0
                           : 1,
                       color: context.color.borderColor.darken(30)),
@@ -150,15 +144,15 @@ class StatesScreenState extends State<StatesScreen> {
                     //OutlineInputBorder()
                     fillColor: Theme.of(context).colorScheme.secondaryColor,
                     hintText:
-                    "${"search".translate(context)}\t${"state".translate(context)}",
+                        "${"search".translate(context)}\t${"state".translate(context)}",
                     prefixIcon: setSearchIcon(),
                     prefixIconConstraints:
-                    const BoxConstraints(minHeight: 5, minWidth: 5),
+                        const BoxConstraints(minHeight: 5, minWidth: 5),
                   ),
                   enableSuggestions: true,
                   onEditingComplete: () {
                     setState(
-                          () {
+                      () {
                         isFocused = false;
                       },
                     );
@@ -193,9 +187,9 @@ class StatesScreenState extends State<StatesScreen> {
                   textDirection: Directionality.of(context),
                   child: RotatedBox(
                     quarterTurns:
-                    Directionality.of(context) == TextDirection.rtl
-                        ? 2
-                        : -4,
+                        Directionality.of(context) == TextDirection.rtl
+                            ? 2
+                            : -4,
                     child: UiUtils.getSvg(AppIcons.arrowLeft,
                         fit: BoxFit.none,
                         color: context.color.textDefaultColor),
@@ -209,9 +203,9 @@ class StatesScreenState extends State<StatesScreen> {
           ? 0
           : 6,
       shadowColor:
-      context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
-          ? null
-          : context.color.textDefaultColor.withOpacity(0.2),
+          context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
+              ? null
+              : context.color.textDefaultColor.withOpacity(0.2),
       backgroundColor: context.color.backgroundColor,
     );
   }
@@ -239,7 +233,7 @@ class StatesScreenState extends State<StatesScreen> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 border:
-                Border.all(color: context.color.borderColor.darken(30))),
+                    Border.all(color: context.color.borderColor.darken(30))),
           ),
         );
       },
@@ -276,9 +270,9 @@ class StatesScreenState extends State<StatesScreen> {
                 child: NoInternet(
                   onRetry: () {
                     context.read<FetchStatesCubit>().fetchStates(
-                      search: searchController.text,
-                      countryId: widget.countryId,
-                    );
+                          search: searchController.text,
+                          countryId: widget.countryId,
+                        );
                   },
                 ),
               );
@@ -293,9 +287,9 @@ class StatesScreenState extends State<StatesScreen> {
               child: NoDataFound(
                 onTap: () {
                   context.read<FetchStatesCubit>().fetchStates(
-                    search: searchController.text,
-                    countryId: widget.countryId,
-                  );
+                        search: searchController.text,
+                        countryId: widget.countryId,
+                      );
                 },
               ),
             );
@@ -314,15 +308,15 @@ class StatesScreenState extends State<StatesScreen> {
                     /// ---------- HEADER (UNCHANGED) ----------
                     widget.from == "addItem"
                         ? Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 18),
-                      child: Text(
-                        "${"chooseLbl".translate(context)} ${"state".translate(context)}",
-                      )
-                          .color(context.color.textDefaultColor)
-                          .size(context.font.normal)
-                          .bold(weight: FontWeight.w600),
-                    )
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 18, vertical: 18),
+                            child: Text(
+                              "${"chooseLbl".translate(context)} ${"state".translate(context)}",
+                            )
+                                .color(context.color.textDefaultColor)
+                                .size(context.font.normal)
+                                .bold(weight: FontWeight.w600),
+                          )
                         : SizedBox.shrink(),
 
                     /// ---------- POPULAR SEARCHES TITLE ----------
@@ -332,8 +326,7 @@ class StatesScreenState extends State<StatesScreen> {
                       child: Row(
                         children: [
                           Icon(Icons.trending_up,
-                              size: 18,
-                              color: context.color.textDefaultColor),
+                              size: 18, color: context.color.textDefaultColor),
                           const SizedBox(width: 6),
                           Text(
                             "All States".translate(context),
@@ -364,17 +357,23 @@ class StatesScreenState extends State<StatesScreen> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 14, vertical: 8),
                               decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: isSelected ? context.color.territoryColor : context.color.borderColor,
+                                  color: isSelected
+                                      ? context.color.territoryColor
+                                      : context.color.borderColor,
                                 ),
-                                color: isSelected ? context.color.territoryColor.withOpacity(0.1) : context.color.secondaryColor,
+                                color: isSelected
+                                    ? context.color.territoryColor
+                                        .withOpacity(0.1)
+                                    : context.color.secondaryColor,
                               ),
                               child: Text(
                                 states.name!,
                               )
-                                  .color(isSelected ? context.color.territoryColor : context.color.textDefaultColor)
+                                  .color(isSelected
+                                      ? context.color.territoryColor
+                                      : context.color.textDefaultColor)
                                   .size(context.font.small),
                             ),
                           );
@@ -387,8 +386,7 @@ class StatesScreenState extends State<StatesScreen> {
                         padding: const EdgeInsets.all(16),
                         child: Center(
                           child: UiUtils.progress(
-                            normalProgressColor:
-                            context.color.territoryColor,
+                            normalProgressColor: context.color.territoryColor,
                           ),
                         ),
                       ),
@@ -443,7 +441,9 @@ class StatesScreenState extends State<StatesScreen> {
             },
             buttonTitle: "continue".translate(context),
             textColor: Colors.white,
-            buttonColor: selectedState != null ? context.color.territoryColor : context.color.textLightColor,
+            buttonColor: selectedState != null
+                ? context.color.territoryColor
+                : context.color.textLightColor,
             radius: 8,
             disabled: selectedState == null,
           ),
@@ -451,7 +451,6 @@ class StatesScreenState extends State<StatesScreen> {
       ),
     );
   }
-
 
   Widget setSearchIcon() {
     return Padding(

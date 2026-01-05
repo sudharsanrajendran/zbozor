@@ -4,7 +4,6 @@ import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
-import 'package:Ebozor/utils/sliver_grid_delegate_with_fixed_cross_axis_count_and_fixed_height.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/data/model/category_model.dart';
 
@@ -20,7 +19,6 @@ import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
-import 'package:Ebozor/ui/screens/item/add_item_screen/widgets/category.dart';
 
 int screenStack = 0;
 
@@ -108,26 +106,27 @@ class _SelectCategoryScreenState extends CloudState<SelectCategoryScreen> {
                           "Choose the category that your ad fits into",
                           style: TextStyle(
                             fontSize: 14,
-                            color: context.color.textDefaultColor.withOpacity(0.7),
+                            color:
+                                context.color.textDefaultColor.withOpacity(0.7),
                           ),
                         ),
                       ),
                       const SizedBox(height: 25),
-                      
                       GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           mainAxisSpacing: 15,
                           crossAxisSpacing: 15,
-                          childAspectRatio: 1.0, 
+                          childAspectRatio: 1.0,
                         ),
                         itemBuilder: (context, index) {
                           CategoryModel category = state.categories[index];
 
                           return GestureDetector(
-                             onTap: () {
+                            onTap: () {
                               if (category.children!.isEmpty &&
                                   category.subcategoriesCount == 0) {
                                 if (TouchManager.canProcessTouch()) {
@@ -171,54 +170,55 @@ class _SelectCategoryScreenState extends CloudState<SelectCategoryScreen> {
                                 }
                               }
                             },
-                             child: Container(
-                                decoration: BoxDecoration(
-                                  color: context.color.secondaryColor, // Assuming secondaryColor is white/card bg
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: context.color
+                                      .secondaryColor, // Assuming secondaryColor is white/card bg
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: context.color.borderColor.withOpacity(0.5),
+                                    color: context.color.borderColor
+                                        .withOpacity(0.5),
                                     width: 1,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.03),
-                                      blurRadius: 5,
-                                      spreadRadius: 1,
-                                      offset: const Offset(0, 2)
-                                    )
-                                  ]
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      height: 35,
-                                      width: 35,
-                                      child: UiUtils.imageType(
-                                        category.url ?? "",
-                                        color: context.color.territoryColor, // Red/Primary Color
-                                        fit: BoxFit.contain,
-                                      ),
+                                        color: Colors.black.withOpacity(0.03),
+                                        blurRadius: 5,
+                                        spreadRadius: 1,
+                                        offset: const Offset(0, 2))
+                                  ]),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 35,
+                                    width: 35,
+                                    child: UiUtils.imageType(
+                                      category.url ?? "",
+                                      color: context.color
+                                          .territoryColor, // Red/Primary Color
+                                      fit: BoxFit.contain,
                                     ),
-                                    const SizedBox(height: 12),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                                      child: Text(
-                                        category.name ?? "",
-                                        textAlign: TextAlign.center,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 4),
+                                    child: Text(
+                                      category.name ?? "",
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
                                           color: context.color.textColorDark,
-                                          height: 1.2
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                             ),
+                                          height: 1.2),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                           );
                         },
                         itemCount: state.categories.length,

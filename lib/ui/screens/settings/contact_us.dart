@@ -123,7 +123,7 @@ class ContactUsState extends State<ContactUs> {
     );
   }
 
-  showEmailDialoge(email) {
+  void showEmailDialoge(email) {
     Navigator.push(
         context,
         BlurredRouter(

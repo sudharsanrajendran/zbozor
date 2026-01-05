@@ -1,7 +1,7 @@
 import 'package:Ebozor/data/cubits/category/fetch_sub_categories_cubit.dart';
 import 'package:Ebozor/ui/screens/home/widgets/location_widget.dart';
 import 'package:Ebozor/data/model/category_model.dart';
-import 'package:Ebozor/ui/screens/main_activity.dart';
+
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
@@ -9,11 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/utils/constant.dart';
-import 'package:Ebozor/utils/app_icon.dart';
+
 import 'package:flutter/services.dart'; // For TextInputFormatter
 
 class PropertyFilterScreen extends StatefulWidget {
-  final List<CategoryModel> categoryList; // Expecting [Rent, Sale]
+  final List<CategoryModel> categoryList;
   final String catName;
   final int catId;
   final List<String> categoryIds;
@@ -33,7 +33,8 @@ class PropertyFilterScreen extends StatefulWidget {
 class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   int _selectedTabIndex = 0; // 0 for Rent, 1 for Sale (assuming order)
   CategoryModel? _selectedPropertyType; // e.g. Residential
-  final List<CategoryModel> _subCategoryPath = []; // Dynamic path: [Apartment, 1 Room, ...]
+  final List<CategoryModel> _subCategoryPath =
+      []; // Dynamic path: [Apartment, 1 Room, ...]
 
   // We need a separate cubit to fetch children of the selected property type (e.g. Residential -> Apartments)
   late final FetchSubCategoriesCubit _subCategoryCubit;
@@ -44,14 +45,14 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   // Filter State
   TextEditingController minController = TextEditingController();
   TextEditingController maxController = TextEditingController();
-  RangeValues _priceRangeValues = const RangeValues(0, 1000000); // 0 to 1M default
+  RangeValues _priceRangeValues =
+      const RangeValues(0, 1000000); // 0 to 1M default
   String postedOn = Constant.postedSince[0].value; // Default "All Time"
 
   @override
   void initState() {
     super.initState();
 
-    
     _subCategoryCubit = FetchSubCategoriesCubit();
     _propertyTypesCubit = FetchSubCategoriesCubit();
     // Default selection logic
@@ -76,7 +77,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         _onPropertyTypeSelected(firstTabCategory.children!.first);
       } else {
         // If even the first tab is empty, fetch it
-        _propertyTypesCubit.fetchSubCategories(categoryId: firstTabCategory.id!);
+        _propertyTypesCubit.fetchSubCategories(
+            categoryId: firstTabCategory.id!);
       }
     }
   }
@@ -84,15 +86,13 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 // ... (skipping lines)
 
   void _onPropertyTypeSelected(CategoryModel propertyType) {
-    
     setState(() {
       _selectedPropertyType = propertyType;
       _subCategoryPath.clear(); // Reset all subcategories
     });
 
     // If this property type has children already loaded, we don't need to fetch.
-    if (propertyType.children != null &&
-        propertyType.children!.isNotEmpty) {
+    if (propertyType.children != null && propertyType.children!.isNotEmpty) {
       // Children already available
     } else {
       // Check if it's supposed to have children?
@@ -147,6 +147,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
           child: Column(
             children: [
               _buildTabs(),
+
+              ///////body of the tabs
               const Divider(thickness: 1, height: 1),
               Expanded(
                 child: SingleChildScrollView(
@@ -155,6 +157,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildLocationSection(),
+                      const SizedBox(height: 24),
+                      _buildPriceRangeSection(),
                       const SizedBox(height: 24),
                       _buildPropertyTypes(),
                       if (_selectedPropertyType != null) ...[
@@ -175,16 +179,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     );
   }
 
-
-
-
-
-
-
-
-
-
-
   ///
   ///
   ///
@@ -204,13 +198,15 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                 setState(() {
                   _selectedTabIndex = index;
                   // Reset lower selections when switching tabs
-                  if (category.children != null && category.children!.isNotEmpty) {
+                  if (category.children != null &&
+                      category.children!.isNotEmpty) {
                     _onPropertyTypeSelected(category.children!.first);
                   } else {
                     _selectedPropertyType = null;
                     _subCategoryPath.clear();
                     // Fetch if empty
-                    _propertyTypesCubit.fetchSubCategories(categoryId: category.id!);
+                    _propertyTypesCubit.fetchSubCategories(
+                        categoryId: category.id!);
                   }
                 });
               },
@@ -219,8 +215,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                 decoration: BoxDecoration(
                   border: isSelected
                       ? Border(
-                      bottom: BorderSide(
-                          color: context.color.territoryColor, width: 2))
+                          bottom: BorderSide(
+                              color: context.color.territoryColor, width: 2))
                       : null,
                 ),
                 child: Text(
@@ -231,7 +227,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         ? context.color.territoryColor
                         : context.color.textDefaultColor,
                     fontWeight:
-                    isSelected ? FontWeight.bold : FontWeight.normal,
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                     fontSize: 14,
                   ),
                 ),
@@ -288,7 +284,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       child: BlocBuilder<FetchSubCategoriesCubit, FetchSubCategoriesState>(
         builder: (context, state) {
           if (state is FetchSubCategoriesInProgress) {
-            return Center(child: Padding(
+            return Center(
+                child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: UiUtils.progress(),
             ));
@@ -303,7 +300,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       ),
     );
   }
-
 
   //PRPERTY TYPE
   Widget _buildPropertyTypesList(List<CategoryModel> propertyTypes) {
@@ -352,7 +348,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                           width: 30,
                           child: UiUtils.imageType(
                             subCat.url ?? "",
-                                color: isSelected
+                            color: isSelected
                                 ? context.color.textDefaultColor
                                 : context.color.textDefaultColor,
                             fit: BoxFit.contain,
@@ -374,8 +370,9 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                               color: isSelected
                                   ? context.color.textDefaultColor
                                   : context.color.textDefaultColor,
-                              fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
                               height: 1.2, // 🔥 line height control
                             ),
                           ),
@@ -383,7 +380,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                       ],
                     ),
                   ),
-
                 ),
               );
             }).toList(),
@@ -398,7 +394,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     if (_selectedPropertyType?.children != null &&
         _selectedPropertyType!.children!.isNotEmpty) {
       // Pass Level 0 to identify this is the first level of dynamic categories
-      return _buildDynamicSubCategoryChips(0, _selectedPropertyType!.children!); 
+      return _buildDynamicSubCategoryChips(0, _selectedPropertyType!.children!);
     }
 
     // Otherwise use BlocBuilder to listen to fetched children
@@ -426,29 +422,32 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   /// Level 1 (if Level 0 selected) -> Level 2 (if Level 1 selected) -> ...
   List<Widget> _buildDynamicCategoryLevels() {
     List<Widget> levels = [];
-    
+
     // Iterate through the CURRENT path to show the NEXT level for each selection
     for (int i = 0; i < _subCategoryPath.length; i++) {
       CategoryModel currentSelection = _subCategoryPath[i];
-      if (currentSelection.children != null && currentSelection.children!.isNotEmpty) {
+      if (currentSelection.children != null &&
+          currentSelection.children!.isNotEmpty) {
         levels.add(const SizedBox(height: 24));
         // The children of path[i] constitute level i+1
-        levels.add(_buildDynamicSubCategoryChips(i + 1, currentSelection.children!));
+        levels.add(
+            _buildDynamicSubCategoryChips(i + 1, currentSelection.children!));
       }
     }
     return levels;
   }
 
   /// Generic widget to build a row of chips for a specific level
-  Widget _buildDynamicSubCategoryChips(int levelIndex, List<CategoryModel> subCats) {
+  Widget _buildDynamicSubCategoryChips(
+      int levelIndex, List<CategoryModel> subCats) {
     // Determine which item is currently selected at this level (if any)
     CategoryModel? currentlySelectedAtThisLevel;
     if (_subCategoryPath.length > levelIndex) {
       currentlySelectedAtThisLevel = _subCategoryPath[levelIndex];
     }
-    
-    // Title logic: 
-    // If level 0, use PropertyType name. 
+
+    // Title logic:
+    // If level 0, use PropertyType name.
     // If level > 0, use the name of the parent (which is at levelIndex - 1)
     String titleName = "";
     if (levelIndex == 0) {
@@ -470,7 +469,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "$titleName $suffix", 
+          "$titleName $suffix",
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -478,7 +477,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
           ),
         ),
         const SizedBox(height: 12),
-
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
@@ -497,7 +495,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   ),
 
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5), 
+                    borderRadius: BorderRadius.circular(5),
                   ),
                   labelStyle: TextStyle(
                     color: context.color.textDefaultColor,
@@ -505,7 +503,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   // 🔥 CORE SELECTION LOGIC
                   onPressed: () {
                     setState(() {
-                      // 1. If we are changing a selection at an existing level, 
+                      // 1. If we are changing a selection at an existing level,
                       // discard everything deeper than this level.
                       if (_subCategoryPath.length > levelIndex) {
                         // We are re-selecting at this level.
@@ -514,9 +512,10 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         // Path becomes [D].
                         // e.g. Path [A, B, C]. User clicks E at level 1 (replacing B).
                         // Path becomes [A, E].
-                        _subCategoryPath.removeRange(levelIndex, _subCategoryPath.length);
+                        _subCategoryPath.removeRange(
+                            levelIndex, _subCategoryPath.length);
                       }
-                      
+
                       // 2. Add the new selection
                       _subCategoryPath.add(child);
                     });
@@ -525,6 +524,58 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
               );
             }).toList(),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPriceRangeSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Price Range",
+          style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: context.color.textDefaultColor),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "${_priceRangeValues.start.round()}",
+              style: TextStyle(
+                  color: context.color.textDefaultColor,
+                  fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "${_priceRangeValues.end.round()}",
+              style: TextStyle(
+                  color: context.color.textDefaultColor,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        RangeSlider(
+          values: _priceRangeValues,
+          min: 0,
+          max: 1000000,
+          divisions: 1000,
+          activeColor: context.color.territoryColor,
+          inactiveColor: context.color.textDefaultColor.withOpacity(0.1),
+          labels: RangeLabels(
+            _priceRangeValues.start.round().toString(),
+            _priceRangeValues.end.round().toString(),
+          ),
+          onChanged: (RangeValues values) {
+            setState(() {
+              _priceRangeValues = values;
+              minController.text = values.start.round().toString();
+              maxController.text = values.end.round().toString();
+            });
+          },
         ),
       ],
     );
@@ -543,7 +594,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Text(
           "Show Results",
-          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -561,7 +613,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       accumulatedIds.add(_selectedPropertyType!.id.toString());
       accumulatedModels.add(_selectedPropertyType!);
     }
-    
+
     // Add all dynamically selected sub, nested, etc. categories
     for (var cat in _subCategoryPath) {
       accumulatedIds.add(cat.id.toString());
@@ -572,7 +624,9 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     if (_subCategoryPath.isNotEmpty) {
       targetCat = _subCategoryPath.last;
     } else {
-      targetCat = _selectedPropertyType ?? _currentTabCategory ?? widget.categoryList[0];
+      targetCat = _selectedPropertyType ??
+          _currentTabCategory ??
+          widget.categoryList[0];
     }
 
     Navigator.pushNamed(context, Routes.itemsList, arguments: {

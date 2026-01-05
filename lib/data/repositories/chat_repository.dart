@@ -1,12 +1,9 @@
-
 import 'package:dio/dio.dart';
 import 'package:Ebozor/data/model/chat/chated_user_model.dart';
 import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/ui/screens/chat/chat_audio/widgets/chat_widget.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-
 
 class ChatRepostiory {
   BuildContext? _setContext;
@@ -89,7 +86,6 @@ class ChatRepostiory {
       required String message,
       MultipartFile? audio,
       MultipartFile? attachment}) async {
-
     Map<String, dynamic> parameters = {
       "item_offer_id": itemOfferId,
     };
@@ -106,10 +102,8 @@ class ChatRepostiory {
     }
 
     print("/////////////// send message param");
-     print(parameters);
+    print(parameters);
     print("///////////////");
-
-
 
     // Logger.error(parameters, name: "CHAT PARAMS");
     Map<String, dynamic> map =
@@ -142,19 +136,15 @@ class ChatRepostiory {
     Map<String, dynamic> map =
         await Api.post(url: Api.unBlockUserApi, parameter: parameters);
 
-
     return map;
   }
 
-
   Future<DataOutput<BlockedUserModel>> blockedUsersListApi() async {
-
-    Map<String, dynamic> response = await Api.get(
-        url: Api.blockedUsersListApi,
-        queryParameters: {});
+    Map<String, dynamic> response =
+        await Api.get(url: Api.blockedUsersListApi, queryParameters: {});
 
     List<BlockedUserModel> modelList = (response['data'] as List).map(
-          (e) {
+      (e) {
         return BlockedUserModel.fromJson(e);
       },
     ).toList();

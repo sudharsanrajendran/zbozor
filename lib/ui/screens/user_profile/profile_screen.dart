@@ -1120,7 +1120,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     height: 40,
                     width: 30,
                     child: CupertinoSwitch(
-                      activeColor: context.color.territoryColor,
+                      activeTrackColor: context.color.territoryColor,
                       value: switchValue ?? false,
                       onChanged: (value) {
                         onTapSwitch?.call(value);
@@ -1151,7 +1151,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  deleteConfirmWidget() {
+  void deleteConfirmWidget() {
     UiUtils.showBlurredDialoge(
       context,
       dialoge: BlurredDialogBox(
@@ -1204,7 +1204,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  askToLoginAgain() {
+  void askToLoginAgain() {
     HelperUtils.showSnackBarMessage(context, 'loginReqMsg'.translate(context));
     HiveUtils.clear();
     Constant.favoriteItemList.clear();
@@ -1229,7 +1229,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
-  proceedToDeleteProfile() async {
+  Future<void> proceedToDeleteProfile() async {
     //delete user from firebase
     try {
       await _auth.currentUser!.delete().then((value) {

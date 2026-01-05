@@ -57,7 +57,6 @@ class FetchMyItemsCubit extends Cubit<FetchMyItemsState> {
 
   void fetchMyItems({String? getItemsWithStatus}) async {
     try {
-
       emit(FetchMyItemsInProgress());
       DataOutput<ItemModel> result = await _itemRepository.fetchMyItems(
         page: 1,
@@ -91,11 +90,10 @@ class FetchMyItemsCubit extends Cubit<FetchMyItemsState> {
       items.removeWhere(((element) => (element.id == model.id)));
 
       emit((state as FetchMyItemsSuccess).copyWith(items: items));
-
     }
   }
 
-  edit(ItemModel item) {
+  void edit(ItemModel item) {
     if (state is FetchMyItemsSuccess) {
       List<ItemModel> items = (state as FetchMyItemsSuccess).items;
       int index = items.indexWhere((element) => element.id == item.id);
@@ -105,8 +103,6 @@ class FetchMyItemsCubit extends Cubit<FetchMyItemsState> {
       }
     }
   }
-
-
 
   Future<void> fetchMyMoreItems({String? getItemsWithStatus}) async {
     try {
@@ -129,8 +125,7 @@ class FetchMyItemsCubit extends Cubit<FetchMyItemsState> {
             hasError: false,
             items: myItemsState.items,
             page: (state as FetchMyItemsSuccess).page + 1,
-            getItemsWithStatus:
-                getItemsWithStatus,
+            getItemsWithStatus: getItemsWithStatus,
             total: result.total,
           ),
         );

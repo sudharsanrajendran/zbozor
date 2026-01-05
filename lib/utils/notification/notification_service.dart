@@ -38,7 +38,7 @@ class NotificationService {
   static late StreamSubscription<RemoteMessage> foregroundStream;
   static late StreamSubscription<RemoteMessage> onMessageOpen;
 
-  static requestPermission() async {}
+  static Future<void> requestPermission() async {}
 
 /*  static int? getPrice(dynamic price) {
     if (price == null || price.toString().trim().isEmpty) {
@@ -77,9 +77,9 @@ class NotificationService {
     //     useAuthToken: true);
   }*/
 
-
   //chat notification
-  static handleNotification(RemoteMessage? message, [BuildContext? context]) {
+  static void handleNotification(RemoteMessage? message,
+      [BuildContext? context]) {
     var notificationType = message?.data['type'] ?? "";
 
     print("@notificaiton data is ${message?.data}****${notificationType}");
@@ -187,7 +187,7 @@ class NotificationService {
     }
   }
 
-  static init(context) {
+  static void init(context) {
     requestPermission();
     registerListeners(context);
   }
@@ -198,7 +198,7 @@ class NotificationService {
     handleNotification(message);
   }
 
-  static forgroundNotificationHandler(BuildContext context) async {
+  static Future<void> forgroundNotificationHandler(BuildContext context) async {
     foregroundStream =
         FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print("foreground notification***${message.toString()}");
@@ -206,17 +206,16 @@ class NotificationService {
     });
   }
 
-  static terminatedStateNotificationHandler(BuildContext context) {
-    FirebaseMessaging.instance.getInitialMessage().then(
-      (RemoteMessage? message) {
-        if (message == null) {
-          return;
-        }
-        if (message.notification == null) {
-          handleNotification(message, context);
-        }
-      },
-    );
+  static Future<void> terminatedStateNotificationHandler(
+      BuildContext context) async {
+    final RemoteMessage? message =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (message == null) {
+      return;
+    }
+    if (message.notification == null) {
+      handleNotification(message, context);
+    }
   }
 
   static void onTapNotificationHandler(context) {

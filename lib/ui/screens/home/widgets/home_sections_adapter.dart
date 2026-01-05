@@ -5,7 +5,6 @@ import 'package:Ebozor/ui/screens/home/home_screen.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
-import 'package:Ebozor/utils/responsiveSize.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/data/repositories/favourites_repository.dart';
 import 'package:Ebozor/data/cubits/favorite/manage_fav_cubit.dart';
@@ -18,7 +17,6 @@ import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/data/cubits/favorite/favorite_cubit.dart';
 import 'package:Ebozor/data/model/home/home_screen_section.dart';
 
-import 'package:Ebozor/ui/screens/widgets/promoted_widget.dart';
 import 'package:Ebozor/ui/screens/home/widgets/grid_list_adapter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -82,6 +80,7 @@ class ItemCard extends StatefulWidget {
   @override
   State<ItemCard> createState() => _ItemCardState();
 }
+
 class _ItemCardState extends State<ItemCard> {
   final double likeButtonSize = 24;
   final double imageHeight = 130;
@@ -145,7 +144,7 @@ class _ItemCardState extends State<ItemCard> {
 
                       /// ITEM NAME
                       Text(widget.item?.name ?? "")
-                      .bold()
+                          .bold()
                           .firstUpperCaseWidget()
                           .setMaxLines(lines: 1)
                           .size(context.font.small),
@@ -194,29 +193,24 @@ class _ItemCardState extends State<ItemCard> {
 
   Widget _favButton() {
     bool isLike =
-    context.read<FavoriteCubit>().isItemFavorite(widget.item!.id!);
+        context.read<FavoriteCubit>().isItemFavorite(widget.item!.id!);
 
     return BlocProvider(
       create: (_) => UpdateFavoriteCubit(FavoriteRepository()),
       child: BlocConsumer<FavoriteCubit, FavoriteState>(
         bloc: context.read<FavoriteCubit>(),
         listener: (_, __) {
-          isLike = context
-              .read<FavoriteCubit>()
-              .isItemFavorite(widget.item!.id!);
+          isLike =
+              context.read<FavoriteCubit>().isItemFavorite(widget.item!.id!);
         },
         builder: (context, _) {
           return BlocConsumer<UpdateFavoriteCubit, UpdateFavoriteState>(
             listener: (context, state) {
               if (state is UpdateFavoriteSuccess) {
                 if (state.wasProcess) {
-                  context
-                      .read<FavoriteCubit>()
-                      .addFavoriteitem(state.item);
+                  context.read<FavoriteCubit>().addFavoriteitem(state.item);
                 } else {
-                  context
-                      .read<FavoriteCubit>()
-                      .removeFavoriteItem(state.item);
+                  context.read<FavoriteCubit>().removeFavoriteItem(state.item);
                 }
               }
             },
@@ -229,51 +223,48 @@ class _ItemCardState extends State<ItemCard> {
                     UiUtils.checkUser(
                       context: context,
                       onNotGuest: () {
-                        context
-                            .read<UpdateFavoriteCubit>()
-                            .setFavoriteItem(
-                          item: widget.item!,
-                          type: isLike ? 0 : 1,
-                        );
+                        context.read<UpdateFavoriteCubit>().setFavoriteItem(
+                              item: widget.item!,
+                              type: isLike ? 0 : 1,
+                            );
                       },
                     );
                   },
-                   child: Container(
-                  width: likeButtonSize,
-                  height: likeButtonSize,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: context.color.secondaryColor,
-                    boxShadow:
-                    context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
-                        ? null
-                        : [
-                      BoxShadow(
-                        color: Colors.grey.shade300,
-                        blurRadius: 3,
-                        offset: const Offset(0, 2),
-                      )
-                    ],
-                  ),
-                  child: state is UpdateFavoriteInProgress
-                      ? Center(
-                    child: SizedBox(
-                      width: 14,
-                      height: 14,
-                      child: UiUtils.progress(),
+                  child: Container(
+                    width: likeButtonSize,
+                    height: likeButtonSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: context.color.secondaryColor,
+                      boxShadow:
+                          context.watch<AppThemeCubit>().state.appTheme ==
+                                  AppTheme.dark
+                              ? null
+                              : [
+                                  BoxShadow(
+                                    color: Colors.grey.shade300,
+                                    blurRadius: 3,
+                                    offset: const Offset(0, 2),
+                                  )
+                                ],
                     ),
-                  )
-                      : Center(
-                    child: UiUtils.getSvg(
-                      isLike ? AppIcons.like_fill : AppIcons.like,
-                      width: 14,
-                      height: 14,
-                      color: context.color.territoryColor
-                    ),
+                    child: state is UpdateFavoriteInProgress
+                        ? Center(
+                            child: SizedBox(
+                              width: 14,
+                              height: 14,
+                              child: UiUtils.progress(),
+                            ),
+                          )
+                        : Center(
+                            child: UiUtils.getSvg(
+                                isLike ? AppIcons.like_fill : AppIcons.like,
+                                width: 14,
+                                height: 14,
+                                color: context.color.territoryColor),
+                          ),
                   ),
                 ),
-
-              ),
               );
             },
           );
@@ -282,7 +273,6 @@ class _ItemCardState extends State<ItemCard> {
     );
   }
 }
-
 
 class TitleHeader extends StatelessWidget {
   final String title;
@@ -320,8 +310,7 @@ class TitleHeader extends StatelessWidget {
             GestureDetector(
               onTap: onTap,
               child: Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                 child: Text("seeAll".translate(context))
                     .size(context.font.smaller + 3)
                     .color(context.color.deactivateColor),
@@ -332,5 +321,3 @@ class TitleHeader extends StatelessWidget {
     );
   }
 }
-
-

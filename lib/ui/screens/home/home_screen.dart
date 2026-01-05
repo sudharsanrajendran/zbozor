@@ -79,7 +79,6 @@ class HomeScreenState extends State<HomeScreen>
       GlobalKey<RefreshIndicatorState>();
 
   Future<void> _refreshData() async {
-
     try {
       var city = HiveUtils.getCityName();
       var areaId = HiveUtils.getAreaId();
@@ -95,15 +94,9 @@ class HomeScreenState extends State<HomeScreen>
       print("Country: $country");
       print("Lat/Lng: $latitude, $longitude");
 
-
-
-
-      context.read<FetchHomeScreenCubit>().fetch(
-          city: city,
-          areaId: areaId,
-          country: country,
-          state: state);
-
+      context
+          .read<FetchHomeScreenCubit>()
+          .fetch(city: city, areaId: areaId, country: country, state: state);
 
       context.read<FetchHomeAllItemsCubit>().fetch(
           city: city,
@@ -113,15 +106,14 @@ class HomeScreenState extends State<HomeScreen>
           latitude: latitude,
           country: country,
           state: state);
-    } catch (e, st) {
+    } catch (e) {}
 
-    }
-  
     if (HiveUtils.isUserAuthenticated()) {
       context.read<FetchNotificationsCubit>().fetchNotifications();
-      context.read<FetchVerificationRequestsCubit>().fetchVerificationRequests();
+      context
+          .read<FetchVerificationRequestsCubit>()
+          .fetchVerificationRequests();
     }
-
   }
 
   @override
@@ -142,7 +134,9 @@ class HomeScreenState extends State<HomeScreen>
       //fetchApiKeys();
       context.read<GetBuyerChatListCubit>().fetch();
       context.read<BlockedUsersListCubit>().blockedUsersList();
-      context.read<FetchVerificationRequestsCubit>().fetchVerificationRequests();
+      context
+          .read<FetchVerificationRequestsCubit>()
+          .fetchVerificationRequests();
     }
 
     _scrollController.addListener(() {
@@ -185,7 +179,7 @@ class HomeScreenState extends State<HomeScreen>
     context.read<GetApiKeysCubit>().fetch();
   }
 
- /*void pageScrollListener() {
+  /*void pageScrollListener() {
     ///This will load data on page end
     if (homeScreenController.isEndReached()) {
       if (mounted) {
@@ -205,7 +199,7 @@ class HomeScreenState extends State<HomeScreen>
 
     return SafeArea(
       child: Scaffold(
-     /*   appBar: AppBar(
+        /*   appBar: AppBar(
           elevation: 0,
           leadingWidth: double.maxFinite,
           leading: Padding(
@@ -231,7 +225,6 @@ class HomeScreenState extends State<HomeScreen>
               children: [
                 BlocBuilder<FetchHomeScreenCubit, FetchHomeScreenState>(
                   builder: (context, state) {
-
                     if (state is FetchHomeScreenInProgress) {
                       return shimmerEffect();
                     }
@@ -239,21 +232,24 @@ class HomeScreenState extends State<HomeScreen>
                       return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-     // seach widget at home scree
+                          // seach widget at home scree
                           const HomeSearchField(),
                           const SliderWidget(),
                           const CategoryWidgetHome(),
 
-                          if(HiveUtils.isUserAuthenticated())
-                            BlocBuilder<FetchVerificationRequestsCubit, FetchVerificationRequestState>(
+                          if (HiveUtils.isUserAuthenticated())
+                            BlocBuilder<FetchVerificationRequestsCubit,
+                                FetchVerificationRequestState>(
                               builder: (context, state) {
-                                bool isLocallyVerified = HiveUtils.getUserDetails().isVerified == 1;
+                                bool isLocallyVerified =
+                                    HiveUtils.getUserDetails().isVerified == 1;
                                 bool isRemotelyVerified = false;
-                                
+
                                 if (state is FetchVerificationRequestSuccess) {
-                                  isRemotelyVerified = state.data.status == "approved";
+                                  isRemotelyVerified =
+                                      state.data.status == "approved";
                                 }
-                                
+
                                 if (!isLocallyVerified && !isRemotelyVerified) {
                                   return const VerificationBanner();
                                 }
@@ -287,14 +283,13 @@ class HomeScreenState extends State<HomeScreen>
                       );
                     }
 
-                    if(state is FetchHomeScreenFail)
-                    {
+                    if (state is FetchHomeScreenFail) {
                       print('hey bro ${state.error}');
                     }
                     return SizedBox.shrink();
                   },
                 ),
-             //   const AllItemsWidget(),
+                //   const AllItemsWidget(),
                 const SizedBox(
                   height: 30,
                 )
@@ -496,7 +491,6 @@ class HomeScreenState extends State<HomeScreen>
   Widget sliderWidget() {
     return BlocConsumer<SliderCubit, SliderState>(
       listener: (context, state) {
-
         if (state is SliderFetchSuccess) {
           setState(() {});
         }
@@ -510,7 +504,6 @@ class HomeScreenState extends State<HomeScreen>
           return Container();
         }
         if (state is SliderFetchSuccess) {
-        
           if (state.sliderlist.isNotEmpty) {
             return const SliderWidget();
           }
@@ -534,7 +527,7 @@ class AllItemsWidget extends StatelessWidget {
           if (state.items.isNotEmpty) {
             return Column(
               children: [
-                Text("Recent Ads"),
+                Text("recentlyAdded".translate(context)),
                 GridListAdapter(
                   type: ListUiType.Mixed,
                   mixMode: true,
@@ -593,8 +586,6 @@ class AllItemsWidget extends StatelessWidget {
     );
   }
 }
-
-
 
 Future<void> notificationPermissionChecker() async {
   if (!(await Permission.notification.isGranted)) {

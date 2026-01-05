@@ -5,13 +5,11 @@ import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/extensions/lib/build_context.dart';
-import 'package:Ebozor/utils/extensions/lib/textWidgetExtention.dart';
 import 'package:Ebozor/utils/notification/notification_service.dart';
-import 'package:Ebozor/utils/ui_utils.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+
 class ChatTile extends StatelessWidget {
   final String profilePicture;
   final String userName;
@@ -76,7 +74,7 @@ class ChatTile extends StatelessWidget {
                   date: date,
                   itemOfferId: itemOfferId,
                   itemPrice: itemPrice,
-                  itemOfferPrice: itemAmount??null,
+                  itemOfferPrice: itemAmount ?? null,
                   status: status,
                   buyerId: buyerId,
                   alreadyReview: alreadyReview,
@@ -99,54 +97,60 @@ class ChatTile extends StatelessWidget {
               // 1. Stack for Avatar (Item Image + User Image)
               Stack(
                 children: [
-                   // Large Circle: Item/Ad Image
-                   Container(
-                     width: 50,
-                     height: 50,
-                     decoration: BoxDecoration(
-                       shape: BoxShape.circle,
-                       image: DecorationImage(
-                         image: NetworkImage(itemPicture), // Big Image = Item Image
-                         fit: BoxFit.cover,
-                         onError: (exception, stackTrace) {},
-                       ),
-                       border: Border.all(color: Colors.transparent)
-                     ),
-                     child: itemPicture.isEmpty
+                  // Large Circle: Item/Ad Image
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              itemPicture), // Big Image = Item Image
+                          fit: BoxFit.cover,
+                          onError: (exception, stackTrace) {},
+                        ),
+                        border: Border.all(color: Colors.transparent)),
+                    child: itemPicture.isEmpty
                         ? CircleAvatar(
-                             radius: 25,
-                             backgroundColor: context.color.territoryColor,
-                            child: SvgPicture.asset(AppIcons.profile, colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn))
-                          )
+                            radius: 25,
+                            backgroundColor: context.color.territoryColor,
+                            child: SvgPicture.asset(AppIcons.profile,
+                                colorFilter: ColorFilter.mode(
+                                    Colors.white, BlendMode.srcIn)))
                         : null,
-                   ),
-                   
-                   // Small Circle: User/Profile Image (Badge)
-                   Positioned(
-                     bottom: 0,
-                     right: 0,
-                     child: Container(
-                       width: 20, // Smaller size for badge
-                       height: 20,
-                       decoration: BoxDecoration(
-                         shape: BoxShape.circle,
-                         border: Border.all(color: context.color.secondaryColor, width: 1.5), // Border to separate from bg
-                         image: DecorationImage(
-                           image: NetworkImage(profilePicture), // Small Image = User Profile
-                           fit: BoxFit.cover,
-                           onError: (exception, stackTrace) {},
-                         ),
-                         color: Colors.grey[300] // Fallback color
-                       ),
-                         child: profilePicture.isEmpty ? 
-                            Icon(Icons.person, size: 12, color: Colors.grey[600]) : null,
-                     ),
-                   )
+                  ),
+
+                  // Small Circle: User/Profile Image (Badge)
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      width: 20, // Smaller size for badge
+                      height: 20,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: context.color.secondaryColor,
+                              width: 1.5), // Border to separate from bg
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                profilePicture), // Small Image = User Profile
+                            fit: BoxFit.cover,
+                            onError: (exception, stackTrace) {},
+                          ),
+                          color: Colors.grey[300] // Fallback color
+                          ),
+                      child: profilePicture.isEmpty
+                          ? Icon(Icons.person,
+                              size: 12, color: Colors.grey[600])
+                          : null,
+                    ),
+                  )
                 ],
               ),
-              
+
               const SizedBox(width: 15),
-              
+
               // 2. Name and Item Name
               Expanded(
                 child: Column(
@@ -155,10 +159,9 @@ class ChatTile extends StatelessWidget {
                     Text(
                       userName,
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: context.color.textColorDark
-                      ),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: context.color.textColorDark),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -166,29 +169,28 @@ class ChatTile extends StatelessWidget {
                     Text(
                       itemName, // Or "Property For Selling" based on context, but using itemName is safer dynamic data
                       style: TextStyle(
-                        fontSize: 14,
-                        color: context.color.textDefaultColor.withOpacity(0.6)
-                      ),
+                          fontSize: 14,
+                          color:
+                              context.color.textDefaultColor.withOpacity(0.6)),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-              
+
               // 3. Date (Right Side)
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                   Text(
-                      date, // Ensure 'date' format is short (e.g. "Yesterday" or "10:30")
-                      style: TextStyle(
+                  Text(
+                    date, // Ensure 'date' format is short (e.g. "Yesterday" or "10:30")
+                    style: TextStyle(
                         fontSize: 12,
-                         color: context.color.textDefaultColor.withOpacity(0.5)
-                      ),
-                   ),
-                   // Optional: Unread count badge could go here if needed
+                        color: context.color.textDefaultColor.withOpacity(0.5)),
+                  ),
+                  // Optional: Unread count badge could go here if needed
                 ],
               )
             ],

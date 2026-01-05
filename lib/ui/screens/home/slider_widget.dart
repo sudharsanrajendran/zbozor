@@ -158,18 +158,9 @@ import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
-import 'package:Ebozor/app/routes.dart';
-import 'package:Ebozor/data/repositories/item/item_repository.dart';
 import 'package:Ebozor/data/cubits/slider_cubit.dart';
-import 'package:Ebozor/data/helper/widgets.dart';
-import 'package:Ebozor/data/model/category_model.dart';
-import 'package:Ebozor/data/model/data_output.dart';
-import 'package:Ebozor/data/model/item/item_model.dart';
-import 'package:url_launcher/url_launcher.dart' as urllauncher;
 
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
 // Import your SliderCubit and other necessary dependencies
@@ -222,8 +213,6 @@ class _SliderWidgetState extends State<SliderWidget>
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     Widget _buildIndicator() {
@@ -238,9 +227,11 @@ class _SliderWidgetState extends State<SliderWidget>
                 duration: const Duration(milliseconds: 300),
                 margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                 width: isActive ? 12 : 8,
-                height: isActive ?12:8,
+                height: isActive ? 12 : 8,
                 decoration: BoxDecoration(
-                  color: isActive ? context.color.territoryColor:context.color.territoryColor.withOpacity(0.5) ,
+                  color: isActive
+                      ? context.color.territoryColor
+                      : context.color.territoryColor.withOpacity(0.5),
                   borderRadius: BorderRadius.circular(10),
                 ),
               );
@@ -249,6 +240,7 @@ class _SliderWidgetState extends State<SliderWidget>
         },
       );
     }
+
     super.build(context);
 
     return BlocConsumer<SliderCubit, SliderState>(
@@ -257,10 +249,8 @@ class _SliderWidgetState extends State<SliderWidget>
       },
       builder: (context, SliderState state) {
         if (state is SliderFetchSuccess && state.sliderlist.isNotEmpty) {
-
-
           bannersLength = state.sliderlist.length; // Update bannersLength
-           return Column(
+          return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
@@ -278,7 +268,8 @@ class _SliderWidgetState extends State<SliderWidget>
                         // your existing onTap logic (UNCHANGED)
                       },
                       child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: sidePadding),
+                        margin:
+                            const EdgeInsets.symmetric(horizontal: sidePadding),
                         width: MediaQuery.of(context).size.width - 16,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
@@ -301,7 +292,6 @@ class _SliderWidgetState extends State<SliderWidget>
               _buildIndicator(),
             ],
           );
-
         } else {
           return SizedBox.shrink();
         }

@@ -8,15 +8,11 @@ import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/system/fetch_language_cubit.dart';
 import 'package:Ebozor/data/cubits/system/fetch_system_settings_cubit.dart';
 import 'package:Ebozor/data/cubits/system/language_cubit.dart';
-import 'package:Ebozor/settings.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
-import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/constant.dart';
-import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
-import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/data/repositories/system_repository.dart';
 
 // import 'package:flutter/services.dart';

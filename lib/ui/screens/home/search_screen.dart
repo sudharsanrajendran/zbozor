@@ -54,7 +54,8 @@ class SearchScreen extends StatefulWidget {
               create: (context) => SearchItemCubit(),
             ),
             BlocProvider(
-              create: (context) => FetchPopularItemsCubit(),),
+              create: (context) => FetchPopularItemsCubit(),
+            ),
           ],
           child: SearchScreen(
             autoFocus: arguments?['autoFocus'],
@@ -140,12 +141,11 @@ class SearchScreenState extends State<SearchScreen>
     // if (searchController.text.isNotEmpty) {
     if (previousSearchQuery != searchController.text) {
       context.read<SearchItemCubit>().searchItem(
-        searchController.text,
-        page: 1,
-        filter: filter ?? _getLocationFilter(),
-      );
+            searchController.text,
+            page: 1,
+            filter: filter ?? _getLocationFilter(),
+          );
       previousSearchQuery = searchController.text;
-      insertSearchQuery(searchController.text);
       setState(() {});
     } else {
       if (filter == null) context.read<SearchItemCubit>().clearSearch();
@@ -160,6 +160,7 @@ class SearchScreenState extends State<SearchScreen>
       state: HiveUtils.getStateName(),
     );
   }
+
   PreferredSizeWidget appBarWidget() {
     return AppBar(
       systemOverlayStyle:
@@ -197,36 +198,39 @@ class SearchScreenState extends State<SearchScreen>
                                     const BorderRadius.all(Radius.circular(10)),
                                 color: context.color.secondaryColor),
                             child: TextFormField(
-                                autofocus: widget.autoFocus,
-                                controller: searchController,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  //OutlineInputBorder()
-                                  fillColor: Theme.of(context)
-                                      .colorScheme
-                                      .secondaryColor,
-                                  hintText:'searchHintLbl'.translate(context),
-                                  prefixIcon: setSearchIcon(),
-                                  prefixIconConstraints: const BoxConstraints(
-                                      minHeight: 5, minWidth: 5),
-                                ),
-                                enableSuggestions: true,
-                                onEditingComplete: () {
-                                  setState(
-                                    () {
-                                      isFocused = false;
-                                    },
-                                  );
-                                  FocusScope.of(context).unfocus();
-                                },
-                                onTap: () {
-                                  //change prefix icon color to primary
-                                  setState(() {
-                                    isFocused = true;
-                                  });
-                                },onChanged: (text){
-                                  searchItemListener();
-                            },)),
+                              autofocus: widget.autoFocus,
+                              controller: searchController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                //OutlineInputBorder()
+                                fillColor: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryColor,
+                                hintText: 'searchHintLbl'.translate(context),
+                                prefixIcon: setSearchIcon(),
+                                prefixIconConstraints: const BoxConstraints(
+                                    minHeight: 5, minWidth: 5),
+                              ),
+                              enableSuggestions: true,
+                              onFieldSubmitted: (value) {
+                                insertSearchQuery(value);
+                                setState(
+                                  () {
+                                    isFocused = false;
+                                  },
+                                );
+                                FocusScope.of(context).unfocus();
+                              },
+                              onTap: () {
+                                //change prefix icon color to primary
+                                setState(() {
+                                  isFocused = true;
+                                });
+                              },
+                              onChanged: (text) {
+                                searchItemListener();
+                              },
+                            )),
                         const SizedBox(
                           width: 14,
                         ),
@@ -255,7 +259,8 @@ class SearchScreenState extends State<SearchScreen>
                               decoration: BoxDecoration(
                                 border: Border.all(
                                     width: 1,
-                                    color: context.color.borderColor.darken(30)),
+                                    color:
+                                        context.color.borderColor.darken(30)),
                                 color: context.color.secondaryColor,
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -312,7 +317,7 @@ class SearchScreenState extends State<SearchScreen>
     );
   }
 
-  getFilterValue(ItemFilterModel model) {
+  void getFilterValue(ItemFilterModel model) {
     filter = model;
     setState(() {});
   }
@@ -396,7 +401,6 @@ class SearchScreenState extends State<SearchScreen>
     );
   }
 
-
   // here seach mainbody
   @override
   Widget build(BuildContext context) {
@@ -457,7 +461,6 @@ class SearchScreenState extends State<SearchScreen>
     );
   }
 
-
   //////////seachbody ends here
   //////////////////////////////
 
@@ -466,7 +469,6 @@ class SearchScreenState extends State<SearchScreen>
     await box.clear();
     setState(() {});
   }
-
 
   // seach history
   Widget buildHistoryItemList() {
@@ -479,14 +481,14 @@ class SearchScreenState extends State<SearchScreen>
             try {
               var json = jsonDecode(item);
               if (json['is_query'] == true) {
-                 // Reconstruct a dummy item for display
-                 items.add(ItemModel(
-                   id: -1, 
-                   name: json['name'], 
-                   category: CategoryModel(name: ""),
-                 ));
+                // Reconstruct a dummy item for display
+                items.add(ItemModel(
+                  id: -1,
+                  name: json['name'],
+                  category: CategoryModel(name: ""),
+                ));
               } else {
-                 items.add(ItemModel.fromJson(json));
+                items.add(ItemModel.fromJson(json));
               }
             } catch (e) {}
           }
@@ -528,7 +530,8 @@ class SearchScreenState extends State<SearchScreen>
                         searchController.selection = TextSelection.fromPosition(
                             TextPosition(offset: searchController.text.length));
                         setState(() {
-                             isFocused = true; // Focus state to show search results if needed
+                          isFocused =
+                              true; // Focus state to show search results if needed
                         });
                       },
                       child: Container(
@@ -589,7 +592,7 @@ class SearchScreenState extends State<SearchScreen>
 
   void insertNewItem(ItemModel model) {
     var box = Hive.box(HiveKeys.historyBox);
-    
+
     // Create a simplified item or query wrapper if needed, but here we save the item
     // For search queries, we use a different method.
     // If we want to prevent dups:
@@ -598,17 +601,18 @@ class SearchScreenState extends State<SearchScreen>
       var itemString = box.getAt(i);
       if (itemString is String) {
         try {
-           var item = jsonDecode(itemString);
-           if (item['id'] == model.id) {
-             exists = true;
-             break;
-           }
-        } catch(e) {}
+          var item = jsonDecode(itemString);
+          if (item['id'] == model.id) {
+            exists = true;
+            break;
+          }
+        } catch (e) {}
       }
     }
 
     if (!exists) {
-      if (box.length >= 10) { // Increase limit
+      if (box.length >= 10) {
+        // Increase limit
         box.deleteAt(0);
       }
       box.add(jsonEncode(model.toJson()));
@@ -619,37 +623,37 @@ class SearchScreenState extends State<SearchScreen>
   void insertSearchQuery(String query) {
     if (query.trim().isEmpty) return;
     var box = Hive.box(HiveKeys.historyBox);
-    
+
     // Check if query exists (using a custom format)
     bool exists = false;
     for (int i = 0; i < box.length; i++) {
-        var itemString = box.getAt(i);
-        if (itemString is String) {
-             try {
-                var json = jsonDecode(itemString);
-                if (json['is_query'] == true && json['name'] == query) {
-                  exists = true;
-                  break;
-                }
-             } catch(e) {}
-        }
+      var itemString = box.getAt(i);
+      if (itemString is String) {
+        try {
+          var json = jsonDecode(itemString);
+          if (json['is_query'] == true && json['name'] == query) {
+            exists = true;
+            break;
+          }
+        } catch (e) {}
+      }
     }
 
     if (!exists) {
-       if (box.length >= 10) box.deleteAt(0);
-       
-       // Create a dummy ItemModel-like JSON for query
-       Map<String, dynamic> queryJson = {
-         'id': -1, // -1 for query
-         'name': query,
-         'is_query': true,
-         'category': {'name': ''}, // dummy category
-         'image': '',
-         'price': 0,
-         'total_likes': 0,
-         'clicks': 0
-       };
-       box.add(jsonEncode(queryJson));
+      if (box.length >= 10) box.deleteAt(0);
+
+      // Create a dummy ItemModel-like JSON for query
+      Map<String, dynamic> queryJson = {
+        'id': -1, // -1 for query
+        'name': query,
+        'is_query': true,
+        'category': {'name': ''}, // dummy category
+        'image': '',
+        'price': 0,
+        'total_likes': 0,
+        'clicks': 0
+      };
+      box.add(jsonEncode(queryJson));
     }
   }
 
@@ -734,6 +738,7 @@ class SearchScreenState extends State<SearchScreen>
                           },
                         );
                       },
+
                       /// card design here
                       child: ItemHorizontalCard(
                         item: item,

@@ -44,14 +44,14 @@ class ChatMessageHandler {
         if (element is ChatMessage && element.key is ValueKey) {
           elementId = (element.key as ValueKey).value;
         } else if (element is BlocProvider && (element).child is ChatMessage) {
-           var child = (element).child as ChatMessage;
-           if (child.key is ValueKey) elementId = (child.key as ValueKey).value;
+          var child = (element).child as ChatMessage;
+          if (child.key is ValueKey) elementId = (child.key as ValueKey).value;
         }
         return elementId == chatId;
       });
       if (exists) return; // Skip duplicate
     }
-  
+
     _chat.clear();
     _chat.insert(0, chat);
 
@@ -60,7 +60,6 @@ class ChatMessageHandler {
     messages = [..._chat, ...messages];
     _chatMessageStream.sink.add(messages);
   }
-
 
   /* static void add(Widget chat) {
     print("Adding chat message: $chat");
@@ -101,22 +100,25 @@ class ChatMessageHandler {
 
       // Check for duplicates before adding to history
       dynamic newMsgId;
-      if (chats[i] is ChatMessage && (chats[i] as ChatMessage).key is ValueKey) {
-         newMsgId = ((chats[i] as ChatMessage).key as ValueKey).value;
+      if (chats[i] is ChatMessage &&
+          (chats[i] as ChatMessage).key is ValueKey) {
+        newMsgId = ((chats[i] as ChatMessage).key as ValueKey).value;
       }
 
       bool exists = false;
       if (newMsgId != null) {
-         exists = messagesWithDate.any((element) {
-           dynamic elementId;
-           if (element is ChatMessage && element.key is ValueKey) {
-             elementId = (element.key as ValueKey).value;
-           } else if (element is BlocProvider && (element).child is ChatMessage) {
-              var child = (element).child as ChatMessage;
-              if (child.key is ValueKey) elementId = (child.key as ValueKey).value;
-           }
-           return elementId == newMsgId;
-         });
+        exists = messagesWithDate.any((element) {
+          dynamic elementId;
+          if (element is ChatMessage && element.key is ValueKey) {
+            elementId = (element.key as ValueKey).value;
+          } else if (element is BlocProvider &&
+              (element).child is ChatMessage) {
+            var child = (element).child as ChatMessage;
+            if (child.key is ValueKey)
+              elementId = (child.key as ValueKey).value;
+          }
+          return elementId == newMsgId;
+        });
       }
 
       if (!exists) {
@@ -156,11 +158,11 @@ class ChatMessageHandler {
     return _chatMessageStream.stream;
   }
 
-  static attachListener(void Function(dynamic)? onData) {
+  static void attachListener(void Function(dynamic)? onData) {
     _chatMessageStream.stream.listen(onData);
   }
 
-  static removeMessage(int id) {
+  static void removeMessage(int id) {
     List<Widget> msgs = (messages);
     msgs.removeWhere((element) {
       if (element is! Padding) {
@@ -173,11 +175,10 @@ class ChatMessageHandler {
   }
 
   ///This will replace message's key with server key so we will be able to delete message if we want
-  static updateMessageId(String identifier, int id) {
+  static void updateMessageId(String identifier, int id) {
     try {
       List<Widget> msgs = _chat;
-      for
-   (var i = 0; i < _chat.length; i++) {
+      for (var i = 0; i < _chat.length; i++) {
         //We will only need to change its key when it is bloc provider because we added it locally and its key was also locally so we have to
         // replace it with server key when message send complete
         if (msgs[i] is BlocProvider) {
@@ -207,7 +208,8 @@ class ChatMessageHandler {
             _chatMessageStream.sink.add(msgs);
           }
         }
-      }  } catch (e) {}
+      }
+    } catch (e) {}
   }
 }
 

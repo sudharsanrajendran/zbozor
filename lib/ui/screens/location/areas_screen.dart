@@ -1,19 +1,13 @@
 import 'dart:async';
 import 'package:Ebozor/app/app_theme.dart';
-import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/location/fetch_areas_cubit.dart';
 import 'package:Ebozor/data/cubits/system/app_theme_cubit.dart';
 import 'package:Ebozor/data/model/location/areaModel.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
-import 'package:Ebozor/utils/constant.dart';
-import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
-import 'package:Ebozor/utils/helper_utils.dart';
-import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
-import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
 
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
@@ -340,7 +334,9 @@ class AreasScreenState extends State<AreasScreen> {
                         bool isSelected = selectedArea?.id == area.id;
 
                         return ListTile(
-                          tileColor: isSelected ? context.color.territoryColor.withOpacity(0.1) : null,
+                          tileColor: isSelected
+                              ? context.color.territoryColor.withOpacity(0.1)
+                              : null,
                           onTap: () {
                             setState(() {
                               selectedArea = area;
@@ -352,12 +348,13 @@ class AreasScreenState extends State<AreasScreen> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           )
-                              .color(isSelected ? context.color.territoryColor : context.color.textDefaultColor)
+                              .color(isSelected
+                                  ? context.color.territoryColor
+                                  : context.color.textDefaultColor)
                               .size(context.font.normal),
                           trailing: isSelected
                               ? Icon(Icons.check,
-                                color: context.color.territoryColor,
-                                size: 20)
+                                  color: context.color.territoryColor, size: 20)
                               : null,
                         );
                       },
@@ -402,9 +399,8 @@ class AreasScreenState extends State<AreasScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const LocationMapScreen(),
-                      settings: RouteSettings(
-                        arguments: {
+                        builder: (context) => const LocationMapScreen(),
+                        settings: RouteSettings(arguments: {
                           'area_id': selectedArea!.id,
                           'area': selectedArea!.name,
                           'city': widget.cityName,
@@ -413,9 +409,7 @@ class AreasScreenState extends State<AreasScreen> {
                           'latitude': widget.latitude,
                           'longitude': widget.longitude,
                           'from': widget.from,
-                        }
-                      )
-                    ),
+                        })),
                   ).then((value) {
                     if (value != null && widget.from == "addItem") {
                       Navigator.pop(context, value);
@@ -434,6 +428,7 @@ class AreasScreenState extends State<AreasScreen> {
           ],
         ));
   }
+
   Widget setSearchIcon() {
     return Padding(
         padding: const EdgeInsets.all(8.0),

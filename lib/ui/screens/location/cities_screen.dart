@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 import 'package:Ebozor/app/app_theme.dart';
 import 'package:Ebozor/app/routes.dart';
@@ -8,16 +6,11 @@ import 'package:Ebozor/data/cubits/location/fetch_cities_cubit.dart';
 import 'package:Ebozor/data/cubits/system/app_theme_cubit.dart';
 import 'package:Ebozor/data/model/location/cityModel.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
-import 'package:Ebozor/utils/constant.dart';
-import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
 import 'package:Ebozor/utils/cloudState/cloud_state.dart';
-import 'package:Ebozor/utils/helper_utils.dart';
-import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
-import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
 
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
@@ -116,7 +109,6 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
     setState(() {});
   }
 
-
 //This will create delay so we don't face rapid api call
   void searchCallAfterDelay() {
     _searchDelay = Timer(const Duration(milliseconds: 500), itemSearch);
@@ -136,11 +128,10 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
     }
   }
 
-
   PreferredSizeWidget appBarWidget() {
     return AppBar(
       systemOverlayStyle:
-      SystemUiOverlayStyle(statusBarColor: context.color.backgroundColor),
+          SystemUiOverlayStyle(statusBarColor: context.color.backgroundColor),
       bottom: PreferredSize(
           preferredSize: Size.fromHeight(58.rh(context)),
           child: Container(
@@ -151,7 +142,7 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
               decoration: BoxDecoration(
                   border: Border.all(
                       width: context.watch<AppThemeCubit>().state.appTheme ==
-                          AppTheme.dark
+                              AppTheme.dark
                           ? 0
                           : 1,
                       color: context.color.borderColor.darken(30)),
@@ -164,15 +155,15 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
                     //OutlineInputBorder()
                     fillColor: Theme.of(context).colorScheme.secondaryColor,
                     hintText:
-                    "${"search".translate(context)}\t${"city".translate(context)}",
+                        "${"search".translate(context)}\t${"city".translate(context)}",
                     prefixIcon: setSearchIcon(),
                     prefixIconConstraints:
-                    const BoxConstraints(minHeight: 5, minWidth: 5),
+                        const BoxConstraints(minHeight: 5, minWidth: 5),
                   ),
                   enableSuggestions: true,
                   onEditingComplete: () {
                     setState(
-                          () {
+                      () {
                         isFocused = false;
                       },
                     );
@@ -207,9 +198,9 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
                   textDirection: Directionality.of(context),
                   child: RotatedBox(
                     quarterTurns:
-                    Directionality.of(context) == TextDirection.rtl
-                        ? 2
-                        : -4,
+                        Directionality.of(context) == TextDirection.rtl
+                            ? 2
+                            : -4,
                     child: UiUtils.getSvg(AppIcons.arrowLeft,
                         fit: BoxFit.none,
                         color: context.color.textDefaultColor),
@@ -223,9 +214,9 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
           ? 0
           : 6,
       shadowColor:
-      context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
-          ? null
-          : context.color.textDefaultColor.withOpacity(0.2),
+          context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
+              ? null
+              : context.color.textDefaultColor.withOpacity(0.2),
       backgroundColor: context.color.backgroundColor,
     );
   }
@@ -253,7 +244,7 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 border:
-                Border.all(color: context.color.borderColor.darken(30))),
+                    Border.all(color: context.color.borderColor.darken(30))),
           ),
         );
       },
@@ -288,9 +279,8 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const LocationMapScreen(),
-                settings: RouteSettings(
-                  arguments: {
+                  builder: (context) => const LocationMapScreen(),
+                  settings: RouteSettings(arguments: {
                     'area_id': null,
                     'area': null,
                     'city': selectedCity!.name!,
@@ -299,9 +289,7 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
                     'latitude': double.parse(selectedCity!.latitude!),
                     'longitude': double.parse(selectedCity!.longitude!),
                     'from': widget.from,
-                  }
-                )
-              ),
+                  })),
             ).then((value) {
               if (value != null && widget.from == "addItem") {
                 Navigator.pop(context, value);
@@ -337,9 +325,9 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
               child: NoInternet(
                 onRetry: () {
                   context.read<FetchCitiesCubit>().fetchCities(
-                    search: searchController.text,
-                    stateId: widget.stateId,
-                  );
+                        search: searchController.text,
+                        stateId: widget.stateId,
+                      );
                 },
               ),
             );
@@ -353,9 +341,9 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
               child: NoDataFound(
                 onTap: () {
                   context.read<FetchCitiesCubit>().fetchCities(
-                    search: searchController.text,
-                    stateId: widget.stateId,
-                  );
+                        search: searchController.text,
+                        stateId: widget.stateId,
+                      );
                 },
               ),
             );
@@ -374,15 +362,15 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
                     /// ---------- HEADER (UNCHANGED) ----------
                     widget.from == "addItem"
                         ? Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 18, vertical: 18),
-                      child: Text(
-                        "${"chooseLbl".translate(context)} ${"city".translate(context)}",
-                      )
-                          .color(context.color.textDefaultColor)
-                          .size(context.font.normal)
-                          .bold(weight: FontWeight.w600),
-                    )
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 18, vertical: 18),
+                            child: Text(
+                              "${"chooseLbl".translate(context)} ${"city".translate(context)}",
+                            )
+                                .color(context.color.textDefaultColor)
+                                .size(context.font.normal)
+                                .bold(weight: FontWeight.w600),
+                          )
                         : SizedBox.shrink(),
 
                     /// ---------- POPULAR SEARCHES ----------
@@ -392,8 +380,7 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
                       child: Row(
                         children: [
                           Icon(Icons.trending_up,
-                              size: 18,
-                              color: context.color.textDefaultColor),
+                              size: 18, color: context.color.textDefaultColor),
                           const SizedBox(width: 6),
                           Text(" All Cities".translate(context))
                               .color(context.color.textDefaultColor)
@@ -412,8 +399,7 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
                         children: state.citiesModel.map((city) {
                           bool isSelected = selectedCity?.id == city.id;
                           return InkWell(
-                            borderRadius:
-                            BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(8),
                             onTap: () {
                               setState(() {
                                 selectedCity = city;
@@ -423,16 +409,20 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 14, vertical: 8),
                               decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                    color: isSelected ? context.color.territoryColor :
-                                    context.color.borderColor),
-                                color: isSelected ? context.color.territoryColor.withOpacity(0.1) :
-                                context.color.secondaryColor,
+                                    color: isSelected
+                                        ? context.color.territoryColor
+                                        : context.color.borderColor),
+                                color: isSelected
+                                    ? context.color.territoryColor
+                                        .withOpacity(0.1)
+                                    : context.color.secondaryColor,
                               ),
                               child: Text(city.name!)
-                                  .color(isSelected ? context.color.territoryColor : context.color.textDefaultColor)
+                                  .color(isSelected
+                                      ? context.color.territoryColor
+                                      : context.color.textDefaultColor)
                                   .size(context.font.small),
                             ),
                           );
@@ -445,8 +435,7 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
                         padding: const EdgeInsets.all(16),
                         child: Center(
                           child: UiUtils.progress(
-                            normalProgressColor:
-                            context.color.territoryColor,
+                            normalProgressColor: context.color.territoryColor,
                           ),
                         ),
                       ),
@@ -461,7 +450,6 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
       },
     );
   }
-
 
   Widget setSearchIcon() {
     return Padding(
@@ -507,19 +495,21 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
               return state is FetchAreasInProgress
                   ? UiUtils.progress()
                   : UiUtils.buildButton(
-                context,
-                onPressed: () {
-                  if (selectedCity != null) {
-                    context.read<FetchAreasCubit>().fetchAreas(
-                        search: "", cityId: selectedCity!.id!);
-                  }
-                },
-                buttonTitle: "continue".translate(context),
-                textColor: Colors.white,
-                buttonColor: selectedCity != null ? context.color.territoryColor : context.color.textLightColor,
-                radius: 8,
-                disabled: selectedCity == null,
-              );
+                      context,
+                      onPressed: () {
+                        if (selectedCity != null) {
+                          context.read<FetchAreasCubit>().fetchAreas(
+                              search: "", cityId: selectedCity!.id!);
+                        }
+                      },
+                      buttonTitle: "continue".translate(context),
+                      textColor: Colors.white,
+                      buttonColor: selectedCity != null
+                          ? context.color.territoryColor
+                          : context.color.textLightColor,
+                      radius: 8,
+                      disabled: selectedCity == null,
+                    );
             },
           ),
         ],
@@ -529,7 +519,7 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
 
   @override
   void dispose() {
-    _searchDelay?.cancel();          // timer cancel (good practice)
+    _searchDelay?.cancel(); // timer cancel (good practice)
     searchController.removeListener(searchItemListener);
     controller.removeListener(pageScrollListen);
 
@@ -538,5 +528,4 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
 
     super.dispose();
   }
-
 }
