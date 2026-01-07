@@ -94,6 +94,17 @@ class ItemsListState extends State<ItemsList> {
     _selectedCustomFields =
         widget.selectedFilters != null ? Map.from(widget.selectedFilters!) : {};
 
+    // Fix: Extract Price from custom fields and move to standard filter fields
+    String? priceMin, priceMax;
+    if (_selectedCustomFields.containsKey("Price_min")) {
+      priceMin = _selectedCustomFields["Price_min"].toString();
+      _selectedCustomFields.remove("Price_min");
+    }
+    if (_selectedCustomFields.containsKey("Price_max")) {
+      priceMax = _selectedCustomFields["Price_max"].toString();
+      _selectedCustomFields.remove("Price_max");
+    }
+
     // Fallback: If chain is empty but we have a main category and it's not "Property" (which is root), add it.
     // Actually, simply relying on arguments is safer.
     // If empty & we have categoryName, maybe add it?
@@ -113,23 +124,28 @@ class ItemsListState extends State<ItemsList> {
     searchController.addListener(searchItemListener);
     controller = ScrollController()..addListener(_loadMore);
 
+    // Initialize filter with extracted price
+    filter = ItemFilterModel(
+        country: HiveUtils.getCountryName() ?? "",
+        areaId: HiveUtils.getAreaId() != null
+            ? int.parse(HiveUtils.getAreaId().toString())
+            : null,
+        city: HiveUtils.getCityName() ?? "",
+        state: HiveUtils.getStateName() ?? "",
+        categoryId: widget.categoryId,
+        radius: HiveUtils.getNearbyRadius() ?? null,
+        latitude: HiveUtils.getLatitude() ?? null,
+        longitude: HiveUtils.getLongitude() ?? null,
+        minPrice: priceMin,
+        maxPrice: priceMax,
+        customFields: _selectedCustomFields);
+
     context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
         categoryId: int.parse(
           widget.categoryId,
         ),
         search: "",
-        filter: ItemFilterModel(
-            country: HiveUtils.getCountryName() ?? "",
-            areaId: HiveUtils.getAreaId() != null
-                ? int.parse(HiveUtils.getAreaId().toString())
-                : null,
-            city: HiveUtils.getCityName() ?? "",
-            state: HiveUtils.getStateName() ?? "",
-            categoryId: widget.categoryId,
-            radius: HiveUtils.getNearbyRadius() ?? null,
-            latitude: HiveUtils.getLatitude() ?? null,
-            longitude: HiveUtils.getLongitude() ?? null,
-            customFields: _selectedCustomFields));
+        filter: filter);
 
     Future.delayed(Duration.zero, () {
       selectedcategoryId = widget.categoryId;
@@ -1416,6 +1432,7 @@ class ItemsListState extends State<ItemsList> {
                             widget.categoryId,
                           ),
                           search: searchController.text.toString(),
+                          filter: filter,
                           sortBy: null);
 
                   setState(() {
@@ -1441,6 +1458,7 @@ class ItemsListState extends State<ItemsList> {
                             widget.categoryId,
                           ),
                           search: searchController.text.toString(),
+                          filter: filter,
                           sortBy: "new-to-old");
                   setState(() {
                     sortBy = "new-to-old";
@@ -1461,6 +1479,7 @@ class ItemsListState extends State<ItemsList> {
                             widget.categoryId,
                           ),
                           search: searchController.text.toString(),
+                          filter: filter,
                           sortBy: "old-to-new");
                   setState(() {
                     sortBy = "old-to-new";
@@ -1481,6 +1500,7 @@ class ItemsListState extends State<ItemsList> {
                             widget.categoryId,
                           ),
                           search: searchController.text.toString(),
+                          filter: filter,
                           sortBy: "price-high-to-low");
                   setState(() {
                     sortBy = "price-high-to-low";
@@ -1501,6 +1521,7 @@ class ItemsListState extends State<ItemsList> {
                             widget.categoryId,
                           ),
                           search: searchController.text.toString(),
+                          filter: filter,
                           sortBy: "price-low-to-high");
                   setState(() {
                     sortBy = "price-low-to-high";
@@ -1889,35 +1910,23 @@ class ItemsListState extends State<ItemsList> {
                 const SizedBox(height: 24),
 
                 // Range Slider
-                SliderTheme(
-                  data: SliderThemeData(
-                    activeTrackColor: context.color.territoryColor,
-                    inactiveTrackColor:
-                        context.color.territoryColor.withOpacity(0.1),
-                    thumbColor: context.color.territoryColor,
-                    overlayColor: context.color.territoryColor.withOpacity(0.3),
-                    trackHeight: 1,
-                    thumbShape:
-                        const RoundSliderThumbShape(enabledThumbRadius: 8),
+                RangeSlider(
+                  activeColor: context.color.territoryColor,
+                  inactiveColor: context.color.territoryColor.withOpacity(0.3),
+                  values: RangeValues(
+                    (localMin < localMax ? localMin : localMax).clamp(min, max),
+                    (localMin > localMax ? localMin : localMax).clamp(min, max),
                   ),
-                  child: RangeSlider(
-                    values: RangeValues(
-                      (localMin < localMax ? localMin : localMax)
-                          .clamp(min, max),
-                      (localMin > localMax ? localMin : localMax)
-                          .clamp(min, max),
-                    ),
-                    min: min,
-                    max: max,
-                    onChanged: (RangeValues values) {
-                      setSheetState(() {
-                        localMin = values.start;
-                        localMax = values.end;
-                        minCtrl.text = localMin.toStringAsFixed(0);
-                        maxCtrl.text = localMax.toStringAsFixed(0);
-                      });
-                    },
-                  ),
+                  min: min,
+                  max: max,
+                  onChanged: (RangeValues values) {
+                    setSheetState(() {
+                      localMin = values.start;
+                      localMax = values.end;
+                      minCtrl.text = localMin.toStringAsFixed(0);
+                      maxCtrl.text = localMax.toStringAsFixed(0);
+                    });
+                  },
                 ),
 
                 const SizedBox(height: 16),
@@ -2148,22 +2157,25 @@ class ItemsListState extends State<ItemsList> {
       }
 
       // Update Filter Model
-      context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
-          categoryId: int.parse(widget.categoryId),
-          search: searchController.text,
-          filter: ItemFilterModel(
-            country: HiveUtils.getCountryName() ?? "",
-            areaId: HiveUtils.getAreaId() != null
-                ? int.parse(HiveUtils.getAreaId().toString())
-                : null,
-            city: HiveUtils.getCityName() ?? "",
-            state: HiveUtils.getStateName() ?? "",
-            categoryId: widget.categoryId,
-            radius: HiveUtils.getNearbyRadius() ?? null,
-            latitude: HiveUtils.getLatitude() ?? null,
-            longitude: HiveUtils.getLongitude() ?? null,
-            customFields: _selectedCustomFields,
-          ));
+      if (filter != null) {
+        filter = filter!.copyWith(customFields: _selectedCustomFields);
+      } else {
+        filter = ItemFilterModel(
+          country: HiveUtils.getCountryName() ?? "",
+          areaId: HiveUtils.getAreaId() != null
+              ? int.parse(HiveUtils.getAreaId().toString())
+              : null,
+          city: HiveUtils.getCityName() ?? "",
+          state: HiveUtils.getStateName() ?? "",
+          categoryId: widget.categoryId,
+          radius: HiveUtils.getNearbyRadius() ?? null,
+          latitude: HiveUtils.getLatitude() ?? null,
+          longitude: HiveUtils.getLongitude() ?? null,
+          customFields: _selectedCustomFields,
+        );
+      }
+
+      _fetchItemsWithFilter();
     });
   }
 

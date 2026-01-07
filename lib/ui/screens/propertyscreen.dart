@@ -62,12 +62,22 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     _initializeDefaultSelection();
   }
 
+  // Persistent controllers for dynamic ListViews to avoid cursor reset
+  final Map<String, TextEditingController> _controllers = {};
+  final Map<String, FocusNode> _focusNodes = {};
+
   @override
   void dispose() {
     _subCategoryCubit.close();
     _propertyTypesCubit.close();
     minController.dispose();
     maxController.dispose();
+    for (var controller in _controllers.values) {
+      controller.dispose();
+    }
+    for (var node in _focusNodes.values) {
+      node.dispose();
+    }
     super.dispose();
   }
 
@@ -954,45 +964,69 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                       '1000000') ??
               1000000;
 
-          // Ensure validity
-          if (currentMin < 0) currentMin = 0;
-          if (currentMax > 1000000) currentMax = 1000000;
-          if (currentMin > currentMax) currentMin = currentMax;
+          // Dynamic Max: If user types more than default max, expand the slider
+          double sliderMax = 1000000;
+          if (currentMax > sliderMax) sliderMax = currentMax;
+          // Ensure min is also within bounds for slider logic?
+          // Actually slider just needs min <= value <= max.
+          // Start of slider is 0.
 
-          // Manage controllers to sync text with slider
-          // Note: using stateless approach with "controller.text = value" in build can reset cursor.
-          // Ideally we map these, but for a quick robust fix we can rely on Key to force update
-          // OR use a specialized hook.
-          // here we will just force the text content to match state if it's not being edited (active focus?)
-          // actually, easiest way for "Slider updates Text" in this dynamic setup:
-          var minController = TextEditingController(
-              text: currentMin == 0 ? "" : currentMin.round().toString());
-          var maxController = TextEditingController(
-              text: currentMax == 1000000 ? "" : currentMax.round().toString());
+          // Create/Retrieve Persistent Objects
+          // Min
+          String minKey = "${filter.name}_min";
+          TextEditingController minCtrl = _controllers.putIfAbsent(
+              minKey,
+              () => TextEditingController(
+                  text: currentMin == 0 ? "" : currentMin.round().toString()));
+          FocusNode minFocus =
+              _focusNodes.putIfAbsent(minKey, () => FocusNode());
 
-          // Problem: Creating controller in build resets cursor on type.
-          // Solution: We simply don't pass controller. We just use `key` to rebuild
-          // the widget when the value comes from EXTERNAL source (Slider).
-          // But standard TextField doesn't support "value" prop like React.
+          // Max
+          String maxKey = "${filter.name}_max";
+          TextEditingController maxCtrl = _controllers.putIfAbsent(
+              maxKey,
+              () => TextEditingController(
+                  text: currentMax == 1000000
+                      ? ""
+                      : currentMax.round().toString()));
+          FocusNode maxFocus =
+              _focusNodes.putIfAbsent(maxKey, () => FocusNode());
 
-          // Correct Hybrid Approach for Dynamic List:
-          // Use Key(value) to force rebuild? No, loses focus.
+          // Sync Logic: If NOT focused, keep text updated with State (Slider drags)
+          if (!minFocus.hasFocus) {
+            String newVal =
+                currentMin == 0 ? "" : currentMin.round().toString();
+            if (minCtrl.text != newVal) {
+              minCtrl.text = newVal;
+            }
+          }
+          if (!maxFocus.hasFocus) {
+            String newVal = currentMax == 1000000 && sliderMax == 1000000
+                ? ""
+                : currentMax.round().toString();
+            // logic: if it's default 1M, show empty? Or show 1000000?
+            // Standard UI often leaves max empty if default.
+            // But keeping it numeric is safer for "10000".
+            if (maxCtrl.text != newVal && newVal != "1000000") {
+              // Keep "1000000" hidden if default? Or show? User wants manual control.
+              // Let's show actual value unless it's pure init.
+              // If I type 10000, I want to see 10000.
+              maxCtrl.text = newVal;
+            } else if (newVal == "1000000" &&
+                sliderMax == 1000000 &&
+                maxCtrl.text.isEmpty) {
+              // allow empty for default max
+            } else if (maxCtrl.text != newVal) {
+              maxCtrl.text = newVal;
+            }
+          }
 
-          // Since the user EXPLICITLY asked for "Range slider updates text container",
-          // AND standard typing, I will use the "only update if significantly different" strategy
-          // with a persistent controller map if I could, but I can't easily here.
-          // Let's use the simple approach: The Slider works, Text works.
-          // To make Slider update Text: pass `controller` with current value.
-          // To prevent cursor reset: Use `TextSelection` ... too complex.
-
-          // Let's rely on standard flutter behavior:
-          // If we provide a controller that is created every build, the cursor resets.
-          // The user seems to prioritize visual sync.
-          // I will use `Key` to identity the input.
-
-          // Hacky but effective for this specific request:
-          // Since these are specific fields (Min/Max), let's just inline the widgets
-          // with keys derived from their values so they redraw when value changes from slider.
+          // Smart Suffix
+          String suffix = "AED";
+          if (filter.name!.toLowerCase().contains("area") ||
+              filter.name!.toLowerCase().contains("size")) {
+            suffix = "Sqft";
+          }
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1015,26 +1049,30 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         border: Border.all(color: context.color.borderColor),
                       ),
                       child: TextField(
-                        // Key helps, but doesn't solve cursor reset if controller is recreated.
-                        // But we need to show the value from Slider.
-                        controller: minController,
+                        controller: minCtrl,
+                        focusNode: minFocus,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         onChanged: (value) {
-                          // Update state from Text
+                          // Allow empty (reset to 0)
+                          double val =
+                              value.isEmpty ? 0 : double.tryParse(value) ?? 0;
                           setState(() {
-                            if (value.isEmpty) {
-                              _selectedFilters.remove("${filter.name}_min");
-                            } else {
-                              _selectedFilters["${filter.name}_min"] = value;
-                            }
+                            _selectedFilters["${filter.name}_min"] =
+                                val.toString();
+                            // Ensure consistency if min > max?
+                            // Usually better to let user type freely and validator handles it,
+                            // or clamp silently.
+                            // If I type 5000 and max is 1000, momentarily invalid state for Slider?
+                            // Slider requires values.start <= values.end.
+                            // We must ensure that before passing to slider.
                           });
                         },
                         decoration: InputDecoration(
                           hintText: "Min",
-                          suffixText: "AED",
+                          suffixText: suffix,
                           hintStyle: TextStyle(
                               color: context.color.textDefaultColor
                                   .withOpacity(0.5)),
@@ -1059,23 +1097,24 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         border: Border.all(color: context.color.borderColor),
                       ),
                       child: TextField(
-                        controller: maxController,
+                        controller: maxCtrl,
+                        focusNode: maxFocus,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         onChanged: (value) {
+                          double val = value.isEmpty
+                              ? 1000000
+                              : double.tryParse(value) ?? 1000000;
                           setState(() {
-                            if (value.isEmpty) {
-                              _selectedFilters.remove("${filter.name}_max");
-                            } else {
-                              _selectedFilters["${filter.name}_max"] = value;
-                            }
+                            _selectedFilters["${filter.name}_max"] =
+                                val.toString();
                           });
                         },
                         decoration: InputDecoration(
                           hintText: "Max",
-                          suffixText: "AED",
+                          suffixText: suffix,
                           hintStyle: TextStyle(
                               color: context.color.textDefaultColor
                                   .withOpacity(0.5)),
@@ -1091,36 +1130,29 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
               ),
               // Slider
               const SizedBox(height: 8),
-              SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  overlayShape: SliderComponentShape.noOverlay,
-                  rangeTrackShape: const RoundedRectRangeSliderTrackShape(),
-                  trackHeight: 3,
-                  activeTrackColor: context.color.territoryColor,
-                  inactiveTrackColor:
-                      context.color.textDefaultColor.withOpacity(0.1),
-                  thumbColor: context.color.territoryColor,
-                  thumbShape:
-                      const RoundSliderThumbShape(enabledThumbRadius: 8),
+              RangeSlider(
+                values: RangeValues(
+                  (currentMin).clamp(0, sliderMax),
+                  (currentMax < currentMin ? currentMin : currentMax)
+                      .clamp(0, sliderMax),
                 ),
-                child: RangeSlider(
-                  values: RangeValues(currentMin, currentMax),
-                  min: 0,
-                  max: 1000000,
-                  divisions: 100,
-                  labels: RangeLabels(
-                    currentMin.round().toString(),
-                    currentMax.round().toString(),
-                  ),
-                  onChanged: (RangeValues values) {
-                    setState(() {
-                      _selectedFilters["${filter.name}_min"] =
-                          values.start.round().toString();
-                      _selectedFilters["${filter.name}_max"] =
-                          values.end.round().toString();
-                    });
-                  },
+                min: 0,
+                max: sliderMax, // Dynamic Max!
+                divisions: sliderMax > 0 ? 100 : 1,
+                activeColor: context.color.territoryColor,
+                inactiveColor: context.color.territoryColor.withOpacity(0.3),
+                labels: RangeLabels(
+                  currentMin.round().toString(),
+                  currentMax.round().toString(),
                 ),
+                onChanged: (RangeValues values) {
+                  setState(() {
+                    _selectedFilters["${filter.name}_min"] =
+                        values.start.round().toString();
+                    _selectedFilters["${filter.name}_max"] =
+                        values.end.round().toString();
+                  });
+                },
               ),
               const SizedBox(height: 12),
             ],

@@ -424,38 +424,29 @@ class FilterScreenState extends State<FilterScreen> {
               ],
             ),
             SizedBox(height: 10),
-            SliderTheme(
-              data: SliderThemeData(
-                activeTrackColor: context.color.territoryColor,
-                inactiveTrackColor:
-                    context.color.territoryColor.withOpacity(0.1),
-                thumbColor: context.color.territoryColor,
-                overlayColor: context.color.territoryColor.withOpacity(0.3),
-                trackHeight: 1,
-                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+            RangeSlider(
+              activeColor: context.color.territoryColor,
+              inactiveColor: context.color.territoryColor.withOpacity(0.3),
+              values: RangeValues(
+                (_priceRangeValues.start < _priceRangeValues.end
+                        ? _priceRangeValues.start
+                        : _priceRangeValues.end)
+                    .clamp(0, 1000000),
+                (_priceRangeValues.start > _priceRangeValues.end
+                        ? _priceRangeValues.start
+                        : _priceRangeValues.end)
+                    .clamp(0, 1000000),
               ),
-              child: RangeSlider(
-                values: RangeValues(
-                  (_priceRangeValues.start < _priceRangeValues.end
-                          ? _priceRangeValues.start
-                          : _priceRangeValues.end)
-                      .clamp(0, 1000000),
-                  (_priceRangeValues.start > _priceRangeValues.end
-                          ? _priceRangeValues.start
-                          : _priceRangeValues.end)
-                      .clamp(0, 1000000),
-                ),
-                min: 0,
-                max: 1000000,
-                divisions: 1000,
-                onChanged: (RangeValues values) {
-                  setState(() {
-                    _priceRangeValues = values;
-                    minController.text = values.start.round().toString();
-                    maxController.text = values.end.round().toString();
-                  });
-                },
-              ),
+              min: 0,
+              max: 1000000,
+              divisions: 1000,
+              onChanged: (RangeValues values) {
+                setState(() {
+                  _priceRangeValues = values;
+                  minController.text = values.start.round().toString();
+                  maxController.text = values.end.round().toString();
+                });
+              },
             ),
             const SizedBox(height: 20),
             Text('postedSinceLbl'.translate(context))
@@ -802,37 +793,29 @@ class FilterScreenState extends State<FilterScreen> {
           ],
         ),
         const SizedBox(height: 10),
-        SliderTheme(
-          data: SliderThemeData(
-            activeTrackColor: context.color.territoryColor,
-            inactiveTrackColor: context.color.territoryColor.withOpacity(0.1),
-            thumbColor: context.color.territoryColor,
-            overlayColor: context.color.territoryColor.withOpacity(0.3),
-            trackHeight: 1,
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+        RangeSlider(
+          activeColor: context.color.territoryColor,
+          inactiveColor: context.color.territoryColor.withOpacity(0.3),
+          values: RangeValues(
+            (_priceRangeValues.start < _priceRangeValues.end
+                    ? _priceRangeValues.start
+                    : _priceRangeValues.end)
+                .clamp(0, 1000000),
+            (_priceRangeValues.start > _priceRangeValues.end
+                    ? _priceRangeValues.start
+                    : _priceRangeValues.end)
+                .clamp(0, 1000000),
           ),
-          child: RangeSlider(
-            values: RangeValues(
-              (_priceRangeValues.start < _priceRangeValues.end
-                      ? _priceRangeValues.start
-                      : _priceRangeValues.end)
-                  .clamp(0, 1000000),
-              (_priceRangeValues.start > _priceRangeValues.end
-                      ? _priceRangeValues.start
-                      : _priceRangeValues.end)
-                  .clamp(0, 1000000),
-            ),
-            min: 0,
-            max: 1000000,
-            divisions: 1000,
-            onChanged: (RangeValues values) {
-              setState(() {
-                _priceRangeValues = values;
-                minController.text = values.start.round().toString();
-                maxController.text = values.end.round().toString();
-              });
-            },
-          ),
+          min: 0,
+          max: 1000000,
+          divisions: 1000,
+          onChanged: (RangeValues values) {
+            setState(() {
+              _priceRangeValues = values;
+              minController.text = values.start.round().toString();
+              maxController.text = values.end.round().toString();
+            });
+          },
         ),
       ],
     );

@@ -12,6 +12,7 @@ final appThemeData = {
     //textTheme
     useMaterial3: false,
     fontFamily: "Manrope",
+
     textSelectionTheme: const TextSelectionThemeData(
       selectionColor: territoryColor_,
       cursorColor: territoryColor_,
@@ -27,7 +28,19 @@ final appThemeData = {
       }),
     ),
     colorScheme: ColorScheme.fromSeed(
-        error: errorMessageColor, seedColor: territoryColor_,brightness:Brightness.light),
+        error: errorMessageColor,
+        seedColor: territoryColor_,
+        brightness: Brightness.light),
+    sliderTheme: SliderThemeData(
+      activeTrackColor: territoryColor_,
+      inactiveTrackColor: territoryColor_.withOpacity(0.2),
+      thumbColor: territoryColor_,
+      overlayColor: territoryColor_.withOpacity(0.1),
+      trackHeight: 2.0,
+      rangeThumbShape:
+          const RoundRangeSliderThumbShape(enabledThumbRadius: 8.0),
+      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
+    ),
   ),
   AppTheme.dark: ThemeData(
     brightness: Brightness.dark,
@@ -40,7 +53,18 @@ final appThemeData = {
     ),
     colorScheme: ColorScheme.fromSeed(
         error: errorMessageColor.withOpacity(0.7),
-        seedColor: territoryColorDark,brightness:Brightness.dark),
+        seedColor: territoryColorDark,
+        brightness: Brightness.dark),
+    sliderTheme: SliderThemeData(
+      activeTrackColor: territoryColorDark,
+      inactiveTrackColor: territoryColorDark.withOpacity(0.2),
+      thumbColor: territoryColorDark,
+      overlayColor: territoryColorDark.withOpacity(0.1),
+      trackHeight: 2.0,
+      rangeThumbShape:
+          const RoundRangeSliderThumbShape(enabledThumbRadius: 8.0),
+      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
+    ),
     switchTheme: SwitchThemeData(
         thumbColor: const MaterialStatePropertyAll(territoryColor_),
         trackColor: MaterialStateProperty.resolveWith((states) {

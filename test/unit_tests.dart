@@ -10,7 +10,6 @@ import 'package:Ebozor/data/model/item/item_model.dart';
 import 'package:Ebozor/data/model/item_filter_model.dart';
 import 'package:Ebozor/utils/login/lib/login_system.dart';
 import 'package:Ebozor/utils/login/lib/payloads.dart';
-import 'package:Ebozor/utils/login/email_login/email_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Ebozor/utils/login/lib/login_status.dart';
 

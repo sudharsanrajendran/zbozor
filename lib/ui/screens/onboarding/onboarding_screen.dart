@@ -8,7 +8,9 @@ import 'package:Ebozor/utils/responsiveSize.dart';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 
 import 'package:Ebozor/data/model/system_settings_model.dart';
@@ -153,12 +155,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        color: context.color.forthColor.withOpacity(0.102),
+                        color: context.color.territoryColor,
                         elevation: 0,
                         height: 28,
                         minWidth: 64,
                         child: Text("skip".translate(context))
-                            .color(context.color.forthColor),
+                            .color(Colors.white),
                       )),
                   Positioned.directional(
                       textDirection: Directionality.of(context),
@@ -241,8 +243,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 SizedBox(
                                   width: context.screenWidth,
                                   height: 221.rh(context),
-                                  child: UiUtils.getAdaptiveSvg(context,
-                                      slidersList[currentPageIndex]['svg'],
+                                  child: UiUtils.getAdaptiveSvg(
+                                      context, slidersList[currentPageIndex]['svg'],
                                       color: context.color.territoryColor),
                                 ),
                                 SizedBox(
@@ -251,7 +253,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 SizedBox(
                                   width: context.screenWidth,
                                   child: Text(slidersList[currentPageIndex]
-                                          ['title'])
+                                  ['title'])
                                       .size(context.font.extraLarge)
                                       .bold(weight: FontWeight.w600)
                                       .color(context.color.textDefaultColor)
@@ -266,18 +268,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 13),
                                     child: Text(slidersList[currentPageIndex]
-                                            ['description'])
+                                    ['description'])
                                         .centerAlign()
                                         .size(context.font.larger),
                                   ),
                                 ),
                                 SizedBox(
-                                  height: 24.rh(context),
+                                  height: 28.rh(context),
                                 ),
                                 IndicatorBuilder(
                                   total: totalPages,
                                   selectedIndex: currentPageIndex,
-                                )
+                                ),
+                                SizedBox(
+                                  height: 28.rh(context),
+                                ),
                               ],
                             ),
                           ),
@@ -359,7 +364,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Positioned.directional(
                       textDirection: Directionality.of(context),
                       top:
-                          context.screenHeight * ((0.636 * heightFactor) / 0.7),
+                      context.screenHeight * ((0.636 * heightFactor) / 0.7),
                       start: (context.screenWidth / 2) - 70 / 2,
                       child: GestureDetector(
                         onTap: () {
@@ -376,21 +381,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           width: 70,
                           height: 70,
                           decoration: BoxDecoration(
-                              color: context.color.forthColor,
+                              color: context.color.territoryColor,
                               boxShadow: context
-                                          .watch<AppThemeCubit>()
-                                          .state
-                                          .appTheme ==
-                                      AppTheme.dark
+                                  .watch<AppThemeCubit>()
+                                  .state
+                                  .appTheme ==
+                                  AppTheme.dark
                                   ? null
                                   : [
-                                      BoxShadow(
-                                          color: context.color.forthColor
-                                              .withOpacity(0.8),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 4),
-                                          spreadRadius: 1)
-                                    ],
+                                BoxShadow(
+                                    color: context.color.territoryColor,
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 2),
+                                    spreadRadius: 1)
+                              ],
                               shape: BoxShape.circle),
                           child: const Icon(
                             Icons.arrow_forward,
@@ -407,16 +411,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(28),
                   boxShadow: context.watch<AppThemeCubit>().state.appTheme ==
-                          AppTheme.dark
+                      AppTheme.dark
                       ? null
                       : [
-                          BoxShadow(
-                            color:
-                                context.color.territoryColor.withOpacity(0.3),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8), /*spreadRadius: 1*/
-                          )
-                        ],
+                    BoxShadow(
+                      color:
+                      context.color.territoryColor,
+                      blurRadius: 20,
+                      offset: const Offset(0, 2),
+                      /*spreadRadius: 1*/)
+                  ],
                 ),
                 child: MaterialButton(
                   onPressed: () {
@@ -432,8 +436,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     borderRadius: BorderRadius.circular(28),
                   ),
                   child: Text(currentPageIndex < slidersList.length - 1
-                          ? "signIn".translate(context)
-                          : "getStarted".translate(context))
+                      ? "signIn".translate(context)
+                      : "getStarted".translate(context))
                       .color(context.color.buttonColor)
                       .size(context.font.larger),
                 ),
