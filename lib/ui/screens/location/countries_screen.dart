@@ -91,13 +91,16 @@ class CountriesScreenState extends State<CountriesScreen> {
     }
   }
 
-  void addToRecentSearches(String name) {
-    if (!recentSearches.contains(name)) {
-      recentSearches.insert(0, name);
-      if (recentSearches.length > 5) recentSearches.removeLast();
-      if (Hive.isBoxOpen(HiveKeys.historyBox)) {
-        Hive.box(HiveKeys.historyBox).put("country_history", recentSearches);
-      }
+  void addToRecentSearches(CountriesModel country) {
+    String encoded = "${country.name}|${country.id}";
+    // Remove if already exists to move to top
+    recentSearches
+        .removeWhere((element) => element.split('|')[0] == country.name);
+
+    recentSearches.insert(0, encoded);
+    if (recentSearches.length > 5) recentSearches.removeLast();
+    if (Hive.isBoxOpen(HiveKeys.historyBox)) {
+      Hive.box(HiveKeys.historyBox).put("country_history", recentSearches);
     }
   }
 
@@ -290,18 +293,21 @@ class CountriesScreenState extends State<CountriesScreen> {
           .color(context.color.textDefaultColor)
           .bold(weight: FontWeight.w600)
           .size(18),
-      leading: Material(
-        clipBehavior: Clip.antiAlias,
-        color: Colors.transparent,
-        type: MaterialType.circle,
-        child: InkWell(
+      leading: Padding(
+        padding: const EdgeInsetsDirectional.only(start: 18.0),
+        child: Material(
+          clipBehavior: Clip.antiAlias,
+          color: Colors.transparent,
+          type: MaterialType.circle,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(50),
             onTap: () {
               Navigator.pop(context);
             },
-            child: Padding(
-                padding: EdgeInsetsDirectional.only(
-                  start: 18.0,
-                ),
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: Center(
                 child: Directionality(
                   textDirection: Directionality.of(context),
                   child: RotatedBox(
@@ -313,7 +319,11 @@ class CountriesScreenState extends State<CountriesScreen> {
                         fit: BoxFit.none,
                         color: context.color.textDefaultColor),
                   ),
-                ))),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
       actions: [
         Center(
@@ -328,13 +338,7 @@ class CountriesScreenState extends State<CountriesScreen> {
           ),
         )
       ],
-      elevation: context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
-          ? 0
-          : 6,
-      shadowColor:
-          context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
-              ? null
-              : context.color.textDefaultColor.withOpacity(0.2),
+      elevation: 0,
       backgroundColor: context.color.backgroundColor,
     );
   }
@@ -377,7 +381,7 @@ class CountriesScreenState extends State<CountriesScreen> {
         appBar: appBarWidget(countriesModel),
         body: bodyData(),
         bottomNavigationBar: bottomBar(),
-        backgroundColor: context.color.backgroundColor,
+        // backgroundColor: context.color.backgroundColor,
       );
     });
   }
@@ -411,12 +415,11 @@ class CountriesScreenState extends State<CountriesScreen> {
                     radius: 8,
                     height: 48,
                   ),
-            const SizedBox(height: 12),
             UiUtils.buildButton(
               context,
               onPressed: () {
                 if (selectedCountry != null) {
-                  addToRecentSearches(selectedCountry!.name!);
+                  addToRecentSearches(selectedCountry!);
                   Navigator.pushNamed(
                     context,
                     Routes.statesScreen,
@@ -481,7 +484,7 @@ class CountriesScreenState extends State<CountriesScreen> {
 
                 return Container(
                   width: double.infinity,
-                  color: context.color.secondaryColor,
+                  color: context.color.backgroundColor,
                   child: SingleChildScrollView(
                     controller: controller,
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -506,7 +509,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                                 const Spacer(),
                                 InkWell(
                                   onTap: () {
-                                    // See All Logic
+                                    ////////// heere
                                   },
                                   child: Text("seeAll".translate(context))
                                       .size(context.font.small)
@@ -521,18 +524,54 @@ class CountriesScreenState extends State<CountriesScreen> {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: recentSearches.map((search) {
+                                  final parts = search.split('|');
+                                  final name = parts[0];
+                                  final id = parts.length > 1
+                                      ? int.tryParse(parts[1])
+                                      : null;
+
                                   return Padding(
                                     padding: const EdgeInsetsDirectional.only(
                                         end: 10),
-                                    child: Chip(
-                                      label: Text(search),
-                                      backgroundColor:
-                                          context.color.secondaryColor,
-                                      side: BorderSide(
-                                          color: context.color.borderColor),
-                                      labelStyle: TextStyle(
-                                          color: context.color.textDefaultColor,
-                                          fontSize: 12),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        if (id != null) {
+                                          setState(() {
+                                            selectedCountry = CountriesModel(
+                                                id: id, name: name);
+                                            // searchController.text = name;
+                                          });
+                                          // Optional: clear focus or trigger search if needed
+                                          FocusScope.of(context).unfocus();
+                                        } else {
+                                          // Fallback for legacy
+                                          searchController.text = name;
+                                          if (state.countriesModel.any(
+                                              (element) =>
+                                                  element.name == name)) {
+                                            var country = state.countriesModel
+                                                .firstWhere((element) =>
+                                                    element.name == name);
+                                            setState(() {
+                                              selectedCountry = country;
+                                            });
+                                          }
+                                        }
+                                      },
+                                      child: Chip(
+                                        label: Text(name),
+                                        backgroundColor:
+                                            context.color.secondaryColor,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(4)),
+                                        side: BorderSide(
+                                            color: context.color.borderColor),
+                                        labelStyle: TextStyle(
+                                            color:
+                                                context.color.textDefaultColor,
+                                            fontSize: 12),
+                                      ),
                                     ),
                                   );
                                 }).toList(),

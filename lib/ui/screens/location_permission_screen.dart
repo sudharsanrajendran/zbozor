@@ -264,7 +264,7 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
               const SizedBox(height: 58),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
+                    const EdgeInsets.symmetric(horizontal: 12.0),
                 child: UiUtils.buildButton(context,
                     showElevation: false,
                     buttonColor: context.color.territoryColor,
@@ -278,7 +278,7 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
               ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
+                    const EdgeInsets.symmetric(horizontal: 12),
                 child: UiUtils.buildButton(context,
                     showElevation: false,
                     buttonColor: context.color.backgroundColor,

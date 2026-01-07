@@ -294,88 +294,94 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
       body: Column(
         children: [
           Expanded(
-            child: Stack(
-              children: [
-                _cameraPosition == null
-                    ? Center(child: UiUtils.progress())
-                    : GoogleMap(
-                        initialCameraPosition: _cameraPosition!,
-                        onMapCreated: _onMapCreated,
-                        // markers: _markers, // No markers for center pin mode
-                        markers: {},
-                        myLocationButtonEnabled: false,
-                        myLocationEnabled: true,
-                        zoomControlsEnabled: true,
-                        mapToolbarEnabled: false,
-                        onCameraMove: (position) {
-                          _cameraPosition = position;
-                        },
-                        onCameraIdle: () {
-                          getLocationFromLatitudeLongitude(
-                              latLng: _cameraPosition!.target);
-                          latitude = _cameraPosition!.target.latitude;
-                          longitude = _cameraPosition!.target.longitude;
-                        },
-                        onTap: (latLng) {
-                          // Optional: Tap logic if needed, but center pin is primary
-                        },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Stack(
+                  children: [
+                    _cameraPosition == null
+                        ? Center(child: UiUtils.progress())
+                        : GoogleMap(
+                            initialCameraPosition: _cameraPosition!,
+                            onMapCreated: _onMapCreated,
+                            // markers: _markers, // No markers for center pin mode
+                            markers: {},
+                            myLocationButtonEnabled: false,
+                            myLocationEnabled: true,
+                            zoomControlsEnabled: true,
+                            mapToolbarEnabled: false,
+                            onCameraMove: (position) {
+                              _cameraPosition = position;
+                            },
+                            onCameraIdle: () {
+                              getLocationFromLatitudeLongitude(
+                                  latLng: _cameraPosition!.target);
+                              latitude = _cameraPosition!.target.latitude;
+                              longitude = _cameraPosition!.target.longitude;
+                            },
+                            onTap: (latLng) {
+                              // Optional: Tap logic if needed, but center pin is primary
+                            },
+                          ),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 40),
+                        child: Icon(
+                          Icons.location_on,
+                          size: 45,
+                          color: context.color.territoryColor,
+                        ),
                       ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 40),
-                    child: Icon(
-                      Icons.location_on,
-                      size: 45,
-                      color: context.color.territoryColor,
                     ),
-                  ),
+                    Positioned(
+                        top: 20,
+                        left: 20,
+                        right: 20,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: context.color.backgroundColor,
+                              borderRadius: BorderRadius.circular(30),
+                              boxShadow: [
+                                BoxShadow(
+                                    color: context.color.borderColor
+                                        .withOpacity(0.3),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 5))
+                              ]),
+                          child: TextField(
+                            controller: searchController,
+                            focusNode: searchFocusNode,
+                            onChanged: (query) {
+                              if (_searchDebounce?.isActive ?? false)
+                                _searchDebounce!.cancel();
+                              _searchDebounce =
+                                  Timer(const Duration(milliseconds: 1000), () {
+                                _searchLocation(query);
+                              });
+                            },
+                            textInputAction: TextInputAction.search,
+                            onSubmitted: _searchLocation,
+                            decoration: InputDecoration(
+                                hintText: "Search",
+                                hintStyle: TextStyle(
+                                    color: context.color.textLightColor),
+                                border: InputBorder.none,
+                                prefixIcon: Icon(Icons.location_on_outlined,
+                                    color: context.color.territoryColor),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 14)),
+                          ),
+                        )),
+                  ],
                 ),
-                Positioned(
-                    top: 20,
-                    left: 20,
-                    right: 20,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: context.color.secondaryColor,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: [
-                            BoxShadow(
-                                color:
-                                    context.color.borderColor.withOpacity(0.3),
-                                blurRadius: 10,
-                                offset: const Offset(0, 5))
-                          ]),
-                      child: TextField(
-                        controller: searchController,
-                        focusNode: searchFocusNode,
-                        onChanged: (query) {
-                          if (_searchDebounce?.isActive ?? false)
-                            _searchDebounce!.cancel();
-                          _searchDebounce =
-                              Timer(const Duration(milliseconds: 1000), () {
-                            _searchLocation(query);
-                          });
-                        },
-                        textInputAction: TextInputAction.search,
-                        onSubmitted: _searchLocation,
-                        decoration: InputDecoration(
-                            hintText: "Search",
-                            hintStyle:
-                                TextStyle(color: context.color.textLightColor),
-                            border: InputBorder.none,
-                            prefixIcon: Icon(Icons.location_on_outlined,
-                                color: context.color.territoryColor),
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 14)),
-                      ),
-                    )),
-              ],
+              ),
             ),
           ),
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: context.color.secondaryColor,
+              color: context.color.backgroundColor,
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.1),
@@ -394,9 +400,9 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                     _getCurrentLocation();
                   },
                   buttonTitle: "Reset",
-                  textColor: context.color.textDefaultColor,
+                  textColor: context.color.territoryColor,
                   buttonColor: context.color.secondaryColor,
-                  border: BorderSide(color: context.color.textDefaultColor),
+                  border: BorderSide(color: context.color.territoryColor),
                   radius: 8,
                 ),
                 const SizedBox(height: 12),

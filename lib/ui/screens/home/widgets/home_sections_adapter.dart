@@ -52,7 +52,7 @@ class HomeSectionsAdapter extends StatelessWidget {
         GridListAdapter(
           type: ListUiType.List,
           listAxis: Axis.horizontal,
-          height: 220,
+          height: 210,
           listSaperator: (_, __) => const SizedBox(width: 14),
           builder: (context, index, _) {
             final item = section.sectionData![index];
@@ -127,7 +127,7 @@ class _ItemCardState extends State<ItemCard> {
 
                 /// CONTENT
                 Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.only(right: 8, left: 8, top: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -157,11 +157,13 @@ class _ItemCardState extends State<ItemCard> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             UiUtils.getSvg(
-                              height: 20,
-                              width: 20,
                               AppIcons.location,
+                              height: 13,
+                              width: 13,
+                              color: context.color.textDefaultColor
+                                  .withOpacity(0.5),
                             ),
-                            const SizedBox(width: 1),
+                            const SizedBox(width: 4),
                             Expanded(
                               child: Text(
                                 widget.item?.address ?? "",
@@ -169,9 +171,8 @@ class _ItemCardState extends State<ItemCard> {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: context.font.small,
-                                  height: 1,
-                                  color: context.color.textDefaultColor
-                                      .withOpacity(0.5),
+                                  color: context.color.deactivateColor,
+                                  fontWeight: FontWeight.w400
                                 ),
                               ),
                             ),
@@ -311,8 +312,11 @@ class TitleHeader extends StatelessWidget {
               onTap: onTap,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                child: Text("seeAll".translate(context))
-                    .size(context.font.smaller + 3)
+                child: Text(
+                  "seeAll".translate(context),
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                )
+                    .size(context.font.smaller + 5)
                     .color(context.color.deactivateColor),
               ),
             ),

@@ -4,7 +4,6 @@ import 'package:Ebozor/data/model/item_filter_model.dart';
 import 'package:Ebozor/data/repositories/item/item_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 abstract class FetchItemFromCategoryState {}
 
 class FetchItemFromCategoryInitial extends FetchItemFromCategoryState {}
@@ -51,17 +50,26 @@ class FetchItemFromCategoryFailure extends FetchItemFromCategoryState {
 }
 
 class FetchItemFromCategoryCubit extends Cubit<FetchItemFromCategoryState> {
-  FetchItemFromCategoryCubit() : super(FetchItemFromCategoryInitial());
+  FetchItemFromCategoryCubit({ItemRepository? itemRepository})
+      : _itemRepository = itemRepository ?? ItemRepository(),
+        super(FetchItemFromCategoryInitial());
 
-  final ItemRepository _itemRepository = ItemRepository();
+  final ItemRepository _itemRepository;
 
   Future<void> fetchItemFromCategory(
-      {required int categoryId, required String search, String? sortBy,ItemFilterModel? filter}) async {
+      {required int categoryId,
+      required String search,
+      String? sortBy,
+      ItemFilterModel? filter}) async {
     try {
       emit(FetchItemFromCategoryInProgress());
 
       DataOutput<ItemModel> result = await _itemRepository.fetchItemFromCatId(
-          categoryId: categoryId, page: 1, search: search, sortBy: sortBy,filter: filter);
+          categoryId: categoryId,
+          page: 1,
+          search: search,
+          sortBy: sortBy,
+          filter: filter);
       emit(
         FetchItemFromCategorySuccess(
           isLoadingMore: false,
@@ -82,7 +90,10 @@ class FetchItemFromCategoryCubit extends Cubit<FetchItemFromCategoryState> {
   }
 
   Future<void> fetchItemFromCategoryMore(
-      {required int catId, required String? search, String? sortBy,ItemFilterModel? filter}) async {
+      {required int catId,
+      required String? search,
+      String? sortBy,
+      ItemFilterModel? filter}) async {
     try {
       if (state is FetchItemFromCategorySuccess) {
         if ((state as FetchItemFromCategorySuccess).isLoadingMore) {
@@ -95,7 +106,8 @@ class FetchItemFromCategoryCubit extends Cubit<FetchItemFromCategoryState> {
             categoryId: catId,
             page: (state as FetchItemFromCategorySuccess).page + 1,
             search: search,
-            sortBy: sortBy,filter: filter);
+            sortBy: sortBy,
+            filter: filter);
 
         FetchItemFromCategorySuccess item =
             (state as FetchItemFromCategorySuccess);

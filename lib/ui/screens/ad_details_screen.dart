@@ -431,73 +431,91 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  // this is image widget
                   setImageViewer(),
+                  const SizedBox(height: 10),
                   if (isAddedByMe) setLikesAndViewsCount(),
+                  if (isAddedByMe) const SizedBox(height: 10),
                   // this is price and status widget
                   setPriceAndStatus(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(model.name!)
-                        .size(context.font.large)
-                        .setMaxLines(lines: 2)
-                        .color(context.color.textDefaultColor),
-                  ),
+
+                  Text(model.name!)
+                      .size(context.font.large)
+                      .setMaxLines(lines: 2)
+                      .color(context.color.textDefaultColor),
 
                   if (isAddedByMe) setRejectedReason(),
+                  if (isAddedByMe) const SizedBox(height: 10),
                   if (model.address != null) setAddress(isDate: false),
+                  const SizedBox(height: 10),
 
                   if (Constant.isGoogleBannerAdsEnabled == "1") ...[
                     Divider(
                         thickness: 1,
                         color: context.color.textDefaultColor.withOpacity(0.1)),
+                    const SizedBox(height: 15),
                     Container(
                       alignment: AlignmentDirectional.center,
                       child: AdBannerWidget(), // Custom widget for banner ad
                     ),
+                    const SizedBox(height: 15),
                   ],
 
                   if (isAddedByMe)
                     if (!model.isFeature!) createFeaturesAds(),
+                  if (isAddedByMe && !model.isFeature!)
+                    const SizedBox(height: 15),
                   if (model.customFields!.isNotEmpty) customFields(),
+                  if (model.customFields!.isNotEmpty)
+                    const SizedBox(height: 10),
                   //detailsContainer Widget
                   //Dynamic Ads here
                   Divider(
                       thickness: 1,
                       color: context.color.textDefaultColor.withOpacity(0.1)),
+                  const SizedBox(height: 8),
                   // this is description widget
                   setDescription(),
-
-                  // this is make an offer widget
+                  const SizedBox(height: 8),
 
                   Divider(
                       thickness: 1,
                       color: context.color.textDefaultColor.withOpacity(0.1)),
+                  const SizedBox(height: 15),
                   makeOfferButtonWidget(),
+                  const SizedBox(height: 15),
                   setLocation(),
+                  const SizedBox(height: 15),
 
                   // this is seller details widget
-                  if (!isAddedByMe && model.user != null) setSellerDetails(),
+                  if (!isAddedByMe && model.user != null)
+                    Divider(
+                        thickness: 1,
+                        color: context.color.textDefaultColor.withOpacity(0.1)),
+                  setSellerDetails(),
+                  Divider(
+                      thickness: 1,
+                      color: context.color.textDefaultColor.withOpacity(0.1)),
+
+                  if (!isAddedByMe && model.user != null)
+                    const SizedBox(height: 15),
 
                   if (Constant.isGoogleBannerAdsEnabled == "1") ...[
                     Divider(
                         thickness: 1,
                         color: context.color.textDefaultColor.withOpacity(0.1)),
+                    const SizedBox(height: 15),
                     Container(
                       alignment: AlignmentDirectional.center,
                       child: AdBannerWidget(), // Custom widget for banner ad
                     ),
+                    const SizedBox(height: 15),
                   ],
 
                   // this is report ad widget
                   if (!isAddedByMe) reportedAdsWidget(),
-                  /*if (model.isAlreadyReported != null &&
-                        model.isAlreadyReported!)
-                      setReportAd(),*/
-
-                  // this is similar ads widget
+                  if (!isAddedByMe) const SizedBox(height: 15),
                   relatedAds(),
-                  // const SizedBox(height: 15),
+                  const SizedBox(height: 15),
                 ],
               ),
             ),
@@ -1794,151 +1812,139 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
   Widget setImageViewer() {
     return Container(
       height: 250.rh(context),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(10))),
+      // decoration: BoxDecoration(
+      //     borderRadius: BorderRadius.vertical(top: Radius.circular(10))),
       padding: const EdgeInsets.symmetric(vertical: 10),
-      // decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
-      child: ClipRRect(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-        child: Stack(children: [
-          PageView.builder(
-            itemCount: images.length,
-            // Increase itemCount if videoLink is present
-            controller: pageController,
-            itemBuilder: (context, index) {
-              if (index == images.length - 1 &&
-                  model.videoLink != "" &&
-                  model.videoLink != null) {
-                return Stack(
-                  children: [
-                    // Thumbnail Image
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return VideoViewScreen(
-                                videoUrl: model.videoLink ?? "",
-                                flickManager: flickManager,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+            child: Stack(
+              children: [
+                PageView.builder(
+                  itemCount: images.length,
+                  controller: pageController,
+                  itemBuilder: (context, index) {
+                    if (index == images.length - 1 &&
+                        model.videoLink != "" &&
+                        model.videoLink != null) {
+                      return Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return VideoViewScreen(
+                                      videoUrl: model.videoLink ?? "",
+                                      flickManager: flickManager,
+                                    );
+                                  },
+                                ),
                               );
                             },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(10)),
+                              child: UiUtils.getImage(
+                                youtubeVideoThumbnail,
+                                fit: BoxFit.cover,
+                                height: 250.rh(context),
+                                width: double.maxFinite,
+                              ),
+                            ),
                           ),
-                        );
-                      },
-                      child: ClipRRect(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(10)),
-                        child: UiUtils.getImage(
-                          youtubeVideoThumbnail,
-                          fit: BoxFit.cover,
-                          height: 250.rh(context),
-                          width: double.maxFinite,
-                        ),
-                      ),
-                    ),
-                    // Play Button
-                    Positioned.fill(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return VideoViewScreen(
-                                  videoUrl: model.videoLink ?? "",
-                                  flickManager: flickManager,
+                          Positioned.fill(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      return VideoViewScreen(
+                                        videoUrl: model.videoLink ?? "",
+                                        flickManager: flickManager,
+                                      );
+                                    },
+                                  ),
                                 );
                               },
-                            ),
-                          );
-                        },
-                        child: Container(
-                          color: Colors.transparent,
-                          child: Center(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.black.withOpacity(0.5),
-                              ),
-                              padding: EdgeInsets.all(12),
-                              child: Icon(
-                                Icons.play_arrow,
-                                color: Colors.white,
-                                size: 25,
+                              child: Container(
+                                color: Colors.transparent,
+                                child: Center(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.black.withOpacity(0.5),
+                                    ),
+                                    padding: EdgeInsets.all(12),
+                                    child: Icon(
+                                      Icons.play_arrow,
+                                      color: Colors.white,
+                                      size: 25,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
+                        ],
+                      );
+                    } else {
+                      return ShaderMask(
+                        shaderCallback: (bounds) {
+                          return LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Color(0x00FFFFFF), Color(0x7F060606)],
+                          ).createShader(bounds);
+                        },
+                        blendMode: BlendMode.darken,
+                        child: InkWell(
+                          child: UiUtils.getImage(
+                            images[index]!,
+                            fit: BoxFit.cover,
+                            height: 250.rh(context),
+                          ),
+                          onTap: () {
+                            UiUtils.imageGallaryView(context,
+                                images: images, initalIndex: index);
+                          },
                         ),
+                      );
+                    }
+                  },
+                ),
+                Align(
+                  alignment: AlignmentDirectional.bottomCenter,
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        images.length,
+                        (index) => buildDot(index),
                       ),
                     ),
-                  ],
-                );
-
-                /*  if (model.videoLink!.contains("youtube.com"))
-                  return buildYouTubePlayer(model.videoLink!);
-                else
-                  return buildVideoPlayer(model.videoLink!);*/
-              } else {
-                // Display image
-                return ShaderMask(
-                  shaderCallback: (bounds) {
-                    return LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0x00FFFFFF),
-                        Color(0x7F060606)
-
-                        /*Colors.black.withOpacity(0.01),
-                        Colors.black.withOpacity(0.30),
-                        Colors.black.withOpacity(0.55)*/
-                      ],
-                    ).createShader(bounds);
-                    //TODO: change black color to some other app color if required
-                  },
-                  blendMode: BlendMode.darken,
-                  child: InkWell(
-                    child: UiUtils.getImage(
-                      images[index]!,
-                      fit: BoxFit.cover,
-                      height: 250.rh(context),
-                    ),
-                    onTap: () {
-                      UiUtils.imageGallaryView(context,
-                          images: images, initalIndex: index);
-                    },
                   ),
-                );
-              }
-            },
-          ),
-          Align(
-            alignment: AlignmentDirectional.bottomCenter,
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  images.length,
-                  // Increase number of dots if videoLink is present
-                  (index) => buildDot(index),
                 ),
-              ),
+                if (widget.model.isFeature != null)
+                  if (widget.model.isFeature!)
+                    setTopRowItem(
+                        alignment: AlignmentDirectional.topStart,
+                        marginVal: 15,
+                        cornerRadius: 5,
+                        backgroundColor: context.color.territoryColor,
+                        childWidget: Text("featured".translate(context))
+                            .size(context.font.small)
+                            .color(context.color.backgroundColor)),
+              ],
             ),
           ),
-          if (widget.model.isFeature != null)
-            if (widget.model.isFeature!)
-              setTopRowItem(
-                  alignment: AlignmentDirectional.topStart,
-                  marginVal: 15,
-                  cornerRadius: 5,
-                  backgroundColor: context.color.territoryColor,
-                  childWidget: Text("featured".translate(context))
-                      .size(context.font.small)
-                      .color(context.color.backgroundColor)),
           imageActionButtons()
-        ]),
+        ],
       ),
     );
   }
@@ -1961,93 +1967,117 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
   }*/
 
   Widget imageActionButtons() {
-    return Align(
-      alignment: AlignmentDirectional.bottomEnd,
-      child: Container(
-        margin: const EdgeInsetsDirectional.only(bottom: 10, end: 10),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!isAddedByMe)
-              BlocBuilder<FavoriteCubit, FavoriteState>(
-                bloc: context.read<FavoriteCubit>(),
-                builder: (context, favState) {
-                  bool isLike = context.select(
-                      (FavoriteCubit cubit) => cubit.isItemFavorite(model.id!));
+    return PositionedDirectional(
+      bottom: -20,
+      end: 10,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (!isAddedByMe)
+            BlocBuilder<FavoriteCubit, FavoriteState>(
+              bloc: context.read<FavoriteCubit>(),
+              builder: (context, favState) {
+                bool isLike = context.select(
+                    (FavoriteCubit cubit) => cubit.isItemFavorite(model.id!));
 
-                  return BlocConsumer<UpdateFavoriteCubit, UpdateFavoriteState>(
-                    bloc: context.read<UpdateFavoriteCubit>(),
-                    listener: (context, state) {
-                      if (state is UpdateFavoriteSuccess) {
-                        if (state.wasProcess) {
-                          context
-                              .read<FavoriteCubit>()
-                              .addFavoriteitem(state.item);
-                        } else {
-                          context
-                              .read<FavoriteCubit>()
-                              .removeFavoriteItem(state.item);
-                        }
+                return BlocConsumer<UpdateFavoriteCubit, UpdateFavoriteState>(
+                  bloc: context.read<UpdateFavoriteCubit>(),
+                  listener: (context, state) {
+                    if (state is UpdateFavoriteSuccess) {
+                      if (state.wasProcess) {
+                        context
+                            .read<FavoriteCubit>()
+                            .addFavoriteitem(state.item);
+                      } else {
+                        context
+                            .read<FavoriteCubit>()
+                            .removeFavoriteItem(state.item);
                       }
-                    },
-                    builder: (context, state) {
-                      return Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              color: context.color.backgroundColor),
-                          child: InkWell(
-                            onTap: () {
-                              UiUtils.checkUser(
-                                  onNotGuest: () {
-                                    context
-                                        .read<UpdateFavoriteCubit>()
-                                        .setFavoriteItem(
-                                          item: model,
-                                          type: isLike ? 0 : 1,
-                                        );
-                                  },
-                                  context: context);
-                            },
-                            child: state is UpdateFavoriteInProgress
-                                ? UiUtils.progress(
-                                    height: 22,
-                                    width: 22,
-                                  )
-                                : UiUtils.getSvg(
-                                    isLike ? AppIcons.like_fill : AppIcons.like,
-                                    color: isLike
-                                        ? context.color.territoryColor
-                                        : context.color.textLightColor
-                                            .withOpacity(0.5),
-                                    //color: context.color.textLightColor,
-                                    width: 22,
-                                    height: 22),
-                          ));
-                    },
-                  );
-                },
-              )
-            else
-              SizedBox.shrink(),
-            SizedBox(width: 10),
-            Container(
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  color: context.color.backgroundColor),
-              child: InkWell(
-                  onTap: () {
-                    HelperUtils.share(context, model.slug!);
+                    }
                   },
-                  child: Icon(
-                    Icons.share,
-                    size: 22,
-                    color: context.color.textLightColor.withOpacity(0.5),
-                  )),
+                  builder: (context, state) {
+                    return Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: context.color.secondaryColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            blurRadius: 10,
+                            spreadRadius: 1,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(40),
+                        onTap: () {
+                          UiUtils.checkUser(
+                              onNotGuest: () {
+                                context
+                                    .read<UpdateFavoriteCubit>()
+                                    .setFavoriteItem(
+                                      item: model,
+                                      type: isLike ? 0 : 1,
+                                    );
+                              },
+                              context: context);
+                        },
+                        child: Center(
+                          child: state is UpdateFavoriteInProgress
+                              ? UiUtils.progress(
+                                  height: 22,
+                                  width: 22,
+                                )
+                              : UiUtils.getSvg(
+                                  isLike ? AppIcons.like_fill : AppIcons.like,
+                                  color: isLike
+                                      ? context.color.territoryColor
+                                      : context.color.textLightColor
+                                          .withOpacity(0.5),
+                                  width: 22,
+                                  height: 22,
+                                ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
-          ],
-        ),
+          if (!isAddedByMe) SizedBox(width: 10),
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: context.color.secondaryColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 10,
+                  spreadRadius: 1,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(40),
+              onTap: () {
+                HelperUtils.share(context, model.slug!);
+              },
+              child: Center(
+                child: Icon(
+                  Icons.share,
+                  size: 22,
+                  color: context.color.textLightColor.withOpacity(0.5),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -2167,7 +2197,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
               Icon(
                 Icons.report,
                 size: 20,
-                color: Colors.red, // Icon color can be adjusted
+                color:
+                    context.color.territoryColor, // Icon color can be adjusted
               ),
               SizedBox(
                 width: 5,
@@ -2284,10 +2315,13 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             (isDate) ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SvgPicture.asset(
-            AppIcons.location,
-            colorFilter:
-                ColorFilter.mode(context.color.textLightColor, BlendMode.srcIn),
+          Padding(
+            padding: const EdgeInsets.only(top: 3.0),
+            child: SvgPicture.asset(
+              AppIcons.location,
+              colorFilter: ColorFilter.mode(
+                  context.color.textLightColor, BlendMode.srcIn),
+            ),
           ),
           Expanded(
             flex: 3,
@@ -2314,11 +2348,27 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       children: [
         Text("aboutThisItemLbl".translate(context)).bold().size(context
             .font.large), //TODO: replace label with your own - aboutThisPropLbl
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5.0),
-          child: Text(model.description!)
-              .color(context.color.textDefaultColor.withOpacity(0.5)),
-        ),
+        SizedBox(height: 10),
+        if (model.category != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 1.0),
+            child: Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Type")
+                    .color(context.color.textDefaultColor.withOpacity(0.5))
+                    .size(context.font.normal),
+                SizedBox(
+                  width: 100,
+                ),
+                //Spacer(),
+                Text(model.category!.name ?? "")
+                    .bold(weight: FontWeight.w600)
+                    .color(context.color.textDefaultColor)
+                    .size(context.font.normal),
+              ],
+            ),
+          ),
       ],
     );
   }
@@ -2389,9 +2439,32 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("locationLbl".translate(context)).bold().size(context.font.large),
-        setAddress(isDate: false),
         SizedBox(
-          height: 5,
+          height: 10,
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 3.0),
+              child: SvgPicture.asset(
+                AppIcons.location,
+                colorFilter: ColorFilter.mode(
+                    context.color.textLightColor, BlendMode.srcIn),
+                height: 20,
+                width: 20,
+              ),
+            ),
+            SizedBox(width: 5),
+            Expanded(
+              child: Text(model.address!)
+                  .color(context.color.textDefaultColor)
+                  .size(context.font.normal),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 20,
         ),
         ClipRRect(
           borderRadius: BorderRadius.circular(18),
@@ -2464,6 +2537,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             thickness: 1,
             color: context.color.textDefaultColor.withOpacity(0.1),
           ),
+          SizedBox(
+            height: 10,
+          ),
           InkWell(
             onTap: () {
               UiUtils.checkUser(
@@ -2490,6 +2566,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 ],
               ),
             ),
+          ),
+          SizedBox(
+            height: 10,
           ),
           Divider(
             thickness: 1,
@@ -2731,15 +2810,15 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
               null
         });
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+        decoration: BoxDecoration(
+          color: context.color.secondaryColor,
+        ),
         child: Row(children: [
           Container(
               height: 60.rh(context),
               width: 60.rw(context),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-              ),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(30),
                   child: model.user!.profile != null &&
@@ -2752,18 +2831,20 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                         ))),
           Expanded(
             child: Padding(
-              padding: const EdgeInsetsDirectional.only(start: 20.0),
+              padding: const EdgeInsetsDirectional.only(start: 15.0),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(model.user!.name!).bold().size(context.font.large),
+                    SizedBox(height: 5),
                     Text("Owner")
                         .size(context.font.small)
-                        .bold(weight: FontWeight.w500)
-                        .color(context.color.textDefaultColor),
-                    Text("View Profile")
-                        .size(context.font.small)
-                        .color(Colors.blue),
+                        .bold(weight: FontWeight.bold)
+                        .color(context.color.textDefaultColor.withOpacity(0.7)),
+                    SizedBox(height: 5),
+                    Text(
+                      "View Profile",
+                    ).size(context.font.small).color(Colors.blue).bold()
                   ]),
             ),
           ),

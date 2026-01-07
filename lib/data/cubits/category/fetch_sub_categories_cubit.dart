@@ -8,7 +8,6 @@ import 'package:Ebozor/data/model/category_model.dart';
 import 'package:Ebozor/data/model/data_output.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 abstract class FetchSubCategoriesState {}
 
 class FetchSubCategoriesInitial extends FetchSubCategoriesState {}
@@ -88,11 +87,12 @@ class FetchSubCategoriesFailure extends FetchSubCategoriesState {
   FetchSubCategoriesFailure(this.errorMessage);
 }
 
-class FetchSubCategoriesCubit extends Cubit<FetchSubCategoriesState>
-    {
-  FetchSubCategoriesCubit() : super(FetchSubCategoriesInitial());
+class FetchSubCategoriesCubit extends Cubit<FetchSubCategoriesState> {
+  FetchSubCategoriesCubit({CategoryRepository? categoryRepository})
+      : _categoryRepository = categoryRepository ?? CategoryRepository(),
+        super(FetchSubCategoriesInitial());
 
-  final CategoryRepository _categoryRepository = CategoryRepository();
+  final CategoryRepository _categoryRepository;
 
   Future<void> fetchSubCategories(
       {bool? forceRefresh,
@@ -140,7 +140,8 @@ class FetchSubCategoriesCubit extends Cubit<FetchSubCategoriesState>
             (state as FetchSubCategoriesSuccess);
         categoryState.categories.addAll(result.modelList);
 
-        List<String> list = categoryState.categories.map((e) => e.url!).toList();
+        List<String> list =
+            categoryState.categories.map((e) => e.url!).toList();
         await HelperUtils.precacheSVG(list);
 
         emit(FetchSubCategoriesSuccess(

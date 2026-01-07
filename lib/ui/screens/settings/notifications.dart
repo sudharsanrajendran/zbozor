@@ -123,41 +123,45 @@ class NotificationsState extends State<Notifications> {
               ),
             )
           : BlocBuilder<FetchNotificationsCubit, FetchNotificationsState>(
-          builder: (context, state) {
-        if (state is FetchNotificationsInProgress) {
-          return buildNotificationShimmer();
-        }
-        if (state is FetchNotificationsFailure) {
-          if (state.errorMessage is ApiException) {
-            if (state.errorMessage.error == "no-internet") {
-              return NoInternet(
-                onRetry: () {
-                  context.read<FetchNotificationsCubit>().fetchNotifications();
-                },
-              );
-            }
-          }
+              builder: (context, state) {
+              if (state is FetchNotificationsInProgress) {
+                return buildNotificationShimmer();
+              }
+              if (state is FetchNotificationsFailure) {
+                if (state.errorMessage is ApiException) {
+                  if (state.errorMessage.error == "no-internet") {
+                    return NoInternet(
+                      onRetry: () {
+                        context
+                            .read<FetchNotificationsCubit>()
+                            .fetchNotifications();
+                      },
+                    );
+                  }
+                }
 
-          return const SomethingWentWrong();
-        }
+                return const SomethingWentWrong();
+              }
 
-        if (state is FetchNotificationsSuccess) {
-          // Update the "seen" total so badge clears
-          HiveUtils.setNotificationTotal(state.total);
+              if (state is FetchNotificationsSuccess) {
+                // Update the "seen" total so badge clears
+                HiveUtils.setNotificationTotal(state.total);
 
-          if (state.notificationdata.isEmpty) {
-            return NoDataFound(
-              onTap: () {
-                context.read<FetchNotificationsCubit>().fetchNotifications();
-              },
-            );
-          }
+                if (state.notificationdata.isEmpty) {
+                  return NoDataFound(
+                    onTap: () {
+                      context
+                          .read<FetchNotificationsCubit>()
+                          .fetchNotifications();
+                    },
+                  );
+                }
 
-          return buildNotificationListWidget(state);
-        }
+                return buildNotificationListWidget(state);
+              }
 
-        return const SizedBox.square();
-      }),
+              return const SizedBox.square();
+            }),
     );
   }
 
@@ -216,8 +220,8 @@ class NotificationsState extends State<Notifications> {
               controller: _pageScrollController,
               physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.all(10),
-              separatorBuilder: (context, index) => const Divider(
-                    color: Colors.grey,
+              separatorBuilder: (context, index) => Divider(
+                    color: Colors.grey.withOpacity(0.3),
                     thickness: 0.5,
                   ),
               itemCount: state.notificationdata.length,
@@ -233,8 +237,8 @@ class NotificationsState extends State<Notifications> {
                   },
                   child: Container(
                     color: Colors.transparent, // Ensure hit test works
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -254,6 +258,7 @@ class NotificationsState extends State<Notifications> {
                               ),
                             ),
                             PopupMenuButton<String>(
+                              elevation: 2,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               onSelected: (value) async {
@@ -267,7 +272,11 @@ class NotificationsState extends State<Notifications> {
                                 }.map((String choice) {
                                   return PopupMenuItem<String>(
                                     value: "delete",
-                                    child: Text(choice),
+                                    child: Text(
+                                      choice,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   );
                                 }).toList();
                               },
@@ -283,9 +292,10 @@ class NotificationsState extends State<Notifications> {
                           notificationData.message!.firstUpperCase(),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: const Color(0xff5D6269)
-                            ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(color: const Color(0xff5D6269)),
                         ),
                         const SizedBox(height: 8),
                         Text(notificationData.createdAt!

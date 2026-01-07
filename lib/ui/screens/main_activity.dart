@@ -500,72 +500,76 @@ class MainActivityState extends State<MainActivity>
             ),
 
             /// CENTER BUTTON
-            BlocListener<FetchUserPackageLimitCubit,
-                FetchUserPackageLimitState>(
-              listener: (context, state) {
-                if (state is FetchUserPackageLimitFailure) {
-                  UiUtils.noPackageAvailableDialog(context);
-                }
-                if (state is FetchUserPackageLimitInSuccess) {
-                  Navigator.pushNamed(
-                    context,
-                    Routes.selectCategoryScreen,
-                    arguments: <String, dynamic>{},
-                  );
-                }
-              },
-              child: BlocBuilder<FetchUserPackageLimitCubit,
+            Expanded(
+              child: BlocListener<FetchUserPackageLimitCubit,
                   FetchUserPackageLimitState>(
-                builder: (context, state) {
-                  return InkWell(
-                      borderRadius: BorderRadius.circular(30),
-                      onTap: () {
-                        UiUtils.checkUser(
-                          context: context,
-                          onNotGuest: () {
-                            context
-                                .read<FetchUserPackageLimitCubit>()
-                                .fetchUserPackageLimit(
-                                  packageType: "item_listing",
-                                );
-                          },
-                        );
-                      },
-                      child: SizedBox(
-                        // ⬅️ HEIGHT INCREASED
-                        child: Center(
-                          child: state is FetchUserPackageLimitInProgress
-                              ? const CircularProgressIndicator(strokeWidth: 2)
-                              : !svgLoaded
-                                  ? const SizedBox.shrink()
-                                  : SizedBox(
-                                      // ⬅️ ICON SIZE CONTROL
-                                      child: Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: context.color.territoryColor,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: context
-                                                    .color.territoryColor
-                                                    .withOpacity(0.4),
-                                                //blurRadius: 8,
-                                                //offset: const Offset(0, 4),
-                                              )
-                                            ]),
-                                        child: const Icon(
-                                          Icons.add,
-                                          color: Colors.white,
-                                          size: 20,
+                listener: (context, state) {
+                  if (state is FetchUserPackageLimitFailure) {
+                    UiUtils.noPackageAvailableDialog(context);
+                  }
+                  if (state is FetchUserPackageLimitInSuccess) {
+                    Navigator.pushNamed(
+                      context,
+                      Routes.selectCategoryScreen,
+                      arguments: <String, dynamic>{},
+                    );
+                  }
+                },
+                child: BlocBuilder<FetchUserPackageLimitCubit,
+                    FetchUserPackageLimitState>(
+                  builder: (context, state) {
+                    return InkWell(
+                        borderRadius: BorderRadius.circular(30),
+                        onTap: () {
+                          UiUtils.checkUser(
+                            context: context,
+                            onNotGuest: () {
+                              context
+                                  .read<FetchUserPackageLimitCubit>()
+                                  .fetchUserPackageLimit(
+                                    packageType: "item_listing",
+                                  );
+                            },
+                          );
+                        },
+                        child: SizedBox(
+                          // ⬅️ HEIGHT INCREASED
+                          child: Center(
+                            child: state is FetchUserPackageLimitInProgress
+                                ? const CircularProgressIndicator(
+                                    strokeWidth: 2)
+                                : !svgLoaded
+                                    ? const SizedBox.shrink()
+                                    : SizedBox(
+                                        // ⬅️ ICON SIZE CONTROL
+                                        child: Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                              color:
+                                                  context.color.territoryColor,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: context
+                                                      .color.territoryColor
+                                                      .withOpacity(0.4),
+                                                  //blurRadius: 8,
+                                                  //offset: const Offset(0, 4),
+                                                )
+                                              ]),
+                                          child: const Icon(
+                                            Icons.add,
+                                            color: Colors.white,
+                                            size: 20,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                        ),
-                      ));
-                },
+                          ),
+                        ));
+                  },
+                ),
               ),
             ),
 

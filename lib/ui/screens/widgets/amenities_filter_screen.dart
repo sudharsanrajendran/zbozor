@@ -62,41 +62,52 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
           ),
         ),
         actions: [
-          TextButton(
-            onPressed: () {
-              setState(() {
-                _currentSelection.clear();
-              });
-            },
-            child: Text(
-              "Clear All",
-              style: TextStyle(color: context.color.textLightColor),
+          Padding(
+            padding: const EdgeInsets.only(left: 2.0),
+            child: TextButton(
+              onPressed: _currentSelection.isNotEmpty
+                  ? () {
+                      setState(() {
+                        _currentSelection.clear();
+                      });
+                    }
+                  : null,
+              child: Text(
+                "Clear All",
+                style: TextStyle(
+                  color: _currentSelection.isNotEmpty
+                      ? Colors.red
+                      : context.color.textLightColor,
+                ),
+              ),
             ),
           )
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         color: context.color.backgroundColor,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: SafeArea(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "${_filteredAmenities.length} Results", // Or total results
-                style: TextStyle(color: context.color.textLightColor),
+                "${_filteredAmenities.length} Results",
+                style: TextStyle(
+                  color: context.color.textDefaultColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-              const SizedBox(height: 10),
               SizedBox(
-                width: double.infinity,
+                width: 140,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: context.color.territoryColor,
+                    backgroundColor: Colors.red,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   onPressed: () {
                     Navigator.pop(context, _currentSelection);
@@ -118,7 +129,8 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             child: TextField(
               controller: _searchController,
               onChanged: _filterAmenities,
@@ -130,8 +142,16 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
                 filled: true,
                 fillColor: context.color.secondaryColor,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: context.color.borderColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: context.color.borderColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: context.color.borderColor),
                 ),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 20),
               ),
@@ -144,8 +164,8 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 childAspectRatio: 3.5, // Adjust based on density
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
               ),
               itemCount: _filteredAmenities.length,
               itemBuilder: (context, index) {
@@ -170,9 +190,7 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
                           shape: BoxShape.rectangle, // Checkbox style
                           borderRadius: BorderRadius.circular(4),
                           border: Border.all(
-                            color: isSelected
-                                ? context.color.territoryColor
-                                : context.color.textLightColor,
+                            color: context.color.territoryColor,
                             width: 1.5,
                           ),
                           color: isSelected

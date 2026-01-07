@@ -276,34 +276,31 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: sidePadding),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+          child: Column(
             children: [
-              Expanded(
-                  child: UiUtils.buildButton(context, radius: 8, fontSize: 16,
-                      onPressed: () {
+              UiUtils.buildButton(context, radius: 8, fontSize: 16,
+                  onPressed: () {
                 setState(() {
                   radius = 1;
                   _addCircle(LatLng(latitude!, longitude!), radius);
                 });
               },
-                      buttonTitle: "reset".translate(context),
-                      height: 43,
-                      border: BorderSide(color: context.color.textDefaultColor),
-                      textColor: context.color.textDefaultColor,
-                      buttonColor: context.color.secondaryColor)),
-              const SizedBox(width: 16),
-              Expanded(
-                  child: UiUtils.buildButton(context, radius: 8, fontSize: 16,
-                      onPressed: () {
+                  buttonTitle: "reset".translate(context),
+                  height: 48,
+                  border: BorderSide(color: context.color.territoryColor),
+                  textColor: context.color.territoryColor,
+                  buttonColor: context.color.secondaryColor),
+              const SizedBox(height: 10),
+              UiUtils.buildButton(context, radius: 8, fontSize: 16,
+                  onPressed: () {
                 print("DEBUG: Apply Button CLICKED in UI");
                 HiveUtils.setNearbyRadius(radius.toInt());
                 applyOnPressed();
               },
-                      buttonTitle: "apply".translate(context),
-                      height: 43,
-                      textColor: context.color.buttonColor,
-                      buttonColor: context.color.territoryColor)),
+                  buttonTitle: "apply".translate(context),
+                  height: 48,
+                  textColor: context.color.buttonColor,
+                  buttonColor: context.color.territoryColor),
             ],
           ),
         ),
@@ -401,13 +398,15 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
     return AnnotatedRegion(
       value: UiUtils.getSystemUiOverlayStyle(
         context: context,
-        statusBarColor: context.color.secondaryColor,
+        statusBarColor: context.color.backgroundColor,
       ),
       child: Scaffold(
         bottomNavigationBar: bottomBar(),
-        backgroundColor: context.color.secondaryColor,
+        backgroundColor: context.color.backgroundColor,
         appBar: UiUtils.buildAppBar(context,
-            showBackButton: true, title: "nearbyListings".translate(context)),
+            showBackButton: true,
+            title: "nearbyListings".translate(context),
+            backgroundColor: context.color.backgroundColor),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -531,9 +530,6 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                                   width: 25,
                                                   height: 25,
                                                   decoration: BoxDecoration(
-                                                    color: context
-                                                        .color.territoryColor
-                                                        .withOpacity(0.15),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             5),

@@ -207,7 +207,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   _buildTabs(),
 
                   ///////body of the tabs
-                  const Divider(thickness: 1, height: 1),
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(16.0),
@@ -215,15 +214,15 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildLocationSection(),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 12),
                           _buildPropertyTypes(),
                           if (_selectedPropertyType != null) ...[
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 12),
                             _buildSubCategories(),
                           ],
                           if (_selectedPropertyType?.filters != null &&
                               _selectedPropertyType!.filters!.isNotEmpty) ...[
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 12),
                             _buildDynamicFilters(
                                 _selectedPropertyType!.filters!),
                           ],
@@ -236,7 +235,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                               if (cat.filters != null &&
                                   cat.filters!.isNotEmpty) {
                                 return Padding(
-                                  padding: const EdgeInsets.only(top: 24),
+                                  padding: const EdgeInsets.only(top: 12),
                                   child: _buildDynamicFilters(cat.filters!),
                                 );
                               }
@@ -264,55 +263,51 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   ///
   Widget _buildTabs() {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       color: context.color.secondaryColor,
       child: Row(
-        children: widget.categoryList.asMap().entries.map((entry) {
-          int index = entry.key;
-          CategoryModel category = entry.value;
-          bool isSelected = _selectedTabIndex == index;
-          return Expanded(
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  _selectedTabIndex = index;
-                  // Reset lower selections when switching tabs
-                  if (category.children != null &&
-                      category.children!.isNotEmpty) {
-                    _onPropertyTypeSelected(category.children!.first);
-                  } else {
+        children: [
+          for (int index = 0; index < widget.categoryList.length; index++) ...[
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _selectedTabIndex = index;
                     _selectedPropertyType = null;
                     _subCategoryPath.clear();
-                    // Fetch if empty
                     _propertyTypesCubit.fetchSubCategories(
-                        categoryId: category.id!);
-                  }
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                decoration: BoxDecoration(
-                  border: isSelected
-                      ? Border(
-                          bottom: BorderSide(
-                              color: context.color.territoryColor, width: 2))
-                      : null,
-                ),
-                child: Text(
-                  category.name ?? "",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: isSelected
-                        ? context.color.territoryColor
-                        : context.color.textDefaultColor,
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
-                    fontSize: 14,
+                        categoryId: widget.categoryList[index].id!);
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  decoration: BoxDecoration(
+                    border: _selectedTabIndex == index
+                        ? Border(
+                            bottom: BorderSide(
+                                color: context.color.territoryColor, width: 2))
+                        : null,
+                  ),
+                  child: Text(
+                    widget.categoryList[index].name ?? "",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: _selectedTabIndex == index
+                          ? context.color.territoryColor
+                          : context.color.textDefaultColor,
+                      fontWeight: _selectedTabIndex == index
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ),
             ),
-          );
-        }).toList(),
+            if (index != widget.categoryList.length - 1)
+              const SizedBox(width: 20),
+          ],
+        ],
       ),
     );
   }
@@ -331,6 +326,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         const SizedBox(height: 12),
         Container(
           width: double.infinity,
+          height: 43,
           decoration: BoxDecoration(
             color: context.color.backgroundColor,
             borderRadius: BorderRadius.circular(20),
@@ -450,8 +446,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   },
                   child: Container(
                     width: 100,
-                    height: 100, // 🔥 FIXED HEIGHT (important)
-                    padding: const EdgeInsets.all(12),
+                    height: 90, // 🔥 FIXED HEIGHT (important)
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: context.color.backgroundColor,
                       borderRadius: BorderRadius.circular(8),
@@ -459,11 +455,12 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         color: isSelected
                             ? context.color.textDefaultColor
                             : context.color.borderColor,
-                        width: isSelected ? 2 : 1,
+                        width: isSelected ? 1.5 : 1,
                       ),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         /// ICON
                         SizedBox(
@@ -551,7 +548,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       CategoryModel currentSelection = _subCategoryPath[i];
       if (currentSelection.children != null &&
           currentSelection.children!.isNotEmpty) {
-        levels.add(const SizedBox(height: 24));
+        levels.add(const SizedBox(height: 12));
         // The children of path[i] constitute level i+1
         levels.add(
             _buildDynamicSubCategoryChips(i + 1, currentSelection.children!));
@@ -829,7 +826,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   ),
                 ),
               ),
-               SizedBox(height: 12),
+              SizedBox(height: 12),
             ],
           );
         }
@@ -895,7 +892,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   }).toList(),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
             ],
           );
         }
@@ -942,7 +939,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   style: TextStyle(color: context.color.textDefaultColor),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
             ],
           );
         }
@@ -1125,7 +1122,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
             ],
           );
         }

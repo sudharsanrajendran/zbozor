@@ -1,9 +1,9 @@
-
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Ebozor/utils/ui_utils.dart';
+
 class CategoryHomeCard extends StatelessWidget {
   final String title;
   final String url;
@@ -30,47 +30,51 @@ class CategoryHomeCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
           decoration: BoxDecoration(
             color: context.color.secondaryColor,
-              borderRadius: BorderRadius.circular(5),
+            borderRadius: BorderRadius.circular(5),
+            boxShadow: [
+              BoxShadow(
+                color: context.color.borderColor.darken(30).withOpacity(0.6),
+                offset: const Offset(0, 2),
+                blurRadius: 7,
+                spreadRadius: 0,
+              )
+            ],
           ),
           child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Flexible(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Flexible(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
                   child: UiUtils.imageType(
                     url,
                     fit: isFullImage ? BoxFit.contain : BoxFit.cover,
                     color: context.color.territoryColor,
                   ),
+                ),
               ),
-            ),
 
-           // const SizedBox(height: ),
+              // const SizedBox(height: ),
 
-            Expanded(
-              child: Center(
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: context.font.small,
-                    color: context.color.textDefaultColor,
-                    fontWeight: FontWeight.w500,
+              Expanded(
+                child: Center(
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: context.font.small,
+                      color: context.color.textDefaultColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-
-
-      ),
       ),
     );
   }
 }
-
-

@@ -423,21 +423,39 @@ class FilterScreenState extends State<FilterScreen> {
                 Expanded(child: minMaxTFFProperty("maxLbl".translate(context))),
               ],
             ),
-            const SizedBox(height: 10),
-            RangeSlider(
-              values: _priceRangeValues,
-              min: 0,
-              max: 1000000,
-              activeColor: context.color.territoryColor,
-              inactiveColor: context.color.textDefaultColor.withOpacity(0.1),
-              divisions: 1000,
-              onChanged: (RangeValues values) {
-                setState(() {
-                  _priceRangeValues = values;
-                  minController.text = values.start.round().toString();
-                  maxController.text = values.end.round().toString();
-                });
-              },
+            SizedBox(height: 10),
+            SliderTheme(
+              data: SliderThemeData(
+                activeTrackColor: context.color.territoryColor,
+                inactiveTrackColor:
+                    context.color.territoryColor.withOpacity(0.1),
+                thumbColor: context.color.territoryColor,
+                overlayColor: context.color.territoryColor.withOpacity(0.3),
+                trackHeight: 1,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+              ),
+              child: RangeSlider(
+                values: RangeValues(
+                  (_priceRangeValues.start < _priceRangeValues.end
+                          ? _priceRangeValues.start
+                          : _priceRangeValues.end)
+                      .clamp(0, 1000000),
+                  (_priceRangeValues.start > _priceRangeValues.end
+                          ? _priceRangeValues.start
+                          : _priceRangeValues.end)
+                      .clamp(0, 1000000),
+                ),
+                min: 0,
+                max: 1000000,
+                divisions: 1000,
+                onChanged: (RangeValues values) {
+                  setState(() {
+                    _priceRangeValues = values;
+                    minController.text = values.start.round().toString();
+                    maxController.text = values.end.round().toString();
+                  });
+                },
+              ),
             ),
             const SizedBox(height: 20),
             Text('postedSinceLbl'.translate(context))
@@ -499,7 +517,8 @@ class FilterScreenState extends State<FilterScreen> {
         border: Border.all(color: Colors.grey.shade300),
       ),
       alignment: Alignment.center,
-      child: TextFormField(
+      child: TextField(
+        key: Key(minMax), // Helper key to preserve focus
         controller: (minMax == "minLbl".translate(context))
             ? minController
             : maxController,
@@ -511,7 +530,31 @@ class FilterScreenState extends State<FilterScreen> {
           double? val = double.tryParse(value);
           if (val != null) {
             if (minMax == "minLbl".translate(context)) {
-              if (val <= _priceRangeValues.end) {
+              // Ensure we don't cross the max
+              double newStart = val;
+              // We allow user to type, clamping logic might interfere if strict.
+              // For smoother typing, we just update state.
+              // But we must honor the slider constraint (start <= end).
+              // If user types start > end, we might need to adjust end or just clamp start?
+              // Standard behavior: clamp start to end if it exceeds.
+
+              if (newStart > _priceRangeValues.end) {
+                // Option: don't update slider yet? or clamp?
+                // If we clamp, valid typing like "100" (when max 50) is impossible.
+                // Better: Extend max automatically? Or just clamp purely for valid RangeValues.
+                // Let's just create valid RangeValues.
+                // If newStart > end, momentarily make end = newStart?
+                // Or just let RangeValues throw error? RangeValues requires start <= end.
+
+                // User request: "na 1 kudutha...".
+                // Let's assume user types valid sequence.
+                // If val <= end, update.
+                if (val <= _priceRangeValues.end) {
+                  setState(() {
+                    _priceRangeValues = RangeValues(val, _priceRangeValues.end);
+                  });
+                }
+              } else {
                 setState(() {
                   _priceRangeValues = RangeValues(val, _priceRangeValues.end);
                 });
@@ -759,20 +802,37 @@ class FilterScreenState extends State<FilterScreen> {
           ],
         ),
         const SizedBox(height: 10),
-        RangeSlider(
-          values: _priceRangeValues,
-          min: 0,
-          max: 1000000,
-          activeColor: context.color.territoryColor,
-          inactiveColor: context.color.textDefaultColor.withOpacity(0.1),
-          divisions: 1000,
-          onChanged: (RangeValues values) {
-            setState(() {
-              _priceRangeValues = values;
-              minController.text = values.start.round().toString();
-              maxController.text = values.end.round().toString();
-            });
-          },
+        SliderTheme(
+          data: SliderThemeData(
+            activeTrackColor: context.color.territoryColor,
+            inactiveTrackColor: context.color.territoryColor.withOpacity(0.1),
+            thumbColor: context.color.territoryColor,
+            overlayColor: context.color.territoryColor.withOpacity(0.3),
+            trackHeight: 1,
+            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
+          ),
+          child: RangeSlider(
+            values: RangeValues(
+              (_priceRangeValues.start < _priceRangeValues.end
+                      ? _priceRangeValues.start
+                      : _priceRangeValues.end)
+                  .clamp(0, 1000000),
+              (_priceRangeValues.start > _priceRangeValues.end
+                      ? _priceRangeValues.start
+                      : _priceRangeValues.end)
+                  .clamp(0, 1000000),
+            ),
+            min: 0,
+            max: 1000000,
+            divisions: 1000,
+            onChanged: (RangeValues values) {
+              setState(() {
+                _priceRangeValues = values;
+                minController.text = values.start.round().toString();
+                maxController.text = values.end.round().toString();
+              });
+            },
+          ),
         ),
       ],
     );

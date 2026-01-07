@@ -44,15 +44,18 @@ class AuthenticationFail extends AuthenticationState {
 }
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
-  AuthenticationCubit() : super(AuthenticationInitial());
+  AuthenticationCubit({MMultiAuthentication? multiAuthentication})
+      : mMultiAuthentication = multiAuthentication ??
+            MMultiAuthentication({
+              "google": GoogleLogin(),
+              "email": EmailLogin(),
+              if (Platform.isIOS) "apple": AppleLogin(),
+              "phone": PhoneLogin()
+            }),
+        super(AuthenticationInitial());
   AuthenticationType? type;
   LoginPayload? payload;
-  MMultiAuthentication mMultiAuthentication = MMultiAuthentication({
-    "google": GoogleLogin(),
-    "email": EmailLogin(),
-    if (Platform.isIOS) "apple": AppleLogin(),
-    "phone": PhoneLogin()
-  });
+  final MMultiAuthentication mMultiAuthentication;
 
   void init() {
     mMultiAuthentication.init();
@@ -78,7 +81,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
       UserCredential? credential = await mMultiAuthentication.login();
 
-
       LoginPayload? payloadData = (payload);
 
       if (payloadData is EmailLoginPayload &&
@@ -92,15 +94,13 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
                 "pleaseFirstVerifyUser"
                     .translate(Constant.navigatorKey.currentContext!))));
           } else {
-            emit(AuthenticationSuccess(type!, credential,payload!));
+            emit(AuthenticationSuccess(type!, credential, payload!));
           }
         }
       } else {
-        emit(AuthenticationSuccess(type!, credential!,payload!));
+        emit(AuthenticationSuccess(type!, credential!, payload!));
       }
     } catch (e) {
-
-
       print(" ///////////////////////////");
       print("1Authentication Failed: $e");
       print(" ///////////////////////////");
@@ -121,11 +121,3 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     mMultiAuthentication.requestVerification();
   }
 }
-
-
-
-
-
-
-
-
