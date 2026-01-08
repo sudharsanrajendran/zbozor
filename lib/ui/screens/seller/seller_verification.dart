@@ -183,6 +183,13 @@ class _SellerVerificationScreenState
                     data[key] = value;
                   }
                 });
+
+                // Add personal info to data
+                data['name'] = nameController.text;
+                data['email'] = emailController.text;
+                data['mobile'] = phoneController.text;
+                data['address'] = addressController.text;
+
                 context.read<SendVerificationFieldCubit>().send(data: data);
               }
             }
@@ -217,6 +224,14 @@ class _SellerVerificationScreenState
         }
         if (state is SendVerificationFieldSuccess) {
           Widgets.hideLoder(context);
+
+          // Update local profile data
+          HiveUtils.setUserData({
+            'name': nameController.text,
+            'email': emailController.text,
+            'mobile': phoneController.text,
+            'address': addressController.text,
+          });
 
           Future.delayed(Duration(milliseconds: 500), () {
             if (mounted) {
@@ -337,7 +352,8 @@ class _SellerVerificationScreenState
           hintText: "provideFullNameHere".translate(context),
           controller: nameController,
           //validator: CustomTextFieldValidator.nullCheck,
-          readOnly: true,
+          //validator: CustomTextFieldValidator.nullCheck,
+          readOnly: false,
         ),
         buildTextField(
           context,
@@ -345,14 +361,14 @@ class _SellerVerificationScreenState
           hintText: "homeAddressHere".translate(context),
           controller: addressController,
           //validator: CustomTextFieldValidator.nullCheck,
-          readOnly: true,
+          readOnly: false,
         ),
         buildTextField(
           context,
           title: "phoneNumber",
           hintText: "phoneNumberHere".translate(context),
           controller: phoneController,
-          readOnly: true,
+          readOnly: false,
           //validator: CustomTextFieldValidator.phoneNumber,
         ),
         buildTextField(
@@ -360,7 +376,7 @@ class _SellerVerificationScreenState
           title: "emailAddress",
           hintText: "emailAddressHere".translate(context),
           controller: emailController,
-          readOnly: true,
+          readOnly: false,
           //validator: CustomTextFieldValidator.email,
         ),
       ],
@@ -438,6 +454,9 @@ class _SellerVerificationScreenState
                         } // Use null-aware operator '?.' for safety
                       }
                     }
+
+                    // Force required validation for verification documents
+                    fieldData['required'] = 1;
 
                     CustomFieldBuilder customFieldBuilder =
                         CustomFieldBuilder(fieldData);

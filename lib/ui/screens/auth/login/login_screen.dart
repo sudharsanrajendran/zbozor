@@ -22,6 +22,7 @@ import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
+import 'package:Ebozor/utils/cloudState/cloud_state.dart';
 import 'package:Ebozor/utils/login/lib/login_status.dart';
 import 'package:Ebozor/utils/login/lib/payloads.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
@@ -402,7 +403,12 @@ class LoginScreenState extends State<LoginScreen> {
                                 firebaseUserId: state.credential.user!.uid,
                                 type: state.type.name,
                                 credential: state.credential,
-                                countryCode: null);
+                                countryCode: null,
+                                name: CloudState.cloudData['signup_details'] !=
+                                        null
+                                    ? CloudState.cloudData['signup_details']
+                                        ['username']
+                                    : null);
                           } else {
                             HelperUtils.showSnackBarMessage(
                                 context, "Please Verify Your email first");
@@ -415,14 +421,24 @@ class LoginScreenState extends State<LoginScreen> {
                               type: state.type.name,
                               credential: state.credential,
                               countryCode:
-                                  "+${(state.payload as PhoneLoginPayload).countryCode}");
+                                  "+${(state.payload as PhoneLoginPayload).countryCode}",
+                              name:
+                                  CloudState.cloudData['signup_details'] != null
+                                      ? CloudState.cloudData['signup_details']
+                                          ['username']
+                                      : null);
                         } else {
                           context.read<LoginCubit>().login(
                               phoneNumber: state.credential.user!.phoneNumber,
                               firebaseUserId: state.credential.user!.uid,
                               type: state.type.name,
                               credential: state.credential,
-                              countryCode: null);
+                              countryCode: null,
+                              name:
+                                  CloudState.cloudData['signup_details'] != null
+                                      ? CloudState.cloudData['signup_details']
+                                          ['username']
+                                      : null);
                         }
                       }
 

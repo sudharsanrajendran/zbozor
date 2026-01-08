@@ -2,6 +2,7 @@ import 'package:Ebozor/data/cubits/category/fetch_sub_categories_cubit.dart';
 import 'package:Ebozor/ui/screens/home/widgets/location_widget.dart';
 import 'package:Ebozor/data/model/category_model.dart';
 import 'package:Ebozor/ui/screens/widgets/amenities_filter_screen.dart';
+import 'package:Ebozor/utils/helper_utils.dart';
 
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
@@ -693,6 +694,27 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   }
 
   void _onShowResults() {
+    // 1. Validate Property Type
+    if (_selectedPropertyType == null) {
+      HelperUtils.showSnackBarMessage(
+          context, "Please select a Property Type".translate(context));
+      return;
+    }
+
+    // 2. Validate chain completion (Ensure user didn't stop at a parent category)
+    CategoryModel lastSelected;
+    if (_subCategoryPath.isNotEmpty) {
+      lastSelected = _subCategoryPath.last;
+    } else {
+      lastSelected = _selectedPropertyType!;
+    }
+
+    if (lastSelected.children != null && lastSelected.children!.isNotEmpty) {
+      HelperUtils.showSnackBarMessage(
+          context, "pleaseSelectAllField".translate(context));
+      return;
+    }
+
     List<String> accumulatedIds = [...widget.categoryIds];
     List<CategoryModel> accumulatedModels = [];
 

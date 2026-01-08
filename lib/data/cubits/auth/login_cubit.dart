@@ -56,15 +56,16 @@ class LoginCubit extends Cubit<LoginState> {
     required String type,
     required UserCredential credential,
     String? countryCode,
+    String? name,
   }) async {
     try {
       emit(LoginInProgress());
 
       /*String? token = await getDeviceToken();*/
       String? token = await () async {
-        try{
+        try {
           return await FirebaseMessaging.instance.getToken();
-        } catch(_){
+        } catch (_) {
           return '';
         }
       }();
@@ -86,24 +87,25 @@ class LoginCubit extends Cubit<LoginState> {
         uid: firebaseUserId,
         fcmId: token,
         email: credential.user!.providerData[0].email,
-        name: () {
-          String? name = type == AuthenticationType.apple.name
-              ? updatedUser?.displayName ??
-                  credential.user!.displayName ??
-                  credential.user!.providerData[0].displayName
-              : credential.user!.providerData[0].displayName;
+        name: name ??
+            () {
+              String? name = type == AuthenticationType.apple.name
+                  ? updatedUser?.displayName ??
+                      credential.user!.displayName ??
+                      credential.user!.providerData[0].displayName
+                  : credential.user!.providerData[0].displayName;
 
-          if (name == null || name.trim().isEmpty) {
-            String? email = credential.user!.providerData[0].email ??
-                credential.user!.email;
-            if (email != null && email.isNotEmpty) {
-              name = email.split('@')[0];
-            } else {
-              name = "User";
-            }
-          }
-          return name;
-        }(),
+              if (name == null || name.trim().isEmpty) {
+                String? email = credential.user!.providerData[0].email ??
+                    credential.user!.email;
+                if (email != null && email.isNotEmpty) {
+                  name = email.split('@')[0];
+                } else {
+                  name = "User";
+                }
+              }
+              return name;
+            }(),
         profile: credential.user!.providerData[0].photoURL,
         countryCode: countryCode,
       );

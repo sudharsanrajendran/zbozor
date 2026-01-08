@@ -86,7 +86,9 @@ class _SellerIntroVerificationScreenState
           onTap: () {
             Navigator.pop(context);
           },
-        )
+        ),
+
+        SizedBox(height: 40,),
       ],
     );
   }

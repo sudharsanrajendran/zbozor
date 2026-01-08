@@ -7,7 +7,6 @@ import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/data/model/item/item_model.dart';
 import 'package:path/path.dart' as path;
 
-
 class ItemRepository {
   Future<ItemModel> createItem(
     Map<String, dynamic> itemDetails,
@@ -103,8 +102,6 @@ class ItemRepository {
       Api.id: id,
     };
 
-
-
     Map<String, dynamic> response = await Api.get(
       url: Api.getItemApi,
       queryParameters: parameters,
@@ -126,8 +123,9 @@ class ItemRepository {
       queryParameters: parameters,
     );
 
-    List<ItemModel> modelList =
-        (response['data']['data'] as List).map((e) => ItemModel.fromJson(e)).toList();
+    List<ItemModel> modelList = (response['data']['data'] as List)
+        .map((e) => ItemModel.fromJson(e))
+        .toList();
 
     return DataOutput(total: modelList.length, modelList: modelList);
   }
@@ -165,7 +163,8 @@ class ItemRepository {
     };
 
     print("**** ItemRepository: fetchItemFromCatId: filter=$filter");
-    print("**** ItemRepository: fetchItemFromCatId: initial parameters: $parameters");
+    print(
+        "**** ItemRepository: fetchItemFromCatId: initial parameters: $parameters");
 
     if (filter != null) {
       parameters.addAll(filter.toMap());
@@ -201,10 +200,11 @@ class ItemRepository {
       // Add custom fields separately to the parameters
       if (filter.customFields != null) {
         filter.customFields!.forEach((key, value) {
+          String paramKey = "filters[$key]";
           if (value is List) {
-            parameters[key] = value.map((v) => v.toString()).join(',');
+            parameters[paramKey] = value.map((v) => v.toString()).join(',');
           } else {
-            parameters[key] = value.toString();
+            parameters[paramKey] = value.toString();
           }
         });
       }
@@ -343,8 +343,10 @@ class ItemRepository {
   }
 
   Future<void> itemTotalClick(int id) async {
-    Map response = await Api.post(url: Api.setItemTotalClickApi, parameter: {Api.itemId: id});
-    print("*************** homeproperty itemTotalClick response ***************");
+    Map response = await Api.post(
+        url: Api.setItemTotalClickApi, parameter: {Api.itemId: id});
+    print(
+        "*************** homeproperty itemTotalClick response ***************");
     print(response);
   }
 
@@ -358,12 +360,10 @@ class ItemRepository {
   ///////////////
   /// search api called here
   Future<DataOutput<ItemModel>> searchItem(
-      String query,
-      ItemFilterModel? filter,
-      {required int page})
-  async {
+      String query, ItemFilterModel? filter,
+      {required int page}) async {
     Map<String, dynamic> parameters = {
-    ///api.search rathu just String tha
+      ///api.search rathu just String tha
 
       Api.search: query,
       Api.page: page,
@@ -376,18 +376,25 @@ class ItemRepository {
         parameters.remove('area');
         parameters.remove('area_id');
       }
-      
-      // Keep existing logic for explicit null areaId check if needed, 
+
+      // Keep existing logic for explicit null areaId check if needed,
       // though the above block handles it if radius is set.
       if (filter.areaId == null) {
         parameters.remove('area_id');
       }
-      // removing area anyway if it might be null/empty from toMap? 
+      // removing area anyway if it might be null/empty from toMap?
       // The original code had: parameters.remove('area');
       // We'll keep it safe by ensuring we don't send conflicting data if not handled above
-      
+
       if (filter.customFields != null) {
-        parameters.addAll(filter.customFields!);
+        filter.customFields!.forEach((key, value) {
+          String paramKey = "filters[$key]";
+          if (value is List) {
+            parameters[paramKey] = value.map((v) => v.toString()).join(',');
+          } else {
+            parameters[paramKey] = value.toString();
+          }
+        });
       }
     }
 
