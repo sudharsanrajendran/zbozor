@@ -518,8 +518,9 @@ class _MyItemTabState extends CloudState<MyItemTab> {
                               }
 
                               if (state is CreateFeaturedAdFailure) {
+                                debugPrint("Create Featured Ad Failure: ${state.error}");
                                 HelperUtils.showSnackBarMessage(
-                                    context, state.error.toString(),
+                                    context, "Failed to create featured ad",
                                     messageDuration: 3);
                               }
                             },
@@ -574,8 +575,9 @@ class _MyItemTabState extends CloudState<MyItemTab> {
                                         );
                                   } else if (changeState
                                       is ChangeMyItemStatusFailure) {
+                                    debugPrint("Change Status Failure: ${changeState.errorMessage}");
                                     HelperUtils.showSnackBarMessage(
-                                        context, changeState.errorMessage);
+                                        context, "Failed to change status");
                                   }
                                 },
                                 child: BlocListener<DeleteItemCubit,
@@ -591,8 +593,9 @@ class _MyItemTabState extends CloudState<MyItemTab> {
                                           .deleteItem(item);
                                     } else if (deleteState
                                         is DeleteItemFailure) {
+                                      debugPrint("Delete Item Failure: ${deleteState.errorMessage}");
                                       HelperUtils.showSnackBarMessage(
-                                          context, deleteState.errorMessage);
+                                          context, "Failed to delete item");
                                     }
                                   },
                                   child: InkWell(

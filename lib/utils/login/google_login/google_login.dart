@@ -18,6 +18,10 @@ class GoogleLogin extends LoginSystem {
   Future<UserCredential?> login() async {
     try {
       emit(MProgress());
+      try {
+        await _googleSignIn?.disconnect();
+      } catch (e) {}
+      await _googleSignIn?.signOut();
       GoogleSignInAccount? googleSignIn = await _googleSignIn?.signIn();
       if (googleSignIn == null) {
         print("google-terminated");
@@ -25,7 +29,7 @@ class GoogleLogin extends LoginSystem {
       }
 
       GoogleSignInAuthentication? googleAuth =
-      await googleSignIn.authentication;
+          await googleSignIn.authentication;
 
       AuthCredential authCredential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -33,13 +37,13 @@ class GoogleLogin extends LoginSystem {
       );
 
       UserCredential userCredential =
-      await firebaseAuth.signInWithCredential(authCredential);
+          await firebaseAuth.signInWithCredential(authCredential);
       emit(MSuccess());
 
       return userCredential;
     } catch (e) {
       if (e is ErrorDescription) {
-        emit(MFail("google-terminated"));
+        emit(MFail("google-cancelled"));
       } else {
         emit(MFail(e.toString()));
       }

@@ -1282,7 +1282,9 @@ class _ProfileScreenState extends State<ProfileScreen>
           }
         }
       } else {
-        throw HelperUtils.showSnackBarMessage(context, '${error.message}');
+        debugPrint("Delete Profile Error: ${error.code} - ${error.message}");
+        HelperUtils.showSnackBarMessage(
+            context, "Failed to delete account. Please re-login.");
       }
     } catch (e) {
       debugPrint("unable to delete user - ${e.toString()}");
@@ -1353,7 +1355,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                 MediaQuery.of(context).size.height / 2));
       }
     } catch (e) {
-      HelperUtils.showSnackBarMessage(context, e.toString());
+      debugPrint("Share App Error: $e");
+      HelperUtils.showSnackBarMessage(context, "Failed to share app");
     }
   }
 

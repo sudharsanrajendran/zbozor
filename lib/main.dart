@@ -15,8 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:Ebozor/data/cubits/system/language_cubit.dart';
-
-
+import 'package:Ebozor/ui/screens/widgets/global_internet_listener.dart';
 
 /////////////
 ///V-1.0.0//
@@ -65,12 +64,11 @@ class _AppState extends State<App> {
   void initState() {
     context.read<LanguageCubit>().loadCurrentLanguage();
 
-
     AppTheme currentTheme = HiveUtils.getCurrentTheme();
 
     // ///Initialized notification services
     //LocalAwsomeNotification().init(context);
-    ///////////// 
+    /////////////
     NotificationService.init(context);
 
     /// Initialized dynamic links for share items feature
@@ -120,7 +118,7 @@ class _AppState extends State<App> {
 
                   /// Turn on this if you want to test the app in different screen sizes
                   builder: (context) {
-                    return child!;
+                    return GlobalInternetListener(child: child!);
                   },
                 ),
               ),

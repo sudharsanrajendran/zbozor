@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 
@@ -151,27 +150,18 @@ class Validator {
   }
 
   static String? urlValidation({String? value, required BuildContext context}) {
-    if (value!.isNotEmpty) {
-      validUrl(value).then((result) {
-        if (result == false) {
-          return 'plzValidUrlLbl'.translate(context);
-        } else {
-          return result;
-        }
-      });
-    } else {
+    if ((value ??= "").trim().isEmpty) {
       return null;
     }
-    return null;
-  }
 
-  static Future<bool> validUrl(String value) async {
-    try {
-      Response response = await Dio().head(value);
-      return response.statusCode == 200;
-    } catch (e) {
-      return false;
+    String pattern =
+        r'(http|https)://[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:/~+#-]*[\w@?^=%&amp;/~+#-])?';
+    RegExp regExp = RegExp(pattern);
+
+    if (!regExp.hasMatch(value)) {
+      return 'plzValidUrlLbl'.translate(context);
     }
+    return null;
   }
 }
 

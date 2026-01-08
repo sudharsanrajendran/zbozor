@@ -336,10 +336,10 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         const SizedBox(height: 12),
         Container(
           width: double.infinity,
-          height: 43,
+          height: 50,
           decoration: BoxDecoration(
             color: context.color.backgroundColor,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(color: context.color.borderColor),
           ),
           child: const LocationWidget(),
@@ -449,7 +449,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
             children: propertyTypes.map((subCat) {
               bool isSelected = _selectedPropertyType?.id == subCat.id;
               return Padding(
-                padding: const EdgeInsets.only(right: 12),
+                padding: const EdgeInsets.only(right: 10),
                 child: GestureDetector(
                   onTap: () {
                     _onPropertyTypeSelected(subCat);

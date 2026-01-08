@@ -97,6 +97,9 @@ class LoginScreenState extends State<LoginScreen> {
           // Widgets.showLoader(context);
 
           isOtpSent = true;
+          if (Platform.isAndroid) {
+            SmsAutoFill().listenForCode();
+          }
           setState(() {});
           if (isMobileNumberField) {
             HelperUtils.showSnackBarMessage(
@@ -106,8 +109,10 @@ class LoginScreenState extends State<LoginScreen> {
       }
 
       if (state is MFail) {
-        //Widgets.hideLoder(context);
-
+        if (state.error == "google-cancelled") {
+          Widgets.hideLoder(context);
+          return;
+        }
         if (!isOtpSent && isMobileNumberField) {
           Widgets.hideLoder(context);
         }
@@ -117,16 +122,26 @@ class LoginScreenState extends State<LoginScreen> {
               "${"weSentCodeOnNumber".translate(context)}\t${emailMobileTextController.text}",
               type: MessageType.error);
         } else {
+          // Log the raw error
+          debugPrint("Login Error (MFail): ${state.error}");
+
           if (state.error is FirebaseAuthException) {
-            try {
+            final e = state.error as FirebaseAuthException;
+            if (e.code == 'too-many-requests' ||
+                e.message?.contains("24 hours") == true) {
               HelperUtils.showSnackBarMessage(context,
-                  (state.error as FirebaseAuthException).message!.toString());
-            } catch (e) {}
+                  "Too many attempts. Please try again after 24 hours.",
+                  type: MessageType.error);
+            } else {
+              HelperUtils.showSnackBarMessage(
+                  context, "Login Failed", // Generic user-friendly message
+                  type: MessageType.error);
+            }
           } else {
-            HelperUtils.showSnackBarMessage(context, state.error.toString());
+            HelperUtils.showSnackBarMessage(
+                context, "Login Failed", // Generic user-friendly message
+                type: MessageType.error);
           }
-          /*HelperUtils.showSnackBarMessage(context, state.error.toString(),
-              type: MessageType.error);*/
         }
       }
       if (state is MSuccess) {
@@ -135,7 +150,6 @@ class LoginScreenState extends State<LoginScreen> {
     });
     getSimCountry().then((value) {
       countryCode = value.phoneCode;
-
       flagEmoji = value.flagEmoji;
       setState(() {});
     });
@@ -157,7 +171,7 @@ class LoginScreenState extends State<LoginScreen> {
             (element) => element.phoneCode == Constant.defaultCountryCode,
           );
         } else {
-          return element.phoneCode == simCountryCode;
+          return element.countryCode == simCountryCode?.toUpperCase();
         }
       },
       orElse: () {
@@ -179,8 +193,10 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> getSignature() async {
-    signature = await SmsAutoFill().getAppSignature;
-    SmsAutoFill().listenForCode;
+    if (Platform.isAndroid) {
+      signature = await SmsAutoFill().getAppSignature;
+      await SmsAutoFill().listenForCode();
+    }
     setState(() {});
   }
 
@@ -199,6 +215,27 @@ class LoginScreenState extends State<LoginScreen> {
 
   void _onTapContinue() {
     if (isMobileNumberField) {
+      String phoneNumber = emailMobileTextController.text
+          .trim()
+          .replaceAll(RegExp(r'[^0-9]'), '');
+      bool isValid = true;
+
+      // Basic validation based on country code (Mocking strict validation)
+      if (countryCode == '91' && phoneNumber.length != 10) {
+        isValid = false;
+      } else if (countryCode == '1' && phoneNumber.length != 10) {
+        isValid = false;
+      } else if (phoneNumber.length < 7 || phoneNumber.length > 15) {
+        isValid = false;
+      }
+
+      if (!isValid) {
+        HelperUtils.showSnackBarMessage(
+            context, "pleaseEnterValidPhoneNumber".translate(context),
+            type: MessageType.error);
+        return;
+      }
+
       // isOtpSent = true;
       phoneLoginPayload =
           PhoneLoginPayload(emailMobileTextController.text, countryCode!);
@@ -349,8 +386,7 @@ class LoginScreenState extends State<LoginScreen> {
                     if (state is LoginFailure) {
                       ////////
                       debugPrint("Login Failure: ${state.errorMessage}");
-                      HelperUtils.showSnackBarMessage(
-                          context, "Login Failed");
+                      HelperUtils.showSnackBarMessage(context, "Login Failed");
                     }
                   },
                   child: BlocConsumer<AuthenticationCubit, AuthenticationState>(
@@ -368,7 +404,8 @@ class LoginScreenState extends State<LoginScreen> {
                                 credential: state.credential,
                                 countryCode: null);
                           } else {
-                             HelperUtils.showSnackBarMessage(context,"Please Verify Your email first" );
+                            HelperUtils.showSnackBarMessage(
+                                context, "Please Verify Your email first");
                           }
                         } else if (state.type == AuthenticationType.phone) {
                           context.read<LoginCubit>().login(
@@ -395,25 +432,28 @@ class LoginScreenState extends State<LoginScreen> {
                         // 🔴 EXACT LOGIN ERROR PRINT HERE
                         debugPrint('========== LOGIN ERROR ==========');
                         debugPrint('ERROR OBJ : ${state.error}');
-                        
-                        String message = "Login Failed"; // Default friendly message
+
+                        String message =
+                            "Login Failed"; // Default friendly message
 
                         if (state.error is FirebaseAuthException) {
                           final e = state.error as FirebaseAuthException;
                           debugPrint('FIREBASE CODE : ${e.code}');
                           debugPrint('FIREBASE MSG  : ${e.message}');
-                          
-                          if (e.code == 'credential-already-in-use' || 
-                              e.code == 'account-exists-with-different-credential' || 
+
+                          if (e.code == 'credential-already-in-use' ||
+                              e.code ==
+                                  'account-exists-with-different-credential' ||
                               e.code == 'email-already-in-use') {
                             message = "Account already used";
                           }
                         }
 
                         debugPrint('=================================');
-                        
+
                         // Show friendly message in SnackBar
-                        HelperUtils.showSnackBarMessage(context, message, type: MessageType.error);
+                        HelperUtils.showSnackBarMessage(context, message,
+                            type: MessageType.error);
                       }
 
                       if (state is AuthenticationInProcess) {
@@ -424,11 +464,22 @@ class LoginScreenState extends State<LoginScreen> {
                       return Builder(builder: (context) {
                         return Form(
                           key: _formKey,
-                          child: isOtpSent
-                              ? verifyOTPWidget()
-                              : sendMailClicked
-                                  ? enterPasswordWidget()
-                                  : buildLoginWidget(),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 500),
+                            switchInCurve: Curves.easeInOut,
+                            switchOutCurve: Curves.easeInOut,
+                            child: isOtpSent
+                                ? KeyedSubtree(
+                                    key: const ValueKey("otp"),
+                                    child: verifyOTPWidget())
+                                : sendMailClicked
+                                    ? KeyedSubtree(
+                                        key: const ValueKey("pass"),
+                                        child: enterPasswordWidget())
+                                    : KeyedSubtree(
+                                        key: const ValueKey("login"),
+                                        child: buildLoginWidget()),
+                          ),
                         );
                       });
                     },
@@ -494,7 +545,7 @@ class LoginScreenState extends State<LoginScreen> {
                             showCountryCode();
                           },
                           child: Container(
-                            // color: Colors.red,
+                            // color: Colors.padding,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8.0, vertical: 8),
                             child: Center(
@@ -556,12 +607,12 @@ class LoginScreenState extends State<LoginScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      color: context.color.forthColor.withOpacity(0.102),
+                      color: context.color.territoryColor,
                       elevation: 0,
                       height: 28,
                       minWidth: 64,
-                      child: Text("skip".translate(context))
-                          .color(context.color.forthColor),
+                      child:
+                          Text("skip".translate(context)).color(Colors.white),
                     ),
                   ),
                 ),
@@ -621,8 +672,8 @@ class LoginScreenState extends State<LoginScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("dontHaveAcc".translate(context))
-                                .color(context.color.textColorDark.brighten(50)),
+                            Text("dontHaveAcc".translate(context)).color(
+                                context.color.textColorDark.brighten(50)),
                             const SizedBox(
                               width: 12,
                             ),
@@ -650,6 +701,7 @@ class LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
   //Apple login Widgets
   Widget googleAndAppleLogin() {
     return Column(
@@ -826,6 +878,8 @@ class LoginScreenState extends State<LoginScreen> {
             ),
             currentCode: otp,
             codeLength: 6,
+            autoFocus: true,
+            keyboardType: TextInputType.number,
             onCodeChanged: (String? code) {
               otp = code;
             },
@@ -909,6 +963,9 @@ class LoginScreenState extends State<LoginScreen> {
             alignment: AlignmentDirectional.centerEnd,
             child: MaterialButton(
               onPressed: () {
+                setState(() {
+                  otp = "";
+                });
                 context.read<AuthenticationCubit>().setData(
                       payload: phoneLoginPayload,
                       type: AuthenticationType.phone,

@@ -229,7 +229,9 @@ class _SellerVerificationScreenState
         }
 
         if (state is SendVerificationFieldFail) {
-          HelperUtils.showSnackBarMessage(context, state.error.toString());
+          debugPrint("Send Verification Field Failure: ${state.error}");
+          HelperUtils.showSnackBarMessage(
+              context, "Failed to send verification request");
           Widgets.hideLoder(context);
         }
       },

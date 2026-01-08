@@ -158,12 +158,18 @@ import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart' as urllauncher;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/data/cubits/slider_cubit.dart';
-
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
-// Import your SliderCubit and other necessary dependencies
+import 'package:Ebozor/data/repositories/item/item_repository.dart';
+import 'package:Ebozor/data/model/item/item_model.dart';
+import 'package:Ebozor/app/routes.dart';
+import 'package:Ebozor/data/model/data_output.dart';
+import 'package:Ebozor/utils/helper_utils.dart';
+import 'package:Ebozor/data/helper/widgets.dart';
 
 class SliderWidget extends StatefulWidget {
   const SliderWidget({super.key});
@@ -254,7 +260,7 @@ class _SliderWidgetState extends State<SliderWidget>
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
-                height: 170,
+                height: 200,
                 child: PageView.builder(
                   itemCount: bannersLength,
                   controller: _pageController,
@@ -265,7 +271,40 @@ class _SliderWidgetState extends State<SliderWidget>
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () async {
-                        // your existing onTap logic (UNCHANGED)
+                        if (state.sliderlist[index].thirdPartyLink != null &&
+                            state
+                                .sliderlist[index].thirdPartyLink!.isNotEmpty) {
+                          await urllauncher.launchUrl(
+                              Uri.parse(
+                                  state.sliderlist[index].thirdPartyLink!),
+                              mode: LaunchMode.externalApplication);
+                        } else if (state.sliderlist[index].modelId != null) {
+                          try {
+                            ItemRepository fetch = ItemRepository();
+
+                            Widgets.showLoader(context);
+
+                            DataOutput<ItemModel> dataOutput =
+                                await fetch.fetchItemFromItemId(
+                                    state.sliderlist[index].modelId!);
+
+                            Future.delayed(
+                              Duration.zero,
+                              () {
+                                Widgets.hideLoder(context);
+                                Navigator.pushNamed(
+                                    context, Routes.adDetailsScreen,
+                                    arguments: {
+                                      "model": dataOutput.modelList[0],
+                                    });
+                              },
+                            );
+                          } catch (e) {
+                            Widgets.hideLoder(context);
+                            HelperUtils.showSnackBarMessage(context,
+                                "somethingWentWrng".translate(context));
+                          }
+                        }
                       },
                       child: Container(
                         margin:
@@ -277,9 +316,31 @@ class _SliderWidgetState extends State<SliderWidget>
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: UiUtils.getImage(
-                            state.sliderlist[index].image ?? "",
-                            fit: BoxFit.fill,
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              UiUtils.getImage(
+                                state.sliderlist[index].image ?? "",
+                                fit: BoxFit.fill,
+                              ),
+                              PositionedDirectional(
+                                bottom: 30, // Adjusted to match image
+                                start: 18, // Adjusted to match image
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 8), // Slightly wider
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(22),
+                                  ),
+                                  child: Text("VIEW NOW")
+                                      .bold()
+                                      .size(context.font.smaller)
+                                      .color(context.color.territoryColor),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

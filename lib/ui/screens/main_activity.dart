@@ -389,15 +389,16 @@ class MainActivityState extends State<MainActivity>
     addHistory(index);
 
     if (index == currtab) {
-      /* var xIndex = index;
+      int controllerIndex = index;
+      if (index == 3) {
+        controllerIndex =
+            2; // Map Profile UI index (3) to Profile Controller index (2)
+      }
 
-      if (xIndex == 3) {
-        xIndex = 2;
-      } else if (xIndex == 4) {
-        xIndex = 3;
-      }*/
-      if (controllerList[index].hasClients) {
-        controllerList[index].animateTo(0,
+      // Check if the mapped index is valid for controllerList
+      if (controllerIndex < controllerList.length &&
+          controllerList[controllerIndex].hasClients) {
+        controllerList[controllerIndex].animateTo(0,
             duration: const Duration(milliseconds: 200),
             curve: Curves.bounceOut);
       }

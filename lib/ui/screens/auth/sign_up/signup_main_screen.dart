@@ -25,7 +25,6 @@ import 'package:flutter/services.dart';
 import 'package:Ebozor/utils/login/lib/payloads.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class SignUpMainScreen extends StatefulWidget {
   const SignUpMainScreen({super.key});
 
@@ -73,16 +72,26 @@ class LoginScreenState extends State<SignUpMainScreen> {
       }
 
       if (state is MFail) {
-        if (state.error is FirebaseAuthException) {
-          try {
-            HelperUtils.showSnackBarMessage(context,
-                (state.error as FirebaseAuthException).message!.toString());
-          } catch (e) {}
-        } else {
-          HelperUtils.showSnackBarMessage(context, state.error.toString());
+        if (state.error == "google-cancelled") {
+          Widgets.hideLoder(context);
+          return;
         }
-        /*HelperUtils.showSnackBarMessage(context, state.error.toString(),
-              type: MessageType.error);*/
+        debugPrint("Signup Error (MFail): ${state.error}");
+        if (state.error is FirebaseAuthException) {
+          final e = state.error as FirebaseAuthException;
+          if (e.code == 'too-many-requests' ||
+              e.message?.contains("24 hours") == true) {
+            HelperUtils.showSnackBarMessage(
+                context, "Too many attempts. Please try again later.",
+                type: MessageType.error);
+          } else {
+            HelperUtils.showSnackBarMessage(context, "Signup Failed",
+                type: MessageType.error);
+          }
+        } else {
+          HelperUtils.showSnackBarMessage(context, "Signup Failed",
+              type: MessageType.error);
+        }
       }
       if (state is MSuccess) {
         // Widgets.hideLoder(context);
@@ -206,9 +215,26 @@ class LoginScreenState extends State<SignUpMainScreen> {
                 backgroundColor: context.color.backgroundColor,
                 bottomNavigationBar: termAndPolicyTxt(),
                 body: Builder(builder: (context) {
-                  return Form(
-                    key: _formKey,
-                    child: buildLoginWidget(),
+                  return BlocListener<AuthenticationCubit, AuthenticationState>(
+                    listener: (context, state) {
+                      if (state is AuthenticationSuccess) {
+                        Widgets.hideLoder(context);
+                        Navigator.pushReplacementNamed(context, Routes.login);
+                      }
+                      if (state is AuthenticationFail) {
+                        Widgets.hideLoder(context);
+                        HelperUtils.showSnackBarMessage(
+                            context, "Signup Failed",
+                            type: MessageType.error);
+                      }
+                      if (state is AuthenticationInProcess) {
+                        Widgets.showLoader(context);
+                      }
+                    },
+                    child: Form(
+                      key: _formKey,
+                      child: buildLoginWidget(),
+                    ),
                   );
                 }),
               ),
@@ -328,12 +354,11 @@ class LoginScreenState extends State<SignUpMainScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    color: context.color.forthColor.withOpacity(0.102),
+                    color: context.color.territoryColor,
                     elevation: 0,
                     height: 28,
                     minWidth: 64,
-                    child: Text("skip".translate(context))
-                        .color(context.color.forthColor),
+                    child: Text("skip".translate(context)).color(Colors.white),
                   ),
                 ),
               ),
@@ -418,11 +443,6 @@ class LoginScreenState extends State<SignUpMainScreen> {
                   height: 46,
                   buttonTitle: "continueWithGoogle".translate(context)),
 
-
-
-
-
-
 //apple login
             const SizedBox(
               height: 12,
@@ -462,9 +482,6 @@ class LoginScreenState extends State<SignUpMainScreen> {
       ],
     );
   }
-
-
-
 
   Widget termAndPolicyTxt() {
     return Padding(

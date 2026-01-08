@@ -684,7 +684,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 Navigator.pop(context, "refresh");
               }
               if (state is CreateFeaturedAdFailure) {
-                HelperUtils.showSnackBarMessage(context, state.error.toString(),
+                debugPrint("Create Featured Ad Failure: ${state.error}");
+                HelperUtils.showSnackBarMessage(
+                    context, "Failed to create featured ad",
                     messageDuration: 3);
               }
             },
@@ -2518,7 +2520,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
     return BlocListener<ItemReportCubit, ItemReportState>(
       listener: (context, state) {
         if (state is ItemReportFailure) {
-          HelperUtils.showSnackBarMessage(context, state.error.toString());
+          debugPrint("Report Ad Failure: ${state.error}");
+          HelperUtils.showSnackBarMessage(context, "Failed to report ad");
         }
         if (state is ItemReportInSuccess) {
           HelperUtils.showSnackBarMessage(

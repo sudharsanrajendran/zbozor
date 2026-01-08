@@ -139,8 +139,10 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
           updateSlug();
         }
       });
-    
-     isJob = widget.breadCrumbItems?.any((element) => element.name?.toLowerCase().contains("job") ?? false) ?? false;
+
+      isJob = widget.breadCrumbItems?.any((element) =>
+              element.name?.toLowerCase().contains("job") ?? false) ??
+          false;
     }
 
     _pickTitleImage.listener((p0) {
@@ -227,6 +229,32 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                           title: "imageRequired".translate(context),
                           content: Text(
                             "selectImageYourItem".translate(context),
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
+                    if (!isJob && mixedItemImageList.isEmpty) {
+                      UiUtils.showBlurredDialoge(
+                        context,
+                        dialoge: BlurredDialogBox(
+                          title: "imageRequired".translate(context),
+                          content: Text(
+                            "atLeastOneImageRequired".translate(context),
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
+                    if (mixedItemImageList.length > 5) {
+                      UiUtils.showBlurredDialoge(
+                        context,
+                        dialoge: BlurredDialogBox(
+                          title: "limitExceeded".translate(context),
+                          content: Text(
+                            "uploadMax5Images".translate(context),
                           ),
                         ),
                       );

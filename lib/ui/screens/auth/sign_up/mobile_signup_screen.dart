@@ -74,8 +74,6 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
     context.read<AuthenticationCubit>().init();
     context.read<FetchSystemSettingsCubit>().fetchSettings();
     context.read<AuthenticationCubit>().listen((MLoginState state) {
-
-
       if (state is MFail) {
         //Widgets.hideLoder(context);
 
@@ -213,7 +211,18 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                 body: Builder(builder: (context) {
                   return Form(
                     key: _formKey,
-                    child: isOtpSent ? verifyOTPWidget() : buildLoginWidget(),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      switchInCurve: Curves.easeInOut,
+                      switchOutCurve: Curves.easeInOut,
+                      child: isOtpSent
+                          ? KeyedSubtree(
+                              key: const ValueKey("otp"),
+                              child: verifyOTPWidget())
+                          : KeyedSubtree(
+                              key: const ValueKey("signup"),
+                              child: buildLoginWidget()),
+                    ),
                   );
                 }),
               ),
@@ -498,7 +507,6 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
     );
   }
 
-
   Widget otpInput() {
     return Center(
         child: PinFieldAutoFill(
@@ -511,9 +519,9 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
             codeLength: 6,
             onCodeChanged: (String? code) {
               otp = code;
-              print("OTP changed: $otp");  // Log the OTP value to confirm it updates
-            }
-            ,
+              print(
+                  "OTP changed: $otp"); // Log the OTP value to confirm it updates
+            },
             onCodeSubmitted: (String code) {
               otp = code;
             }));
@@ -592,6 +600,9 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
             alignment: AlignmentDirectional.centerEnd,
             child: MaterialButton(
               onPressed: () {
+                setState(() {
+                  otp = "";
+                });
                 context.read<AuthenticationCubit>().setData(
                       payload: phoneLoginPayload,
                       type: AuthenticationType.phone,
@@ -608,18 +619,17 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
           UiUtils.buildButton(
             context,
             onPressed: () {
-               if (_otpController.text.length != 6) {
+              if (_otpController.text.length != 6) {
                 HelperUtils.showSnackBarMessage(
                     context, "lblEnterOtp".translate(context));
               } else {
-
-              if (otp!.trim().length < 6) {
-                HelperUtils.showSnackBarMessage(
-                    context, "pleaseEnterSixDigits".translate(context));
-              } else {
-                phoneLoginPayload.setOTP(otp!.trim());
-                context.read<AuthenticationCubit>().authenticate();
-              }
+                if (otp!.trim().length < 6) {
+                  HelperUtils.showSnackBarMessage(
+                      context, "pleaseEnterSixDigits".translate(context));
+                } else {
+                  phoneLoginPayload.setOTP(otp!.trim());
+                  context.read<AuthenticationCubit>().authenticate();
+                }
               }
             },
             buttonTitle: "signIn".translate(context),

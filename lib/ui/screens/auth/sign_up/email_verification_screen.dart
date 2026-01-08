@@ -100,10 +100,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
             }
 
             if (state is AuthenticationFail) {
-              // Navigator.pop<Map>(context, {
-              //   "type":"Error",
-              //   "error":state.error
-              // });
+              debugPrint("Authentication Failure: ${state.error}");
             }
           },
           builder: (context, state) {
@@ -169,7 +166,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
             }
             if (state is AuthenticationFail) {
               return Center(
-                child: Text(state.error.toString()),
+                child: Text("Verification Failed"),
               );
             }
 

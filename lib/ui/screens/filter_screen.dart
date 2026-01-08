@@ -116,14 +116,7 @@ class FilterScreenState extends State<FilterScreen> {
     setCategories();
     setDefaultVal(isRefresh: false);
     //clearFieldData();
-    getCustomFieldsData();
-
-    // Initialize slider values
-    double min = double.tryParse(minController.text.replaceAll(',', '')) ?? 0;
-    double max =
-        double.tryParse(maxController.text.replaceAll(',', '')) ?? 1000000;
-    if (max < min) max = min + 1000;
-    _priceRangeValues = RangeValues(min, max);
+    _priceRangeValues = const RangeValues(0, 1000000);
   }
 
   void setCategories() {
@@ -179,6 +172,7 @@ class FilterScreenState extends State<FilterScreen> {
       checkFilterValSet();
       setCategories();
       getCustomFieldsData();
+      _priceRangeValues = const RangeValues(0, 1000000); // Reset slider
     } else {
       city = HiveUtils.getCityName() ?? "";
       areaId = HiveUtils.getAreaId() != null

@@ -333,6 +333,7 @@ class ItemsListState extends State<ItemsList> {
       searchController.clear();
       previousSearchQuery = "";
       filter = null;
+      _selectedCustomFields.clear(); // Clear selected custom chips
       _currentCategoryIds = [widget.categoryId];
       _isAllFieldsSelected = true;
 
@@ -382,29 +383,32 @@ class ItemsListState extends State<ItemsList> {
             ),
 
             // Static Area Filter
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: _buildChip(
-                label: "Area Size",
-                isActive: _selectedCustomFields.containsKey("Area Size"),
-                onTap: () => _onFilterChipTap("Area Size"),
-              ),
-            ),
 
             // Dynamic Chips - All Available Filters in Chain
             ..._currentChain.expand((cat) => cat.filters ?? []).map((filter) {
-              // Skip Price/Area if handled explicitly (assuming naming convention)
-              if (filter.name!.toLowerCase().contains("price") ||
-                  filter.name!.toLowerCase() == "area" ||
-                  filter.name!.toLowerCase() == "area size") {
+              // Skip Price if handled explicitly (assuming naming convention)
+              if (filter.name!.toLowerCase().contains("price")) {
                 return const SizedBox.shrink();
+              }
+
+              String label = filter.name ?? "";
+              bool isActive = false;
+
+              // Check for Range keys (suffix _min / _max)
+              if (_selectedCustomFields.containsKey("${filter.name}_min") ||
+                  _selectedCustomFields.containsKey("${filter.name}_max")) {
+                isActive = true;
+              }
+              // Check for standard key
+              else if (_selectedCustomFields.containsKey(filter.name)) {
+                isActive = true;
               }
 
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: _buildChip(
-                  label: filter.name ?? "",
-                  isActive: _selectedCustomFields.containsKey(filter.name),
+                  label: label,
+                  isActive: isActive,
                   onTap: () => _onFilterChipTap(filter.name!),
                 ),
               );
@@ -1109,6 +1113,7 @@ class ItemsListState extends State<ItemsList> {
     });
   }
 
+  //// etha dynamic scroll chips oda ui
   Widget _buildChip(
       {required String label, required bool isActive, VoidCallback? onTap}) {
     return GestureDetector(
@@ -1117,10 +1122,10 @@ class ItemsListState extends State<ItemsList> {
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
           color: context.color.primaryColor,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
               color: isActive
-                  ? context.color.borderColor
+                  ? context.color.blackColor
                   : context
                       .color.borderColor), // Same border for now or customize
         ),
@@ -1719,32 +1724,59 @@ class ItemsListState extends State<ItemsList> {
     }
 
     // Check for "Area"
-    if (filterName.toLowerCase() == "area" ||
-        filterName.toLowerCase() == "area size") {
-      // Assuming custom fields store area size? Or separate fields?
-      // Usually ItemFilterModel has NO minArea/maxArea, only 'area_id' (which is location).
-      // But user says "area size".
-      // If it comes from custom fields, we use custom logic.
-      // Let's assume it's a generic range filter from custom fields or we need to support it.
-      // The user screenshot says "Show X Results", implying it's a filter.
-      // If it's a custom field named "Area Size", it might expect a range?
-      // For now, let's treat it as a custom field range.
+    // Check for "Area" or "Size" (Dynamic)
+    if (filterName.toLowerCase().contains("area") ||
+        filterName.toLowerCase().contains("size")) {
+      double? initialMin;
+      double? initialMax;
 
-      // ... Logic to find max value if possible ...
+      // Try to parse existing value from _min / _max keys first property style
+      String minKey = "${filterName}_min";
+      String maxKey = "${filterName}_max";
+
+      if (_selectedCustomFields.containsKey(minKey)) {
+        initialMin =
+            double.tryParse(_selectedCustomFields[minKey]?.toString() ?? "");
+      }
+      if (_selectedCustomFields.containsKey(maxKey)) {
+        initialMax =
+            double.tryParse(_selectedCustomFields[maxKey]?.toString() ?? "");
+      }
+
+      // Fallback: Check "min-max" string format if stored that way
+      if (initialMin == null && _selectedCustomFields.containsKey(filterName)) {
+        var val = _selectedCustomFields[filterName];
+        if (val is List && val.isNotEmpty) {
+          String rangeStr = val[0].toString(); // "100-500"
+          List<String> parts = rangeStr.split("-");
+          if (parts.length == 2) {
+            initialMin = double.tryParse(parts[0]);
+            initialMax = double.tryParse(parts[1]);
+          }
+        }
+      }
+
       _showRangeFilterSheet(
-          title: "Area Size",
+          title: filterName, // Use dynamic name
           min: 0,
           max: 5000,
-          currentMin:
-              null, // Need to parse from _selectedCustomFields if stored there
-          currentMax: null,
+          currentMin: initialMin,
+          currentMax: initialMax,
           onApply: (min, max) {
-            // Store as custom field or specific model property?
-            // If API expects "min_area", "max_area", but model doesn't have it?
-            // I'll stick to Custom Fields for "Area Size" if not in model.
-            // Maybe "sqft_min", "sqft_max"?
-            // Using string "min-max" for custom field?
-            _updateCustomFilter(filterName, ["$min-$max"]);
+            setState(() {
+              // Store using _min / _max keys for PropertyScreen compatibility
+              _selectedCustomFields["${filterName}_min"] =
+                  min.toInt().toString();
+              _selectedCustomFields["${filterName}_max"] =
+                  max.toInt().toString();
+
+              // Clear generic key if mixed
+              _selectedCustomFields.remove(filterName);
+
+              // Update Model
+              filter = filter?.copyWith(customFields: _selectedCustomFields);
+              _fetchItemsWithFilter(); // Trigger Fetch
+            });
           });
       return;
     }

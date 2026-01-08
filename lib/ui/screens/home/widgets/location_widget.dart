@@ -175,11 +175,6 @@ class LocationWidget extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("locationLbl".translate(context))
-                        .color(context.color.textColorDark)
-                        .size(
-                          context.font.small,
-                        ),
                     Text(
                       [
                         HiveUtils.getAreaName(),
