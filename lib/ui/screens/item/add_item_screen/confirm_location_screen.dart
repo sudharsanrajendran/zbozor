@@ -521,8 +521,8 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
                         ),
                       ),
                       PositionedDirectional(
-                        end: 30,
-                        bottom: 15,
+                        end: 20,
+                        bottom: 130,
                         child: InkWell(
                           child: Container(
                             width: 48,
@@ -542,21 +542,28 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
                             ),
                           ),
                           onTap: () async {
-                            Position position =
-                                await Geolocator.getCurrentPosition(
-                              desiredAccuracy: LocationAccuracy.high,
-                            );
+                            try {
+                              // Get last known position for immediate response
+                              Position? lastPosition =
+                                  await Geolocator.getLastKnownPosition();
 
-                            _cameraPosition = CameraPosition(
-                              target:
-                                  LatLng(position.latitude, position.longitude),
-                              zoom: 14.4746,
-                              bearing: 0,
-                            );
+                              if (lastPosition != null) {
+                                _updateMapToPosition(lastPosition);
+                              }
 
-                            _mapController.animateCamera(
-                              CameraUpdate.newCameraPosition(_cameraPosition!),
-                            );
+                              // Fetch fresh position in parallel
+                              Position position =
+                                  await Geolocator.getCurrentPosition(
+                                desiredAccuracy: LocationAccuracy.medium,
+                                timeLimit: const Duration(seconds: 5),
+                              );
+
+                              _updateMapToPosition(position);
+                            } catch (e) {
+                              // If it's just a timeout but we got lastPosition, it's fine
+                              // Otherwise show error
+                              log("Location error: $e");
+                            }
                           },
                         ),
                       )
@@ -652,6 +659,29 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
             )
           : shimmerEffect();
     });
+  }
+
+  void _updateMapToPosition(Position position) {
+    _cameraPosition = CameraPosition(
+      target: LatLng(position.latitude, position.longitude),
+      zoom: 14.4746,
+      bearing: 0,
+    );
+
+    if (mounted) {
+      setState(() {
+        latitude = position.latitude;
+        longitude = position.longitude;
+      });
+    }
+
+    _mapController.animateCamera(
+      CameraUpdate.newCameraPosition(_cameraPosition!),
+    );
+
+    getLocationFromLatitudeLongitude(
+      latLng: LatLng(position.latitude, position.longitude),
+    );
   }
 
   void dialogueBottomSheet(

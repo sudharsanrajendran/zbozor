@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:Ebozor/data/helper/custom_exception.dart';
 import 'package:Ebozor/settings.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
@@ -438,6 +440,53 @@ class HelperUtils {
       await launchUrl(redirectUri);
     } else {
       throw 'Could not launch $redirectUri';
+    }
+  }
+
+  static Future<void> fetchAndStoreCurrentLocation(BuildContext context) async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw 'Location permission denied';
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw 'Location permission denied forever';
+      }
+
+      // Show temporary message if it takes time
+      showSnackBarMessage(context, "fetchingLocation".translate(context));
+
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        HiveUtils.setLocation(
+          city: place.locality,
+          state: place.administrativeArea,
+          country: place.country,
+          area: place.subLocality,
+          latitude: position.latitude,
+          longitude: position.longitude,
+          areaId: null,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error fetching location: $e");
+      if (context.mounted) {
+        showSnackBarMessage(context, e.toString(), type: MessageType.error);
+      }
     }
   }
 }

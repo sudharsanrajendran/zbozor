@@ -283,11 +283,24 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                 onTap: () {
                   setState(() {
                     _selectedTabIndex = index;
-                    _selectedPropertyType = null;
-                    _subCategoryPath.clear();
-                    _propertyTypesCubit.fetchSubCategories(
-                        categoryId: widget.categoryList[index].id!);
                   });
+
+                  // Fetch subcategories for the new tab (e.g. Sale)
+                  _propertyTypesCubit.fetchSubCategories(
+                      categoryId: widget.categoryList[index].id!);
+
+                  // Auto-select first child if available (replication of init logic)
+                  var currentCategory = widget.categoryList[index];
+                  if (currentCategory.children != null &&
+                      currentCategory.children!.isNotEmpty) {
+                    _onPropertyTypeSelected(currentCategory.children!.first);
+                  } else {
+                    setState(() {
+                      _selectedPropertyType = null;
+                      _subCategoryPath.clear();
+                      _selectedFilters.clear();
+                    });
+                  }
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 16),

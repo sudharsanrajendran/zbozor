@@ -11,6 +11,11 @@ import 'package:Ebozor/ui/screens/home/home_screen.dart';
 import 'package:Ebozor/data/cubits/fetch_notifications_cubit.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
+import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
+import 'package:Ebozor/utils/helper_utils.dart';
 
 class HomeSearchField extends StatelessWidget {
   const HomeSearchField({super.key});
@@ -78,9 +83,12 @@ class HomeSearchField extends StatelessWidget {
 
           /// 📍 LOCATION ICON (outside search)
           GestureDetector(
-            onTap: () async {
+            onLongPress: () {
               Navigator.pushNamed(context, Routes.countriesScreen,
                   arguments: {"from": "home"});
+            },
+            onTap: () async {
+              await _fastFetchLocation(context);
             },
             child: UiUtils.getSvg(
               AppIcons.location,
@@ -150,5 +158,77 @@ class HomeSearchField extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _fastFetchLocation(BuildContext context) async {
+    try {
+      // Show feedback
+      HelperUtils.showSnackBarMessage(
+          context, "fetchingLocation".translate(context));
+
+      // 1. Get last known position for potentially instant result
+      Position? position = await Geolocator.getLastKnownPosition();
+
+      // 2. Fetch fresh position if last known is old or null
+      position ??= await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+        timeLimit: const Duration(seconds: 5),
+      );
+
+      // 3. Get Address
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+
+        // 4. Update Hive
+        HiveUtils.setLocation(
+          city: place.locality,
+          state: place.administrativeArea,
+          country: place.country,
+          area: place.subLocality,
+          latitude: position.latitude,
+          longitude: position.longitude,
+          areaId: null,
+        );
+
+        // 5. Refresh Cubits
+        if (context.mounted) {
+          context.read<FetchHomeScreenCubit>().fetch(
+                city: HiveUtils.getCityName(),
+                country: HiveUtils.getCountryName(),
+                state: HiveUtils.getStateName(),
+                areaId: null,
+              );
+
+          context.read<FetchHomeAllItemsCubit>().fetch(
+                city: HiveUtils.getCityName(),
+                country: HiveUtils.getCountryName(),
+                state: HiveUtils.getStateName(),
+                latitude: position.latitude,
+                longitude: position.longitude,
+                radius: HiveUtils.getNearbyRadius(),
+                areaId: null,
+              );
+
+          HelperUtils.showSnackBarMessage(
+            context,
+            "locationUpdated".translate(context),
+            type: MessageType.success,
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        HelperUtils.showSnackBarMessage(
+          context,
+          e.toString(),
+          type: MessageType.error,
+        );
+      }
+    }
   }
 }

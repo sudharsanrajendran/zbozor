@@ -9,6 +9,7 @@ import 'package:Ebozor/data/model/location/countriesModel.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_keys.dart';
+import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -107,9 +108,11 @@ class CountriesScreenState extends State<CountriesScreen> {
   void clearRecentSearches() {
     setState(() {
       recentSearches.clear();
+      selectedCountry = null;
       if (Hive.isBoxOpen(HiveKeys.historyBox)) {
         Hive.box(HiveKeys.historyBox).put("country_history", recentSearches);
       }
+      HiveUtils.clearLocation();
     });
   }
 

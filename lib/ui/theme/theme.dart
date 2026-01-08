@@ -14,6 +14,7 @@ const Color textDarkColor = Color(0xFF121230);
 Color lightTextColor = const Color(0xFF000000).withOpacity(0.5);
 Color widgetsBorderColorLight = const Color(0xffEEEEEE).withOpacity(0.6);
 Color senderChatColor = const Color.fromARGB(255, 233, 233, 233).darken(22);
+final Color filterBorderColorLight = const Color.fromARGB(121, 46, 102, 245);
 
 ///Dark Theme Colors
 Color primaryColorDark = const Color(0xff121212);
@@ -41,8 +42,7 @@ const Color pendingButtonColor = Color(0xff0C5D9C);
 const Color soldOutButtonColor = Color(0xffFFBB33);
 const Color deactivateButtonColor = Color(0xffFE0000);
 const Color activateButtonColor = Color(0xFF02AD11);
-const Color bannerBlue=Color(0xFF52A6FF);
-
+const Color bannerBlue = Color(0xFF52A6FF);
 
 //Button text color
 const Color buttonTextColor = Colors.white;
@@ -84,7 +84,11 @@ extension ColorPrefs on ColorScheme {
       lightColor: lightTextColor, darkColor: lightTextColorDarkTheme);
 
   Color get borderColor => _getColor(brightness,
-      lightColor: widgetsBorderColorLight, darkColor: secondaryColorDark.withOpacity(0.2));
+      lightColor: widgetsBorderColorLight,
+      darkColor: secondaryColorDark.withOpacity(0.2));
+
+  Color get filterBorderColor => _getColor(brightness,
+      lightColor: filterBorderColorLight, darkColor: borderColor);
 
   Color get chatSenderColor => _getColor(brightness,
       lightColor: senderChatColor, darkColor: darkSenderChatColor);

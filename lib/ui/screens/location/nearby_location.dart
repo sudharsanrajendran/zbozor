@@ -371,12 +371,44 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
           child: Column(
             children: [
               UiUtils.buildButton(context, radius: 8, fontSize: 16,
-                  onPressed: () {
-                setState(() {
-                  radius = 1;
-                  searchController.clear(); // Clear search on reset
-                  _addCircle(LatLng(latitude!, longitude!), radius);
-                });
+                  onPressed: () async {
+                try {
+                  // Fetch actual current position
+                  Position position = await Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.high,
+                  );
+
+                  setState(() {
+                    radius = 1;
+                    searchController.clear();
+                    latitude = position.latitude;
+                    longitude = position.longitude;
+
+                    _cameraPosition = CameraPosition(
+                      target: LatLng(latitude!, longitude!),
+                      zoom: 14.4746,
+                      bearing: 0,
+                    );
+
+                    _markers.clear();
+                    _markers.add(Marker(
+                      markerId: const MarkerId('currentLocation'),
+                      position: LatLng(latitude!, longitude!),
+                    ));
+
+                    _addCircle(LatLng(latitude!, longitude!), radius);
+                  });
+
+                  mapController.animateCamera(
+                    CameraUpdate.newCameraPosition(_cameraPosition!),
+                  );
+
+                  getLocationFromLatitudeLongitude(
+                    latLng: LatLng(latitude!, longitude!),
+                  );
+                } catch (e) {
+                  HelperUtils.showSnackBarMessage(context, e.toString());
+                }
               },
                   buttonTitle: "reset".translate(context),
                   height: 48,

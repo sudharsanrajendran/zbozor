@@ -41,6 +41,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextCapitalization? capitalization;
   final bool? isRequired;
   final bool? isMobileRequired;
+  final BoxConstraints? fixedPrefixConstraints;
 
   const CustomTextFormField({
     super.key,
@@ -65,7 +66,9 @@ class CustomTextFormField extends StatelessWidget {
     this.hintTextStyle,
     this.minLength,
     this.capitalization,
-    this.isRequired, this.isMobileRequired=true,
+    this.isRequired,
+    this.isMobileRequired = true,
+    this.fixedPrefixConstraints,
   });
 
   @override
@@ -160,6 +163,7 @@ class CustomTextFormField extends StatelessWidget {
           prefix: prefix,
           isDense: dense,
           prefixIcon: fixedPrefix,
+          prefixIconConstraints: fixedPrefixConstraints,
           suffixIcon: suffix,
           hintText: hintText,
           hintStyle: hintTextStyle ??

@@ -10,7 +10,6 @@ import 'package:Ebozor/ui/screens/item/add_item_screen/widgets/image_adapter.dar
 import 'package:Ebozor/ui/screens/item/add_item_screen/select_category.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/cloudState/cloud_state.dart';
-import 'package:Ebozor/utils/constant.dart';
 
 import 'package:Ebozor/utils/extensions/extensions.dart';
 
@@ -528,7 +527,15 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                         CustomTextFormField(
                           controller: adPriceController,
                           action: TextInputAction.next,
-                          prefix: Text("${Constant.currencySymbol} "),
+                          fixedPrefix: const Padding(
+                            padding:
+                                EdgeInsetsDirectional.only(start: 13, end: 5),
+                            child: Text("AED"),
+                          ),
+                          fixedPrefixConstraints: const BoxConstraints(
+                            minWidth: 0,
+                            minHeight: 0,
+                          ),
                           // controller: _priceController,
                           formaters: [
                             FilteringTextInputFormatter.allow(
@@ -744,7 +751,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                 titleImageURL = "";
                 setState(() {});
               });
-            })
+            }, title: "change\nPhoto".translate(context))
         ],
       );
     });
@@ -892,7 +899,8 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
     );
   }
 
-  Widget uploadPhotoCard(BuildContext context, {required Function onTap}) {
+  Widget uploadPhotoCard(BuildContext context,
+      {required Function onTap, String? title}) {
     return GestureDetector(
       onTap: () {
         onTap.call();
@@ -909,7 +917,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
             radius: const Radius.circular(10),
             child: Container(
               alignment: AlignmentDirectional.center,
-              child: Text("uploadPhoto".translate(context)),
+              child: Text(title ?? "uploadPhoto".translate(context)),
             )),
       ),
     );
