@@ -144,8 +144,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
 
   late bool isAddedByMe = (widget.model.user?.id != null
           ? widget.model.user!.id.toString()
-          : widget.model.userId) ==
-      HiveUtils.getUserId();
+          : widget.model.userId.toString()) ==
+      HiveUtils.getUserId().toString();
 
   bool isFeaturedWidget = true;
   String youtubeVideoThumbnail = "";
@@ -275,7 +275,10 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
 
   void setItemClick() {
     if (!isAddedByMe) {
-      context.read<ItemTotalClickCubit>().itemTotalClick(model.id!);
+      if (!HiveUtils.isItemViewed(model.id!)) {
+        context.read<ItemTotalClickCubit>().itemTotalClick(model.id!);
+        HiveUtils.setItemViewed(model.id!);
+      }
     }
   }
 

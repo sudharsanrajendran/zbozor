@@ -3,6 +3,7 @@ import 'package:Ebozor/data/repositories/notifications_repository_repository.dar
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:Ebozor/data/model/notification_data.dart';
+import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 
 abstract class FetchNotificationsState {}
 
@@ -61,10 +62,15 @@ class FetchNotificationsCubit extends Cubit<FetchNotificationsState> {
       DataOutput<NotificationData> result =
           await _notificationsRepository.fetchNotifications(page: 1);
 
+      List<String> removedIds = HiveUtils.getRemovedNotificationIds();
+      List<NotificationData> filteredList = result.modelList
+          .where((element) => !removedIds.contains(element.id))
+          .toList();
+
       emit(FetchNotificationsSuccess(
           isLoadingMore: false,
           loadingMoreError: false,
-          notificationdata: result.modelList,
+          notificationdata: filteredList,
           page: 1,
           total: result.total));
     } catch (e) {
@@ -85,9 +91,14 @@ class FetchNotificationsCubit extends Cubit<FetchNotificationsState> {
           page: (state as FetchNotificationsSuccess).page + 1,
         );
 
+        List<String> removedIds = HiveUtils.getRemovedNotificationIds();
+        List<NotificationData> newFilteredList = result.modelList
+            .where((element) => !removedIds.contains(element.id))
+            .toList();
+
         FetchNotificationsSuccess notificationdataState =
             (state as FetchNotificationsSuccess);
-        notificationdataState.notificationdata.addAll(result.modelList);
+        notificationdataState.notificationdata.addAll(newFilteredList);
         emit(FetchNotificationsSuccess(
             isLoadingMore: false,
             loadingMoreError: false,

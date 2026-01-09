@@ -643,7 +643,7 @@ class ItemsListState extends State<ItemsList> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: context.color.territoryColor,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                             elevation: 0,
                           ),
@@ -2047,7 +2047,7 @@ class ItemsListState extends State<ItemsList> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: context.color.territoryColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                     onPressed: () {

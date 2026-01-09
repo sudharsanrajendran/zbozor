@@ -33,13 +33,16 @@ final appThemeData = {
         brightness: Brightness.light),
     sliderTheme: SliderThemeData(
       activeTrackColor: territoryColor_,
-      inactiveTrackColor: territoryColor_.withOpacity(0.2),
+      inactiveTrackColor: territoryColor_.withOpacity(0.3),
+      activeTickMarkColor: Colors.transparent,
+      inactiveTickMarkColor: Colors.transparent,
       thumbColor: territoryColor_,
       overlayColor: territoryColor_.withOpacity(0.1),
-      trackHeight: 2.0,
+      trackHeight: 1.8,
       rangeThumbShape:
           const RoundRangeSliderThumbShape(enabledThumbRadius: 8.0),
       thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
+      overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
     ),
   ),
   AppTheme.dark: ThemeData(
@@ -57,13 +60,16 @@ final appThemeData = {
         brightness: Brightness.dark),
     sliderTheme: SliderThemeData(
       activeTrackColor: territoryColorDark,
-      inactiveTrackColor: territoryColorDark.withOpacity(0.2),
+      inactiveTrackColor: territoryColorDark.withOpacity(0.3),
+      activeTickMarkColor: Colors.transparent,
+      inactiveTickMarkColor: Colors.transparent,
       thumbColor: territoryColorDark,
       overlayColor: territoryColorDark.withOpacity(0.1),
-      trackHeight: 2.0,
+      trackHeight: 1.8,
       rangeThumbShape:
           const RoundRangeSliderThumbShape(enabledThumbRadius: 8.0),
       thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
+      overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
     ),
     switchTheme: SwitchThemeData(
         thumbColor: const MaterialStatePropertyAll(territoryColor_),

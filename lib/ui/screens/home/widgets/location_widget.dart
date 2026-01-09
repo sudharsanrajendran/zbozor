@@ -147,15 +147,12 @@ class LocationWidget extends StatelessWidget {
     return FittedBox(
       fit: BoxFit.none,
       alignment: AlignmentDirectional.centerStart,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: () async {
-              Navigator.pushNamed(context, Routes.countriesScreen,
-                  arguments: {"from": "home"});
-            },
-            child: Container(
+      child: GestureDetector(
+        onTap: () {},
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
               width: 40.rw(context),
               height: 40.rh(context),
               child: UiUtils.getSvg(
@@ -164,69 +161,69 @@ class LocationWidget extends StatelessWidget {
                 color: context.color.textLightColor,
               ),
             ),
-          ),
-          SizedBox(
-            width: 10.rw(context),
-          ),
-          ValueListenableBuilder(
-              valueListenable: Hive.box(HiveKeys.userDetailsBox).listenable(),
-              builder: (context, value, child) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      [
-                        HiveUtils.getAreaName(),
-                        HiveUtils.getCityName(),
-                        HiveUtils.getStateName(),
-                        HiveUtils.getCountryName()
-                      ]
-                              .where((element) =>
-                                  element != null && element.isNotEmpty)
-                              .join(", ")
-                              .isEmpty
-                          ? "------"
-                          : [
-                              HiveUtils.getAreaName(),
-                              HiveUtils.getCityName(),
-                              HiveUtils.getStateName(),
-                              HiveUtils.getCountryName()
-                            ]
-                              .where((element) =>
-                                  element != null && element.isNotEmpty)
-                              .join(", ")
-                      /*HiveUtils.getCityName() == null
-                          ? "---"
-                          : (HiveUtils.getAreaName() ?? "") +
-                              ((HiveUtils.getAreaName() == null ||
-                                          HiveUtils.getAreaName() == ""
-                                      ? ""
-                                      : ",") +
-                                  (HiveUtils.getCityName() ?? "") +
-                                  (HiveUtils.getStateName() == null ||
-                                          HiveUtils.getStateName() == ""
-                                      ? ""
-                                      : ",") +
-                                  (HiveUtils.getStateName() ?? "") +
-                                  (HiveUtils.getCountryName() == null ||
-                                          HiveUtils.getCountryName() == ""
-                                      ? ""
-                                      : ",") +
-                                  (HiveUtils.getCountryName() ?? "")) +
-                              ""*/
-                      ,
-                      maxLines: 1,
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                    )
-                        .color(context.color.textColorDark)
-                        .size(context.font.small)
-                        .bold(weight: FontWeight.w600),
-                  ],
-                );
-              }),
-        ],
+            SizedBox(
+              width: 10.rw(context),
+            ),
+            ValueListenableBuilder(
+                valueListenable: Hive.box(HiveKeys.userDetailsBox).listenable(),
+                builder: (context, value, child) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        [
+                          HiveUtils.getAreaName(),
+                          HiveUtils.getCityName(),
+                          HiveUtils.getStateName(),
+                          HiveUtils.getCountryName()
+                        ]
+                                .where((element) =>
+                                    element != null && element.isNotEmpty)
+                                .join(", ")
+                                .isEmpty
+                            ? "------"
+                            : [
+                                HiveUtils.getAreaName(),
+                                HiveUtils.getCityName(),
+                                HiveUtils.getStateName(),
+                                HiveUtils.getCountryName()
+                              ]
+                                .where((element) =>
+                                    element != null && element.isNotEmpty)
+                                .join(", ")
+                        /*HiveUtils.getCityName() == null
+                            ? "---"
+                            : (HiveUtils.getAreaName() ?? "") +
+                                ((HiveUtils.getAreaName() == null ||
+                                            HiveUtils.getAreaName() == ""
+                                        ? ""
+                                        : ",") +
+                                    (HiveUtils.getCityName() ?? "") +
+                                    (HiveUtils.getStateName() == null ||
+                                            HiveUtils.getStateName() == ""
+                                        ? ""
+                                        : ",") +
+                                    (HiveUtils.getStateName() ?? "") +
+                                    (HiveUtils.getCountryName() == null ||
+                                            HiveUtils.getCountryName() == ""
+                                        ? ""
+                                        : ",") +
+                                    (HiveUtils.getCountryName() ?? "")) +
+                                ""*/
+                        ,
+                        maxLines: 1,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                          .color(context.color.textColorDark)
+                          .size(context.font.small)
+                          .bold(weight: FontWeight.w600),
+                    ],
+                  );
+                }),
+          ],
+        ),
       ),
     );
   }

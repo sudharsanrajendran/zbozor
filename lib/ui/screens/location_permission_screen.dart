@@ -165,8 +165,18 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
 
   Future<void> _getCurrentLocationAndNavigate() async {
     try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+      // Optimize: Try last known position first for speed
+      Position? position = await Geolocator.getLastKnownPosition();
+
+      // If no last known position, fetch fresh with optimized settings
+      if (position == null) {
+        position = await Geolocator.getCurrentPosition(
+          desiredAccuracy:
+              LocationAccuracy.medium, // Medium is enough for City/Area
+          timeLimit: const Duration(seconds: 10), // Allow 10s max
+        );
+      }
+
       print(
           "DEBUG: Raw Position Fetched: Lat:${position.latitude}, Lng:${position.longitude}");
 
@@ -190,7 +200,7 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
                 "DEBUG: Permission Screen Location - Lat: ${position.latitude}, Lng: ${position.longitude}");
             print("DEBUG: Google Address: $googleAddress");
           }
-           HelperUtils.killPreviousPages(
+          HelperUtils.killPreviousPages(
               context, Routes.main, {"from": "login"});
         }
       } else {
@@ -245,7 +255,6 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
                   child: UiUtils.getAdaptiveSvg(
                       context, AppIcons.locationAccessIcon,
                       color: context.color.territoryColor)),
-
               const SizedBox(height: 19),
               Text(
                 "whatsYourLocation".translate(context),
@@ -263,8 +272,7 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
               ),
               const SizedBox(height: 58),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12.0),
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: UiUtils.buildButton(context,
                     showElevation: false,
                     buttonColor: context.color.territoryColor,
@@ -277,8 +285,7 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
                     buttonTitle: "findMyLocation".translate(context)),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: UiUtils.buildButton(context,
                     showElevation: false,
                     buttonColor: context.color.backgroundColor,

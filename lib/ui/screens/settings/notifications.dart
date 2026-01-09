@@ -145,7 +145,15 @@ class NotificationsState extends State<Notifications> {
 
               if (state is FetchNotificationsSuccess) {
                 // Update the "seen" total so badge clears
-                HiveUtils.setNotificationTotal(state.total);
+                // Logic: Total from Server - (Read Locally + Removed Locally)
+                int totalServer = state.total;
+                Set<String> processedIds = {
+                  ...HiveUtils.getReadNotificationIds(),
+                  ...HiveUtils.getRemovedNotificationIds()
+                };
+                int unreadCount = totalServer - processedIds.length;
+                HiveUtils.setNotificationTotal(
+                    unreadCount > 0 ? unreadCount : 0);
 
                 if (state.notificationdata.isEmpty) {
                   return NoDataFound(
@@ -232,6 +240,14 @@ class NotificationsState extends State<Notifications> {
                   onTap: () {
                     selectedNotification = notificationData;
 
+                    // Mark as read locally
+                    HiveUtils.addReadNotificationId(notificationData.id!);
+                    // Decrease unread count
+                    int currentTotal = HiveUtils.getNotificationTotal();
+                    if (currentTotal > 0) {
+                      HiveUtils.setNotificationTotal(currentTotal - 1);
+                    }
+
                     HelperUtils.goToNextPage(
                         Routes.notificationDetailPage, context, false);
                   },
@@ -264,6 +280,11 @@ class NotificationsState extends State<Notifications> {
                               onSelected: (value) async {
                                 if (value == "delete") {
                                   // delete logic here
+                                  await HiveUtils.addRemovedNotificationId(
+                                      notificationData.id!);
+                                  context
+                                      .read<FetchNotificationsCubit>()
+                                      .fetchNotifications();
                                 }
                               },
                               itemBuilder: (BuildContext context) {

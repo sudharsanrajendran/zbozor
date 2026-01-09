@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/utils/constant.dart';
+import 'package:Ebozor/utils/app_icon.dart';
 
 import 'package:flutter/services.dart'; // For TextInputFormatter
 
@@ -133,6 +134,85 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     return null;
   }
 
+  PreferredSize _buildAppBar(BuildContext context) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(65),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: RoundedBorderOnSomeSidesWidget(
+              borderColor: context.color.borderColor,
+              borderRadius: 0,
+              borderWidth: 1.5,
+              contentBackgroundColor: context.color.secondaryColor,
+              bottomLeft: true,
+              bottomRight: true,
+              topLeft: false,
+              topRight: false,
+              child: Container(
+                alignment: AlignmentDirectional.centerStart,
+                padding: const EdgeInsets.only(top: 25),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Material(
+                      clipBehavior: Clip.antiAlias,
+                      color: Colors.transparent,
+                      type: MaterialType.circle,
+                      child: InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: Directionality(
+                            textDirection: Directionality.of(context),
+                            child: RotatedBox(
+                              quarterTurns: Directionality.of(context) ==
+                                      TextDirection.rtl
+                                  ? 2
+                                  : -4,
+                              child: UiUtils.getSvg(AppIcons.arrowLeft,
+                                  fit: BoxFit.none,
+                                  color: context.color.textDefaultColor),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        widget.catName,
+                        overflow: TextOverflow.ellipsis,
+                        softWrap: true,
+                      )
+                          .color(context.color.textDefaultColor)
+                          .bold(weight: FontWeight.w600)
+                          .size(18),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedTabIndex = 0;
+                          _initializeDefaultSelection();
+                        });
+                      },
+                      child: Text(
+                        "Reset".translate(context),
+                        style: TextStyle(
+                            color: context.color.textDefaultColor
+                                .withOpacity(0.5)),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion(
@@ -140,27 +220,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
           context: context, statusBarColor: context.color.backgroundColor),
       child: Scaffold(
         backgroundColor: context.color.backgroundColor,
-        appBar: UiUtils.buildAppBar(
-          context,
-          showBackButton: true,
-          title: widget.catName,
-          actions: [
-            TextButton(
-              onPressed: () {
-                // Reset logic
-                setState(() {
-                  _selectedTabIndex = 0;
-                  _initializeDefaultSelection();
-                });
-              },
-              child: Text(
-                "Reset".translate(context),
-                style: TextStyle(
-                    color: context.color.textDefaultColor.withOpacity(0.5)),
-              ),
-            )
-          ],
-        ),
+        appBar: _buildAppBar(context),
         body: Container(
           color: context.color.secondaryColor,
           child: BlocProvider.value(
@@ -913,8 +973,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
                           decoration: BoxDecoration(
-                            color:
-                                context.color.secondaryColor, // White usually
+                            color: Colors.white, // White usually
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(
                                 width: isSelected ? 1.5 : 1,
@@ -1165,17 +1224,16 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
               ),
               // Slider
               const SizedBox(height: 8),
+
               RangeSlider(
                 values: RangeValues(
-                  (currentMin).clamp(0, sliderMax),
+                  currentMin.clamp(0, sliderMax),
                   (currentMax < currentMin ? currentMin : currentMax)
                       .clamp(0, sliderMax),
                 ),
                 min: 0,
-                max: sliderMax, // Dynamic Max!
-                divisions: sliderMax > 0 ? 100 : 1,
-                activeColor: context.color.territoryColor,
-                inactiveColor: context.color.territoryColor.withOpacity(0.3),
+                max: sliderMax,
+               // divisions: sliderMax > 0 ? 100 : 1,
                 labels: RangeLabels(
                   currentMin.round().toString(),
                   currentMax.round().toString(),
@@ -1189,6 +1247,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   });
                 },
               ),
+
               const SizedBox(height: 12),
             ],
           );

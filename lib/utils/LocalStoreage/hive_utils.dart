@@ -329,4 +329,85 @@ class HiveUtils {
     HiveUtils.setUserIsAuthenticated(false);
     //GuestChecker.set(isGuest: true);
   }
+
+  static bool isItemViewed(int itemId) {
+    String? userId = getUserId();
+    if (userId == null) return false;
+
+    // Ensure we are working with the history box
+    if (!Hive.isBoxOpen(HiveKeys.historyBox)) return false;
+
+    List result = Hive.box(HiveKeys.historyBox)
+        .get("viewed_items_$userId", defaultValue: []);
+
+    return result.cast<int>().contains(itemId);
+  }
+
+  static void setItemViewed(int itemId) {
+    String? userId = getUserId();
+    if (userId == null) return;
+
+    // Ensure we are working with the history box
+    if (!Hive.isBoxOpen(HiveKeys.historyBox)) return;
+
+    List result = Hive.box(HiveKeys.historyBox)
+        .get("viewed_items_$userId", defaultValue: []);
+    List<int> viewedItems = result.cast<int>().toList();
+
+    if (!viewedItems.contains(itemId)) {
+      viewedItems.add(itemId);
+      Hive.box(HiveKeys.historyBox).put("viewed_items_$userId", viewedItems);
+    }
+  }
+
+  /// Notification Management
+  static List<String> getRemovedNotificationIds() {
+    String? userId = getUserId();
+    if (userId == null) return [];
+    if (!Hive.isBoxOpen(HiveKeys.historyBox)) return [];
+
+    List result = Hive.box(HiveKeys.historyBox)
+        .get("removed_notifications_$userId", defaultValue: []);
+    return result.cast<String>().toList();
+  }
+
+  static Future<void> addRemovedNotificationId(String id) async {
+    String? userId = getUserId();
+    if (userId == null) return;
+    if (!Hive.isBoxOpen(HiveKeys.historyBox)) return;
+
+    List<String> current = getRemovedNotificationIds();
+    if (!current.contains(id)) {
+      current.add(id);
+      await Hive.box(HiveKeys.historyBox)
+          .put("removed_notifications_$userId", current);
+    }
+  }
+
+  static List<String> getReadNotificationIds() {
+    String? userId = getUserId();
+    if (userId == null) return [];
+    if (!Hive.isBoxOpen(HiveKeys.historyBox)) return [];
+
+    List result = Hive.box(HiveKeys.historyBox)
+        .get("read_notifications_$userId", defaultValue: []);
+    return result.cast<String>().toList();
+  }
+
+  static Future<void> addReadNotificationId(String id) async {
+    String? userId = getUserId();
+    if (userId == null) return;
+    if (!Hive.isBoxOpen(HiveKeys.historyBox)) return;
+
+    List<String> current = getReadNotificationIds();
+    if (!current.contains(id)) {
+      current.add(id);
+      await Hive.box(HiveKeys.historyBox)
+          .put("read_notifications_$userId", current);
+    }
+  }
+
+  static bool isNotificationRead(String id) {
+    return getReadNotificationIds().contains(id);
+  }
 }

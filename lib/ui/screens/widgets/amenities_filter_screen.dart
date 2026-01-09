@@ -76,7 +76,7 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
                 "Clear All",
                 style: TextStyle(
                   color: _currentSelection.isNotEmpty
-                      ? Colors.red
+                      ? context.color.territoryColor
                       : context.color.textLightColor,
                 ),
               ),
@@ -103,7 +103,7 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
                 width: 140,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: context.color.territoryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
