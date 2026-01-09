@@ -252,138 +252,145 @@ class FilterScreenState extends State<FilterScreen> {
         checkFilterValSet();
         return;
       },
-      child: Scaffold(
-        backgroundColor: isProperty
-            ? Color(0xFFF9F9F9)
-            : Theme.of(context).colorScheme.primaryColor,
-        appBar: UiUtils.buildAppBar(
-          context,
-          onBackPress: () {
-            checkFilterValSet();
-            Navigator.pop(context);
-          },
-          showBackButton: true,
-          title: "filterTitle".translate(context),
-          actions: [
-            FittedBox(
-              fit: BoxFit.none,
-              child: UiUtils.buildButton(
-                context,
-                onPressed: () {
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: isProperty
+              ? Color(0xFFF9F9F9)
+              : Theme.of(context).colorScheme.primaryColor,
+          appBar: UiUtils.buildAppBar(
+            context,
+            onBackPress: () {
+              checkFilterValSet();
+              Navigator.pop(context);
+            },
+            showBackButton: true,
+            title: "filterTitle".translate(context),
+            backgroundColor: context.color.backgroundColor,
+            actions: [
+              GestureDetector(
+                onTap: () {
                   setDefaultVal(isRefresh: true);
                   setState(() {});
                 },
-                width: 100,
-                height: 50,
-                fontSize: context.font.normal,
-                buttonColor: context.color.secondaryColor,
-                showElevation: false,
-                textColor: context.color.textColorDark,
-                buttonTitle: "reset".translate(context),
-              ),
-            )
-          ],
-        ),
-        bottomNavigationBar: BottomAppBar(
-          color: isProperty ? Color(0xFFF9F9F9) : context.color.secondaryColor,
-          elevation: isProperty ? 0 : 3,
-          child: UiUtils.buildButton(context,
-              outerPadding: const EdgeInsets.all(12),
-              height: 50.rh(context), onPressed: () {
-            Map<String, dynamic> customFields =
-                convertToCustomFields(AbstractField.fieldsData);
-            Constant.itemFilter = ItemFilterModel(
-                maxPrice: maxController.text,
-                minPrice: minController.text,
-                categoryId: selectedCategories.isNotEmpty
-                    ? selectedCategories.last
-                    : "",
-                postedSince: postedOn,
-                city: city,
-                areaId: areaId,
-                radius: radius,
-                state: _state,
-                country: country,
-                latitude: latitude,
-                longitude: longitude,
-                customFields: customFields);
-
-            widget.update(ItemFilterModel(
-                maxPrice: maxController.text,
-                minPrice: minController.text,
-                categoryId: widget.from == "search"
-                    ? selectedCategories.isNotEmpty
-                        ? selectedCategories.last
-                        : ""
-                    : '',
-                postedSince: postedOn,
-                city: city,
-                areaId: areaId,
-                radius: radius,
-                state: _state,
-                country: country,
-                longitude: longitude,
-                latitude: latitude,
-                customFields: customFields));
-
-            Navigator.pop(context, true);
-          },
-              buttonTitle: "applyFilter".translate(context),
-              radius: 8,
-              buttonColor:
-                  isProperty ? Color(0xFFE52D2D) : context.color.territoryColor,
-              textColor: Colors.white),
-        ),
-        body: isProperty
-            ? propertyFilterBody()
-            : SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
                 child: Padding(
-                  padding: const EdgeInsets.all(
-                    20.0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Text('locationLbl'.translate(context))
-                          .bold(weight: FontWeight.w600)
-                          .color(context.color.textDefaultColor),
-                      const SizedBox(height: 5),
-                      locationWidget(context),
-                      if (widget.categoryIds == null ||
-                          widget.categoryIds!.isEmpty) ...[
-                        const SizedBox(height: 15),
-                        Text('category'.translate(context))
-                            .bold(weight: FontWeight.w600)
-                            .color(context.color.textDefaultColor),
-                        const SizedBox(height: 5),
-                        categoryWidget(context),
-                        const SizedBox(height: 5),
-                      ],
-                      //categoryModule(),
-                      const SizedBox(
-                        height: 15,
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Center(
+                    child: Text(
+                      "reset".translate(context),
+                      style: TextStyle(
+                        color: context.color.textDefaultColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
                       ),
-                      Text('budgetLbl'.translate(context))
-                          .bold(weight: FontWeight.w600)
-                          .color(context.color.textDefaultColor),
-                      const SizedBox(height: 15),
-                      budgetOption(),
-                      const SizedBox(height: 15),
-                      Text('postedSinceLbl'.translate(context))
-                          .bold(weight: FontWeight.w600)
-                          .color(context.color.textDefaultColor),
-                      const SizedBox(height: 5),
-                      postedSinceOption(context),
-                      const SizedBox(height: 15),
-                      //   customFields()
-                    ],
+                    ),
                   ),
                 ),
               ),
+            ],
+          ),
+          bottomNavigationBar: BottomAppBar(
+            color:
+                isProperty ? Color(0xFFF9F9F9) : context.color.secondaryColor,
+            elevation: isProperty ? 0 : 3,
+            child: UiUtils.buildButton(context,
+                outerPadding: const EdgeInsets.all(12),
+                height: 50.rh(context), onPressed: () {
+              Map<String, dynamic> customFields =
+                  convertToCustomFields(AbstractField.fieldsData);
+              Constant.itemFilter = ItemFilterModel(
+                  maxPrice: maxController.text,
+                  minPrice: minController.text,
+                  categoryId: selectedCategories.isNotEmpty
+                      ? selectedCategories.last
+                      : "",
+                  postedSince: postedOn,
+                  city: city,
+                  areaId: areaId,
+                  radius: radius,
+                  state: _state,
+                  country: country,
+                  latitude: latitude,
+                  longitude: longitude,
+                  customFields: customFields);
+
+              widget.update(ItemFilterModel(
+                  maxPrice: maxController.text,
+                  minPrice: minController.text,
+                  categoryId: widget.from == "search"
+                      ? selectedCategories.isNotEmpty
+                          ? selectedCategories.last
+                          : ""
+                      : '',
+                  postedSince: postedOn,
+                  city: city,
+                  areaId: areaId,
+                  radius: radius,
+                  state: _state,
+                  country: country,
+                  longitude: longitude,
+                  latitude: latitude,
+                  customFields: customFields));
+
+              Navigator.pop(context, true);
+            },
+                buttonTitle: "applyFilter".translate(context),
+                radius: 8,
+                buttonColor: isProperty
+                    ? Color(0xFFE52D2D)
+                    : context.color.territoryColor,
+                textColor: Colors.white),
+          ),
+          body: isProperty
+              ? propertyFilterBody()
+              : SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  child: Padding(
+                    padding: const EdgeInsets.all(
+                      20.0,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Text('locationLbl'.translate(context))
+                            .bold(weight: FontWeight.w600)
+                            .color(context.color.textDefaultColor),
+                        const SizedBox(height: 5),
+                        locationWidget(context),
+                        if (widget.categoryIds == null ||
+                            widget.categoryIds!.isEmpty) ...[
+                          const SizedBox(height: 15),
+                          Text('category'.translate(context))
+                              .bold(weight: FontWeight.w600)
+                              .color(context.color.textDefaultColor),
+                          const SizedBox(height: 5),
+                          categoryWidget(context),
+                          const SizedBox(height: 5),
+                        ],
+                        //categoryModule(),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Text('budgetLbl'.translate(context))
+                            .bold(weight: FontWeight.w600)
+                            .color(context.color.textDefaultColor),
+                        const SizedBox(height: 15),
+                        budgetOption(),
+                        const SizedBox(height: 15),
+                        Text('postedSinceLbl'.translate(context))
+                            .bold(weight: FontWeight.w600)
+                            .color(context.color.textDefaultColor),
+                        const SizedBox(height: 5),
+                        postedSinceOption(context),
+                        const SizedBox(height: 15),
+                        //   customFields()
+                      ],
+                    ),
+                  ),
+                ),
+        ),
       ),
     );
   }

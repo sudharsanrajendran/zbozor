@@ -2324,6 +2324,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             padding: const EdgeInsets.only(top: 3.0),
             child: SvgPicture.asset(
               AppIcons.location,
+              width: 20,
+              height: 20,
               colorFilter: ColorFilter.mode(
                   context.color.textLightColor, BlendMode.srcIn),
             ),
@@ -2331,7 +2333,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
           Expanded(
             flex: 3,
             child: Padding(
-              padding: EdgeInsetsDirectional.only(start: 5.0),
+              padding: EdgeInsetsDirectional.only(start: 5.0,top: 3),
               child: Text(model.address!).color(context.color.textDefaultColor),
             ),
           ),
@@ -2460,11 +2462,12 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 width: 20,
               ),
             ),
-            SizedBox(width: 5),
             Expanded(
-              child: Text(model.address!)
-                  .color(context.color.textDefaultColor)
-                  .size(context.font.normal),
+              flex: 3,
+              child: Padding(
+                padding: EdgeInsetsDirectional.only(start: 5.0,top: 3),
+                child: Text(model.address!).color(context.color.textDefaultColor),
+              ),
             ),
           ],
         ),

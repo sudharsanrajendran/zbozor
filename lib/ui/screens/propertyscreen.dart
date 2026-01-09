@@ -134,82 +134,54 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     return null;
   }
 
-  PreferredSize _buildAppBar(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(65),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Expanded(
-            child: RoundedBorderOnSomeSidesWidget(
-              borderColor: context.color.borderColor,
-              borderRadius: 0,
-              borderWidth: 1.5,
-              contentBackgroundColor: context.color.secondaryColor,
-              bottomLeft: true,
-              bottomRight: true,
-              topLeft: false,
-              topRight: false,
-              child: Container(
-                alignment: AlignmentDirectional.centerStart,
-                padding: const EdgeInsets.only(top: 25),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Material(
-                      clipBehavior: Clip.antiAlias,
-                      color: Colors.transparent,
-                      type: MaterialType.circle,
-                      child: InkWell(
-                        onTap: () => Navigator.pop(context),
-                        child: Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: Directionality(
-                            textDirection: Directionality.of(context),
-                            child: RotatedBox(
-                              quarterTurns: Directionality.of(context) ==
-                                      TextDirection.rtl
-                                  ? 2
-                                  : -4,
-                              child: UiUtils.getSvg(AppIcons.arrowLeft,
-                                  fit: BoxFit.none,
-                                  color: context.color.textDefaultColor),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        widget.catName,
-                        overflow: TextOverflow.ellipsis,
-                        softWrap: true,
-                      )
-                          .color(context.color.textDefaultColor)
-                          .bold(weight: FontWeight.w600)
-                          .size(18),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _selectedTabIndex = 0;
-                          _initializeDefaultSelection();
-                        });
-                      },
-                      child: Text(
-                        "Reset".translate(context),
-                        style: TextStyle(
-                            color: context.color.textDefaultColor
-                                .withOpacity(0.5)),
-                      ),
-                    )
-                  ],
-                ),
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      elevation: 0,
+      centerTitle: false,
+      backgroundColor: context.color.secondaryColor,
+      leading: Material(
+        clipBehavior: Clip.antiAlias,
+        color: Colors.transparent,
+        type: MaterialType.circle,
+        child: InkWell(
+          onTap: () => Navigator.pop(context),
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Directionality(
+              textDirection: Directionality.of(context),
+              child: RotatedBox(
+                quarterTurns:
+                    Directionality.of(context) == TextDirection.rtl ? 2 : -4,
+                child: UiUtils.getSvg(AppIcons.arrowLeft,
+                    fit: BoxFit.none, color: context.color.textDefaultColor),
               ),
             ),
           ),
-        ],
+        ),
       ),
+      title: Text(
+        widget.catName,
+        overflow: TextOverflow.ellipsis,
+        softWrap: true,
+      )
+          .color(context.color.textDefaultColor)
+          .bold(weight: FontWeight.w600)
+          .size(18),
+      actions: [
+        TextButton(
+          onPressed: () {
+            setState(() {
+              _selectedTabIndex = 0;
+              _initializeDefaultSelection();
+            });
+          },
+          child: Text(
+            "Reset".translate(context),
+            style: TextStyle(
+                color: context.color.textDefaultColor.withOpacity(0.5)),
+          ),
+        )
+      ],
     );
   }
 

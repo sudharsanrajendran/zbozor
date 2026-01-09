@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
-import 'package:Ebozor/utils/helper_utils.dart';
+
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
 
 import 'package:Ebozor/data/cubits/fetch_notifications_cubit.dart';
@@ -109,14 +109,7 @@ class HomeSearchField extends StatelessWidget {
 
               return GestureDetector(
                 onTap: () {
-                  if (HiveUtils.isUserAuthenticated()) {
-                    Navigator.pushNamed(context, Routes.notificationPage);
-                  } else {
-                    HelperUtils.showSnackBarMessage(
-                        context, "Please Login to see notifications");
-                    Navigator.pushNamed(context, Routes.login,
-                        arguments: {"popToCurrent": true});
-                  }
+                  Navigator.pushNamed(context, Routes.notificationPage);
                 },
                 child: Stack(
                   clipBehavior: Clip.none,
