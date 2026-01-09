@@ -119,6 +119,7 @@ class StatesScreenState extends State<StatesScreen> {
 
   PreferredSizeWidget appBarWidget() {
     return AppBar(
+      elevation: 0,
       systemOverlayStyle:
           SystemUiOverlayStyle(statusBarColor: context.color.backgroundColor),
       bottom: PreferredSize(
@@ -199,13 +200,7 @@ class StatesScreenState extends State<StatesScreen> {
       /*BackButton(
         color: context.color.textDefaultColor,
       ),*/
-      elevation: context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
-          ? 0
-          : 6,
-      shadowColor:
-          context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
-              ? null
-              : context.color.textDefaultColor.withOpacity(0.2),
+
       backgroundColor: context.color.backgroundColor,
     );
   }
@@ -298,7 +293,7 @@ class StatesScreenState extends State<StatesScreen> {
           return Padding(
             padding: const EdgeInsets.only(top: 17),
             child: Container(
-              color: context.color.secondaryColor,
+              color: Colors.transparent,
               child: SingleChildScrollView(
                 controller: controller,
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -366,7 +361,7 @@ class StatesScreenState extends State<StatesScreen> {
                                 color: isSelected
                                     ? context.color.territoryColor
                                         .withOpacity(0.1)
-                                    : context.color.secondaryColor,
+                                    : Colors.white,
                               ),
                               child: Text(
                                 states.name!,

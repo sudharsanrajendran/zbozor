@@ -7,7 +7,8 @@ enum AppTheme { dark, light }
 
 final appThemeData = {
   AppTheme.light: ThemeData(
-    // scaffoldBackgroundColor: pageBackgroundColor,
+    scaffoldBackgroundColor: const Color(0xFFF8FAFE),
+    cardColor: Colors.white,
     brightness: Brightness.light,
     //textTheme
     useMaterial3: false,

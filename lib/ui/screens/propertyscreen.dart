@@ -412,7 +412,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
           width: double.infinity,
           height: 50,
           decoration: BoxDecoration(
-            color: context.color.backgroundColor,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: context.color.borderColor),
           ),
@@ -533,7 +533,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     height: 90, // 🔥 FIXED HEIGHT (important)
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: context.color.backgroundColor,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected
@@ -691,7 +691,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                 padding: const EdgeInsets.only(right: 8),
                 child: ActionChip(
                   label: Text(child.name ?? ""),
-                  backgroundColor: context.color.backgroundColor,
+                  backgroundColor: Colors.white,
                   side: BorderSide(
                     color: isSelected
                         ? context.color.textDefaultColor
@@ -771,8 +771,49 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
     if (lastSelected.children != null && lastSelected.children!.isNotEmpty) {
       HelperUtils.showSnackBarMessage(
-          context, "pleaseSelectAllField".translate(context));
+          context, "Please select sub-category for ${lastSelected.name}");
       return;
+    }
+
+    // 3. Validate Dynamic Filters (Strict: All filters from API must have a selection)
+    List<CategoryModel> allSelectedCategories = [];
+    if (_selectedPropertyType != null) {
+      allSelectedCategories.add(_selectedPropertyType!);
+    }
+    allSelectedCategories.addAll(_subCategoryPath);
+
+    for (var cat in allSelectedCategories) {
+      if (cat.filters != null && cat.filters!.isNotEmpty) {
+        for (var filter in cat.filters!) {
+          // Range Filter Check
+          if (filter.type == 'range') {
+            String minKey = "${filter.name}_min";
+            // Check if min is set (handling loose typing)
+            bool isMinSet = _selectedFilters.containsKey(minKey) &&
+                _selectedFilters[minKey] != null &&
+                _selectedFilters[minKey].toString().isNotEmpty;
+
+            if (!isMinSet) {
+              HelperUtils.showSnackBarMessage(
+                  context, "Please select range for ${filter.name}");
+              return;
+            }
+          }
+          // Other Filters Check
+          else {
+            if (!_selectedFilters.containsKey(filter.name) ||
+                _selectedFilters[filter.name] == null ||
+                (_selectedFilters[filter.name] is String &&
+                    (_selectedFilters[filter.name] as String).isEmpty) ||
+                (_selectedFilters[filter.name] is List &&
+                    (_selectedFilters[filter.name] as List).isEmpty)) {
+              HelperUtils.showSnackBarMessage(
+                  context, "Please select ${filter.name}");
+              return;
+            }
+          }
+        }
+      }
     }
 
     List<String> accumulatedIds = [...widget.categoryIds];
@@ -1233,7 +1274,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                 ),
                 min: 0,
                 max: sliderMax,
-               // divisions: sliderMax > 0 ? 100 : 1,
+                // divisions: sliderMax > 0 ? 100 : 1,
                 labels: RangeLabels(
                   currentMin.round().toString(),
                   currentMax.round().toString(),

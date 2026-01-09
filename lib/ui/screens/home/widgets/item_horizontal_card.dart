@@ -122,7 +122,11 @@ class ItemHorizontalCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 4.5),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: context.color.borderColor.darken(50)),
+          border: Border.all(
+              color:
+                  context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
+                      ? context.color.borderColor.darken(50)
+                      : const Color(0xFFEEEEEE)),
           color: context.color.secondaryColor,
           borderRadius: BorderRadius.circular(15),
         ),
@@ -143,39 +147,36 @@ class ItemHorizontalCard extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-
                 if (item.isFeature ?? false)
                   const Positioned(
                     top: 8,
                     left: 8,
                     child: PromotedCard(type: PromoteCardType.icon),
                   ),
-
                 if (showLikeButton ?? true)
                   Positioned(
                     top: 8,
                     right: 8,
-
-                    child: favButton(context,),
+                    child: favButton(
+                      context,
+                    ),
                   ),
               ],
             ),
 
             // CONTENT
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.only(
+                  left: 12, right: 12, top: 5, bottom: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // PRICE
-                  SizedBox(height: 10,),
+
                   Text(
                     Constant.currencySymbol +
-                        item.price!
-                            .toString()
-                            .priceFormate(
-                            disabled:
-                            Constant.isNumberWithSuffix == false),
+                        item.price!.toString().priceFormate(
+                            disabled: Constant.isNumberWithSuffix == false),
                   )
                       .size(context.font.large)
                       .color(context.color.territoryColor)
@@ -187,7 +188,8 @@ class ItemHorizontalCard extends StatelessWidget {
                   Text(item.name!.firstUpperCase())
                       .setMaxLines(lines: 2)
                       .size(context.font.normal)
-                      .color(context.color.textDefaultColor),
+                      .color(context.color.textDefaultColor)
+                      .bold(weight: FontWeight.w500),
 
                   const SizedBox(height: 10),
 
@@ -197,16 +199,18 @@ class ItemHorizontalCard extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.location_on_outlined,
-                          size: 14,
-                          color: context.color.textDefaultColor.withOpacity(0.5),
+                          size: 16,
+                          color:
+                              context.color.textDefaultColor.withOpacity(0.5),
                         ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(item.address?.trim() ?? "")
                               .setMaxLines(lines: 1)
-                              .size(context.font.smaller)
+                              .size(context.font.normal)
                               .color(context.color.textDefaultColor
-                              .withOpacity(0.5)),
+                                  .withOpacity(0.5))
+                              .bold(weight: FontWeight.w400),
                         ),
                       ],
                     ),
@@ -220,7 +224,7 @@ class ItemHorizontalCard extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 12, bottom: 8),
                 child: Container(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: statusButton!.color,
                     borderRadius: BorderRadius.circular(4),
@@ -228,21 +232,18 @@ class ItemHorizontalCard extends StatelessWidget {
                   child: Text(statusButton!.lable)
                       .size(context.font.small)
                       .bold()
-                      .color(
-                      statusButton?.textColor ?? Colors.black),
+                      .color(statusButton?.textColor ?? Colors.black),
                 ),
               ),
 
             // ADD BOTTOM WIDGETS
             if (useRow == false || useRow == null) ...addBottom ?? [],
-            if (useRow == true)
-              Row(children: addBottom ?? []),
+            if (useRow == true) Row(children: addBottom ?? []),
           ],
         ),
       ),
     );
   }
-
 }
 
 class StatusButton {

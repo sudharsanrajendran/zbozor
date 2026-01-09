@@ -125,6 +125,7 @@ class LoginScreenState extends State<LoginScreen> {
         } else {
           // Log the raw error
           debugPrint("Login Error (MFail): ${state.error}");
+          Widgets.hideLoder(context); // Ensure loader is hidden
 
           if (state.error is FirebaseAuthException) {
             final e = state.error as FirebaseAuthException;
@@ -133,14 +134,17 @@ class LoginScreenState extends State<LoginScreen> {
               HelperUtils.showSnackBarMessage(context,
                   "Too many attempts. Please try again after 24 hours.",
                   type: MessageType.error);
+            } else if (e.code == 'invalid-phone-number') {
+              HelperUtils.showSnackBarMessage(
+                  context, "Invalid Phone Number or Country Code",
+                  type: MessageType.error);
             } else {
               HelperUtils.showSnackBarMessage(
-                  context, "Login Failed", // Generic user-friendly message
+                  context, "Verify Failed: ${e.message}",
                   type: MessageType.error);
             }
           } else {
-            HelperUtils.showSnackBarMessage(
-                context, "Login Failed", // Generic user-friendly message
+            HelperUtils.showSnackBarMessage(context, "Verify Failed",
                 type: MessageType.error);
           }
         }
@@ -339,9 +343,7 @@ class LoginScreenState extends State<LoginScreen> {
               ),
               child: Scaffold(
                 backgroundColor: context.color.backgroundColor,
-                bottomNavigationBar: !isOtpSent && !sendMailClicked
-                    ? termAndPolicyTxt()
-                    : SizedBox.shrink(),
+                bottomNavigationBar: _buildStaticFooter(),
                 body: BlocListener<LoginCubit, LoginState>(
                   listener: (context, state) {
                     if (state is LoginSuccess) {
@@ -450,7 +452,7 @@ class LoginScreenState extends State<LoginScreen> {
                         debugPrint('ERROR OBJ : ${state.error}');
 
                         String message =
-                            "Login Failed"; // Default friendly message
+                            "Verify Failed"; // Default friendly message
 
                         if (state.error is FirebaseAuthException) {
                           final e = state.error as FirebaseAuthException;
@@ -462,6 +464,9 @@ class LoginScreenState extends State<LoginScreen> {
                                   'account-exists-with-different-credential' ||
                               e.code == 'email-already-in-use') {
                             message = "Account already used";
+                          } else if (e.code == 'invalid-phone-number') {
+                            message =
+                                "The phone number is invalid for the selected country code.";
                           }
                         }
 
@@ -591,128 +596,136 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
+////////////////////////////////////////////
+  Widget _buildStaticFooter() {
+    if (isOtpSent || sendMailClicked) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (Constant.googleAuthentication == "1" ||
+              Constant.appleAuthentication == "1")
+            googleAndAppleLogin(),
+          termAndPolicyTxt(),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget buildLoginWidget() {
-    return SingleChildScrollView(
-      child: SizedBox(
-        height: context.screenHeight - 50,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: AlignmentDirectional.topEnd,
-                  child: FittedBox(
-                    fit: BoxFit.none,
-                    child: MaterialButton(
-                      onPressed: () {
-                        //HiveUtils.setUserIsNotNew();
-                        HiveUtils.setUserSkip();
-                        HelperUtils.killPreviousPages(context, Routes.main,
-                            {"from": "login", "isSkipped": true});
-                        /*Navigator.pushReplacementNamed(
-                          context,
-                          Routes.main,
-                          arguments: {
-                            "from": "login",
-                            "isSkipped": true,
-                          },
-                        );*/
+    return SizedBox(
+      height: context.screenHeight - 50,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: AlignmentDirectional.topEnd,
+              child: FittedBox(
+                fit: BoxFit.none,
+                child: MaterialButton(
+                  onPressed: () {
+                    //HiveUtils.setUserIsNotNew();
+                    HiveUtils.setUserSkip();
+                    HelperUtils.killPreviousPages(context, Routes.main,
+                        {"from": "login", "isSkipped": true});
+                    /*Navigator.pushReplacementNamed(
+                      context,
+                      Routes.main,
+                      arguments: {
+                        "from": "login",
+                        "isSkipped": true,
                       },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      color: context.color.territoryColor,
-                      elevation: 0,
-                      height: 28,
-                      minWidth: 64,
-                      child:
-                          Text("skip".translate(context)).color(Colors.white),
-                    ),
+                    );*/
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
+                  color: context.color.territoryColor,
+                  elevation: 0,
+                  height: 28,
+                  minWidth: 64,
+                  child: Text("skip".translate(context)).color(Colors.white),
                 ),
-                const SizedBox(
-                  height: 66,
-                ),
-                Text("welcomeback".translate(context))
-                    .size(context.font.extraLarge)
-                    .color(context.color.textDefaultColor),
-                const SizedBox(
-                  height: 8,
-                ),
+              ),
+            ),
+            Text("welcomeback".translate(context))
+                .size(context.font.extraLarge)
+                .color(context.color.textDefaultColor),
+            const SizedBox(
+              height: 8,
+            ),
+            if (Constant.mobileAuthentication == "1" ||
+                Constant.emailAuthentication == "1")
+              mobileOrEmailLogin(),
+            const SizedBox(
+              height: 60,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
                 if (Constant.mobileAuthentication == "1" ||
                     Constant.emailAuthentication == "1")
-                  mobileOrEmailLogin(),
-                const SizedBox(
-                  height: 68,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (Constant.mobileAuthentication == "1" ||
-                        Constant.emailAuthentication == "1")
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("dontHaveAcc".translate(context))
-                              .color(context.color.textColorDark.brighten(50)),
-                          const SizedBox(
-                            width: 12,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, Routes.signupMainScreen);
-                            },
-                            child: Text("signUp".translate(context))
-                                .underline()
-                                .color(context.color.territoryColor),
-                          )
-                        ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("dontHaveAcc".translate(context))
+                          .color(context.color.textColorDark.brighten(50)),
+                      const SizedBox(
+                        width: 12,
                       ),
-                    const SizedBox(
-                      height: 24,
-                    ),
-                    if (Constant.googleAuthentication == "1" ||
-                        Constant.appleAuthentication == "1")
-                      googleAndAppleLogin(),
-                    if (Constant.mobileAuthentication == "0" ||
-                        Constant.emailAuthentication == "0") ...[
-                      if ((Constant.googleAuthentication == "1") ||
-                          (Constant.appleAuthentication == "1" &&
-                              Platform.isIOS)) ...[
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, Routes.signupMainScreen);
+                        },
+                        child: Text("signUp".translate(context))
+                            .underline()
+                            .color(context.color.territoryColor),
+                      )
+                    ],
+                  ),
+                const SizedBox(
+                  height: 24,
+                ),
+                // if (Constant.googleAuthentication == "1" ||
+                //     Constant.appleAuthentication == "1")
+                //   googleAndAppleLogin(),
+                if (Constant.mobileAuthentication == "0" ||
+                    Constant.emailAuthentication == "0") ...[
+                  if ((Constant.googleAuthentication == "1") ||
+                      (Constant.appleAuthentication == "1" &&
+                          Platform.isIOS)) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("dontHaveAcc".translate(context))
+                            .color(context.color.textColorDark.brighten(50)),
                         const SizedBox(
-                          height: 65,
+                          width: 12,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text("dontHaveAcc".translate(context)).color(
-                                context.color.textColorDark.brighten(50)),
-                            const SizedBox(
-                              width: 12,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, Routes.signupMainScreen);
-                              },
-                              child: Text("signUp".translate(context))
-                                  .underline()
-                                  .color(context.color.territoryColor),
-                            )
-                          ],
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, Routes.signupMainScreen);
+                          },
+                          child: Text("signUp".translate(context))
+                              .underline()
+                              .color(context.color.territoryColor),
                         )
                       ],
-                    ],
+                    )
                   ],
-                ),
-                /* const Spacer(),
-                termAndPolicyTxt()*/
+                ],
               ],
             ),
-          ),
+            /* const Spacer(),
+            termAndPolicyTxt()*/
+          ],
         ),
       ),
     );
@@ -754,9 +767,6 @@ class LoginScreenState extends State<LoginScreen> {
               radius: 8,
               height: 46,
               buttonTitle: "continueWithGoogle".translate(context)),
-        const SizedBox(
-          height: 12,
-        ),
         if (Constant.appleAuthentication == "1" && Platform.isIOS)
           UiUtils.buildButton(context,
               prefixWidget: Padding(
@@ -930,12 +940,11 @@ class LoginScreenState extends State<LoginScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
-                color: context.color.forthColor.withOpacity(0.102),
+                color: context.color.territoryColor,
                 elevation: 0,
                 height: 28,
                 minWidth: 64,
-                child: Text("skip".translate(context))
-                    .color(context.color.forthColor),
+                child: Text("skip".translate(context)).color(Colors.white),
               ),
             ),
           ),

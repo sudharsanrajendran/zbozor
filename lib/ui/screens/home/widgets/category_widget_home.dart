@@ -6,6 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/home/widgets/category_home_card.dart';
 
+import 'package:shimmer/shimmer.dart';
+import 'package:Ebozor/ui/theme/theme.dart';
+
 class CategoryWidgetHome extends StatelessWidget {
   const CategoryWidgetHome({super.key});
 
@@ -14,7 +17,7 @@ class CategoryWidgetHome extends StatelessWidget {
     return BlocBuilder<FetchCategoryCubit, FetchCategoryState>(
       builder: (context, state) {
         if (state is FetchCategoryInProgress) {
-          return const Center(child: CircularProgressIndicator());
+          return _shimmerEffect(context);
         }
 
         if (state is FetchCategorySuccess) {
@@ -30,10 +33,7 @@ class CategoryWidgetHome extends StatelessWidget {
             child: GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-
-              /// ❌ +1 REMOVED (NO MORE CARD)
               itemCount: state.categories.length,
-
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 crossAxisSpacing: 10,
@@ -41,11 +41,6 @@ class CategoryWidgetHome extends StatelessWidget {
                 childAspectRatio: 0.95,
               ),
               itemBuilder: (context, index) {
-                // ❌ MORE CATEGORY REMOVED
-                // if (index == state.categories.length) {
-                //   return moreCategory(context);
-                // }
-
                 final category = state.categories[index];
 
                 return CategoryHomeCard(
@@ -55,8 +50,6 @@ class CategoryWidgetHome extends StatelessWidget {
                     if (category.children!.isNotEmpty) {
                       Navigator.pushNamed(
                         context,
-
-                        ///////// categories egga send aguthu
                         Routes.subCategoryScreen,
                         arguments: {
                           "categoryList": category.children,
@@ -88,53 +81,44 @@ class CategoryWidgetHome extends StatelessWidget {
     );
   }
 
-// ---------------- MORE CATEGORY CARD ----------------
-// ❌ NOT USED – COMMENTED
-/*
-  Widget moreCategory(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(
-          context,
-          Routes.categories,
-          arguments: {"from": Routes.home},
-        ).then((value) {
-          if (value != null) {
-            selectedCategory = value;
-          }
-        });
-      },
-      child: Column(
-        children: [
-          Container(
-            height: 70,
-            width: 70,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(
-                color: context.color.borderColor.darken(60),
-              ),
-              color: context.color.secondaryColor,
-            ),
-            child: Center(
-              child: RotatedBox(
-                quarterTurns: 1,
-                child: UiUtils.getSvg(
-                  AppIcons.more,
-                  color: context.color.territoryColor,
-                ),
-              ),
-            ),
+  Widget _shimmerEffect(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Shimmer.fromColors(
+        baseColor: Theme.of(context).colorScheme.shimmerBaseColor,
+        highlightColor: Theme.of(context).colorScheme.shimmerHighlightColor,
+        child: GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 8, // Show 8 placeholders
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 0.95,
           ),
-          const SizedBox(height: 6),
-          Text("more".translate(context))
-              .centerAlign()
-              .setMaxLines(lines: 2)
-              .size(context.font.smaller)
-              .color(context.color.textDefaultColor),
-        ],
+          itemBuilder: (context, index) {
+            return Column(
+              children: [
+                Container(
+                  height: 60, // Approx size of category circle/box
+                  width: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Container(
+                  height: 10,
+                  width: 50,
+                  color: Colors.white,
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
-  */
 }

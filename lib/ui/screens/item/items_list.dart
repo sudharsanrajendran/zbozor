@@ -2271,9 +2271,9 @@ class ItemsListState extends State<ItemsList> {
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
           crossAxisCount: 2,
-          height: MediaQuery.of(context).size.height / 3.5.rh(context),
+          height: MediaQuery.of(context).size.height / 3.8.rh(context),
           mainAxisSpacing: 7,
-          crossAxisSpacing: 10),
+          crossAxisSpacing: 5),
       itemCount: itemCount,
       itemBuilder: (context, index) {
         ItemModel item = items[startIndex + index];

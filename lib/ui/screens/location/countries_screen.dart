@@ -487,7 +487,7 @@ class CountriesScreenState extends State<CountriesScreen> {
 
                 return Container(
                   width: double.infinity,
-                  color: context.color.backgroundColor,
+                  color: Colors.transparent,
                   child: SingleChildScrollView(
                     controller: controller,
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -563,8 +563,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                                       },
                                       child: Chip(
                                         label: Text(name),
-                                        backgroundColor:
-                                            context.color.secondaryColor,
+                                        backgroundColor: Colors.white,
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(4)),
@@ -631,7 +630,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                                     color: isSelected
                                         ? context.color.territoryColor
                                             .withOpacity(0.1)
-                                        : context.color.secondaryColor,
+                                        : Colors.white,
                                   ),
                                   child: Text(
                                     country.name!,
