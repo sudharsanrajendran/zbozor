@@ -47,6 +47,23 @@ class CategoryModel {
       List<CategoryFilterModel> filters =
           filtersData.map((f) => CategoryFilterModel.fromJson(f)).toList();
 
+      // [NEW] Map custom_fields to filters if filters are empty (or merge them)
+      if (json.containsKey('custom_fields')) {
+        List<dynamic> customFieldsData = json['custom_fields'] ?? [];
+        if (customFieldsData.isNotEmpty) {
+          for (var item in customFieldsData) {
+            // Structure seems to be: { ..., custom_fields: { id, name, type, values... } }
+            if (item is Map<String, dynamic> &&
+                item.containsKey('custom_fields')) {
+              var fieldData = item['custom_fields'];
+              if (fieldData != null) {
+                filters.add(CategoryFilterModel.fromJson(fieldData));
+              }
+            }
+          }
+        }
+      }
+
       return CategoryModel(
           id: json['id'],
           //name: json['name'],

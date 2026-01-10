@@ -15,6 +15,10 @@ import 'package:Ebozor/utils/app_icon.dart';
 
 import 'package:flutter/services.dart'; // For TextInputFormatter
 
+import 'package:Ebozor/data/repositories/item/item_repository.dart';
+import 'package:Ebozor/data/repositories/category_repository.dart';
+import 'package:Ebozor/data/model/data_output.dart';
+
 class PropertyFilterScreen extends StatefulWidget {
   final List<CategoryModel> categoryList;
   final String catName;
@@ -44,6 +48,11 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
   // We need another cubit to fetch Property Types (Residential/Commercial) if the Tab doesn't have them (e.g. Sale)
   late final FetchSubCategoriesCubit _propertyTypesCubit;
+
+  // [NEW] Repository for ad-hoc category fetching
+  final CategoryRepository _categoryRepository = CategoryRepository();
+  // [NEW] Track loading state for specific category IDs
+  final Map<int, bool> _loadingCategories = {};
 
   // Filter State
   TextEditingController minController = TextEditingController();
@@ -98,7 +107,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     }
   }
 
-// ... (skipping lines)
+  // ... (skipping lines)
 
   void _onPropertyTypeSelected(CategoryModel propertyType) {
     setState(() {
@@ -114,12 +123,86 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       setState(() {
         _subCategoryPath.add(propertyType.children!.first);
       });
+      // [NEW] Also ensure the auto-selected child has its own children loaded if needed
+      _fetchChildrenFor(propertyType.children!.first);
     } else {
       // Check if it's supposed to have children?
       // Many times subcategoriesCount is reliable.
       // Or just fetch anyway if it's a leaf node candidate.
       if ((propertyType.subcategoriesCount ?? 0) > 0) {
+        // [MODIFIED] Use the manual fetch to keep logic consistent or keep using Cubit for this top level?
+        // Let's stick to the existing Cubit for the top level for now to minimize risk,
+        // OR rely on our new generic fetch. The existing Cubit updates `_selectedPropertyType` via BlocListener.
         _subCategoryCubit.fetchSubCategories(categoryId: propertyType.id!);
+      }
+    }
+  }
+
+  /// [NEW] Generic method to fetch children for any category level
+  Future<void> _fetchChildrenFor(CategoryModel category) async {
+    // [MODIFIED] Always fetch to ensure fresh data/filters
+    // if (category.children != null && category.children!.isNotEmpty) return;
+
+    // If no potential children, do nothing
+    // [MODIFIED] Force fetch even if count is 0 to ensure we attempt to get dynamic data/filters
+    // if ((category.subcategoriesCount ?? 0) <= 0) return;
+
+    // Avoid duplicate fetches
+    if (_loadingCategories[category.id] == true) return;
+
+    setState(() {
+      _loadingCategories[category.id!] = true;
+    });
+
+    try {
+      print("DEBUG: fetching children for ${category.name} (${category.id})");
+      DataOutput<CategoryModel> result = await _categoryRepository
+          .fetchCategories(page: 1, categoryId: category.id!);
+
+      if (mounted) {
+        setState(() {
+          _loadingCategories[category.id!] = false;
+          // Update the model in memory (Note: this modifies the object references in _subCategoryPath)
+          category.children?.clear();
+
+          // [NEW] Extract fresh filters from self_category if available
+          List<CategoryFilterModel>? freshFilters = category.filters;
+          if (result.extraData?.data != null) {
+            print(
+                "DEBUG: Updating filters for ${category.name} from self_category");
+            freshFilters = result.extraData!.data.filters;
+          }
+
+          CategoryModel newCategory = CategoryModel(
+            id: category.id,
+            name: category.name,
+            url: category.url,
+            description: category.description,
+            subcategoriesCount: category.subcategoriesCount,
+            //translatedName: category.translatedName,
+            filters: freshFilters, // [MODIFIED] Use fresh filters
+            children: result.modelList, // NEW DATA
+          );
+
+          // Find and replace in _subCategoryPath
+          int index = _subCategoryPath.indexWhere((c) => c.id == category.id);
+          if (index != -1) {
+            // Retain selection if valid
+            _subCategoryPath[index] = newCategory;
+          }
+
+          // ALSO: We might be updating `_selectedPropertyType` if this was called for it.
+          if (_selectedPropertyType?.id == category.id) {
+            _selectedPropertyType = newCategory;
+          }
+        });
+      }
+    } catch (e) {
+      print("DEBUG: Error fetching children: $e");
+      if (mounted) {
+        setState(() {
+          _loadingCategories[category.id!] = false;
+        });
       }
     }
   }
@@ -218,6 +301,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                               freshData.children != null &&
                               freshData.children!.isNotEmpty) {
                             _subCategoryPath.add(freshData.children!.first);
+                            // [NEW] Trigger API fetch for this auto-selected child
+                            _fetchChildrenFor(freshData.children!.first);
                           }
                         });
                       } catch (e) {
@@ -234,6 +319,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                             firstProp.children!.isNotEmpty) {
                           _subCategoryPath.clear();
                           _subCategoryPath.add(firstProp.children!.first);
+                          // [NEW] Trigger API fetch for this auto-selected child
+                          _fetchChildrenFor(firstProp.children!.first);
                         }
                       });
                       // Also fetch subcategories for this auto-selected item if needed
@@ -602,7 +689,20 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     // Iterate through the CURRENT path to show the NEXT level for each selection
     for (int i = 0; i < _subCategoryPath.length; i++) {
       CategoryModel currentSelection = _subCategoryPath[i];
-      if (currentSelection.children != null &&
+
+      // [NEW] Check if this specific category is loading
+      bool isLoading = _loadingCategories[currentSelection.id] == true;
+      if (isLoading) {
+        levels.add(const SizedBox(height: 12));
+        levels.add(const Center(
+            child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(strokeWidth: 2)),
+        )));
+      } else if (currentSelection.children != null &&
           currentSelection.children!.isNotEmpty) {
         levels.add(const SizedBox(height: 12));
         // The children of path[i] constitute level i+1
@@ -684,16 +784,15 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                       if (_subCategoryPath.length > levelIndex) {
                         // We are re-selecting at this level.
                         // Remove this level and everything after it.
-                        // e.g. Path [A, B, C]. User clicks D at level 0.
-                        // Path becomes [D].
-                        // e.g. Path [A, B, C]. User clicks E at level 1 (replacing B).
-                        // Path becomes [A, E].
                         _subCategoryPath.removeRange(
                             levelIndex, _subCategoryPath.length);
                       }
 
                       // 2. Add the new selection
                       _subCategoryPath.add(child);
+
+                      // 3. [NEW] Fetch children for this new selection if needed
+                      _fetchChildrenFor(child);
                     });
                   },
                 ),
