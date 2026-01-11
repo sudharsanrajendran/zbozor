@@ -221,7 +221,7 @@ class ItemsListState extends State<ItemsList> {
           /// 🔍 SEARCH FIELD
           Expanded(
             child: Container(
-              height: 50,
+              height: 45,
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 0.1,
@@ -235,7 +235,7 @@ class ItemsListState extends State<ItemsList> {
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   contentPadding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                   hintText: "Search any items ..",
                   prefixIcon: setSearchIcon(),
                   prefixIconConstraints:
@@ -257,7 +257,7 @@ class ItemsListState extends State<ItemsList> {
             ),
           ),
 
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
 
           /// 🔲 GRID VIEW ONLY
           GestureDetector(
@@ -290,7 +290,7 @@ class ItemsListState extends State<ItemsList> {
             ),
           ),
 
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
 
           /// ☰ MENU → LIST VIEW ONLY
           GestureDetector(
