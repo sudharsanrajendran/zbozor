@@ -15,7 +15,6 @@ import 'package:Ebozor/utils/app_icon.dart';
 
 import 'package:flutter/services.dart'; // For TextInputFormatter
 
-import 'package:Ebozor/data/repositories/item/item_repository.dart';
 import 'package:Ebozor/data/repositories/category_repository.dart';
 import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/ui/screens/widgets/shimmerLoadingContainer.dart';
@@ -709,6 +708,36 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     );
   }
 
+  Widget _buildSubCategoryShimmer() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const CustomShimmer(
+          height: 20,
+          width: 150,
+          borderRadius: 4,
+        ),
+        const SizedBox(height: 12),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: List.generate(
+              5,
+              (index) => Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: CustomShimmer(
+                  width: 100,
+                  height: 35,
+                  borderRadius: 18,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   /// Builds a LIST of widgets for sequential levels:
   /// Level 1 (if Level 0 selected) -> Level 2 (if Level 1 selected) -> ...
   List<Widget> _buildDynamicCategoryLevels() {
@@ -717,20 +746,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
     // Iterate through the CURRENT path to show the NEXT level for each selection
     for (int i = 0; i < _subCategoryPath.length; i++) {
       CategoryModel currentSelection = _subCategoryPath[i];
-
-      // [NEW] Check if this specific category is loading
-      bool isLoading = _loadingCategories[currentSelection.id] == true;
-      if (isLoading) {
-        levels.add(const SizedBox(height: 12));
-        levels.add(const Center(
-            child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: SizedBox(
-              height: 20,
-              width: 50,
-              child: CustomShimmer(height: 20, width: 50, borderRadius: 5)),
-        )));
-      } else if (currentSelection.children != null &&
 
       // [NEW] Check if this specific category is loading
       bool isLoading = _loadingCategories[currentSelection.id] == true;
