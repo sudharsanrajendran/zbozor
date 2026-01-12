@@ -420,25 +420,22 @@ class ItemsListState extends State<ItemsList> {
                 isActive: _isAllFieldsSelected,
                 onTap: _onAllFieldsTap),
 
-            const SizedBox(width: 8),
+            const SizedBox(width: 15),
 
             // Reset Button
             GestureDetector(
-                onTap: _onResetTap,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: context.color.primaryColor,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: context.color.borderColor),
-                  ),
-                  child: Text("Reset",
-                      style: TextStyle(
-                          color: context.color.textDefaultColor,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold)),
-                )),
+              onTap: _onResetTap,
+              child: Text("Reset",
+                  style: TextStyle(
+                      color: (_selectedCustomFields.isNotEmpty ||
+                              filter != null ||
+                              searchController.text.isNotEmpty)
+
+                          ? context.color.deactivateColor
+                          : context.color.textDefaultColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold)),
+            ),
           ],
         ),
       ),

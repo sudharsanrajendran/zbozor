@@ -201,7 +201,7 @@ class _ChatScreenState extends State<ChatScreen>
                 Navigator.pop(context);
                 context
                     .read<GetBuyerChatListCubit>()
-                    .updateAlreadyReview(int.parse(widget.itemId));
+                    .updateAlreadyReview(int.tryParse(widget.itemId) ?? 0);
                 HelperUtils.showSnackBarMessage(context, state.responseMessage);
               }
               if (state is AddItemReviewFailure) {
@@ -286,7 +286,7 @@ class _ChatScreenState extends State<ChatScreen>
                           UiUtils.buildButton(context, showElevation: false,
                               onPressed: () {
                             context.read<AddItemReviewCubit>().addItemReview(
-                                itemId: int.parse(widget.itemId),
+                                itemId: int.tryParse(widget.itemId) ?? 0,
                                 rating: _rating,
                                 review: _feedbackController.text.trim());
                           },
@@ -312,7 +312,7 @@ class _ChatScreenState extends State<ChatScreen>
               onPressed: _rating >= 1
                   ? () {
                       context.read<AddItemReviewCubit>().addItemReview(
-                          itemId: int.parse(widget.itemId),
+                          itemId: int.tryParse(widget.itemId) ?? 0,
                           rating: _rating,
                           review: _feedbackController.text.trim());
                     }
@@ -536,7 +536,7 @@ class _ChatScreenState extends State<ChatScreen>
                                       bool isBlocked = context
                                           .read<BlockedUsersListCubit>()
                                           .isUserBlocked(
-                                              int.parse(widget.userId));
+                                              int.tryParse(widget.userId) ?? 0);
                                       return BlocConsumer<BlockedUsersListCubit,
                                               BlockedUsersListState>(
                                           listener: (context, state) {
@@ -544,7 +544,8 @@ class _ChatScreenState extends State<ChatScreen>
                                           isBlocked = context
                                               .read<BlockedUsersListCubit>()
                                               .isUserBlocked(
-                                                  int.parse(widget.userId));
+                                                  int.tryParse(widget.userId) ??
+                                                      0);
                                         }
                                       }, builder:
                                               (context, blockedUsersListState) {
@@ -559,8 +560,10 @@ class _ChatScreenState extends State<ChatScreen>
                                                     context
                                                         .read<
                                                             BlockedUsersListCubit>()
-                                                        .unblockUser(int.parse(
-                                                            widget.userId));
+                                                        .unblockUser(
+                                                            int.tryParse(widget
+                                                                    .userId) ??
+                                                                0);
                                                     HelperUtils
                                                         .showSnackBarMessage(
                                                             context,
@@ -745,8 +748,11 @@ class _ChatScreenState extends State<ChatScreen>
                                                         .toString()
                                                         .toString()),
                                                     message: controller.text,
-                                                    senderId: int.parse(
-                                                        HiveUtils.getUserId()!),
+                                                    senderId: int.tryParse(
+                                                            HiveUtils
+                                                                    .getUserId() ??
+                                                                "0") ??
+                                                        0,
                                                     createdAt: DateTime.now()
                                                         .toString(),
                                                     isSentNow: true,
@@ -783,8 +789,10 @@ class _ChatScreenState extends State<ChatScreen>
                                               key: ValueKey(DateTime.now()
                                                   .millisecondsSinceEpoch),
                                               message: text,
-                                              senderId: int.parse(
-                                                  HiveUtils.getUserId()!),
+                                              senderId: int.tryParse(
+                                                      HiveUtils.getUserId() ??
+                                                          "0") ??
+                                                  0,
                                               createdAt:
                                                   DateTime.now().toString(),
                                               updatedAt:
@@ -876,7 +884,7 @@ class _ChatScreenState extends State<ChatScreen>
 
                                 DataOutput<ItemModel> dataOutput =
                                     await ItemRepository().fetchItemFromItemId(
-                                        int.parse(widget.itemId));
+                                        int.tryParse(widget.itemId) ?? 0);
 
                                 Future.delayed(
                                   Duration.zero,
@@ -971,14 +979,14 @@ class _ChatScreenState extends State<ChatScreen>
                 child: Builder(builder: (context) {
                   bool isBlocked = context
                       .read<BlockedUsersListCubit>()
-                      .isUserBlocked(int.parse(widget.userId));
+                      .isUserBlocked(int.tryParse(widget.userId) ?? 0);
                   return BlocConsumer<BlockedUsersListCubit,
                       BlockedUsersListState>(
                     listener: (context, state) {
                       if (state is BlockedUsersListSuccess) {
                         isBlocked = context
                             .read<BlockedUsersListCubit>()
-                            .isUserBlocked(int.parse(widget.userId));
+                            .isUserBlocked(int.tryParse(widget.userId) ?? 0);
                       }
                     },
                     builder: (context, blockedUsersListState) {
@@ -990,7 +998,7 @@ class _ChatScreenState extends State<ChatScreen>
                                 .read<BlockedUsersListCubit>()
                                 .addBlockedUser(
                                   BlockedUserModel(
-                                      id: int.parse(widget.userId),
+                                      id: int.tryParse(widget.userId) ?? 0,
                                       name: widget.userName,
                                       profile: widget.profilePicture
                                       // Add other necessary user data
@@ -1007,9 +1015,8 @@ class _ChatScreenState extends State<ChatScreen>
                           listener: (context, unblockState) {
                             if (unblockState is UnblockUserSuccess) {
                               // Remove the unblocked user from the list
-                              context
-                                  .read<BlockedUsersListCubit>()
-                                  .unblockUser(int.parse(widget.userId));
+                              context.read<BlockedUsersListCubit>().unblockUser(
+                                  int.tryParse(widget.userId) ?? 0);
                               HelperUtils.showSnackBarMessage(
                                   context, unblockState.message);
                             } else if (unblockState is UnblockUserFail) {
@@ -1066,8 +1073,9 @@ class _ChatScreenState extends State<ChatScreen>
                                             context
                                                 .read<BlockUserCubit>()
                                                 .blockUser(
-                                                  blockUserId:
-                                                      int.parse(widget.userId),
+                                                  blockUserId: int.tryParse(
+                                                          widget.userId) ??
+                                                      0,
                                                 );
                                           });
                                         }
@@ -1095,8 +1103,9 @@ class _ChatScreenState extends State<ChatScreen>
                                             context
                                                 .read<UnblockUserCubit>()
                                                 .unBlockUser(
-                                                  blockUserId:
-                                                      int.parse(widget.userId),
+                                                  blockUserId: int.tryParse(
+                                                          widget.userId) ??
+                                                      0,
                                                 );
                                           });
                                         }
@@ -1303,7 +1312,8 @@ class _ChatScreenState extends State<ChatScreen>
 
   Widget offerWidget() {
     if (widget.itemOfferPrice != null) {
-      if (int.parse(HiveUtils.getUserId()!) == int.parse(widget.buyerId!)) {
+      if ((int.tryParse(HiveUtils.getUserId() ?? "0") ?? 0) ==
+          (int.tryParse(widget.buyerId ?? "0") ?? 0)) {
         return Align(
           alignment: AlignmentDirectional.topEnd,
           child: Container(

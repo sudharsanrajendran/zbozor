@@ -241,7 +241,12 @@ class CountriesScreenState extends State<CountriesScreen> {
                         color: context.color.secondaryColor),
                     child: TextFormField(
                         controller: searchController,
+                        textAlignVertical:
+                            TextAlignVertical.center, // Center text vertically
                         decoration: InputDecoration(
+                          isDense: true, // Reduces height
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 10), // Remove vertical padding
                           border: InputBorder.none,
                           //OutlineInputBorder()
                           fillColor:
@@ -249,8 +254,10 @@ class CountriesScreenState extends State<CountriesScreen> {
                           hintText:
                               "${"search".translate(context)}\t${"country".translate(context)}..",
                           prefixIcon: setSearchIcon(),
-                          prefixIconConstraints:
-                              const BoxConstraints(minHeight: 5, minWidth: 5),
+                          prefixIconConstraints: const BoxConstraints(
+                              minHeight: 40,
+                              minWidth:
+                                  40), // Ensure constrained box for centering
                         ),
                         enableSuggestions: true,
                         onEditingComplete: () {
@@ -259,6 +266,8 @@ class CountriesScreenState extends State<CountriesScreen> {
                               isFocused = false;
                             },
                           );
+
+
                           FocusScope.of(context).unfocus();
                         },
                         onTap: () {
@@ -266,9 +275,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                           setState(() {
                             isFocused = true;
                           });
-                        })
-
-                ),
+                        })),
               ),
               InkWell(
                 onTap: () {

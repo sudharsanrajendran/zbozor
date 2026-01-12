@@ -188,7 +188,7 @@ class NotificationService {
   }
 
   static void init(context) {
-    requestPermission();
+    localNotification.init(context);
     registerListeners(context);
   }
 

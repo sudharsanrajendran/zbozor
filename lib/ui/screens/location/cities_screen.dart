@@ -151,15 +151,21 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
                   color: context.color.secondaryColor),
               child: TextFormField(
                   controller: searchController,
+                  textAlignVertical:
+                      TextAlignVertical.center, // Center text vertically
                   decoration: InputDecoration(
+                    isDense: true, // Reduces height
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 10), // Remove vertical padding
                     border: InputBorder.none,
                     //OutlineInputBorder()
                     fillColor: Theme.of(context).colorScheme.secondaryColor,
                     hintText:
                         "${"search".translate(context)}\t${"city".translate(context)}",
                     prefixIcon: setSearchIcon(),
-                    prefixIconConstraints:
-                        const BoxConstraints(minHeight: 5, minWidth: 5),
+                    prefixIconConstraints: const BoxConstraints(
+                        minHeight: 40,
+                        minWidth: 40), // Ensure constrained box for centering
                   ),
                   enableSuggestions: true,
                   onEditingComplete: () {

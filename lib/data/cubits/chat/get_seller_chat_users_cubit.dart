@@ -5,6 +5,7 @@ import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/data/repositories/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 abstract class GetSellerChatListState {}
 
 class GetSellerChatListInitial extends GetSellerChatListState {}
@@ -92,6 +93,9 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
       DataOutput<ChatedUser> result =
           await _chatRepository.fetchSellerChatList(1);
 
+      result.modelList.sort((a, b) =>
+          DateTime.parse(b.createdAt!).compareTo(DateTime.parse(a.createdAt!)));
+
       emit(
         GetSellerChatListSuccess(
             isLoadingMore: false,
@@ -139,6 +143,10 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
 
         // messagesSuccessState.await.insertAll(0, result.modelList);
         messagesSuccessState.chatedUserList.addAll(result.modelList);
+
+        messagesSuccessState.chatedUserList.sort((a, b) =>
+            DateTime.parse(b.createdAt!)
+                .compareTo(DateTime.parse(a.createdAt!)));
         emit(GetSellerChatListSuccess(
           chatedUserList: messagesSuccessState.chatedUserList,
           page: (state as GetSellerChatListSuccess).page + 1,
@@ -161,5 +169,4 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
 
     return false;
   }
-
 }

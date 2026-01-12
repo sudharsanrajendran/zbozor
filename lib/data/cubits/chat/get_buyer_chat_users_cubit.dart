@@ -1,4 +1,3 @@
-
 import 'package:Ebozor/data/model/chat/chated_user_model.dart';
 import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/data/model/seller_ratings_model.dart';
@@ -53,8 +52,7 @@ class GetBuyerChatListFailed extends GetBuyerChatListState {
   GetBuyerChatListFailed(this.error);
 }
 
-class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState>
-   {
+class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState> {
   GetBuyerChatListCubit() : super(GetBuyerChatListInitial());
   final ChatRepostiory _chatRepository = ChatRepostiory();
 
@@ -69,6 +67,9 @@ class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState>
 
       DataOutput<ChatedUser> result =
           await _chatRepository.fetchBuyerChatList(1);
+
+      result.modelList.sort((a, b) =>
+          DateTime.parse(b.createdAt!).compareTo(DateTime.parse(a.createdAt!)));
 
       emit(
         GetBuyerChatListSuccess(
@@ -137,6 +138,10 @@ class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState>
 
         // messagesSuccessState.await.insertAll(0, result.modelList);
         messagesSuccessState.chatedUserList.addAll(result.modelList);
+
+        messagesSuccessState.chatedUserList.sort((a, b) =>
+            DateTime.parse(b.createdAt!)
+                .compareTo(DateTime.parse(a.createdAt!)));
         emit(GetBuyerChatListSuccess(
           chatedUserList: messagesSuccessState.chatedUserList,
           page: (state as GetBuyerChatListSuccess).page + 1,
