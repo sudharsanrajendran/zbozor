@@ -70,11 +70,13 @@ class HomeSectionsAdapter extends StatelessWidget {
 class ItemCard extends StatefulWidget {
   final double? width;
   final ItemModel? item;
+  final double? radius;
 
   const ItemCard({
     super.key,
     required this.item,
     this.width,
+    this.radius,
   });
 
   @override
@@ -99,7 +101,7 @@ class _ItemCardState extends State<ItemCard> {
         width: widget.width ?? 160,
         decoration: BoxDecoration(
           color: context.color.secondaryColor,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(widget.radius ?? 18),
           border: Border.all(
             color: context.color.borderColor.darken(30),
           ),
@@ -114,8 +116,8 @@ class _ItemCardState extends State<ItemCard> {
                 SizedBox(
                   height: imageHeight,
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(18),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(widget.radius ?? 18),
                     ),
                     child: UiUtils.getImage(
                       widget.item?.image ?? "",
@@ -170,10 +172,9 @@ class _ItemCardState extends State<ItemCard> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  fontSize: context.font.small,
-                                  color: context.color.deactivateColor,
-                                  fontWeight: FontWeight.w400
-                                ),
+                                    fontSize: context.font.small,
+                                    color: context.color.deactivateColor,
+                                    fontWeight: FontWeight.w400),
                               ),
                             ),
                           ],

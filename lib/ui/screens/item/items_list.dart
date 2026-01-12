@@ -2279,7 +2279,7 @@ class ItemsListState extends State<ItemsList> {
         ItemModel item = items[startIndex + index];
         return GestureDetector(
           onTap: () => _navigateToDetails(context, item),
-          child: ItemCard(item: item),
+          child: ItemCard(item: item, radius: 5),
         );
       },
     );
