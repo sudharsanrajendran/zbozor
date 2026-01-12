@@ -65,13 +65,20 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   // Store dynamic filter values: {"Rooms": 2, "Bathrooms": 1}
   Map<String, dynamic> _selectedFilters = {};
 
+  // 4️⃣ ✅ Filters only ONCE update
+  bool filtersInitialized = false;
+
   @override
   void initState() {
     super.initState();
 
     _subCategoryCubit = FetchSubCategoriesCubit();
     _propertyTypesCubit = FetchSubCategoriesCubit();
-    _initializeDefaultSelection();
+
+    // ✅ API CALL ONLY ONCE
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeDefaultSelection();
+    });
   }
 
   // Persistent controllers for dynamic ListViews to avoid cursor reset
@@ -289,24 +296,47 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   print(
                       "DEBUG: Top-level Listener: Fetched ${state.categories.length} categories");
                   if (state.categories.isNotEmpty) {
+                    // 4️⃣ ✅ Filters only ONCE update
+                    // Logic: If we already have a selected property type with filters, don't overwrite blindly unless it's a new selection context
+
                     if (_selectedPropertyType != null) {
                       // Sync existing selection with fresh data
                       try {
                         var freshData = state.categories.firstWhere((element) =>
                             element.id == _selectedPropertyType!.id);
-                        print(
-                            "DEBUG: Syncing ${_selectedPropertyType!.name}. Filters: ${freshData.filters?.length}");
-                        setState(() {
-                          _selectedPropertyType = freshData;
-                          // Auto-select first child of the refreshed data if path is empty
-                          if (_subCategoryPath.isEmpty &&
-                              freshData.children != null &&
-                              freshData.children!.isNotEmpty) {
-                            _subCategoryPath.add(freshData.children!.first);
-                            // [NEW] Trigger API fetch for this auto-selected child
-                            _fetchChildrenFor(freshData.children!.first);
-                          }
-                        });
+
+                        // Only update if filters are meant to be initialized or data changed significantly
+                        // For the purpose of "Filters only ONCE update" pattern:
+                        if (!filtersInitialized &&
+                            (freshData.filters?.isNotEmpty ?? false)) {
+                          print(
+                              "DEBUG: Initializing filters for ${_selectedPropertyType!.name}");
+                          filtersInitialized = true;
+
+                          setState(() {
+                            _selectedPropertyType = freshData;
+                            // Auto-select first child of the refreshed data if path is empty
+                            if (_subCategoryPath.isEmpty &&
+                                freshData.children != null &&
+                                freshData.children!.isNotEmpty) {
+                              _subCategoryPath.add(freshData.children!.first);
+                              // [NEW] Trigger API fetch for this auto-selected child
+                              _fetchChildrenFor(freshData.children!.first);
+                            }
+                          });
+                        } else if (!filtersInitialized) {
+                          // If no filters yet, we might still want to update data but keep flag false?
+                          // Or just standard update.
+                          setState(() {
+                            _selectedPropertyType = freshData;
+                            if (_subCategoryPath.isEmpty &&
+                                freshData.children != null &&
+                                freshData.children!.isNotEmpty) {
+                              _subCategoryPath.add(freshData.children!.first);
+                              _fetchChildrenFor(freshData.children!.first);
+                            }
+                          });
+                        }
                       } catch (e) {
                         print(
                             "DEBUG: Could not find current selection in fresh list: $e");
@@ -414,7 +444,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     _propertyTypesCubit.fetchSubCategories(
                         categoryId: currentCategory.id!);
                   }
-
                   // Auto-select first child if available (replication of init logic)
                   if (currentCategory.children != null &&
                       currentCategory.children!.isNotEmpty) {
