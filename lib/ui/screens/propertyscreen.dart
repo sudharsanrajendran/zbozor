@@ -105,7 +105,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       // By default select the first sub-category of the first tab (e.g. Residential in Rent)
       var firstTabCategory = widget.categoryList.first;
 
-<<<<<<< HEAD
       // Always fetch subcategories for the first tab immediately
       // _propertyTypesCubit.fetchSubCategories(categoryId: firstTabCategory.id!);
 
@@ -735,21 +734,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
       // [NEW] Check if this specific category is loading
       bool isLoading = _loadingCategories[currentSelection.id] == true;
-      if (isLoading) {
-        levels.add(const SizedBox(height: 12));
-<<<<<<< HEAD
-        levels.add(_buildSubCategoryShimmer());
-=======
-        levels.add(const Center(
-            child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: SizedBox(
-              height: 20,
-              width: 50,
-              child: CustomShimmer(height: 20, width: 50, borderRadius: 5)),
-        )));
->>>>>>> acbf72a (baordin ui cleaned)
-      } else if (currentSelection.children != null &&
       if (isLoading) {
         levels.add(const SizedBox(height: 12));
         levels.add(_buildSubCategoryShimmer());
