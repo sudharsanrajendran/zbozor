@@ -266,7 +266,7 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
                   'enjoyPersonalizedSellingAndBuyingLocationLbl'
                       .translate(context),
                 )
-                    .size(context.font.larger)
+                    .size(context.font.large)
                     .color(context.color.textDefaultColor.withOpacity(0.65))
                     .centerAlign(),
               ),

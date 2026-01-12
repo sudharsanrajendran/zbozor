@@ -218,14 +218,14 @@ class CountriesScreenState extends State<CountriesScreen> {
       systemOverlayStyle:
           SystemUiOverlayStyle(statusBarColor: context.color.backgroundColor),
       bottom: PreferredSize(
-          preferredSize: Size.fromHeight(58.rh(context)),
+          preferredSize: Size.fromHeight(42.rh(context)),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Expanded(
                 child: Container(
                     width: double.maxFinite,
-                    height: 48.rh(context),
+                    height: 42.rh(context),
                     margin: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     alignment: AlignmentDirectional.center,
                     decoration: BoxDecoration(
@@ -237,7 +237,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                                     : 1,
                             color: context.color.borderColor.darken(30)),
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
+                            const BorderRadius.all(Radius.circular(16)),
                         color: context.color.secondaryColor),
                     child: TextFormField(
                         controller: searchController,
@@ -266,7 +266,9 @@ class CountriesScreenState extends State<CountriesScreen> {
                           setState(() {
                             isFocused = true;
                           });
-                        })),
+                        })
+
+                ),
               ),
               InkWell(
                 onTap: () {
@@ -274,8 +276,8 @@ class CountriesScreenState extends State<CountriesScreen> {
                       arguments: {"from": widget.from});
                 },
                 child: Container(
-                  width: 50.rw(context),
-                  height: 50.rh(context),
+                  width: 42.rw(context),
+                  height: 42.rh(context),
                   margin: EdgeInsetsDirectional.only(end: sidePadding),
                   decoration: BoxDecoration(
                     border: Border.all(

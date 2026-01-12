@@ -63,7 +63,7 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(left: 2.0),
+            padding: const EdgeInsets.only(right: 10.0),
             child: TextButton(
               onPressed: _currentSelection.isNotEmpty
                   ? () {
@@ -85,7 +85,7 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
         ],
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+        padding: const EdgeInsets.only(left: 20,right: 20,bottom: 15),
         color: context.color.backgroundColor,
         child: SafeArea(
           child: Row(
@@ -94,7 +94,7 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
               Text(
                 "${_filteredAmenities.length} Results",
                 style: TextStyle(
-                  color: context.color.textDefaultColor,
+                  color: context.color.deactivateColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),

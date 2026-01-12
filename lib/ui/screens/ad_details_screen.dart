@@ -2031,20 +2031,14 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                               context: context);
                         },
                         child: Center(
-                          child: state is UpdateFavoriteInProgress
-                              ? UiUtils.progress(
-                                  height: 22,
-                                  width: 22,
-                                )
-                              : UiUtils.getSvg(
-                                  isLike ? AppIcons.like_fill : AppIcons.like,
-                                  color: isLike
-                                      ? context.color.territoryColor
-                                      : context.color.textLightColor
-                                          .withOpacity(0.5),
-                                  width: 22,
-                                  height: 22,
-                                ),
+                          child: UiUtils.getSvg(
+                            isLike ? AppIcons.favorites : AppIcons.like_fill,
+                            color: isLike
+                                ? context.color.territoryColor
+                                : context.color.textLightColor.withOpacity(0.5),
+                            width: 22,
+                            height: 22,
+                          ),
                         ),
                       ),
                     );
@@ -2333,7 +2327,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
           Expanded(
             flex: 3,
             child: Padding(
-              padding: EdgeInsetsDirectional.only(start: 5.0,top: 3),
+              padding: EdgeInsetsDirectional.only(start: 5.0, top: 3),
               child: Text(model.address!).color(context.color.textDefaultColor),
             ),
           ),
@@ -2465,8 +2459,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             Expanded(
               flex: 3,
               child: Padding(
-                padding: EdgeInsetsDirectional.only(start: 5.0,top: 3),
-                child: Text(model.address!).color(context.color.textDefaultColor),
+                padding: EdgeInsetsDirectional.only(start: 5.0, top: 3),
+                child:
+                    Text(model.address!).color(context.color.textDefaultColor),
               ),
             ),
           ],

@@ -1004,7 +1004,7 @@ class ItemsListState extends State<ItemsList> {
                   fontSize: 12,
                   color: isSelected
                       ? context.color.textDefaultColor
-                      : context.color.textDefaultColor,
+                      : context.color.deactivateColor.withOpacity(0.8),
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.normal,
                   height: 1.2,
                 ),

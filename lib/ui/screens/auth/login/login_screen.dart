@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:country_picker/country_picker.dart';
 import 'package:device_region/device_region.dart';
 import 'package:Ebozor/app/app_theme.dart';
@@ -586,12 +585,14 @@ class LoginScreenState extends State<LoginScreen> {
         const SizedBox(
           height: 46,
         ),
-        UiUtils.buildButton(context,
-            onPressed: sendVerificationCode,
-            buttonTitle: "continue".translate(context),
-            radius: 10,
-            disabled: numberOrEmail.isEmpty,
-            disabledColor: const Color.fromARGB(255, 104, 102, 106)),
+        UiUtils.buildButton(
+          context,
+          onPressed: sendVerificationCode,
+          buttonTitle: "continue".translate(context),
+          radius: 10,
+          disabled: numberOrEmail.isEmpty,
+          disabledColor: context.color.territoryColor,
+        )
       ],
     );
   }
@@ -607,6 +608,7 @@ class LoginScreenState extends State<LoginScreen> {
           if (Constant.googleAuthentication == "1" ||
               Constant.appleAuthentication == "1")
             googleAndAppleLogin(),
+          SizedBox(height:10),
           termAndPolicyTxt(),
           const SizedBox(
             height: 10,
@@ -742,9 +744,6 @@ class LoginScreenState extends State<LoginScreen> {
               (Constant.appleAuthentication == "1" && Platform.isIOS))
             Text("orSignInWith".translate(context))
                 .color(context.color.textDefaultColor),
-        const SizedBox(
-          height: 24,
-        ),
         if (Constant.googleAuthentication == "1")
           UiUtils.buildButton(context,
               prefixWidget: Padding(
@@ -753,6 +752,7 @@ class LoginScreenState extends State<LoginScreen> {
                     UiUtils.getSvg(AppIcons.googleIcon, width: 22, height: 22),
               ),
               showElevation: false,
+              outerPadding: const EdgeInsets.only(top: 12),
               buttonColor: secondaryColor_,
               border: context.watch<AppThemeCubit>().state.appTheme !=
                       AppTheme.dark
@@ -767,6 +767,8 @@ class LoginScreenState extends State<LoginScreen> {
               radius: 8,
               height: 46,
               buttonTitle: "continueWithGoogle".translate(context)),
+        ////////////////////////////////
+
         if (Constant.appleAuthentication == "1" && Platform.isIOS)
           UiUtils.buildButton(context,
               prefixWidget: Padding(
@@ -775,6 +777,7 @@ class LoginScreenState extends State<LoginScreen> {
                     UiUtils.getSvg(AppIcons.appleIcon, width: 22, height: 22),
               ),
               showElevation: false,
+              outerPadding: const EdgeInsets.only(top: 12),
               buttonColor: secondaryColor_,
               border: context.watch<AppThemeCubit>().state.appTheme !=
                       AppTheme.dark

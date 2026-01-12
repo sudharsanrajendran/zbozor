@@ -339,6 +339,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                         left: 20,
                         right: 20,
                         child: Container(
+                          width: 300,
                           decoration: BoxDecoration(
                               color: context.color.backgroundColor,
                               borderRadius: BorderRadius.circular(30),
@@ -346,7 +347,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                                 BoxShadow(
                                     color: context.color.borderColor
                                         .withOpacity(0.3),
-                                    blurRadius: 10,
+                                    blurRadius: 16,
                                     offset: const Offset(0, 5))
                               ]),
                           child: TextField(
@@ -395,19 +396,20 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
               children: [
                 UiUtils.buildButton(
                   context,
+                  outerPadding: const EdgeInsets.all(5),
                   onPressed: () {
-                    // Reset Logic - basically current location
                     _getCurrentLocation();
                   },
-                  buttonTitle: "Reset",
+                  buttonTitle: "Reset".translate(context),
                   textColor: context.color.territoryColor,
                   buttonColor: context.color.secondaryColor,
                   border: BorderSide(color: context.color.territoryColor),
                   radius: 8,
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 10),
                 UiUtils.buildButton(
                   context,
+                  outerPadding: const EdgeInsets.all(5),
                   onPressed: () {
                     print("DEBUG: LocationMapScreen Apply Button Pressed");
                     print("DEBUG: Selected Location Details:");
@@ -448,7 +450,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                           arguments: {"from": "login"});
                     }
                   },
-                  buttonTitle: "Apply",
+                  buttonTitle: "Apply".translate(context),
                   textColor: Colors.white,
                   buttonColor:
                       context.color.territoryColor, // Matching image red color

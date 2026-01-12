@@ -110,7 +110,7 @@ class _ItemCardState extends State<ItemCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 /// IMAGE
-                /// IMAGE
+
                 SizedBox(
                   height: imageHeight,
                   child: ClipRRect(

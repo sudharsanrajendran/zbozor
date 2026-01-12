@@ -105,13 +105,12 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       // By default select the first sub-category of the first tab (e.g. Residential in Rent)
       var firstTabCategory = widget.categoryList.first;
 
-      // Only fetch subcategories for the first tab if not already present
+      // Always fetch subcategories for the first tab immediately
+      // _propertyTypesCubit.fetchSubCategories(categoryId: firstTabCategory.id!);
+
       if (firstTabCategory.children != null &&
           firstTabCategory.children!.isNotEmpty) {
         _onPropertyTypeSelected(firstTabCategory.children!.first);
-      } else {
-        _propertyTypesCubit.fetchSubCategories(
-            categoryId: firstTabCategory.id!);
       }
     }
   }
@@ -437,14 +436,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     _selectedTabIndex = index;
                   });
 
-                  // Fetch subcategories for the new tab (e.g. Sale) if needed
-                  var currentCategory = widget.categoryList[index];
-                  if (currentCategory.children == null ||
-                      currentCategory.children!.isEmpty) {
-                    _propertyTypesCubit.fetchSubCategories(
-                        categoryId: currentCategory.id!);
-                  }
                   // Auto-select first child if available (replication of init logic)
+                  var currentCategory = widget.categoryList[index];
                   if (currentCategory.children != null &&
                       currentCategory.children!.isNotEmpty) {
                     _onPropertyTypeSelected(currentCategory.children!.first);
@@ -580,7 +573,11 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         },
         builder: (context, state) {
           if (state is FetchSubCategoriesInProgress) {
-            return _buildPropertyTypeShimmer();
+            return Center(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomShimmer(height: 50, width: 100, borderRadius: 10),
+            ));
           }
           if (state is FetchSubCategoriesSuccess) {
             if (state.categories.isEmpty) return const SizedBox.shrink();
@@ -628,7 +625,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         color: isSelected
                             ? context.color.textDefaultColor
                             : context.color.borderColor,
-                        width: isSelected ? 1.5 : 1,
+                        width: 1,
                       ),
                     ),
                     child: Column(
@@ -696,7 +693,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       child: BlocBuilder<FetchSubCategoriesCubit, FetchSubCategoriesState>(
         builder: (context, state) {
           if (state is FetchSubCategoriesInProgress) {
-            return _buildSubCategoryShimmer();
+            return Center(
+                child: CustomShimmer(height: 30, width: 80, borderRadius: 5));
           }
           if (state is FetchSubCategoriesSuccess) {
             if (state.categories.isEmpty) return const SizedBox.shrink();
@@ -708,68 +706,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
           return const SizedBox.shrink();
         },
       ),
-    );
-  }
-
-  Widget _buildPropertyTypeShimmer() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Property Type",
-          style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: context.color.textDefaultColor),
-        ),
-        const SizedBox(height: 12),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-              5,
-              (index) => Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: CustomShimmer(
-                  width: 100,
-                  height: 90,
-                  borderRadius: 8,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSubCategoryShimmer() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const CustomShimmer(
-          height: 20,
-          width: 150,
-          borderRadius: 4,
-        ),
-        const SizedBox(height: 12),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: List.generate(
-              5,
-              (index) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: CustomShimmer(
-                  width: 100,
-                  height: 35,
-                  borderRadius: 18,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -786,7 +722,14 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       bool isLoading = _loadingCategories[currentSelection.id] == true;
       if (isLoading) {
         levels.add(const SizedBox(height: 12));
-        levels.add(_buildSubCategoryShimmer());
+        levels.add(const Center(
+            child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: SizedBox(
+              height: 20,
+              width: 50,
+              child: CustomShimmer(height: 20, width: 50, borderRadius: 5)),
+        )));
       } else if (currentSelection.children != null &&
           currentSelection.children!.isNotEmpty) {
         levels.add(const SizedBox(height: 12));
