@@ -81,8 +81,8 @@ class ItemHorizontalCard extends StatelessWidget {
                             context: context);
                       },
                       child: Container(
-                        width: 32,
-                        height: 32,
+                        width: 28,
+                        height: 28,
                         decoration: BoxDecoration(
                           color: context.color.secondaryColor,
                           shape: BoxShape.circle,
@@ -92,10 +92,9 @@ class ItemHorizontalCard extends StatelessWidget {
                                   ? null
                                   : [
                                       BoxShadow(
-                                        color: Color.fromARGB(12, 0, 0, 0),
+                                        color: Colors.grey.withOpacity(0.5),
                                         offset: Offset(0, 2),
-                                        blurRadius: 10,
-                                        spreadRadius: 4,
+                                        blurRadius: 8,
                                       )
                                     ],
                         ),
@@ -106,7 +105,7 @@ class ItemHorizontalCard extends StatelessWidget {
                               : UiUtils.getSvg(
                                   isLike ? AppIcons.like_fill : AppIcons.like,
                                   width: 22,
-                                  height: 22,
+                                  height: 20,
                                   color: context.color.territoryColor,
                                 ),
                         ),

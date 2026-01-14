@@ -25,6 +25,8 @@ import 'package:flutter/services.dart';
 import 'package:Ebozor/utils/login/lib/payloads.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:sms_autofill/sms_autofill.dart';
+
 class SignUpMainScreen extends StatefulWidget {
   const SignUpMainScreen({super.key});
 
@@ -40,6 +42,10 @@ class LoginScreenState extends State<SignUpMainScreen> {
   final TextEditingController emailMobileTextController =
       TextEditingController();
   String? phone, countryCode, countryName, flagEmoji;
+  Country? simCountry;
+  String? otp;
+  bool isOtpSent = false;
+  String signature = "";
 
   Timer? timer;
   late Size size;
@@ -57,6 +63,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
   void initState() {
     super.initState();
 
+    getSignature();
     context.read<AuthenticationCubit>().init();
     context.read<FetchSystemSettingsCubit>().fetchSettings();
     context.read<AuthenticationCubit>().listen((MLoginState state) {
@@ -67,7 +74,15 @@ class LoginScreenState extends State<SignUpMainScreen> {
       if (state is MVerificationPending) {
         if (mounted) {
           Widgets.hideLoder(context);
+          if (Platform.isAndroid) {
+            SmsAutoFill().listenForCode();
+          }
+          isOtpSent = true;
           setState(() {});
+          if (isMobileNumberField) {
+            HelperUtils.showSnackBarMessage(
+                context, "optsentsuccessflly".translate(context));
+          }
         }
       }
 
@@ -76,21 +91,34 @@ class LoginScreenState extends State<SignUpMainScreen> {
           Widgets.hideLoder(context);
           return;
         }
-        debugPrint("Signup Error (MFail): ${state.error}");
-        if (state.error is FirebaseAuthException) {
-          final e = state.error as FirebaseAuthException;
-          if (e.code == 'too-many-requests' ||
-              e.message?.contains("24 hours") == true) {
-            HelperUtils.showSnackBarMessage(
-                context, "Too many attempts. Please try again later.",
-                type: MessageType.error);
+
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        if (isOtpSent && (otp == null || otp!.trim().isEmpty)) {
+          HelperUtils.showSnackBarMessage(context,
+              "${"weSentCodeOnNumber".translate(context)}\t${emailMobileTextController.text}",
+              type: MessageType.error);
+        } else {
+          debugPrint("Signup Error (MFail): ${state.error}");
+          if (state.error is FirebaseAuthException) {
+            final e = state.error as FirebaseAuthException;
+            if (e.code == 'too-many-requests' ||
+                e.message?.contains("24 hours") == true) {
+              HelperUtils.showSnackBarMessage(context,
+                  "Too many attempts. Please try again after 24 hours.",
+                  type: MessageType.error);
+            } else if (e.code == 'invalid-phone-number') {
+              HelperUtils.showSnackBarMessage(
+                  context, "Invalid Phone Number or Country Code",
+                  type: MessageType.error);
+            } else {
+              HelperUtils.showSnackBarMessage(
+                  context, "Verify Failed: ${e.message}",
+                  type: MessageType.error);
+            }
           } else {
-            HelperUtils.showSnackBarMessage(context, "Signup Failed",
+            HelperUtils.showSnackBarMessage(context, "Verify Failed",
                 type: MessageType.error);
           }
-        } else {
-          HelperUtils.showSnackBarMessage(context, "Signup Failed",
-              type: MessageType.error);
         }
       }
       if (state is MSuccess) {
@@ -98,6 +126,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
       }
     });
     getSimCountry().then((value) {
+      simCountry = value;
       countryCode = value.phoneCode;
 
       flagEmoji = value.flagEmoji;
@@ -121,7 +150,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
             (element) => element.phoneCode == Constant.defaultCountryCode,
           );
         } else {
-          return element.phoneCode == simCountryCode;
+          return element.countryCode == simCountryCode?.toUpperCase();
         }
       },
       orElse: () {
@@ -142,8 +171,158 @@ class LoginScreenState extends State<SignUpMainScreen> {
     return simCountry;
   }
 
+  Future<void> getSignature() async {
+    if (Platform.isAndroid) {
+      signature = await SmsAutoFill().getAppSignature;
+      await SmsAutoFill().listenForCode();
+    }
+    setState(() {});
+  }
+
+  Future<bool> onBackPress() {
+    if (isOtpSent == true) {
+      setState(() {
+        isOtpSent = false;
+      });
+    } else {
+      return Future.value(true);
+    }
+    return Future.value(false);
+  }
+
+  Widget otpInput() {
+    return Center(
+        child: PinFieldAutoFill(
+            decoration: UnderlineDecoration(
+              textStyle:
+                  TextStyle(fontSize: 20, color: context.color.textColorDark),
+              colorBuilder: FixedColorBuilder(context.color.territoryColor),
+            ),
+            currentCode: otp,
+            codeLength: 6,
+            autoFocus: true,
+            keyboardType: TextInputType.number,
+            onCodeChanged: (String? code) {
+              otp = code;
+            },
+            onCodeSubmitted: (String code) {
+              otp = code;
+            }));
+  }
+
+  Widget verifyOTPWidget() {
+    return Padding(
+      padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top + 10, left: 18, right: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: AlignmentDirectional.bottomEnd,
+            child: FittedBox(
+              fit: BoxFit.none,
+              child: MaterialButton(
+                onPressed: () {
+                  HelperUtils.killPreviousPages(context, Routes.main,
+                      {"from": "login", "isSkipped": true});
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                color: context.color.territoryColor,
+                elevation: 0,
+                height: 28,
+                minWidth: 64,
+                child: Text("skip".translate(context)).color(Colors.white),
+              ),
+            ),
+          ),
+          Text("signInWithMob".translate(context))
+              .size(context.font.extraLarge),
+          const SizedBox(
+            height: 8,
+          ),
+          Row(
+            children: [
+              Text("+${phoneLoginPayload.countryCode}\t${phoneLoginPayload.phoneNumber}")
+                  .size(context.font.large),
+              const SizedBox(
+                width: 5,
+              ),
+              InkWell(
+                  child: Text("change".translate(context))
+                      .underline()
+                      .color(context.color.territoryColor)
+                      .size(context.font.large),
+                  onTap: () {
+                    setState(() {
+                      isOtpSent = false;
+                    });
+                  }),
+            ],
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          otpInput(),
+          const SizedBox(
+            height: 8,
+          ),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: MaterialButton(
+              onPressed: () {
+                setState(() {
+                  otp = "";
+                });
+                context.read<AuthenticationCubit>().setData(
+                      payload: phoneLoginPayload,
+                      type: AuthenticationType.phone,
+                    );
+                context.read<AuthenticationCubit>().verify();
+              },
+              child: Text("resendOtp".translate(context))
+                  .underline()
+                  .color(context.color.territoryColor)
+                  .size(context.font.small),
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          UiUtils.buildButton(context, onPressed: () {
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            if (otp == null || otp!.trim().isEmpty) {
+              HelperUtils.showSnackBarMessage(
+                  context, "enterOtp".translate(context));
+              return;
+            }
+            if (otp!.trim().length < 6) {
+              HelperUtils.showSnackBarMessage(
+                  context,
+                  "invalidOtp".translate(
+                      context)); // Ensure this key exists or use hardcoded string temporarily and ask user to add key
+              return;
+            }
+            context.read<AuthenticationCubit>().setData(
+                payload: phoneLoginPayload, type: AuthenticationType.phone);
+            context.read<AuthenticationCubit>().authenticate();
+          },
+              buttonTitle: "submit".translate(context),
+              radius: 10,
+              disabled: false,
+              disabledColor: context.color.territoryColor),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
+    SmsAutoFill().unregisterListener();
     if (timer != null) {
       timer!.cancel();
     }
@@ -155,10 +334,45 @@ class LoginScreenState extends State<SignUpMainScreen> {
 
   void _onTapContinue() {
     if (isMobileNumberField) {
-      Navigator.pushNamed(context, Routes.mobileSignUp, arguments: {
-        "mobile": emailMobileTextController.text.toString().trim(),
-        "countryCode": countryCode
-      });
+      String phoneNumber = emailMobileTextController.text
+          .trim()
+          .replaceAll(RegExp(r'[^0-9]'), '');
+      bool isValid = true;
+
+      // Basic validation based on country code (Mocking strict validation)
+      if (countryCode == '91' && phoneNumber.length != 10) {
+        isValid = false;
+      } else if (countryCode == '1' && phoneNumber.length != 10) {
+        isValid = false;
+      } else if (phoneNumber.length < 7 || phoneNumber.length > 15) {
+        isValid = false;
+      }
+
+      if (!isValid) {
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        HelperUtils.showSnackBarMessage(
+            context, "pleaseEnterValidPhoneNumber".translate(context),
+            type: MessageType.error);
+        return;
+      }
+
+      if (simCountry != null && countryCode != simCountry!.phoneCode) {
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        HelperUtils.showSnackBarMessage(context,
+            "Please select the country matching your SIM card (+${simCountry!.phoneCode})",
+            type: MessageType.error);
+        return;
+      }
+
+      phoneLoginPayload =
+          PhoneLoginPayload(emailMobileTextController.text, countryCode!);
+
+      context
+          .read<AuthenticationCubit>()
+          .setData(payload: phoneLoginPayload, type: AuthenticationType.phone);
+      context.read<AuthenticationCubit>().verify();
+
+      setState(() {});
     } else {
       Navigator.pushNamed(context, Routes.signup, arguments: {
         "emailId": emailMobileTextController.text.toString().trim()
@@ -196,49 +410,59 @@ class LoginScreenState extends State<SignUpMainScreen> {
         context: context,
         statusBarColor: context.color.backgroundColor,
       ),
-      child: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: PopScope(
-            canPop: isBack,
-            onPopInvoked: (didPop) {
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: PopScope(
+          canPop: isBack,
+          onPopInvoked: (didPop) {
+            if (isOtpSent) {
               setState(() {
-                isBack = true;
+                isOtpSent = false;
+                isMobileNumberField = true;
               });
               return;
-            },
-            child: AnnotatedRegion(
-              value: SystemUiOverlayStyle(
-                statusBarColor: context.color.backgroundColor,
-              ),
-              child: Scaffold(
-                backgroundColor: context.color.backgroundColor,
-                bottomNavigationBar: termAndPolicyTxt(),
-                body: Builder(builder: (context) {
-                  return BlocListener<AuthenticationCubit, AuthenticationState>(
-                    listener: (context, state) {
-                      if (state is AuthenticationSuccess) {
-                        Widgets.hideLoder(context);
-                        Navigator.pushReplacementNamed(context, Routes.login);
-                      }
-                      if (state is AuthenticationFail) {
-                        Widgets.hideLoder(context);
-                        HelperUtils.showSnackBarMessage(
-                            context, "Signup Failed",
-                            type: MessageType.error);
-                      }
-                      if (state is AuthenticationInProcess) {
-                        Widgets.showLoader(context);
-                      }
-                    },
-                    child: Form(
-                      key: _formKey,
-                      child: buildLoginWidget(),
-                    ),
-                  );
-                }),
-              ),
-            ),
+            }
+            setState(() {
+              isBack = true;
+            });
+            return;
+          },
+          child: Scaffold(
+            backgroundColor: context.color.backgroundColor,
+            bottomNavigationBar: _buildStaticFooter(),
+            body: Builder(builder: (context) {
+              return BlocListener<AuthenticationCubit, AuthenticationState>(
+                listener: (context, state) {
+                  if (state is AuthenticationSuccess) {
+                    Widgets.hideLoder(context);
+                    Navigator.pushReplacementNamed(context, Routes.login);
+                  }
+                  if (state is AuthenticationFail) {
+                    Widgets.hideLoder(context);
+                    HelperUtils.showSnackBarMessage(context, "Signup Failed",
+                        type: MessageType.error);
+                  }
+                  if (state is AuthenticationInProcess) {
+                    Widgets.showLoader(context);
+                  }
+                },
+                child: Form(
+                  key: _formKey,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    switchInCurve: Curves.easeInOut,
+                    switchOutCurve: Curves.easeInOut,
+                    child: isOtpSent
+                        ? KeyedSubtree(
+                            key: const ValueKey("otp"),
+                            child: verifyOTPWidget())
+                        : KeyedSubtree(
+                            key: const ValueKey("signup"),
+                            child: buildLoginWidget()),
+                  ),
+                ),
+              );
+            }),
           ),
         ),
       ),
@@ -290,8 +514,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
                 ? SizedBox(
                     width: 55,
                     child: Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: GestureDetector(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: GestureDetector(
                           onTap: () {
                             showCountryCode();
                           },
@@ -303,8 +527,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
                                 child: Text("+$countryCode")
                                     .size(context.font.large)
                                     .centerAlign()),
-                          ),
-                        )),
+                          )),
+                    ),
                   )
                 : null,
             hintText: (Constant.mobileAuthentication == "1" &&
@@ -321,88 +545,82 @@ class LoginScreenState extends State<SignUpMainScreen> {
             buttonTitle: "continue".translate(context),
             radius: 10,
             disabled: numberOrEmail.isEmpty,
-            disabledColor: const Color.fromARGB(255, 104, 102, 106)),
+            disabledColor: context.color.territoryColor),
       ],
     );
   }
 
   Widget buildLoginWidget() {
-    return SingleChildScrollView(
-      child: SizedBox(
-        height: context.screenHeight - 50,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: AlignmentDirectional.topEnd,
-                child: FittedBox(
-                  fit: BoxFit.none,
-                  child: MaterialButton(
-                    onPressed: () {
-                      //HiveUtils.setUserIsNotNew();
-                      Navigator.pushReplacementNamed(
-                        context,
-                        Routes.main,
-                        arguments: {
-                          "from": "login",
-                          "isSkipped": true,
-                        },
-                      );
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    color: context.color.territoryColor,
-                    elevation: 0,
-                    height: 28,
-                    minWidth: 64,
-                    child: Text("skip".translate(context)).color(Colors.white),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: context.screenHeight - 50,
+      ),
+      child: Padding(
+        padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + 10,
+            left: 18.0,
+            right: 18.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: AlignmentDirectional.topEnd,
+              child: FittedBox(
+                fit: BoxFit.none,
+                child: MaterialButton(
+                  onPressed: () {
+                    //HiveUtils.setUserIsNotNew();
+                    Navigator.pushReplacementNamed(
+                      context,
+                      Routes.main,
+                      arguments: {
+                        "from": "login",
+                        "isSkipped": true,
+                      },
+                    );
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
+                  color: context.color.territoryColor,
+                  elevation: 0,
+                  height: 28,
+                  minWidth: 64,
+                  child: Text("skip".translate(context)).color(Colors.white),
                 ),
               ),
-              const SizedBox(
-                height: 66,
-              ),
-              Text("welcome".translate(context))
-                  .size(context.font.extraLarge)
-                  .color(context.color.textDefaultColor),
-              const SizedBox(
-                height: 8,
-              ),
-              if (Constant.mobileAuthentication == "1" ||
-                  Constant.emailAuthentication == "1")
-                mobileAndEmailSignUp(),
-              const SizedBox(
-                height: 68,
-              ),
-              if (Constant.googleAuthentication == "1" ||
-                  Constant.appleAuthentication == "1")
-                googleAndAppleSignUp(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("alreadyHaveAcc".translate(context))
-                      .color(context.color.textColorDark.brighten(50)),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, Routes.login);
-                    },
-                    child: Text("login".translate(context))
-                        .underline()
-                        .color(context.color.territoryColor),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-            ],
-          ),
+            ),
+            Text("welcome".translate(context))
+                .size(context.font.extraLarge)
+                .color(context.color.textDefaultColor),
+            const SizedBox(
+              height: 8,
+            ),
+            if (Constant.mobileAuthentication == "1" ||
+                Constant.emailAuthentication == "1")
+              mobileAndEmailSignUp(),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("alreadyHaveAcc".translate(context))
+                    .color(context.color.textColorDark.brighten(50)),
+                const SizedBox(
+                  width: 12,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.login);
+                  },
+                  child: Text("login".translate(context))
+                      .underline()
+                      .color(context.color.territoryColor),
+                )
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -426,6 +644,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
                         width: 22, height: 22),
                   ),
                   showElevation: false,
+                  outerPadding: const EdgeInsets.only(top: 12),
                   buttonColor: secondaryColor_,
                   border: context.watch<AppThemeCubit>().state.appTheme !=
                           AppTheme.dark
@@ -443,10 +662,6 @@ class LoginScreenState extends State<SignUpMainScreen> {
                   height: 46,
                   buttonTitle: "continueWithGoogle".translate(context)),
 
-//apple login
-            const SizedBox(
-              height: 12,
-            ),
             if (Constant.appleAuthentication == "1" && Platform.isIOS)
 
               //contiunue with apple
@@ -457,6 +672,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
                         width: 22, height: 22),
                   ),
                   showElevation: false,
+                  outerPadding: const EdgeInsets.only(top: 12),
                   buttonColor: secondaryColor_,
                   border: context.watch<AppThemeCubit>().state.appTheme !=
                           AppTheme.dark
@@ -483,11 +699,30 @@ class LoginScreenState extends State<SignUpMainScreen> {
     );
   }
 
+  Widget _buildStaticFooter() {
+    // if (isOtpSent || sendMailClicked) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (Constant.googleAuthentication == "1" ||
+              Constant.appleAuthentication == "1")
+            googleAndAppleSignUp(),
+          SizedBox(height: 10),
+          termAndPolicyTxt(),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget termAndPolicyTxt() {
     return Padding(
       padding: EdgeInsetsDirectional.only(bottom: 15.0, start: 25.0, end: 25.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text("bySigningUpLoggingIn".translate(context))

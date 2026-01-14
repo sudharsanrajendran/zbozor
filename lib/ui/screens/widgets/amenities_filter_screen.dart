@@ -1,5 +1,6 @@
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
+
 import 'package:flutter/material.dart';
 
 class AmenitiesFilterScreen extends StatefulWidget {
@@ -85,7 +86,7 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
         ],
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(left: 20,right: 20,bottom: 15),
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 15),
         color: context.color.backgroundColor,
         child: SafeArea(
           child: Row(
@@ -131,29 +132,40 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-            child: TextField(
-              controller: _searchController,
-              onChanged: _filterAmenities,
-              decoration: InputDecoration(
-                prefixIcon:
-                    Icon(Icons.search, color: context.color.textLightColor),
-                hintText: "Search any items ..",
-                hintStyle: TextStyle(color: context.color.textLightColor),
-                filled: true,
-                fillColor: context.color.secondaryColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(color: context.color.borderColor),
+            child: Container(
+              height: 42,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: context.color.secondaryColor,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: context.color.borderColor),
+              ),
+              child: TextField(
+                controller: _searchController,
+                onChanged: _filterAmenities,
+                textAlignVertical:
+                    TextAlignVertical.center, // Align text vertically
+                decoration: InputDecoration(
+                  prefixIcon: Padding(
+                    padding:
+                        const EdgeInsets.all(12.0), // Adjust padding for icon
+                    child: Image.asset(
+                      "assets/amentiessearch.png",
+                      width: 10,
+                      height: 10,
+                    ),
+                  ),
+                  hintText: "Search any items ..",
+                  hintStyle: TextStyle(
+                    color: context.color.textLightColor,
+                    fontSize: 14, // Ensure appropriate font size
+                  ),
+                  border: InputBorder.none,
+                  filled: false,
+                  isDense: true, // Helps with vertical alignment
+                  contentPadding: EdgeInsets
+                      .zero, // Remove default padding to let centers adhere
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(color: context.color.borderColor),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
-                  borderSide: BorderSide(color: context.color.borderColor),
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 20),
               ),
             ),
           ),

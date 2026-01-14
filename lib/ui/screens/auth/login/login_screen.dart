@@ -55,6 +55,7 @@ class LoginScreenState extends State<LoginScreen> {
       text: Constant.isDemoModeOn ? Constant.demoMobileNumber : "");
   bool isOtpSent = false;
   String? phone, otp, countryCode, countryName, flagEmoji;
+  Country? simCountry;
 
   Timer? timer;
   late Size size;
@@ -113,19 +114,14 @@ class LoginScreenState extends State<LoginScreen> {
           Widgets.hideLoder(context);
           return;
         }
-        if (!isOtpSent && isMobileNumberField) {
-          Widgets.hideLoder(context);
-        }
 
-        if (isOtpSent && (otp!.trim().isEmpty)) {
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        if (isOtpSent && (otp == null || otp!.trim().isEmpty)) {
           HelperUtils.showSnackBarMessage(context,
               "${"weSentCodeOnNumber".translate(context)}\t${emailMobileTextController.text}",
               type: MessageType.error);
         } else {
-          // Log the raw error
           debugPrint("Login Error (MFail): ${state.error}");
-          Widgets.hideLoder(context); // Ensure loader is hidden
-
           if (state.error is FirebaseAuthException) {
             final e = state.error as FirebaseAuthException;
             if (e.code == 'too-many-requests' ||
@@ -153,6 +149,7 @@ class LoginScreenState extends State<LoginScreen> {
       }
     });
     getSimCountry().then((value) {
+      simCountry = value;
       countryCode = value.phoneCode;
       flagEmoji = value.flagEmoji;
       setState(() {});
@@ -234,8 +231,17 @@ class LoginScreenState extends State<LoginScreen> {
       }
 
       if (!isValid) {
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
         HelperUtils.showSnackBarMessage(
             context, "pleaseEnterValidPhoneNumber".translate(context),
+            type: MessageType.error);
+        return;
+      }
+
+      if (simCountry != null && countryCode != simCountry!.phoneCode) {
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        HelperUtils.showSnackBarMessage(context,
+            "Please select the country matching your SIM card (+${simCountry!.phoneCode})",
             type: MessageType.error);
         return;
       }
@@ -306,205 +312,194 @@ class LoginScreenState extends State<LoginScreen> {
         context: context,
         statusBarColor: context.color.backgroundColor,
       ),
-      child: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: PopScope(
-            canPop: isBack,
-            onPopInvoked: (didPop) {
-              if (widget.isDeleteAccount ?? false) {
-                Navigator.pop(context);
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: PopScope(
+          canPop: isBack,
+          onPopInvoked: (didPop) {
+            if (widget.isDeleteAccount ?? false) {
+              Navigator.pop(context);
+            } else {
+              if (isOtpSent) {
+                setState(() {
+                  isOtpSent = false;
+                  isMobileNumberField = true;
+                });
+              } else if (sendMailClicked) {
+                setState(() {
+                  sendMailClicked = false;
+                });
               } else {
-                if (isOtpSent) {
-                  setState(() {
-                    isOtpSent = false;
-                    isMobileNumberField = true;
-                  });
-                } else if (sendMailClicked) {
-                  setState(() {
-                    sendMailClicked = false;
-                  });
-                } else {
-                  setState(() {
-                    isBack = true;
-                  });
-                  return;
-                }
+                setState(() {
+                  isBack = true;
+                });
+                return;
               }
-              setState(() {
-                isBack = false;
-              });
-              return;
-            },
-            child: AnnotatedRegion(
-              value: SystemUiOverlayStyle(
-                statusBarColor: context.color.backgroundColor,
-              ),
-              child: Scaffold(
-                backgroundColor: context.color.backgroundColor,
-                bottomNavigationBar: _buildStaticFooter(),
-                body: BlocListener<LoginCubit, LoginState>(
-                  listener: (context, state) {
-                    if (state is LoginSuccess) {
-                      HiveUtils.setUserIsAuthenticated(true);
-                      //GuestChecker.set(isGuest: false);
-                      //context.read<AuthCubit>().updateFCM(context);
+            }
+            setState(() {
+              isBack = false;
+            });
+            return;
+          },
+          child: Scaffold(
+            backgroundColor: context.color.backgroundColor,
+            bottomNavigationBar: _buildStaticFooter(),
+            body: BlocListener<LoginCubit, LoginState>(
+              listener: (context, state) {
+                if (state is LoginSuccess) {
+                  HiveUtils.setUserIsAuthenticated(true);
+                  //GuestChecker.set(isGuest: false);
+                  //context.read<AuthCubit>().updateFCM(context);
 
-                      context
-                          .read<UserDetailsCubit>()
-                          .fill(HiveUtils.getUserDetails());
-                      if (state.isProfileCompleted) {
-                        if (HiveUtils.getCityName() != null &&
-                            HiveUtils.getCityName() != "") {
-                          HelperUtils.killPreviousPages(
-                              context, Routes.main, {"from": "login"});
-                        } else {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              Routes.locationPermissionScreen,
-                              (route) => false);
+                  context
+                      .read<UserDetailsCubit>()
+                      .fill(HiveUtils.getUserDetails());
+                  if (state.isProfileCompleted) {
+                    if (HiveUtils.getCityName() != null &&
+                        HiveUtils.getCityName() != "") {
+                      HelperUtils.killPreviousPages(
+                          context, Routes.main, {"from": "login"});
+                    } else {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          Routes.locationPermissionScreen, (route) => false);
+                    }
+                  } else {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      Routes.completeProfile,
+                      arguments: {
+                        "from": "login",
+                        "popToCurrent": false,
+                        "type": isMobileNumberField
+                            ? AuthenticationType.phone
+                            : AuthenticationType.email,
+                        "extraData": {
+                          "email": state.credential.user?.email ??
+                              state.apiResponse['email'],
+                          "username": state.apiResponse['name'],
+                          "mobile": state.apiResponse['mobile'],
+                          "countryCode": countryCode
                         }
+                      },
+                    );
+                  }
+                }
+
+                if (state is LoginFailure) {
+                  ////////
+                  debugPrint("Login Failure: ${state.errorMessage}");
+                  HelperUtils.showSnackBarMessage(context, "Login Failed");
+                }
+              },
+              child: BlocConsumer<AuthenticationCubit, AuthenticationState>(
+                listener: (context, state) {
+                  if (state is AuthenticationSuccess) {
+                    Widgets.hideLoder(context);
+
+                    if (state.type == AuthenticationType.email) {
+                      //FirebaseAuth.instance.currentUser?.sendEmailVerification();
+                      if (state.credential.user!.emailVerified) {
+                        context.read<LoginCubit>().login(
+                            phoneNumber: state.credential.user!.phoneNumber,
+                            firebaseUserId: state.credential.user!.uid,
+                            type: state.type.name,
+                            credential: state.credential,
+                            countryCode: null,
+                            name: CloudState.cloudData['signup_details'] != null
+                                ? CloudState.cloudData['signup_details']
+                                    ['username']
+                                : null);
                       } else {
-                        Navigator.pushReplacementNamed(
-                          context,
-                          Routes.completeProfile,
-                          arguments: {
-                            "from": "login",
-                            "popToCurrent": false,
-                            "type": isMobileNumberField
-                                ? AuthenticationType.phone
-                                : AuthenticationType.email,
-                            "extraData": {
-                              "email": state.credential.user?.email ??
-                                  state.apiResponse['email'],
-                              "username": state.apiResponse['name'],
-                              "mobile": state.apiResponse['mobile'],
-                              "countryCode": countryCode
-                            }
-                          },
-                        );
+                        HelperUtils.showSnackBarMessage(
+                            context, "Please Verify Your email first");
+                      }
+                    } else if (state.type == AuthenticationType.phone) {
+                      context.read<LoginCubit>().login(
+                          phoneNumber:
+                              (state.payload as PhoneLoginPayload).phoneNumber,
+                          firebaseUserId: state.credential.user!.uid,
+                          type: state.type.name,
+                          credential: state.credential,
+                          countryCode:
+                              "+${(state.payload as PhoneLoginPayload).countryCode}",
+                          name: CloudState.cloudData['signup_details'] != null
+                              ? CloudState.cloudData['signup_details']
+                                  ['username']
+                              : null);
+                    } else {
+                      context.read<LoginCubit>().login(
+                          phoneNumber: state.credential.user!.phoneNumber,
+                          firebaseUserId: state.credential.user!.uid,
+                          type: state.type.name,
+                          credential: state.credential,
+                          countryCode: null,
+                          name: CloudState.cloudData['signup_details'] != null
+                              ? CloudState.cloudData['signup_details']
+                                  ['username']
+                              : null);
+                    }
+                  }
+
+                  if (state is AuthenticationFail) {
+                    Widgets.hideLoder(context);
+
+                    // 🔴 EXACT LOGIN ERROR PRINT HERE
+                    debugPrint('========== LOGIN ERROR ==========');
+                    debugPrint('ERROR OBJ : ${state.error}');
+
+                    String message =
+                        "Verify Failed"; // Default friendly message
+
+                    if (state.error is FirebaseAuthException) {
+                      final e = state.error as FirebaseAuthException;
+                      debugPrint('FIREBASE CODE : ${e.code}');
+                      debugPrint('FIREBASE MSG  : ${e.message}');
+
+                      if (e.code == 'credential-already-in-use' ||
+                          e.code ==
+                              'account-exists-with-different-credential' ||
+                          e.code == 'email-already-in-use') {
+                        message = "Account already used";
+                      } else if (e.code == 'invalid-phone-number') {
+                        message =
+                            "The phone number is invalid for the selected country code.";
                       }
                     }
 
-                    if (state is LoginFailure) {
-                      ////////
-                      debugPrint("Login Failure: ${state.errorMessage}");
-                      HelperUtils.showSnackBarMessage(context, "Login Failed");
-                    }
-                  },
-                  child: BlocConsumer<AuthenticationCubit, AuthenticationState>(
-                    listener: (context, state) {
-                      if (state is AuthenticationSuccess) {
-                        Widgets.hideLoder(context);
+                    debugPrint('=================================');
 
-                        if (state.type == AuthenticationType.email) {
-                          //FirebaseAuth.instance.currentUser?.sendEmailVerification();
-                          if (state.credential.user!.emailVerified) {
-                            context.read<LoginCubit>().login(
-                                phoneNumber: state.credential.user!.phoneNumber,
-                                firebaseUserId: state.credential.user!.uid,
-                                type: state.type.name,
-                                credential: state.credential,
-                                countryCode: null,
-                                name: CloudState.cloudData['signup_details'] !=
-                                        null
-                                    ? CloudState.cloudData['signup_details']
-                                        ['username']
-                                    : null);
-                          } else {
-                            HelperUtils.showSnackBarMessage(
-                                context, "Please Verify Your email first");
-                          }
-                        } else if (state.type == AuthenticationType.phone) {
-                          context.read<LoginCubit>().login(
-                              phoneNumber: (state.payload as PhoneLoginPayload)
-                                  .phoneNumber,
-                              firebaseUserId: state.credential.user!.uid,
-                              type: state.type.name,
-                              credential: state.credential,
-                              countryCode:
-                                  "+${(state.payload as PhoneLoginPayload).countryCode}",
-                              name:
-                                  CloudState.cloudData['signup_details'] != null
-                                      ? CloudState.cloudData['signup_details']
-                                          ['username']
-                                      : null);
-                        } else {
-                          context.read<LoginCubit>().login(
-                              phoneNumber: state.credential.user!.phoneNumber,
-                              firebaseUserId: state.credential.user!.uid,
-                              type: state.type.name,
-                              credential: state.credential,
-                              countryCode: null,
-                              name:
-                                  CloudState.cloudData['signup_details'] != null
-                                      ? CloudState.cloudData['signup_details']
-                                          ['username']
-                                      : null);
-                        }
-                      }
+                    // Show friendly message in SnackBar
+                    HelperUtils.showSnackBarMessage(context, message,
+                        type: MessageType.error);
+                  }
 
-                      if (state is AuthenticationFail) {
-                        Widgets.hideLoder(context);
-
-                        // 🔴 EXACT LOGIN ERROR PRINT HERE
-                        debugPrint('========== LOGIN ERROR ==========');
-                        debugPrint('ERROR OBJ : ${state.error}');
-
-                        String message =
-                            "Verify Failed"; // Default friendly message
-
-                        if (state.error is FirebaseAuthException) {
-                          final e = state.error as FirebaseAuthException;
-                          debugPrint('FIREBASE CODE : ${e.code}');
-                          debugPrint('FIREBASE MSG  : ${e.message}');
-
-                          if (e.code == 'credential-already-in-use' ||
-                              e.code ==
-                                  'account-exists-with-different-credential' ||
-                              e.code == 'email-already-in-use') {
-                            message = "Account already used";
-                          } else if (e.code == 'invalid-phone-number') {
-                            message =
-                                "The phone number is invalid for the selected country code.";
-                          }
-                        }
-
-                        debugPrint('=================================');
-
-                        // Show friendly message in SnackBar
-                        HelperUtils.showSnackBarMessage(context, message,
-                            type: MessageType.error);
-                      }
-
-                      if (state is AuthenticationInProcess) {
-                        Widgets.showLoader(context);
-                      }
-                    },
-                    builder: (context, state) {
-                      return Builder(builder: (context) {
-                        return Form(
-                          key: _formKey,
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 500),
-                            switchInCurve: Curves.easeInOut,
-                            switchOutCurve: Curves.easeInOut,
-                            child: isOtpSent
+                  if (state is AuthenticationInProcess) {
+                    Widgets.showLoader(context);
+                  }
+                },
+                builder: (context, state) {
+                  return Builder(builder: (context) {
+                    return Form(
+                      key: _formKey,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 500),
+                        switchInCurve: Curves.easeInOut,
+                        switchOutCurve: Curves.easeInOut,
+                        child: isOtpSent
+                            ? KeyedSubtree(
+                                key: const ValueKey("otp"),
+                                child: verifyOTPWidget())
+                            : sendMailClicked
                                 ? KeyedSubtree(
-                                    key: const ValueKey("otp"),
-                                    child: verifyOTPWidget())
-                                : sendMailClicked
-                                    ? KeyedSubtree(
-                                        key: const ValueKey("pass"),
-                                        child: enterPasswordWidget())
-                                    : KeyedSubtree(
-                                        key: const ValueKey("login"),
-                                        child: buildLoginWidget()),
-                          ),
-                        );
-                      });
-                    },
-                  ),
-                ),
+                                    key: const ValueKey("pass"),
+                                    child: enterPasswordWidget())
+                                : KeyedSubtree(
+                                    key: const ValueKey("login"),
+                                    child: buildLoginWidget()),
+                      ),
+                    );
+                  });
+                },
               ),
             ),
           ),
@@ -608,7 +603,7 @@ class LoginScreenState extends State<LoginScreen> {
           if (Constant.googleAuthentication == "1" ||
               Constant.appleAuthentication == "1")
             googleAndAppleLogin(),
-          SizedBox(height:10),
+          SizedBox(height: 10),
           termAndPolicyTxt(),
           const SizedBox(
             height: 10,
@@ -622,7 +617,10 @@ class LoginScreenState extends State<LoginScreen> {
     return SizedBox(
       height: context.screenHeight - 50,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18.0),
+        padding: EdgeInsets.only(
+            top: MediaQuery.of(context).padding.top + 10,
+            left: 18.0,
+            right: 18.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -666,7 +664,7 @@ class LoginScreenState extends State<LoginScreen> {
                 Constant.emailAuthentication == "1")
               mobileOrEmailLogin(),
             const SizedBox(
-              height: 60,
+              height: 10,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -919,7 +917,10 @@ class LoginScreenState extends State<LoginScreen> {
 
   Widget verifyOTPWidget() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: sidePadding),
+      padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top + 10,
+          left: sidePadding,
+          right: sidePadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -950,9 +951,6 @@ class LoginScreenState extends State<LoginScreen> {
                 child: Text("skip".translate(context)).color(Colors.white),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 66,
           ),
           Text("signInWithMob".translate(context))
               .size(context.font.extraLarge),
@@ -1010,9 +1008,17 @@ class LoginScreenState extends State<LoginScreen> {
           UiUtils.buildButton(
             context,
             onPressed: () {
-              if (otp!.trim().length < 6) {
+              if (otp == null || otp!.trim().isEmpty) {
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
                 HelperUtils.showSnackBarMessage(
-                    context, "pleaseEnterSixDigits".translate(context));
+                    context, "enterOtp".translate(context));
+                return;
+              }
+
+              if (otp!.trim().length < 6) {
+                ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                HelperUtils.showSnackBarMessage(
+                    context, "invalidOtp".translate(context));
               } else {
                 phoneLoginPayload.setOTP(otp!.trim());
                 context.read<AuthenticationCubit>().authenticate();
@@ -1028,7 +1034,10 @@ class LoginScreenState extends State<LoginScreen> {
 
   Widget enterPasswordWidget() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: sidePadding),
+      padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top + 10,
+          left: sidePadding,
+          right: sidePadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

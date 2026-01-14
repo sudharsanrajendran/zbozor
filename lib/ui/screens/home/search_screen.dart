@@ -163,6 +163,7 @@ class SearchScreenState extends State<SearchScreen>
 
   PreferredSizeWidget appBarWidget() {
     return AppBar(
+      elevation: 0,
       systemOverlayStyle:
           SystemUiOverlayStyle(statusBarColor: context.color.backgroundColor),
       bottom: PreferredSize(
@@ -174,14 +175,14 @@ class SearchScreenState extends State<SearchScreen>
                   fit: BoxFit.none,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 14, horizontal: 18.0),
+                        vertical: 5,),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         //seach sotainner
                         Container(
                             width: 270.rw(context),
-                            height: 50.rh(context),
+                            height: 42,
                             alignment: AlignmentDirectional.center,
                             decoration: BoxDecoration(
                                 border: Border.all(
@@ -195,12 +196,14 @@ class SearchScreenState extends State<SearchScreen>
                                     color:
                                         context.color.borderColor.darken(30)),
                                 borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
+                                    const BorderRadius.all(Radius.circular(12)),
                                 color: context.color.secondaryColor),
                             child: TextFormField(
                               autofocus: widget.autoFocus,
                               controller: searchController,
+                              textAlignVertical: TextAlignVertical.center,
                               decoration: InputDecoration(
+                                isDense: true,
                                 border: InputBorder.none,
                                 //OutlineInputBorder()
                                 fillColor: Theme.of(context)
@@ -209,7 +212,9 @@ class SearchScreenState extends State<SearchScreen>
                                 hintText: 'searchHintLbl'.translate(context),
                                 prefixIcon: setSearchIcon(),
                                 prefixIconConstraints: const BoxConstraints(
-                                    minHeight: 5, minWidth: 5),
+                                    minHeight: 40, minWidth: 40),
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
                               ),
                               enableSuggestions: true,
                               onFieldSubmitted: (value) {
@@ -254,15 +259,15 @@ class SearchScreenState extends State<SearchScreen>
                           },
                           child: Center(
                             child: Container(
-                              width: 50.rw(context),
-                              height: 50.rh(context),
+                              width: 42,
+                              height: 42,
                               decoration: BoxDecoration(
                                 border: Border.all(
                                     width: 1,
                                     color:
                                         context.color.borderColor.darken(30)),
                                 color: context.color.secondaryColor,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Center(
                                 child: UiUtils.getSvg(
@@ -306,13 +311,7 @@ class SearchScreenState extends State<SearchScreen>
       /*BackButton(
         color: context.color.textDefaultColor,
       ),*/
-      elevation: context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
-          ? 0
-          : 6,
-      shadowColor:
-          context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
-              ? null
-              : context.color.textDefaultColor.withOpacity(0.2),
+
       backgroundColor: context.color.backgroundColor,
     );
   }
@@ -368,9 +367,6 @@ class SearchScreenState extends State<SearchScreen>
                         height: 10,
                         width: c.maxWidth - 50,
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       const CustomShimmer(
                         height: 10,
                       ),
@@ -412,7 +408,10 @@ class SearchScreenState extends State<SearchScreen>
       },
       child: Scaffold(
         appBar: appBarWidget(),
-        body: bodyData(),
+        body: Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: bodyData(),
+        ),
         backgroundColor: context.color.backgroundColor,
       ),
     );
@@ -498,7 +497,7 @@ class SearchScreenState extends State<SearchScreen>
 
         if (items.isNotEmpty) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            padding: const EdgeInsets.fromLTRB(18, 5, 18, 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -518,13 +517,13 @@ class SearchScreenState extends State<SearchScreen>
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 5),
                 Wrap(
                   spacing: 10,
                   runSpacing: 10,
                   children: items.map((item) {
                     return InkWell(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(5),
                       onTap: () {
                         searchController.text = item.name!;
                         searchController.selection = TextSelection.fromPosition(
@@ -539,7 +538,7 @@ class SearchScreenState extends State<SearchScreen>
                             horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
                           color: context.color.secondaryColor,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(5),
                           border: Border.all(
                               color: context.color.borderColor.darken(30)),
                         ),
@@ -563,7 +562,7 @@ class SearchScreenState extends State<SearchScreen>
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 Divider(
                   color: context.color.borderColor.darken(30),
                   thickness: 1.2,
@@ -706,13 +705,13 @@ class SearchScreenState extends State<SearchScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.only(start: 5.0),
+                  padding: EdgeInsetsDirectional.only(start: 0.0),
                   child: Text("searchedItems".translate(context))
                       .color(context.color.textDefaultColor.withOpacity(0.5))
                       .size(context.font.normal),
                 ),
                 SizedBox(
-                  height: 3,
+                  height: 12,
                 ),
                 ListView.separated(
                   shrinkWrap: true,

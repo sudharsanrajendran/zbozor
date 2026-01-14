@@ -84,7 +84,7 @@ class ItemCard extends StatefulWidget {
 }
 
 class _ItemCardState extends State<ItemCard> {
-  final double likeButtonSize = 24;
+  final double likeButtonSize = 28;
   final double imageHeight = 130;
 
   @override
@@ -244,8 +244,8 @@ class _ItemCardState extends State<ItemCard> {
                               ? null
                               : [
                                   BoxShadow(
-                                    color: Colors.grey.shade300,
-                                    blurRadius: 3,
+                                    color: Colors.grey.withOpacity(0.5),
+                                    blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   )
                                 ],
@@ -261,8 +261,8 @@ class _ItemCardState extends State<ItemCard> {
                         : Center(
                             child: UiUtils.getSvg(
                                 isLike ? AppIcons.like_fill : AppIcons.like,
-                                width: 14,
-                                height: 14,
+                                width: 22,
+                                height: 20,
                                 color: context.color.territoryColor),
                           ),
                   ),

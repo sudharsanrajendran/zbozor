@@ -866,7 +866,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         color: context.color.territoryColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Text(
-          "Show Results",
+          "Show 12,000 Results",
           style: const TextStyle(
               color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
         ),

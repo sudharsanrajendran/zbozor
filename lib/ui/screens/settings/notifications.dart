@@ -322,8 +322,8 @@ class NotificationsState extends State<Notifications> {
                         Text(notificationData.createdAt!
                                 .formatDate()
                                 .toString())
-                            .size(context.font.smaller)
-                            .color(context.color.textLightColor),
+                            .size(context.font.small)
+                            .color(context.color.textLightColor).bold(),
                       ],
                     ),
                   ),

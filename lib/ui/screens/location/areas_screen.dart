@@ -125,7 +125,7 @@ class AreasScreenState extends State<AreasScreen> {
           preferredSize: Size.fromHeight(58.rh(context)),
           child: Container(
               width: double.maxFinite,
-              height: 48.rh(context),
+              height: 42,
               margin: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               alignment: AlignmentDirectional.center,
               decoration: BoxDecoration(
@@ -135,7 +135,7 @@ class AreasScreenState extends State<AreasScreen> {
                           ? 0
                           : 1,
                       color: context.color.borderColor.darken(30)),
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
                   color: context.color.secondaryColor),
               child: TextFormField(
                   controller: searchController,

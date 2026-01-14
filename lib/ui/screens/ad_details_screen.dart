@@ -2002,22 +2002,22 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                   },
                   builder: (context, state) {
                     return Container(
-                      width: 40,
-                      height: 40,
+                      width: 28,
+                      height: 28,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: context.color.secondaryColor,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            blurRadius: 10,
-                            spreadRadius: 1,
-                            offset: Offset(0, 3),
+                            color: Colors.grey.withOpacity(0.5),
+                            blurRadius: 8,
+                            spreadRadius: 0,
+                            offset: Offset(0, 2),
                           ),
                         ],
                       ),
                       child: InkWell(
-                        borderRadius: BorderRadius.circular(40),
+                        borderRadius: BorderRadius.circular(28),
                         onTap: () {
                           UiUtils.checkUser(
                               onNotGuest: () {
@@ -2032,12 +2032,10 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                         },
                         child: Center(
                           child: UiUtils.getSvg(
-                            isLike ? AppIcons.favorites : AppIcons.like_fill,
-                            color: isLike
-                                ? context.color.territoryColor
-                                : context.color.textLightColor.withOpacity(0.5),
+                            isLike ? AppIcons.like_fill : AppIcons.like,
+                            color: context.color.territoryColor,
                             width: 22,
-                            height: 22,
+                            height: 20,
                           ),
                         ),
                       ),
@@ -2048,29 +2046,29 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             ),
           if (!isAddedByMe) SizedBox(width: 10),
           Container(
-            width: 40,
-            height: 40,
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: context.color.secondaryColor,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  blurRadius: 10,
-                  spreadRadius: 1,
-                  offset: Offset(0, 3),
+                  color: Colors.grey.withOpacity(0.5),
+                  blurRadius: 8,
+                  spreadRadius: 0,
+                  offset: Offset(0, 2),
                 ),
               ],
             ),
             child: InkWell(
-              borderRadius: BorderRadius.circular(40),
+              borderRadius: BorderRadius.circular(28),
               onTap: () {
                 HelperUtils.share(context, model.slug!);
               },
               child: Center(
                 child: Icon(
                   Icons.share,
-                  size: 22,
+                  size: 20,
                   color: context.color.textLightColor.withOpacity(0.5),
                 ),
               ),

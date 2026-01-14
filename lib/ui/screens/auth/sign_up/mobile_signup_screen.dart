@@ -264,8 +264,10 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
 
   Widget buildLoginWidget() {
     return SingleChildScrollView(
-      child: SizedBox(
-        height: context.screenHeight - 50,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: context.screenHeight - 50,
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18.0),
           child: Column(
@@ -291,12 +293,11 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    color: context.color.forthColor.withOpacity(0.102),
+                    color: context.color.territoryColor,
                     elevation: 0,
                     height: 28,
                     minWidth: 64,
-                    child: Text("skip".translate(context))
-                        .color(context.color.forthColor),
+                    child: Text("skip".translate(context)).color(Colors.white),
                   ),
                 ),
               ),
@@ -551,12 +552,11 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
-                color: context.color.forthColor.withOpacity(0.102),
+                color: context.color.territoryColor,
                 elevation: 0,
                 height: 28,
                 minWidth: 64,
-                child: Text("skip".translate(context))
-                    .color(context.color.forthColor),
+                child: Text("skip".translate(context)).color(Colors.white),
               ),
             ),
           ),

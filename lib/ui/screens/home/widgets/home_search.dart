@@ -1,6 +1,6 @@
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
-import 'package:Ebozor/utils/responsiveSize.dart';
+
 import 'package:flutter/material.dart';
 
 import 'package:Ebozor/app/routes.dart';
@@ -46,28 +46,34 @@ class HomeSearchField extends StatelessWidget {
                 );
               },
               child: Container(
-                height: 56.rh(context),
+                height: 42,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 1,
                     color: context.color.borderColor.darken(30),
                   ),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(12),
                   color: context.color.secondaryColor,
                 ),
                 child: AbsorbPointer(
                   child: TextFormField(
                     readOnly: true,
+                    textAlignVertical:
+                        TextAlignVertical.center, // Align text vertically
                     decoration: InputDecoration(
+                      isDense: true, // Reduces default height usage
                       border: InputBorder.none,
                       hintText: "searchHintLbl".translate(context),
                       hintStyle: TextStyle(
                         color: context.color.textDefaultColor.withOpacity(0.5),
+                        height: 1.2, // Match text height for better centering
                       ),
                       prefixIcon: buildSearchIcon(),
-                      prefixIconConstraints:
-                          const BoxConstraints(minHeight: 5, minWidth: 5),
+                      prefixIconConstraints: const BoxConstraints(
+                          minHeight: 40, minWidth: 40), // Fix icon size
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 10), // Symmetric horizontal padding
                     ),
                   ),
                 ),
@@ -83,11 +89,13 @@ class HomeSearchField extends StatelessWidget {
               Navigator.pushNamed(context, Routes.countriesScreen,
                   arguments: {"from": "home"});
             },
-            child: UiUtils.getSvg(
-              AppIcons.location,
-              color: Colors.grey,
-              width: 32,
-              height: 32,
+            child: Container(
+              child: Image.asset(
+                "assets/location_home.png",
+                width: 24,
+                height: 24,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
 

@@ -221,25 +221,26 @@ class ItemsListState extends State<ItemsList> {
           /// 🔍 SEARCH FIELD
           Expanded(
             child: Container(
-              height: 45,
+              height: 42,
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 0.1,
                   color: context.color.borderColor.darken(30),
                 ),
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
                 color: context.color.backgroundColor,
               ),
               child: TextFormField(
                 controller: searchController,
+                textAlignVertical: TextAlignVertical.center,
                 decoration: InputDecoration(
+                  isDense: true,
                   border: InputBorder.none,
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                   hintText: "Search any items ..",
                   prefixIcon: setSearchIcon(),
                   prefixIconConstraints:
-                      const BoxConstraints(minHeight: 5, minWidth: 5),
+                      const BoxConstraints(minHeight: 40, minWidth: 40),
                 ),
                 enableSuggestions: true,
                 onEditingComplete: () {
@@ -430,7 +431,6 @@ class ItemsListState extends State<ItemsList> {
                       color: (_selectedCustomFields.isNotEmpty ||
                               filter != null ||
                               searchController.text.isNotEmpty)
-
                           ? context.color.deactivateColor
                           : context.color.textDefaultColor,
                       fontSize: 12,

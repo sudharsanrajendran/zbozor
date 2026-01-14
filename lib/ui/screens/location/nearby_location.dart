@@ -2,7 +2,6 @@ import 'dart:async'; // Search debounce
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
@@ -10,6 +9,7 @@ import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 
 import 'package:Ebozor/utils/ui_utils.dart';
+import 'package:Ebozor/utils/app_icon.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -634,9 +634,11 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                   left: 15,
                                   right: 15,
                                   child: Container(
+                                    height: 42,
+                                    alignment: Alignment.center,
                                     decoration: BoxDecoration(
                                       color: context.color.secondaryColor,
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(12),
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withOpacity(0.1),
@@ -648,14 +650,24 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                                     child: TextField(
                                       controller: searchController,
                                       onChanged: _onSearchChanged,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
                                       decoration: InputDecoration(
+                                        isDense: true,
                                         hintText: "Search location...",
                                         border: InputBorder.none,
-                                        prefixIcon: Icon(Icons.search,
-                                            color:
-                                                context.color.textDefaultColor),
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 14),
+                                        prefixIcon: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: UiUtils.getSvg(AppIcons.search,
+                                              color:
+                                                  context.color.territoryColor),
+                                        ),
+                                        prefixIconConstraints:
+                                            const BoxConstraints(
+                                                minHeight: 40, minWidth: 40),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 10),
                                       ),
                                     ),
                                   ),

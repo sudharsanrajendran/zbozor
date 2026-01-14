@@ -225,7 +225,7 @@ class CountriesScreenState extends State<CountriesScreen> {
               Expanded(
                 child: Container(
                     width: double.maxFinite,
-                    height: 42.rh(context),
+                    height: 42,
                     margin: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     alignment: AlignmentDirectional.center,
                     decoration: BoxDecoration(
@@ -237,7 +237,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                                     : 1,
                             color: context.color.borderColor.darken(30)),
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(16)),
+                            const BorderRadius.all(Radius.circular(12)),
                         color: context.color.secondaryColor),
                     child: TextFormField(
                         controller: searchController,
@@ -266,7 +266,6 @@ class CountriesScreenState extends State<CountriesScreen> {
                               isFocused = false;
                             },
                           );
-
 
                           FocusScope.of(context).unfocus();
                         },
