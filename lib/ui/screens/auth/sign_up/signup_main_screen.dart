@@ -92,20 +92,24 @@ class LoginScreenState extends State<SignUpMainScreen> {
           return;
         }
 
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        if (mounted) ScaffoldMessenger.of(context).removeCurrentSnackBar();
         if (isOtpSent && (otp == null || otp!.trim().isEmpty)) {
-          HelperUtils.showSnackBarMessage(context,
-              "${"weSentCodeOnNumber".translate(context)}\t${emailMobileTextController.text}",
-              type: MessageType.error);
+          if (mounted) {
+            HelperUtils.showSnackBarMessage(context,
+                "${"weSentCodeOnNumber".translate(context)}\t${emailMobileTextController.text}",
+                type: MessageType.error);
+          }
         } else {
           debugPrint("Signup Error (MFail): ${state.error}");
           if (state.error is FirebaseAuthException) {
             final e = state.error as FirebaseAuthException;
             if (e.code == 'too-many-requests' ||
                 e.message?.contains("24 hours") == true) {
-              HelperUtils.showSnackBarMessage(context,
-                  "Too many attempts. Please try again after 24 hours.",
-                  type: MessageType.error);
+              if (mounted) {
+                HelperUtils.showSnackBarMessage(context,
+                    "Too many attempts. Please try again after 24 hours.",
+                    type: MessageType.error);
+              }
             } else if (e.code == 'invalid-phone-number') {
               HelperUtils.showSnackBarMessage(
                   context, "Invalid Phone Number or Country Code",
@@ -322,6 +326,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
 
   @override
   void dispose() {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
     SmsAutoFill().unregisterListener();
     if (timer != null) {
       timer!.cancel();

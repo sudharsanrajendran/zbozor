@@ -115,32 +115,42 @@ class LoginScreenState extends State<LoginScreen> {
           return;
         }
 
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        if (mounted) ScaffoldMessenger.of(context).removeCurrentSnackBar();
         if (isOtpSent && (otp == null || otp!.trim().isEmpty)) {
-          HelperUtils.showSnackBarMessage(context,
-              "${"weSentCodeOnNumber".translate(context)}\t${emailMobileTextController.text}",
-              type: MessageType.error);
+          if (mounted) {
+            HelperUtils.showSnackBarMessage(context,
+                "${"weSentCodeOnNumber".translate(context)}\t${emailMobileTextController.text}",
+                type: MessageType.error);
+          }
         } else {
           debugPrint("Login Error (MFail): ${state.error}");
           if (state.error is FirebaseAuthException) {
             final e = state.error as FirebaseAuthException;
             if (e.code == 'too-many-requests' ||
                 e.message?.contains("24 hours") == true) {
-              HelperUtils.showSnackBarMessage(context,
-                  "Too many attempts. Please try again after 24 hours.",
-                  type: MessageType.error);
+              if (mounted) {
+                HelperUtils.showSnackBarMessage(context,
+                    "Too many attempts. Please try again after 24 hours.",
+                    type: MessageType.error);
+              }
             } else if (e.code == 'invalid-phone-number') {
-              HelperUtils.showSnackBarMessage(
-                  context, "Invalid Phone Number or Country Code",
-                  type: MessageType.error);
+              if (mounted) {
+                HelperUtils.showSnackBarMessage(
+                    context, "Invalid Phone Number or Country Code",
+                    type: MessageType.error);
+              }
             } else {
-              HelperUtils.showSnackBarMessage(
-                  context, "Verify Failed: ${e.message}",
-                  type: MessageType.error);
+              if (mounted) {
+                HelperUtils.showSnackBarMessage(
+                    context, "Verify Failed: ${e.message}",
+                    type: MessageType.error);
+              }
             }
           } else {
-            HelperUtils.showSnackBarMessage(context, "Verify Failed",
-                type: MessageType.error);
+            if (mounted) {
+              HelperUtils.showSnackBarMessage(context, "Verify Failed",
+                  type: MessageType.error);
+            }
           }
         }
       }
@@ -203,6 +213,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
     SmsAutoFill().unregisterListener();
     if (timer != null) {
       timer!.cancel();

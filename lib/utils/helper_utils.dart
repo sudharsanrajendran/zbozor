@@ -261,7 +261,8 @@ class HelperUtils {
       MessageType? type,
       bool? isFloating,
       VoidCallback? onClose}) async {
-    ScaffoldMessenger.of(context!).removeCurrentSnackBar();
+    if (!context!.mounted) return;
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
 
     var snackBar = ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
