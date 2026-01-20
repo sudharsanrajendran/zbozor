@@ -2582,6 +2582,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
   }
 
   void makeOfferBottomSheet(ItemModel model) async {
+    if (!mounted) return;
     await showDialog(
       context: context,
       barrierDismissible: true,

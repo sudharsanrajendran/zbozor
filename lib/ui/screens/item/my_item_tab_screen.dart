@@ -146,9 +146,9 @@ class _MyItemTabState extends CloudState<MyItemTab> {
   Widget showStatus(ItemModel model) {
     return Container(
       padding: const EdgeInsets.fromLTRB(10, 4, 10, 4),
-      //margin: EdgeInsetsDirectional.only(end: 4, start: 4),
+      margin: EdgeInsetsDirectional.only(end: 4, start: 4),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(5),
         color: _getStatusColor(model.status),
       ),
       child: Text(

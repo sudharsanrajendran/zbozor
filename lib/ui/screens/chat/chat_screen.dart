@@ -183,6 +183,7 @@ class _ChatScreenState extends State<ChatScreen>
   ];
 
   void ratingsAlertDialog() async {
+    if (!mounted) return;
     await showDialog(
       context: context,
       barrierDismissible: true,

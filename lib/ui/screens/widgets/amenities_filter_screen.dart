@@ -221,7 +221,12 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: context.color.textDefaultColor,
+                            color: isSelected
+                                ? context.color.textDefaultColor
+                                : context.color.textLightColor,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                             fontSize: 14,
                           ),
                         ),

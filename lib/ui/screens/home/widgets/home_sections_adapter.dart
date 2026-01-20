@@ -129,7 +129,8 @@ class _ItemCardState extends State<ItemCard> {
 
                 /// CONTENT
                 Padding(
-                  padding: const EdgeInsets.only(right: 8, left: 8, top: 8),
+                  padding: const EdgeInsetsDirectional.only(
+                      end: 8, start: 8, top: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -217,9 +218,9 @@ class _ItemCardState extends State<ItemCard> {
               }
             },
             builder: (context, state) {
-              return Positioned(
+              return PositionedDirectional(
                 top: imageHeight - (likeButtonSize / 2),
-                right: 12,
+                end: 12,
                 child: InkWell(
                   onTap: () {
                     UiUtils.checkUser(

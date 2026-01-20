@@ -462,8 +462,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: _selectedTabIndex == index
-                          ? context.color.territoryColor
-                          : context.color.textDefaultColor,
+                          ? context.color.textDefaultColor
+                          : context.color.textLightColor,
                       fontWeight: _selectedTabIndex == index
                           ? FontWeight.bold
                           : FontWeight.normal,
@@ -658,7 +658,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                               fontSize: 12,
                               color: isSelected
                                   ? context.color.textDefaultColor
-                                  : context.color.textDefaultColor,
+                                  : context.color.textLightColor,
                               fontWeight: isSelected
                                   ? FontWeight.w600
                                   : FontWeight.normal,
@@ -824,7 +824,11 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     borderRadius: BorderRadius.circular(5),
                   ),
                   labelStyle: TextStyle(
-                    color: context.color.textDefaultColor,
+                    color: isSelected
+                        ? context.color.textDefaultColor
+                        : context.color.textLightColor,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                   // 🔥 CORE SELECTION LOGIC
                   onPressed: () {
@@ -1047,7 +1051,9 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                                 fontWeight: isSelected
                                     ? FontWeight.bold
                                     : FontWeight.normal,
-                                color: context.color.textDefaultColor),
+                                color: isSelected
+                                    ? context.color.textDefaultColor
+                                    : context.color.textLightColor),
                           ),
                         ),
                       ),
@@ -1150,7 +1156,9 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                                 fontWeight: isSelected
                                     ? FontWeight.bold
                                     : FontWeight.normal,
-                                color: context.color.textDefaultColor),
+                                color: isSelected
+                                    ? context.color.textDefaultColor
+                                    : context.color.textLightColor),
                           ),
                         ),
                       ),

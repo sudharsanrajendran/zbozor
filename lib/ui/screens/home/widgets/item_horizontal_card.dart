@@ -147,15 +147,15 @@ class ItemHorizontalCard extends StatelessWidget {
                   ),
                 ),
                 if (item.isFeature ?? false)
-                  const Positioned(
+                  const PositionedDirectional(
                     top: 8,
-                    left: 8,
+                    start: 8,
                     child: PromotedCard(type: PromoteCardType.icon),
                   ),
                 if (showLikeButton ?? true)
-                  Positioned(
+                  PositionedDirectional(
                     top: 8,
-                    right: 8,
+                    end: 8,
                     child: favButton(
                       context,
                     ),
@@ -165,8 +165,8 @@ class ItemHorizontalCard extends StatelessWidget {
 
             // CONTENT
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 12, right: 12, top: 5, bottom: 12),
+              padding: const EdgeInsetsDirectional.only(
+                  start: 12, end: 12, top: 5, bottom: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -220,7 +220,7 @@ class ItemHorizontalCard extends StatelessWidget {
             // STATUS BUTTON
             if (statusButton != null)
               Padding(
-                padding: const EdgeInsets.only(left: 12, bottom: 8),
+                padding: const EdgeInsetsDirectional.only(start: 12, bottom: 8),
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

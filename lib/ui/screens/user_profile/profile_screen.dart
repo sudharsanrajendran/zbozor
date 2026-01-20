@@ -215,8 +215,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                       fit: BoxFit.none,
                                     ))),
                       if (HiveUtils.isUserAuthenticated())
-                        Positioned(
-                          right: 0,
+                        PositionedDirectional(
+                          end: 0,
                           bottom: 0,
                           child: InkWell(
                             onTap: () {

@@ -24,48 +24,48 @@ class VerificationBanner extends StatelessWidget {
         child: Stack(
           children: [
             // Background decorations (circles to mimic the design)
-            Positioned(
-              left: -30,
+            PositionedDirectional(
+              start: -30,
               top: 10,
               child: CircleAvatar(
                 radius: 4,
                 backgroundColor: Colors.white.withOpacity(0.3),
               ),
             ),
-            Positioned(
-              left: 30,
+            PositionedDirectional(
+              start: 30,
               top: 50,
               child: CircleAvatar(
                 radius: 3,
                 backgroundColor: Colors.white.withOpacity(0.3),
               ),
             ),
-            Positioned(
-              left: 100,
+            PositionedDirectional(
+              start: 100,
               top: 20,
               child: CircleAvatar(
                 radius: 5,
                 backgroundColor: Colors.white.withOpacity(0.3),
               ),
             ),
-            Positioned(
-              left: 80,
+            PositionedDirectional(
+              start: 80,
               bottom: 40,
               child: CircleAvatar(
                 radius: 4,
                 backgroundColor: Colors.white.withOpacity(0.3),
               ),
             ),
-            Positioned(
-              right: 120,
+            PositionedDirectional(
+              end: 120,
               top: 50,
               child: CircleAvatar(
                 radius: 2,
                 backgroundColor: Colors.white.withOpacity(0.3),
               ),
             ),
-            Positioned(
-              right: 20,
+            PositionedDirectional(
+              end: 20,
               bottom: 80,
               child: CircleAvatar(
                 radius: 6,
@@ -102,7 +102,7 @@ class VerificationBanner extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Got a verified badge yet?",
+                                "gotVerifiedBadge".translate(context),
                                 style: TextStyle(
                                     // Using fixed style to match design
                                     fontSize: 18,
@@ -112,7 +112,8 @@ class VerificationBanner extends StatelessWidget {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                "Get more Visibility | Enhance your Credibility",
+                                "enhanceVisibilityCredibility"
+                                    .translate(context),
                                 style: TextStyle(
                                     fontSize: 13,
                                     color: Colors.white.withOpacity(0.9),
@@ -144,8 +145,8 @@ class VerificationBanner extends StatelessWidget {
                         ),
                         elevation: 0,
                       ),
-                      child: const Text(
-                        "GET STARTED",
+                      child: Text(
+                        "getStarted".translate(context),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
