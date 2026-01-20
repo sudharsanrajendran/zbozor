@@ -446,6 +446,7 @@ class StatesScreenState extends State<StatesScreen> {
                 ? context.color.territoryColor
                 : context.color.textLightColor,
             radius: 8,
+            height: 48,
             disabled: selectedState == null,
           ),
         ],

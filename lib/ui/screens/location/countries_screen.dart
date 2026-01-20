@@ -113,6 +113,10 @@ class CountriesScreenState extends State<CountriesScreen> {
         Hive.box(HiveKeys.historyBox).put("country_history", recentSearches);
       }
       HiveUtils.clearLocation();
+
+      // Clear search text and reset list
+      searchController.clear();
+      context.read<FetchCountriesCubit>().fetchCountries(search: "");
     });
   }
 

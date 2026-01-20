@@ -509,6 +509,7 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
                           ? context.color.territoryColor
                           : context.color.textLightColor,
                       radius: 8,
+                      height: 48,
                       disabled: selectedCity == null,
                     );
             },

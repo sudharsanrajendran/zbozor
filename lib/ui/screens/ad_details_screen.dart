@@ -435,10 +435,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   setImageViewer(),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 1),
                   if (isAddedByMe) setLikesAndViewsCount(),
                   if (isAddedByMe) const SizedBox(height: 10),
-                  // this is price and status widget
                   setPriceAndStatus(),
 
                   Text(model.name!)
@@ -455,18 +454,18 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                     Divider(
                         thickness: 1,
                         color: context.color.textDefaultColor.withOpacity(0.1)),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 10),
                     Container(
                       alignment: AlignmentDirectional.center,
                       child: AdBannerWidget(), // Custom widget for banner ad
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 10),
                   ],
 
                   if (isAddedByMe)
                     if (!model.isFeature!) createFeaturesAds(),
                   if (isAddedByMe && !model.isFeature!)
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 10),
                   if (model.customFields!.isNotEmpty) customFields(),
                   if (model.customFields!.isNotEmpty)
                     const SizedBox(height: 10),
@@ -476,7 +475,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                       thickness: 1,
                       color: context.color.textDefaultColor.withOpacity(0.1)),
                   const SizedBox(height: 8),
-                  // this is description widget
+
                   setDescription(),
                   const SizedBox(height: 8),
 
@@ -584,7 +583,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
 
   Widget buildRelatedListWidget(FetchRelatedItemsSuccess state) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10.0),
+      padding: const EdgeInsets.only(top: 0.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -617,7 +616,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
           ),
           GridListAdapter(
             type: ListUiType.List,
-            height: MediaQuery.of(context).size.height / 3.5.rh(context),
+            height: MediaQuery.of(context).size.height / 3.9.rh(context),
             controller: _pageScrollController,
             listAxis: Axis.horizontal,
             listSaperator: (BuildContext p0, int p1) => const SizedBox(
@@ -631,6 +630,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 return ItemCard(
                   item: item,
                   width: 162,
+                  radius: 6,
                 );
               } else {
                 return SizedBox.shrink();
@@ -1819,7 +1819,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       height: 250.rh(context),
       // decoration: BoxDecoration(
       //     borderRadius: BorderRadius.vertical(top: Radius.circular(10))),
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 0),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -1973,8 +1973,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
 
   Widget imageActionButtons() {
     return PositionedDirectional(
-      bottom: -20,
-      end: 10,
+      bottom: -15,
+      end: 5,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -2314,19 +2314,17 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 3.0),
-            child: SvgPicture.asset(
-              AppIcons.location,
-              width: 20,
-              height: 20,
-              colorFilter: ColorFilter.mode(
-                  context.color.textLightColor, BlendMode.srcIn),
-            ),
+            child: SvgPicture.asset(AppIcons.location,
+                width: 20,
+                height: 20,
+                colorFilter: ColorFilter.mode(
+                    context.color.deactivateColor, BlendMode.srcIn)),
           ),
           Expanded(
             flex: 3,
             child: Padding(
               padding: EdgeInsetsDirectional.only(start: 5.0, top: 3),
-              child: Text(model.address!).color(context.color.textDefaultColor),
+              child: Text(model.address!).color(context.color.deactivateColor),
             ),
           ),
           (isDate)
@@ -2449,7 +2447,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
               child: SvgPicture.asset(
                 AppIcons.location,
                 colorFilter: ColorFilter.mode(
-                    context.color.textLightColor, BlendMode.srcIn),
+                    context.color.textDefaultColor.withOpacity(0.3),
+                    BlendMode.srcIn),
                 height: 20,
                 width: 20,
               ),
@@ -2458,8 +2457,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
               flex: 3,
               child: Padding(
                 padding: EdgeInsetsDirectional.only(start: 5.0, top: 3),
-                child:
-                    Text(model.address!).color(context.color.textDefaultColor),
+                child: Text(model.address!).color(context.color.textLightColor),
               ),
             ),
           ],
@@ -2820,10 +2818,17 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
         ),
         child: Row(children: [
           Container(
-              height: 60.rh(context),
-              width: 60.rw(context),
+              height: 64.rh(context),
+              width: 64.rw(context),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: context.color.borderColor, // Light border color
+                  width: 1,
+                ),
+              ),
               child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(32),
                   child: model.user!.profile != null &&
                           model.user!.profile != ""
                       ? UiUtils.getImage(model.user!.profile!, fit: BoxFit.fill)

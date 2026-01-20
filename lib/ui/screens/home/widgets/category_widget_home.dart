@@ -38,7 +38,7 @@ class CategoryWidgetHome extends StatelessWidget {
                 crossAxisCount: 4,
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                childAspectRatio: 0.95,
+                childAspectRatio: 1.0,
               ),
               itemBuilder: (context, index) {
                 final category = state.categories[index];

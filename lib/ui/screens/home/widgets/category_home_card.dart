@@ -22,12 +22,12 @@ class CategoryHomeCard extends StatelessWidget {
     final bool isFullImage = !(extension == "png" || extension == "svg");
 
     return SizedBox(
-      width: 85,
-      height: 120,
+      width: 77,
+      height: 77,
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
           decoration: BoxDecoration(
             color: context.color.secondaryColor,
             borderRadius: BorderRadius.circular(5),
@@ -42,10 +42,16 @@ class CategoryHomeCard extends StatelessWidget {
           ),
           child: Column(
             mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Flexible(
+              Container(
+                height: 36,
+                width: 36,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(5),
                   child: UiUtils.imageType(
                     url,
                     fit: isFullImage ? BoxFit.contain : BoxFit.cover,
@@ -53,21 +59,19 @@ class CategoryHomeCard extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // const SizedBox(height: ),
-
-              Expanded(
-                child: Center(
-                  child: Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: context.font.small,
-                      color: context.color.textDefaultColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+              const SizedBox(height: 4),
+              Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 11, // Reduced font size for better fit
+                    color: context.color.textDefaultColor,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

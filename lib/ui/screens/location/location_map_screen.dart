@@ -405,6 +405,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                   buttonColor: context.color.secondaryColor,
                   border: BorderSide(color: context.color.territoryColor),
                   radius: 8,
+                  height: 48,
                 ),
                 SizedBox(height: 10),
                 UiUtils.buildButton(
@@ -455,6 +456,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                   buttonColor:
                       context.color.territoryColor, // Matching image red color
                   radius: 8,
+                  height: 48,
                 ),
               ],
             ),

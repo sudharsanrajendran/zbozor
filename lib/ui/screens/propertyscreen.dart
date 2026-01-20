@@ -506,7 +506,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         const SizedBox(height: 8),
         Text(
           "Select the cities neighbourhoods or building that you want to search property in .",
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyle(fontSize: 12, color: context.color.textLightColor),
         ),
       ],
     );
@@ -635,27 +635,29 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         SizedBox(
                           height: 30,
                           width: 30,
-                          child: UiUtils.imageType(
-                            subCat.url ?? "",
-                            color: isSelected
-                                ? context.color.textDefaultColor
-                                : context.color.textDefaultColor,
-                            fit: BoxFit.contain,
+                          child: Center(
+                            child: UiUtils.imageType(
+                              subCat.url ?? "",
+                              color: isSelected
+                                  ? context.color.textDefaultColor
+                                  : context.color.textDefaultColor,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                         ),
 
                         const SizedBox(height: 8),
 
                         /// TEXT (height controlled)
-                        SizedBox(
-                          height: 32, // 🔥 text area fixed
+                        /// TEXT (height controlled)
+                        Center(
                           child: Text(
                             subCat.name ?? "",
                             textAlign: TextAlign.center,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 11,
                               color: isSelected
                                   ? context.color.textDefaultColor
                                   : context.color.textLightColor,

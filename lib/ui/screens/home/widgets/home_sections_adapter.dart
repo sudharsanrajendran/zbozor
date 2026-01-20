@@ -130,7 +130,7 @@ class _ItemCardState extends State<ItemCard> {
                 /// CONTENT
                 Padding(
                   padding: const EdgeInsetsDirectional.only(
-                      end: 8, start: 8, top: 8),
+                      end: 8, start: 8, top: 6),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -143,7 +143,7 @@ class _ItemCardState extends State<ItemCard> {
                           .size(context.font.large)
                           .color(context.color.territoryColor),
 
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 2),
 
                       /// ITEM NAME
                       Text(widget.item?.name ?? "")
@@ -152,7 +152,7 @@ class _ItemCardState extends State<ItemCard> {
                           .setMaxLines(lines: 1)
                           .size(context.font.small),
 
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 2),
 
                       /// LOCATION (compact)
                       if ((widget.item?.address ?? "").isNotEmpty)
