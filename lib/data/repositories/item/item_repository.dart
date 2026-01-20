@@ -290,8 +290,18 @@ class ItemRepository {
   }*/
 
   Future<DataOutput<ItemModel>> fetchPopularItems(
-      {required String sortBy, required int page}) async {
-    Map<String, dynamic> parameters = {Api.sortBy: sortBy, Api.page: page};
+      {required String sortBy,
+      required int page,
+      double? latitude,
+      double? longitude,
+      int? radius}) async {
+    Map<String, dynamic> parameters = {
+      Api.sortBy: sortBy,
+      Api.page: page,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+      if (radius != null) 'radius': radius,
+    };
 
     Map<String, dynamic> response =
         await Api.get(url: Api.getItemApi, queryParameters: parameters);
@@ -373,21 +383,20 @@ class ItemRepository {
       if (filter != null) ...filter.toMap(),
     };
 
+    if (parameters['posted_since'] == null ||
+        parameters['posted_since'] == "") {
+      parameters['posted_since'] = "all-time";
+    }
+
     if (filter != null) {
       if (filter.radius != null) {
-        // User requested to remove ONLY area and area_id when radius is present
+        // Remove location parameters when radius is present
         parameters.remove('area');
         parameters.remove('area_id');
+        parameters.remove('city');
+        parameters.remove('state');
+        parameters.remove('country');
       }
-
-      // Keep existing logic for explicit null areaId check if needed,
-      // though the above block handles it if radius is set.
-      if (filter.areaId == null) {
-        parameters.remove('area_id');
-      }
-      // removing area anyway if it might be null/empty from toMap?
-      // The original code had: parameters.remove('area');
-      // We'll keep it safe by ensuring we don't send conflicting data if not handled above
 
       if (filter.customFields != null) {
         filter.customFields!.forEach((key, value) {

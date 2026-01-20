@@ -58,6 +58,8 @@ class HomeSectionsAdapter extends StatelessWidget {
             final item = section.sectionData![index];
             return ItemCard(
               item: item,
+              width: 162,
+              radius: 6,
             );
           },
           total: section.sectionData!.length,

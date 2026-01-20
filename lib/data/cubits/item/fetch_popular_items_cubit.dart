@@ -3,6 +3,7 @@ import 'package:Ebozor/data/repositories/item/item_repository.dart';
 import 'package:Ebozor/data/model/item/item_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart'; // Added import
 
 class FetchPopularItemsState {}
 
@@ -51,6 +52,7 @@ class FetchPopularItemsFailed extends FetchPopularItemsState {
 
   FetchPopularItemsFailed(this.error);
 }
+
 ///////////////////////
 //connection for popular item here
 ////////////////////////////
@@ -62,7 +64,11 @@ class FetchPopularItemsCubit extends Cubit<FetchPopularItemsState> {
     try {
       emit(FetchPopularItemsInProgress());
       DataOutput<ItemModel> result = await _itemRepository.fetchPopularItems(
-          sortBy: "popular_items", page: 1,);
+        sortBy: "popular_items",
+        page: 1,
+        latitude: HiveUtils.getLatitude(),
+        longitude: HiveUtils.getLongitude(),
+      );
       emit(FetchPopularItemsSuccess(
           hasError: false,
           isLoadingMore: false,
@@ -86,6 +92,8 @@ class FetchPopularItemsCubit extends Cubit<FetchPopularItemsState> {
         DataOutput<ItemModel> result = await _itemRepository.fetchPopularItems(
           sortBy: "popular_items",
           page: (state as FetchPopularItemsSuccess).page + 1,
+          latitude: HiveUtils.getLatitude(),
+          longitude: HiveUtils.getLongitude(),
         );
 
         FetchPopularItemsSuccess myItemsState =

@@ -29,6 +29,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:Ebozor/ui/screens/widgets/otp_field_widget.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -478,6 +479,8 @@ class LoginScreenState extends State<LoginScreen> {
                       } else if (e.code == 'invalid-phone-number') {
                         message =
                             "The phone number is invalid for the selected country code.";
+                      } else if (e.code == 'invalid-verification-code') {
+                        message = "Entered otp is invalid";
                       }
                     }
 
@@ -911,23 +914,15 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Widget otpInput() {
-    return Center(
-        child: PinFieldAutoFill(
-            decoration: UnderlineDecoration(
-              textStyle:
-                  TextStyle(fontSize: 20, color: context.color.textColorDark),
-              colorBuilder: FixedColorBuilder(context.color.territoryColor),
-            ),
-            currentCode: otp,
-            codeLength: 6,
-            autoFocus: true,
-            keyboardType: TextInputType.number,
-            onCodeChanged: (String? code) {
-              otp = code;
-            },
-            onCodeSubmitted: (String code) {
-              otp = code;
-            }));
+    return CustomOtpField(
+        currentCode: otp,
+        onCodeChanged: (String? code) {
+          otp = code;
+        },
+        onCodeSubmitted: (String code) {
+          otp = code;
+          // Optionally submit here
+        });
   }
 
   Widget verifyOTPWidget() {
@@ -1033,7 +1028,7 @@ class LoginScreenState extends State<LoginScreen> {
               if (otp!.trim().length < 6) {
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
                 HelperUtils.showSnackBarMessage(
-                    context, "invalidOtp".translate(context));
+                    context, "Please enter the 6 digits.");
               } else {
                 phoneLoginPayload.setOTP(otp!.trim());
                 context.read<AuthenticationCubit>().authenticate();

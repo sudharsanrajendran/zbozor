@@ -154,6 +154,7 @@ class HomeScreenState extends State<HomeScreen>
         }
       }
     });
+
     super.initState();
   }
 
@@ -289,7 +290,10 @@ class HomeScreenState extends State<HomeScreen>
                     return SizedBox.shrink();
                   },
                 ),
-                //   const AllItemsWidget(),
+                SizedBox(
+                  height: 10,
+                ),
+                const AllItemsWidget(),
                 const SizedBox(
                   height: 30,
                 )
@@ -526,8 +530,13 @@ class AllItemsWidget extends StatelessWidget {
         if (state is FetchHomeAllItemsSuccess) {
           if (state.items.isNotEmpty) {
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("recentlyAdded".translate(context)),
+                TitleHeader(
+                  title: "recentlyAdded".translate(context),
+                  onTap: () {},
+                  hideSeeAll: true,
+                ),
                 GridListAdapter(
                   type: ListUiType.Mixed,
                   mixMode: true,
@@ -540,11 +549,10 @@ class AllItemsWidget extends StatelessWidget {
                       // Show ItemCard for grid items
                       return ItemCard(
                         item: item,
-                        width: 192,
                       );
                     } else {
                       // Show ItemHorizontalCard for list items
-                      return InkWell(
+                      return GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(
                             context,
@@ -578,7 +586,6 @@ class AllItemsWidget extends StatelessWidget {
               return Center(child: NoInternet());
             }
           }
-
           return const SomethingWentWrong();
         }
         return SizedBox.shrink();

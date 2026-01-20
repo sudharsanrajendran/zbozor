@@ -86,7 +86,7 @@ class SearchScreenState extends State<SearchScreen>
   void initState() {
     super.initState();
     Constant.itemFilter = null;
-    context.read<FetchPopularItemsCubit>().fetchPopularItems();
+    //context.read<FetchPopularItemsCubit>().fetchPopularItems();
     //context.read<ItemCubit>().fetchItem(context, {});
     //context.read<SearchItemCubit>().searchItem(searchController.text, page: 1);
     // context.read<SearchItemCubit>().searchItem(searchController.text,
@@ -138,6 +138,13 @@ class SearchScreenState extends State<SearchScreen>
 
   ///This will call api after some delay
   void itemSearch() {
+    if (searchController.text.isEmpty && filter == null) {
+      context.read<SearchItemCubit>().clearSearch();
+      previousSearchQuery = "";
+      setState(() {});
+      return;
+    }
+
     // if (searchController.text.isNotEmpty) {
     if (previousSearchQuery != searchController.text) {
       context.read<SearchItemCubit>().searchItem(
@@ -148,16 +155,16 @@ class SearchScreenState extends State<SearchScreen>
       previousSearchQuery = searchController.text;
       setState(() {});
     } else {
-      if (filter == null) context.read<SearchItemCubit>().clearSearch();
+      if (filter == null && searchController.text.isEmpty) {
+        context.read<SearchItemCubit>().clearSearch();
+      }
     }
   }
 
   ItemFilterModel _getLocationFilter() {
     return ItemFilterModel(
-      city: HiveUtils.getCityName(),
-      areaId: HiveUtils.getAreaId(),
-      country: HiveUtils.getCountryName(),
-      state: HiveUtils.getStateName(),
+      latitude: HiveUtils.getLatitude(),
+      longitude: HiveUtils.getLongitude(),
     );
   }
 
@@ -175,7 +182,8 @@ class SearchScreenState extends State<SearchScreen>
                   fit: BoxFit.none,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 5,),
+                      vertical: 5,
+                    ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -249,12 +257,12 @@ class SearchScreenState extends State<SearchScreen>
                                   "from": "search",
                                   "categoryList": categoryList,
                                 }).then((value) {
-                              if (value == true) {
+                              /*if (value == true) {
                                 context.read<SearchItemCubit>().searchItem(
                                     searchController.text,
                                     page: 1,
                                     filter: filter);
-                              }
+                              }*/
                             });
                           },
                           child: Center(
@@ -270,10 +278,7 @@ class SearchScreenState extends State<SearchScreen>
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Center(
-                                child: UiUtils.getSvg(
-                                    filter != null
-                                        ? AppIcons.filterByIcon
-                                        : AppIcons.filter,
+                                child: UiUtils.getSvg(AppIcons.filter,
                                     color: context.color.territoryColor),
                               ),
                             ),
@@ -317,8 +322,21 @@ class SearchScreenState extends State<SearchScreen>
   }
 
   void getFilterValue(ItemFilterModel model) {
-    filter = model;
+    // Ensure latitude and longitude are present if not returned by filter
+    if (model.latitude == null && model.longitude == null) {
+      filter = model.copyWith(
+        latitude: HiveUtils.getLatitude(),
+        longitude: HiveUtils.getLongitude(),
+      );
+    } else {
+      filter = model;
+    }
     setState(() {});
+
+    // Trigger search immediately when filter is applied
+    context
+        .read<SearchItemCubit>()
+        .searchItem(searchController.text, page: 1, filter: filter);
   }
 
   //simmer loader effect

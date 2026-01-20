@@ -26,6 +26,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sms_autofill/sms_autofill.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:Ebozor/ui/screens/widgets/otp_field_widget.dart';
 
 class MobileSignUpScreen extends StatefulWidget {
   final String? mobile;
@@ -56,8 +58,6 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
   CountryService countryCodeService = CountryService();
   bool isLoginButtonDisabled = true;
   final _formKey = GlobalKey<FormState>();
-
-  TextEditingController _otpController = TextEditingController();
 
   bool isObscure = true;
   late PhoneLoginPayload phoneLoginPayload =
@@ -208,23 +208,41 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                 backgroundColor: context.color.backgroundColor,
                 bottomNavigationBar:
                     !isOtpSent ? termAndPolicyTxt() : SizedBox.shrink(),
-                body: Builder(builder: (context) {
-                  return Form(
-                    key: _formKey,
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 500),
-                      switchInCurve: Curves.easeInOut,
-                      switchOutCurve: Curves.easeInOut,
-                      child: isOtpSent
-                          ? KeyedSubtree(
-                              key: const ValueKey("otp"),
-                              child: verifyOTPWidget())
-                          : KeyedSubtree(
-                              key: const ValueKey("signup"),
-                              child: buildLoginWidget()),
-                    ),
-                  );
-                }),
+                body: BlocListener<AuthenticationCubit, AuthenticationState>(
+                  listener: (context, state) {
+                    if (state is AuthenticationFail) {
+                      if (state.error is FirebaseAuthException) {
+                        if ((state.error as FirebaseAuthException).code ==
+                            'invalid-verification-code') {
+                          HelperUtils.showSnackBarMessage(
+                              context, "Entered otp is invalid",
+                              type: MessageType.error);
+                        } else {
+                          HelperUtils.showSnackBarMessage(
+                              context, state.error.toString(),
+                              type: MessageType.error);
+                        }
+                      }
+                    }
+                  },
+                  child: Builder(builder: (context) {
+                    return Form(
+                      key: _formKey,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 500),
+                        switchInCurve: Curves.easeInOut,
+                        switchOutCurve: Curves.easeInOut,
+                        child: isOtpSent
+                            ? KeyedSubtree(
+                                key: const ValueKey("otp"),
+                                child: verifyOTPWidget())
+                            : KeyedSubtree(
+                                key: const ValueKey("signup"),
+                                child: buildLoginWidget()),
+                      ),
+                    );
+                  }),
+                ),
               ),
             ),
           ),
@@ -509,23 +527,15 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
   }
 
   Widget otpInput() {
-    return Center(
-        child: PinFieldAutoFill(
-            decoration: UnderlineDecoration(
-              textStyle:
-                  TextStyle(fontSize: 20, color: context.color.textColorDark),
-              colorBuilder: FixedColorBuilder(context.color.territoryColor),
-            ),
-            currentCode: otp,
-            codeLength: 6,
-            onCodeChanged: (String? code) {
-              otp = code;
-              print(
-                  "OTP changed: $otp"); // Log the OTP value to confirm it updates
-            },
-            onCodeSubmitted: (String code) {
-              otp = code;
-            }));
+    return CustomOtpField(
+        currentCode: otp,
+        onCodeChanged: (String? code) {
+          otp = code;
+          print("OTP changed: $otp");
+        },
+        onCodeSubmitted: (String code) {
+          otp = code;
+        });
   }
 
   Widget verifyOTPWidget() {
@@ -619,17 +629,15 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
           UiUtils.buildButton(
             context,
             onPressed: () {
-              if (_otpController.text.length != 6) {
+              if (otp == null || otp!.trim().isEmpty) {
                 HelperUtils.showSnackBarMessage(
                     context, "lblEnterOtp".translate(context));
+              } else if (otp!.trim().length < 6) {
+                HelperUtils.showSnackBarMessage(
+                    context, "Please enter the 6 digits.");
               } else {
-                if (otp!.trim().length < 6) {
-                  HelperUtils.showSnackBarMessage(
-                      context, "pleaseEnterSixDigits".translate(context));
-                } else {
-                  phoneLoginPayload.setOTP(otp!.trim());
-                  context.read<AuthenticationCubit>().authenticate();
-                }
+                phoneLoginPayload.setOTP(otp!.trim());
+                context.read<AuthenticationCubit>().authenticate();
               }
             },
             buttonTitle: "signIn".translate(context),
