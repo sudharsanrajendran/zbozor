@@ -1,4 +1,3 @@
-
 import 'package:Ebozor/utils/login/lib/login_status.dart';
 import 'package:Ebozor/utils/login/lib/payloads.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -41,7 +40,14 @@ class PhoneLogin extends LoginSystem {
           ),
           phoneNumber:
               "+${(payload as PhoneLoginPayload).countryCode}${(payload as PhoneLoginPayload).phoneNumber}",
-          verificationCompleted: (PhoneAuthCredential credential) {},
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            try {
+              await firebaseAuth.signInWithCredential(credential);
+              emit(MSuccess());
+            } catch (e) {
+              emit(MFail(e));
+            }
+          },
           verificationFailed: (FirebaseAuthException e) {
             emit(MFail(e));
           },
@@ -71,7 +77,8 @@ class PhoneLogin extends LoginSystem {
       );
 
       // Sign in with the credential
-      UserCredential userCredential = await firebaseAuth.signInWithCredential(credential);
+      UserCredential userCredential =
+          await firebaseAuth.signInWithCredential(credential);
 
       // Successfully signed in
       emit(MSuccess());
@@ -81,7 +88,6 @@ class PhoneLogin extends LoginSystem {
       print("Error during OTP verification: $e");
     }
   }
-
 
   @override
   void onEvent(MLoginState state) {}

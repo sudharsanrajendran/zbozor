@@ -75,11 +75,19 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
     context.read<FetchSystemSettingsCubit>().fetchSettings();
     context.read<AuthenticationCubit>().listen((MLoginState state) {
       if (state is MFail) {
-        //Widgets.hideLoder(context);
-
-        //if (!isOtpSent && isMobileNumberField) {
         Widgets.hideLoder(context);
-        //}
+        HelperUtils.showSnackBarMessage(context, state.error.toString(),
+            type: MessageType.error);
+      }
+      if (state is MVerificationPending) {
+        Widgets.hideLoder(context);
+        isOtpSent = true;
+        HelperUtils.showSnackBarMessage(context, "otpSent".translate(context),
+            type: MessageType.success);
+        setState(() {});
+      }
+      if (state is MSuccess) {
+        Widgets.hideLoder(context);
       }
     });
   }
@@ -157,7 +165,7 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
 
     //checkbox value should be 1 before Login/SignUp
     if (form.validate()) {
-      isOtpSent = true;
+      Widgets.showLoader(context);
       _onTapContinue();
     }
   }
@@ -180,6 +188,7 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
               if (isOtpSent) {
                 setState(() {
                   isOtpSent = false;
+                  otp = null;
                 });
               } else {
                 setState(() {
