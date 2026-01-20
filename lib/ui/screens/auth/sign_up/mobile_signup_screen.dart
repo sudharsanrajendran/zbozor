@@ -65,6 +65,9 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
   bool isBack = false;
   String signature = "";
 
+  bool hasErrorOccurred = false;
+  VoidCallback? _authListenerCancel;
+
   @override
   void initState() {
     super.initState();
@@ -73,13 +76,28 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
 
     context.read<AuthenticationCubit>().init();
     context.read<FetchSystemSettingsCubit>().fetchSettings();
-    context.read<AuthenticationCubit>().listen((MLoginState state) {
+    _authListenerCancel =
+        context.read<AuthenticationCubit>().listen((MLoginState state) {
       if (state is MFail) {
+        hasErrorOccurred = true;
         Widgets.hideLoder(context);
-        HelperUtils.showSnackBarMessage(context, state.error.toString(),
+        String errorMessage = state.error.toString();
+        if (state.error is FirebaseAuthException) {
+          if ((state.error as FirebaseAuthException).code ==
+              'too-many-requests') {
+            errorMessage = "Too many attempts. Please try again in some time.";
+          } else if ((state.error as FirebaseAuthException)
+                  .message
+                  ?.contains("blocked all requests") ==
+              true) {
+            errorMessage = "Too many attempts. Please try again in some time.";
+          }
+        }
+        HelperUtils.showSnackBarMessage(context, errorMessage,
             type: MessageType.error);
       }
       if (state is MVerificationPending) {
+        if (hasErrorOccurred) return;
         Widgets.hideLoder(context);
         isOtpSent = true;
         HelperUtils.showSnackBarMessage(context, "otpSent".translate(context),
@@ -88,6 +106,14 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
       }
       if (state is MSuccess) {
         Widgets.hideLoder(context);
+        Navigator.pushReplacementNamed(
+          context,
+          Routes.main,
+          arguments: {
+            "from": "login",
+            "isSkipped": false,
+          },
+        );
       }
     });
   }
@@ -137,6 +163,7 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
 
   @override
   void dispose() {
+    _authListenerCancel?.call();
     if (timer != null) {
       timer!.cancel();
     }
@@ -148,6 +175,7 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
   }
 
   void _onTapContinue() {
+    hasErrorOccurred = false;
     phoneLoginPayload = PhoneLoginPayload(widget.mobile!, widget.countryCode!);
     context
         .read<AuthenticationCubit>()
@@ -212,7 +240,19 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                     !isOtpSent ? termAndPolicyTxt() : SizedBox.shrink(),
                 body: BlocListener<AuthenticationCubit, AuthenticationState>(
                   listener: (context, state) {
+                    if (state is AuthenticationSuccess) {
+                      Widgets.hideLoder(context);
+                      Navigator.pushReplacementNamed(
+                        context,
+                        Routes.main,
+                        arguments: {
+                          "from": "login",
+                          "isSkipped": false,
+                        },
+                      );
+                    }
                     if (state is AuthenticationFail) {
+                      Widgets.hideLoder(context);
                       if (state.error is FirebaseAuthException) {
                         if ((state.error as FirebaseAuthException).code ==
                             'invalid-verification-code') {
@@ -612,7 +652,9 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
             alignment: AlignmentDirectional.centerEnd,
             child: MaterialButton(
               onPressed: () {
+                Widgets.showLoader(context);
                 setState(() {
+                  hasErrorOccurred = false;
                   otp = "";
                 });
                 context.read<AuthenticationCubit>().setData(

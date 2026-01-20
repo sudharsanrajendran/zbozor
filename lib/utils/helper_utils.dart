@@ -263,7 +263,7 @@ class HelperUtils {
       VoidCallback? onClose}) async {
     if (context == null || !context.mounted) return;
 
-    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.maybeOf(context)?.clearSnackBars();
 
     var snackBar = SnackBar(
       content: Text(message),
@@ -272,7 +272,7 @@ class HelperUtils {
       duration: Duration(seconds: messageDuration),
     );
 
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(snackBar);
 
     if (onClose != null) {
       Timer(Duration(seconds: messageDuration), onClose);

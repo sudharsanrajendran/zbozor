@@ -30,8 +30,11 @@ class PhoneLogin extends LoginSystem {
     return null;
   }
 
+  bool _hasError = false;
+
   @override
   Future<void> requestVerification() async {
+    _hasError = false;
     emit(MOtpSendInProgress());
     await FirebaseAuth.instance
         .verifyPhoneNumber(
@@ -49,9 +52,11 @@ class PhoneLogin extends LoginSystem {
             }
           },
           verificationFailed: (FirebaseAuthException e) {
+            _hasError = true;
             emit(MFail(e));
           },
           codeSent: (String verificationId, int? resendToken) {
+            if (_hasError) return;
             super.requestVerification();
             forceResendingToken = resendToken;
             this.verificationId = verificationId;

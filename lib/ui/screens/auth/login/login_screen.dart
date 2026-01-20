@@ -55,6 +55,7 @@ class LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailMobileTextController = TextEditingController(
       text: Constant.isDemoModeOn ? Constant.demoMobileNumber : "");
   bool isOtpSent = false;
+  bool hasErrorOccurred = false;
   String? phone, otp, countryCode, countryName, flagEmoji;
   Country? simCountry;
 
@@ -96,6 +97,7 @@ class LoginScreenState extends State<LoginScreen> {
 
       if (state is MVerificationPending) {
         if (mounted) {
+          if (hasErrorOccurred) return;
           Widgets.hideLoder(context);
 
           // Widgets.showLoader(context);
@@ -111,6 +113,7 @@ class LoginScreenState extends State<LoginScreen> {
       }
 
       if (state is MFail) {
+        hasErrorOccurred = true;
         Widgets.hideLoder(context);
         if (state.error == "google-cancelled") {
           return;
@@ -128,10 +131,11 @@ class LoginScreenState extends State<LoginScreen> {
           if (state.error is FirebaseAuthException) {
             final e = state.error as FirebaseAuthException;
             if (e.code == 'too-many-requests' ||
+                e.message?.contains("blocked all requests") == true ||
                 e.message?.contains("24 hours") == true) {
               if (mounted) {
                 HelperUtils.showSnackBarMessage(context,
-                    "Too many attempts. Please try again after 24 hours.",
+                    "Too many attempts. Please try again in some time.",
                     type: MessageType.error);
               }
             } else if (e.code == 'invalid-phone-number') {
@@ -231,6 +235,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   void _onTapContinue() {
     if (isMobileNumberField) {
+      hasErrorOccurred = false;
       String phoneNumber = emailMobileTextController.text
           .trim()
           .replaceAll(RegExp(r'[^0-9]'), '');
@@ -1000,6 +1005,7 @@ class LoginScreenState extends State<LoginScreen> {
             child: MaterialButton(
               onPressed: () {
                 setState(() {
+                  hasErrorOccurred = false;
                   otp = "";
                 });
                 context.read<AuthenticationCubit>().setData(

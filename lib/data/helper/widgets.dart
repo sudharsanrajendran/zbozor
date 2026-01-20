@@ -1,4 +1,3 @@
-
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
@@ -6,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Widgets {
-  static bool isLoadingShowing=false;
+  static bool isLoadingShowing = false;
   static void showLoader(BuildContext context) async {
-    if(isLoadingShowing){
+    if (!context.mounted) return;
+    if (isLoadingShowing) {
       return;
     }
-    isLoadingShowing=true;
+    isLoadingShowing = true;
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -30,7 +30,6 @@ class Widgets {
                 child: Center(
                   child: UiUtils.progress(
                     normalProgressColor: context.color.territoryColor,
-
                   ),
                 ),
                 /*onWillPop: () {
@@ -45,11 +44,11 @@ class Widgets {
   }
 
   static void hideLoder(BuildContext context) {
-
-    if(isLoadingShowing){
-      isLoadingShowing=false;
-      Navigator.of(context).pop();
-
+    if (isLoadingShowing) {
+      isLoadingShowing = false;
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
     }
   }
 
