@@ -257,24 +257,25 @@ class HelperUtils {
   }
 
   static Future<void> showSnackBarMessage(BuildContext? context, String message,
-      {int messageDuration = 3,
+      {int messageDuration = 2,
       MessageType? type,
       bool? isFloating,
       VoidCallback? onClose}) async {
-    if (!context!.mounted) return;
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    if (context == null || !context.mounted) return;
 
-    var snackBar = ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: (isFloating ?? false) ? SnackBarBehavior.floating : null,
-        backgroundColor: type?.value,
-        duration: Duration(seconds: messageDuration),
-      ),
+    ScaffoldMessenger.of(context).clearSnackBars();
+
+    var snackBar = SnackBar(
+      content: Text(message),
+      behavior: (isFloating ?? false) ? SnackBarBehavior.floating : null,
+      backgroundColor: type?.value,
+      duration: Duration(seconds: messageDuration),
     );
-    var snackBarClosedReason = await snackBar.closed;
-    if (SnackBarClosedReason.values.contains(snackBarClosedReason)) {
-      onClose?.call();
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+    if (onClose != null) {
+      Timer(Duration(seconds: messageDuration), onClose);
     }
   }
 

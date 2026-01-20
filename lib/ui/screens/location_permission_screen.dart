@@ -240,9 +240,15 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
                     showElevation: false,
                     buttonColor: context.color.backgroundColor,
                     border: BorderSide(color: context.color.territoryColor),
-                    textColor: context.color.territoryColor, onPressed: () {
-                  Navigator.pushNamed(context, Routes.countriesScreen,
+                    textColor: context.color.territoryColor,
+                    onPressed: () async {
+                  var result = await Navigator.pushNamed(
+                      context, Routes.countriesScreen,
                       arguments: {"from": "location"});
+                  if (result != null) {
+                    HelperUtils.killPreviousPages(
+                        context, Routes.main, {"from": "login"});
+                  }
                 },
                     radius: 8,
                     height: 46,

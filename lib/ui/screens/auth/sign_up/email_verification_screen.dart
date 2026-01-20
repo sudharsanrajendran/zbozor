@@ -6,6 +6,7 @@ import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
+import 'package:Ebozor/utils/helper_utils.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -29,50 +30,16 @@ class EmailVerificationScreen extends StatefulWidget {
 }
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
-  Timer? timer;
+  // Timer? timer;(removed as per request)
   bool isVerified = false;
 
   @override
   void initState() {
-    initFunction();
     super.initState();
-  }
-
-  void initFunction() {
-    timer = Timer.periodic(const Duration(seconds: 3), (timer) async {
-      bool? emailVerified = FirebaseAuth.instance.currentUser?.emailVerified;
-      await FirebaseAuth.instance.currentUser?.reload();
-      if (emailVerified == true) {
-        Future.delayed(
-          Duration.zero,
-          () async {
-            if (isVerified == false) {
-              isVerified = true;
-              setState(() {});
-
-              await Future.delayed(const Duration(seconds: 2));
-              // HelperUtils.killPreviousPages(
-              //     context, Routes.main, {"from": "login"});
-              /* Navigator.pushReplacementNamed(
-                context,
-                Routes.main,
-                arguments: {"from": "login"},
-              );*/
-
-              Navigator.pushReplacementNamed(context, Routes.login);
-              return;
-            }
-            // timer.cancel();
-          },
-        );
-      }
-    });
   }
 
   @override
   void dispose() {
-    timer?.cancel();
-
     super.dispose();
   }
 
@@ -133,15 +100,23 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         height: 58,
                       ),
                       MaterialButton(
-                        onPressed: () {
-                          if (!isVerified) {
-                            openEmailAppToList();
-                            /*HelperUtils.launchPathURL(
-                                isTelephone: false,
-                                isSMS: false,
-                                isMail: true,
-                                value: '',
-                                context: context);*/
+                        onPressed: () async {
+                          if (isVerified) {
+                            Navigator.pushReplacementNamed(
+                                context, Routes.login);
+                          } else {
+                            // Manual check in case timer hasn't updated yet
+                            await FirebaseAuth.instance.currentUser?.reload();
+                            if (FirebaseAuth
+                                    .instance.currentUser?.emailVerified ==
+                                true) {
+                              Navigator.pushReplacementNamed(
+                                  context, Routes.login);
+                            } else {
+                              HelperUtils.showSnackBarMessage(context,
+                                  "pleaseVerifyEmail".translate(context),
+                                  messageDuration: 1);
+                            }
                           }
                         },
                         elevation: 0,
@@ -150,13 +125,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        color: isVerified
-                            ? context.color.territoryColor
-                            : context.color.textLightColor,
-                        child: Text(isVerified
-                                ? "verified".translate(context)
-                                : "checkMail".translate(context))
-                            .color(context.color.buttonColor)
+                        color: context.color.territoryColor,
+                        child: Text("Go To Login".translate(context))
+                            .color(Colors.white)
                             .size(context.font.large),
                       ),
                     ],

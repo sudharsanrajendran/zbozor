@@ -261,7 +261,7 @@ class LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      // isOtpSent = true;
+      isOtpSent = true;
       phoneLoginPayload =
           PhoneLoginPayload(emailMobileTextController.text, countryCode!);
 
@@ -1071,12 +1071,11 @@ class LoginScreenState extends State<LoginScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
-                color: context.color.forthColor.withOpacity(0.102),
+                color: context.color.territoryColor,
                 elevation: 0,
                 height: 28,
                 minWidth: 64,
-                child: Text("skip".translate(context))
-                    .color(context.color.forthColor),
+                child: Text("skip".translate(context)).color(Colors.white),
               ),
             ),
           ),

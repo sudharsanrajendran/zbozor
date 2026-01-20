@@ -150,21 +150,14 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
   }
 
   Future<void> sendVerificationCode() async {
-    isOtpSent = true;
-
-    context
-        .read<AuthenticationCubit>()
-        .setData(payload: phoneLoginPayload, type: AuthenticationType.phone);
-    context.read<AuthenticationCubit>().verify();
-
-    setState(() {});
-
     final form = _formKey.currentState;
 
     if (form == null) return;
     form.save();
+
     //checkbox value should be 1 before Login/SignUp
     if (form.validate()) {
+      isOtpSent = true;
       _onTapContinue();
     }
   }

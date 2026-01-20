@@ -1,4 +1,3 @@
-
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
 import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
@@ -47,22 +46,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     onPressed: () {
                       Navigator.pushReplacementNamed(
                         context,
-                        Routes.main,
-                        arguments: {
-                          "from": "login",
-                          "isSkipped": true,
-                        },
+                        Routes.login,
                       );
                     },
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    color: context.color.forthColor.withOpacity(0.102),
+                    color: context.color.territoryColor,
                     elevation: 0,
                     height: 28,
                     minWidth: 64,
-                    child: Text("skip".translate(context))
-                        .color(context.color.forthColor),
+                    child: Text("login".translate(context)).color(Colors.white),
                   ),
                 ),
               ),
