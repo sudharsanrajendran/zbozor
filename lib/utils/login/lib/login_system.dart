@@ -7,6 +7,14 @@ int? forceResendingToken;
 
 abstract class LoginSystem {
   List<Function(MLoginState fn)> listeners = [];
+
+  void Function() listen(Function(MLoginState state) fn) {
+    listeners.add(fn);
+    return () {
+      listeners.remove(fn);
+    };
+  }
+
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   //This is abstract method it will be called when state of login change it means when emit method will be called it will called
@@ -97,10 +105,17 @@ class MMultiAuthentication {
   }
 
   ///This will listen changes in state
-  void listen(Function(MLoginState state) fn) {
-    systems.forEach((String key, LoginSystem value) async {
-      systems[key]?.listeners.add(fn);
+  void Function() listen(Function(MLoginState state) fn) {
+    List<void Function()> cancellations = [];
+    systems.forEach((String key, LoginSystem value) {
+      cancellations.add(systems[key]!.listen(fn));
     });
+
+    return () {
+      for (var cancel in cancellations) {
+        cancel();
+      }
+    };
   }
 
   ///This method will called for login

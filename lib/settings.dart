@@ -31,7 +31,8 @@ class AppSettings {
   static const String shareAppText = "Share this App";
 
   ///static const String hostUrl = "https://admin.Ebozor.co"; //don't add / at end but https:// is required
-  static const String hostUrl ="http://143.110.251.34";
+  static const String hostUrl = "http://143.110.251.34";
+
   ///API Setting
 
   static const int apiDataLoadLimit = 20;
@@ -72,7 +73,7 @@ it will call API in background without showing the process and when data availab
   static const int otpTimeOutSecond = 60 * 2;
 
   ///This code will show on login screen [Note: don't add  + symbol]
-  static const String defaultCountryCode = "971";
+  static const String defaultCountryCode = "91";
   static const bool disableCountrySelection = false;
 
   ///Lottie animation

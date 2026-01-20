@@ -14,8 +14,6 @@ class HomeRepository {
         if (state != null && state != "") 'state': state,
       };
 
-
-
       Map<String, dynamic> response = await Api.get(
           url: Api.getFeaturedSectionApi, queryParameters: parameters);
       List<HomeScreenSection> homeScreenDataList =
@@ -29,7 +27,6 @@ class HomeRepository {
     }
   }
 
-
   Future<DataOutput<ItemModel>> fetchHomeAllItems(
       {required int page,
       String? country,
@@ -42,19 +39,18 @@ class HomeRepository {
     try {
       Map<String, dynamic> parameters = {
         "page": page,
-        if (radius == null) ...{
-          if (city != null && city != "") 'city': city,
-          if (areaId != null && areaId != "") 'area_id': areaId,
-          if (country != null && country != "") 'country': country,
-          if (state != null && state != "") 'state': state,
-        },
-        if (radius != null && radius != "") 'radius': radius,
-        if (latitude != null && latitude != "") 'latitude': latitude,
-        if (longitude != null && longitude != "") 'longitude': longitude,
-        "sort_by": "new-to-old"
+        if (radius != null) ...{
+          'radius': radius,
+          'latitude': latitude,
+          'longitude': longitude,
+        } else ...{
+          if (city != null && city.isNotEmpty) 'city': city,
+          if (areaId != null) 'area_id': areaId,
+          if (country != null && country.isNotEmpty) 'country': country,
+          if (state != null && state.isNotEmpty) 'state': state,
+          "sort_by": "new-to-old"
+        }
       };
-
-
 
       Map<String, dynamic> response =
           await Api.get(url: Api.getItemApi, queryParameters: parameters);

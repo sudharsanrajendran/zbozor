@@ -13,7 +13,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
-import 'package:Ebozor/utils/google_geocoding_helper.dart';
 
 import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
@@ -91,51 +90,28 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
       double latitude = double.parse(Constant.defaultLatitude);
       double longitude = double.parse(Constant.defaultLongitude);
 
-      if (Platform.isIOS) {
-        var googleAddress =
-            await GoogleGeocodingHelper.getAddress(latitude, longitude);
-        if (googleAddress != null) {
-          if (Constant.isDemoModeOn) {
-            UiUtils.setDefaultLocationValue(
-                isCurrent: false, isHomeUpdate: false, context: context);
-          } else {
-            HiveUtils.setLocation(
-              area: googleAddress['area'],
-              city: googleAddress['city']!,
-              state: googleAddress['state']!,
-              country: googleAddress['country']!,
-              latitude: latitude,
-              longitude: longitude,
-            );
-          }
-          HelperUtils.killPreviousPages(
-              context, Routes.main, {"from": "login"});
-        }
-      } else {
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-          latitude,
-          longitude,
-        );
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        latitude,
+        longitude,
+      );
 
-        if (placemarks.isNotEmpty) {
-          Placemark placemark = placemarks[0];
-          if (Constant.isDemoModeOn) {
-            UiUtils.setDefaultLocationValue(
-                isCurrent: false, isHomeUpdate: false, context: context);
-          } else {
-            HiveUtils.setLocation(
-              area: placemark.subLocality,
-              city: placemark.locality!,
-              state: placemark.administrativeArea!,
-              country: placemark.country!,
-              latitude: latitude,
-              longitude: longitude,
-            );
-          }
-
-          HelperUtils.killPreviousPages(
-              context, Routes.main, {"from": "login"});
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks[0];
+        if (Constant.isDemoModeOn) {
+          UiUtils.setDefaultLocationValue(
+              isCurrent: false, isHomeUpdate: false, context: context);
+        } else {
+          HiveUtils.setLocation(
+            area: placemark.subLocality,
+            city: placemark.locality!,
+            state: placemark.administrativeArea!,
+            country: placemark.country!,
+            latitude: latitude,
+            longitude: longitude,
+          );
         }
+
+        HelperUtils.killPreviousPages(context, Routes.main, {"from": "login"});
       }
     } catch (e) {
       print("Error getting current location: $e");
@@ -180,57 +156,31 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
       print(
           "DEBUG: Raw Position Fetched: Lat:${position.latitude}, Lng:${position.longitude}");
 
-      if (Platform.isIOS) {
-        var googleAddress = await GoogleGeocodingHelper.getAddress(
-            position.latitude, position.longitude);
-        if (googleAddress != null) {
-          if (Constant.isDemoModeOn) {
-            UiUtils.setDefaultLocationValue(
-                isCurrent: false, isHomeUpdate: false, context: context);
-          } else {
-            HiveUtils.setLocation(
-              area: googleAddress['area'],
-              city: googleAddress['city']!,
-              state: googleAddress['state']!,
-              country: googleAddress['country']!,
-              latitude: position.latitude,
-              longitude: position.longitude,
-            );
-            print(
-                "DEBUG: Permission Screen Location - Lat: ${position.latitude}, Lng: ${position.longitude}");
-            print("DEBUG: Google Address: $googleAddress");
-          }
-          HelperUtils.killPreviousPages(
-              context, Routes.main, {"from": "login"});
-        }
-      } else {
-        List<Placemark> placemarks = await placemarkFromCoordinates(
-          position.latitude,
-          position.longitude,
-        );
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
-        if (placemarks.isNotEmpty) {
-          Placemark placemark = placemarks[0];
-          if (Constant.isDemoModeOn) {
-            UiUtils.setDefaultLocationValue(
-                isCurrent: false, isHomeUpdate: false, context: context);
-          } else {
-            HiveUtils.setLocation(
-              area: placemark.subLocality,
-              city: placemark.locality!,
-              state: placemark.administrativeArea!,
-              country: placemark.country!,
-              latitude: position.latitude,
-              longitude: position.longitude,
-            );
-            print(
-                "DEBUG: Permission Screen Location - Lat: ${position.latitude}, Lng: ${position.longitude}");
-            print("DEBUG: Address: ${placemark.toString()}");
-          }
-
-          HelperUtils.killPreviousPages(
-              context, Routes.main, {"from": "login"});
+      if (placemarks.isNotEmpty) {
+        Placemark placemark = placemarks[0];
+        if (Constant.isDemoModeOn) {
+          UiUtils.setDefaultLocationValue(
+              isCurrent: false, isHomeUpdate: false, context: context);
+        } else {
+          HiveUtils.setLocation(
+            area: placemark.subLocality,
+            city: placemark.locality!,
+            state: placemark.administrativeArea!,
+            country: placemark.country!,
+            latitude: position.latitude,
+            longitude: position.longitude,
+          );
+          print(
+              "DEBUG: Permission Screen Location - Lat: ${position.latitude}, Lng: ${position.longitude}");
+          print("DEBUG: Address: ${placemark.toString()}");
         }
+
+        HelperUtils.killPreviousPages(context, Routes.main, {"from": "login"});
       }
     } catch (e) {
       print("Error getting current location: $e");

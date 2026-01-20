@@ -168,6 +168,9 @@ class ItemRepository {
 
     if (filter != null) {
       parameters.addAll(filter.toMap());
+      parameters.remove('city');
+      parameters.remove('country');
+      parameters.remove('state');
 
       // If radius is present, include latitude and longitude
       // and remove location-related fields
@@ -185,10 +188,10 @@ class ItemRepository {
         parameters.remove('state');
       } else {
         // If radius is not present, include other location-related parameters
-        if (city != null && city != "") parameters['city'] = city;
+        // if (city != null && city != "") parameters['city'] = city;
         if (areaId != null) parameters['area_id'] = areaId;
-        if (country != null && country != "") parameters['country'] = country;
-        if (state != null && state != "") parameters['state'] = state;
+        // if (country != null && country != "") parameters['country'] = country;
+        // if (state != null && state != "") parameters['state'] = state;
       }
 
       if (filter.areaId == null) {

@@ -230,46 +230,50 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
       // Let's format address for text field
       if (formatedAddress != null) {
         List<String> addressParts = [];
-        if (formatedAddress!.area != null && formatedAddress!.area!.isNotEmpty)
+
+        // Use a more robust strategy to gather address parts
+        if (formatedAddress!.area != null &&
+            formatedAddress!.area!.isNotEmpty) {
           addressParts.add(formatedAddress!.area!);
-        if (formatedAddress!.city != null && formatedAddress!.city!.isNotEmpty)
+        }
+        if (formatedAddress!.city != null &&
+            formatedAddress!.city!.isNotEmpty) {
           addressParts.add(formatedAddress!.city!);
+        } else if (Platform.isAndroid && formatedAddress!.area != null) {
+          // Fallback if city missing on Android
+        }
+
         if (formatedAddress!.state != null &&
-            formatedAddress!.state!.isNotEmpty)
+            formatedAddress!.state!.isNotEmpty) {
           addressParts.add(formatedAddress!.state!);
+        }
         if (formatedAddress!.country != null &&
-            formatedAddress!.country!.isNotEmpty)
+            formatedAddress!.country!.isNotEmpty) {
           addressParts.add(formatedAddress!.country!);
+        }
 
-        // Only update text if user is NOT searching (we can track this via focus or just policy)
-        // Usually good UX: Set text on map idle/click, but don't interrupt typing.
-        // Since this function is called on tap or map idle, updating text is consistent.
-        // However, be careful with the debounce loop.
-        // If this was triggered by search, we might not want to overwrite formatted query?
-        // Actually, replacing query with standardized address is usually fine after search completes.
+        // If parts are empty, try to get raw values if possible, or leave empty
+        if (addressParts.isEmpty) {
+          // Debug
+          print("DEBUG: All address parts empty.");
+        }
 
-        // To avoid cursor jumping if user is typing and this gets called, we might check active focus or if came from search.
-        // For now, let's update it to provide feedback on "What location did I pick?".
         if (!searchController.selection.isValid ||
             searchController.text.isEmpty) {
-          // Simple check
           searchController.text = addressParts.join(", ");
         } else {
-          // If text exists, we might overwrite it unless it matches current location...
-          // Let's just overwrite it as "Confirmation" of location found.
-          // But if user is typing "New Y", we don't want to replace with "Old Location" before they finish.
-          // This method is called on CameraIdle. If user types -> search -> camera moves -> idle -> this called.
-          // So overwriting is OK as it "Corrects" the input.
+          // Force update to show current pin location
           searchController.text = addressParts.join(", ");
         }
       }
 
       print("DEBUG: Fetched Location - Lat: $latitude, Lng: $longitude");
-      print("DEBUG: Address: ${formatedAddress?.city}"); // Simplified print
+      print(
+          "DEBUG: Address: ${formatedAddress?.city}, Full: ${formatedAddress?.area}, ${formatedAddress?.state}");
 
       setState(() {});
     } catch (e) {
-      log(e.toString());
+      log("Error in getLocationFromLatitudeLongitude: $e");
       formatedAddress = null;
       setState(() {});
     }

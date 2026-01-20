@@ -109,8 +109,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
 
-  void listen(Function(MLoginState state) fn) {
-    mMultiAuthentication.listen(fn);
+  void Function() listen(Function(MLoginState state) fn) {
+    return mMultiAuthentication.listen(fn);
   }
 
   void verify() {

@@ -51,6 +51,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
   late Size size;
   CountryService countryCodeService = CountryService();
   bool isLoginButtonDisabled = true;
+  VoidCallback? _authListenerCancel;
   bool isMobileNumberField = false;
   String numberOrEmail = "";
   final _formKey = GlobalKey<FormState>();
@@ -66,7 +67,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
     getSignature();
     context.read<AuthenticationCubit>().init();
     context.read<FetchSystemSettingsCubit>().fetchSettings();
-    context.read<AuthenticationCubit>().listen((MLoginState state) {
+    _authListenerCancel =
+        context.read<AuthenticationCubit>().listen((MLoginState state) {
       if (state is MOtpSendInProgress) {
         if (mounted) Widgets.showLoader(context);
       }
@@ -74,9 +76,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
       if (state is MVerificationPending) {
         if (mounted) {
           Widgets.hideLoder(context);
-          if (Platform.isAndroid) {
-            SmsAutoFill().listenForCode();
-          }
+          SmsAutoFill().listenForCode();
           isOtpSent = true;
           setState(() {});
           if (isMobileNumberField) {
@@ -87,8 +87,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
       }
 
       if (state is MFail) {
+        Widgets.hideLoder(context);
         if (state.error == "google-cancelled") {
-          Widgets.hideLoder(context);
           return;
         }
 
@@ -145,6 +145,10 @@ class LoginScreenState extends State<SignUpMainScreen> {
 
     try {
       simCountryCode = await DeviceRegion.getSIMCountryCode();
+      if (Platform.isIOS &&
+          (simCountryCode == "us" || simCountryCode == "US")) {
+        simCountryCode = null;
+      }
     } catch (e) {}
 
     Country simCountry = countryList.firstWhere(
@@ -176,10 +180,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
   }
 
   Future<void> getSignature() async {
-    if (Platform.isAndroid) {
-      signature = await SmsAutoFill().getAppSignature;
-      await SmsAutoFill().listenForCode();
-    }
+    signature = await SmsAutoFill().getAppSignature;
+    await SmsAutoFill().listenForCode();
     setState(() {});
   }
 
@@ -326,6 +328,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
 
   @override
   void dispose() {
+    _authListenerCancel?.call();
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     SmsAutoFill().unregisterListener();
     if (timer != null) {
