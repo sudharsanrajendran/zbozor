@@ -375,7 +375,7 @@ class LoginScreenState extends State<LoginScreen> {
                           Routes.locationPermissionScreen, (route) => false);
                     }
                   } else {
-                    Navigator.pushReplacementNamed(
+                    Navigator.pushNamed(
                       context,
                       Routes.completeProfile,
                       arguments: {

@@ -114,7 +114,7 @@ class _SignupScreenState extends CloudState<SignupScreen> {
                           fit: BoxFit.none,
                           child: MaterialButton(
                             onPressed: () {
-                              Navigator.pushReplacementNamed(
+                              Navigator.pushNamed(
                                 context,
                                 Routes.main,
                                 arguments: {
@@ -274,26 +274,27 @@ class _SignupScreenState extends CloudState<SignupScreen> {
           height: 24,
         ),
         if (Constant.googleAuthentication == "1")
-        UiUtils.buildButton(context,
-            prefixWidget: Padding(
-              padding: EdgeInsetsDirectional.only(end: 10.0),
-              child: UiUtils.getSvg(AppIcons.googleIcon, width: 22, height: 22),
-            ),
-            showElevation: false,
-            buttonColor: secondaryColor_,
-            border:
-                context.watch<AppThemeCubit>().state.appTheme != AppTheme.dark
-                    ? BorderSide(
-                        color: context.color.textDefaultColor.withOpacity(0.5))
-                    : null,
-            textColor: textDarkColor, onPressed: () {
-          context.read<AuthenticationCubit>().setData(
-              payload: GoogleLoginPayload(), type: AuthenticationType.google);
-          context.read<AuthenticationCubit>().authenticate();
-        },
-            radius: 8,
-            height: 46,
-            buttonTitle: "continueWithGoogle".translate(context)),
+          UiUtils.buildButton(context,
+              prefixWidget: Padding(
+                padding: EdgeInsetsDirectional.only(end: 10.0),
+                child:
+                    UiUtils.getSvg(AppIcons.googleIcon, width: 22, height: 22),
+              ),
+              showElevation: false,
+              buttonColor: secondaryColor_,
+              border: context.watch<AppThemeCubit>().state.appTheme !=
+                      AppTheme.dark
+                  ? BorderSide(
+                      color: context.color.textDefaultColor.withOpacity(0.5))
+                  : null,
+              textColor: textDarkColor, onPressed: () {
+            context.read<AuthenticationCubit>().setData(
+                payload: GoogleLoginPayload(), type: AuthenticationType.google);
+            context.read<AuthenticationCubit>().authenticate();
+          },
+              radius: 8,
+              height: 46,
+              buttonTitle: "continueWithGoogle".translate(context)),
         if (Constant.appleAuthentication == "1" && Platform.isIOS) ...[
           const SizedBox(
             height: 12,

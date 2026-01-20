@@ -440,7 +440,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
                 listener: (context, state) {
                   if (state is AuthenticationSuccess) {
                     Widgets.hideLoder(context);
-                    Navigator.pushReplacementNamed(context, Routes.login);
+                    Navigator.pushNamed(context, Routes.login);
                   }
                   if (state is AuthenticationFail) {
                     Widgets.hideLoder(context);
@@ -575,7 +575,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
                 child: MaterialButton(
                   onPressed: () {
                     //HiveUtils.setUserIsNotNew();
-                    Navigator.pushReplacementNamed(
+                    Navigator.pushNamed(
                       context,
                       Routes.main,
                       arguments: {
