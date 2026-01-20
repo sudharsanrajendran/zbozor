@@ -216,7 +216,7 @@ class LocationWidget extends StatelessWidget {
                         softWrap: true,
                         overflow: TextOverflow.ellipsis,
                       )
-                          .color(context.color.textDefaultColor)
+                          .color(context.color.deactivateColor)
                           .size(context.font.small)
                           .bold(weight: FontWeight.w600),
                     ],

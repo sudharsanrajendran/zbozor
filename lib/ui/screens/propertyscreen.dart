@@ -503,10 +503,12 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
           ),
           child: const LocationWidget(),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Text(
           "Select the cities neighbourhoods or building that you want to search property in .",
-          style: TextStyle(fontSize: 12, color: context.color.textLightColor),
+          style: TextStyle(
+              fontSize: 12,
+              color: context.color.textDefaultColor.withOpacity(0.5)),
         ),
       ],
     );
@@ -1395,7 +1397,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                 ],
               ),
               // Slider
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
 
               RangeSlider(
                 values: RangeValues(
