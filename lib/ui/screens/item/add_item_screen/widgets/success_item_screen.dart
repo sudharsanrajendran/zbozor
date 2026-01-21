@@ -147,7 +147,7 @@ class _SuccessItemScreenState extends State<SuccessItemScreen>
                           position: _slideAnimation,
                           child: Column(
                             children: [
-                              SizedBox(height: 50),
+                              SizedBox(height: 20),
                               if (!widget.isEdit)
                                 Text(
                                   'congratulations'.translate(context),
@@ -155,14 +155,14 @@ class _SuccessItemScreenState extends State<SuccessItemScreen>
                                     .size(context.font.extraLarge)
                                     .color(context.color.territoryColor)
                                     .bold(weight: FontWeight.w600),
-                              SizedBox(height: 18),
+                              SizedBox(height: 10),
                               Text(widget.isEdit
                                       ? 'updatedSuccess'.translate(context)
                                       : 'submittedSuccess'.translate(context))
                                   .centerAlign()
                                   .size(context.font.larger)
                                   .color(context.color.textDefaultColor),
-                              SizedBox(height: 60),
+                              SizedBox(height: 30),
                               InkWell(
                                 onTap: () {
                                   _navigateToAdDetailsScreen();

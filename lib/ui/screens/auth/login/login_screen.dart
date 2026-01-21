@@ -1122,7 +1122,7 @@ class LoginScreenState extends State<LoginScreen> {
             ),
           ),
           const SizedBox(
-            height: 66,
+            height: 15,
           ),
           Text("signInWithEmail".translate(context))
               .size(context.font.extraLarge),
@@ -1144,7 +1144,7 @@ class LoginScreenState extends State<LoginScreen> {
             ],
           ),
           const SizedBox(
-            height: 24,
+            height: 12,
           ),
           CustomTextFormField(
             hintText: "${"password".translate(context)}*",

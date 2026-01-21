@@ -195,10 +195,24 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
               latLng?.longitude ?? _cameraPosition!.target.longitude))
           .first;
 
+      String? newCity = (placeMark.subAdministrativeArea != null &&
+              placeMark.subAdministrativeArea!.isNotEmpty)
+          ? placeMark.subAdministrativeArea
+          : placeMark.locality;
+
+      String? newArea =
+          (placeMark.subLocality != null && placeMark.subLocality!.isNotEmpty)
+              ? placeMark.subLocality
+              : ((placeMark.locality != null &&
+                      placeMark.locality!.isNotEmpty &&
+                      placeMark.locality != newCity)
+                  ? placeMark.locality
+                  : null);
+
       formatedAddress = AddressComponent(
-          area: placeMark.subLocality,
+          area: newArea,
           areaId: null,
-          city: placeMark.locality,
+          city: newCity,
           country: placeMark.country,
           state: placeMark.administrativeArea);
 

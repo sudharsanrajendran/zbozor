@@ -61,7 +61,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
               const SizedBox(
-                height: 66,
+                height: 20,
               ),
               Text("forgotPassword".translate(context))
                   .size(context.font.extraLarge),
@@ -85,7 +85,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   hintText: "emailAddress".translate(context),
                   validator: CustomTextFieldValidator.email),
               const SizedBox(
-                height: 25,
+                height: 15,
               ),
               UiUtils.buildButton(
                 context,

@@ -44,7 +44,7 @@ import 'package:Ebozor/ui/screens/home/widgets/category_widget_home.dart';
 import 'package:Ebozor/ui/screens/home/widgets/home_search.dart';
 import 'package:Ebozor/ui/screens/home/widgets/home_sections_adapter.dart';
 import 'package:Ebozor/ui/screens/home/widgets/home_shimmers.dart';
-import 'package:Ebozor/ui/screens/home/widgets/location_widget.dart';
+
 import 'package:Ebozor/ui/screens/home/slider_widget.dart';
 import 'package:Ebozor/ui/screens/home/widgets/verification_banner.dart';
 
