@@ -25,6 +25,7 @@ import 'package:flutter/services.dart';
 import 'package:Ebozor/utils/login/lib/payloads.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:pinput/pinput.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 class SignUpMainScreen extends StatefulWidget {
@@ -46,6 +47,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
   String? otp;
   bool isOtpSent = false;
   bool hasErrorOccurred = false;
+  final TextEditingController _pinPutController = TextEditingController();
   String signature = "";
 
   Timer? timer;
@@ -207,7 +209,11 @@ class LoginScreenState extends State<SignUpMainScreen> {
     if (isOtpSent == true) {
       setState(() {
         isOtpSent = false;
-        otp = "";
+        setState(() {
+          isOtpSent = false;
+          otp = "";
+          _pinPutController.clear();
+        });
       });
     } else {
       return Future.value(true);
@@ -217,22 +223,39 @@ class LoginScreenState extends State<SignUpMainScreen> {
 
   Widget otpInput() {
     return Center(
-        child: PinFieldAutoFill(
-            decoration: UnderlineDecoration(
-              textStyle:
-                  TextStyle(fontSize: 20, color: context.color.textColorDark),
-              colorBuilder: FixedColorBuilder(context.color.territoryColor),
+      child: Pinput(
+        length: 6,
+        controller: _pinPutController,
+        onChanged: (String? code) {
+          otp = code;
+        },
+        onCompleted: (String code) {
+          otp = code;
+        },
+        defaultPinTheme: PinTheme(
+          width: 50,
+          height: 50,
+          textStyle: TextStyle(
+            fontSize: 20,
+            color: context.color.textColorDark,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: context.color.territoryColor,
+                width: 2.0,
+              ),
             ),
-            currentCode: otp,
-            codeLength: 6,
-            autoFocus: true,
-            keyboardType: TextInputType.number,
-            onCodeChanged: (String? code) {
-              otp = code;
-            },
-            onCodeSubmitted: (String code) {
-              otp = code;
-            }));
+          ),
+        ),
+        // androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
+        // listenForMultipleSmsOnAndroid: true,
+        showCursor: true,
+        hapticFeedbackType: HapticFeedbackType.lightImpact,
+        // listenForMultipleSmsOnAndroid: true,
+      ),
+    );
   }
 
   Widget verifyOTPWidget() {
@@ -282,6 +305,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
                   onTap: () {
                     setState(() {
                       isOtpSent = false;
+                      otp = "";
+                      _pinPutController.clear();
                     });
                   }),
             ],
@@ -354,6 +379,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
     }
 
     emailMobileTextController.dispose();
+    _pinPutController.dispose();
 
     super.dispose();
   }
@@ -450,7 +476,9 @@ class LoginScreenState extends State<SignUpMainScreen> {
               setState(() {
                 isOtpSent = false;
                 isMobileNumberField = true;
+                isMobileNumberField = true;
                 otp = "";
+                _pinPutController.clear();
               });
               return;
             }

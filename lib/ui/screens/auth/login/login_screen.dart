@@ -29,7 +29,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:Ebozor/ui/screens/widgets/otp_field_widget.dart';
+import 'package:pinput/pinput.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -55,6 +55,7 @@ class LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailMobileTextController = TextEditingController(
       text: Constant.isDemoModeOn ? Constant.demoMobileNumber : "");
   bool isOtpSent = false;
+  final TextEditingController _pinPutController = TextEditingController();
   bool hasErrorOccurred = false;
   String? phone, otp, countryCode, countryName, flagEmoji;
   Country? simCountry;
@@ -235,6 +236,7 @@ class LoginScreenState extends State<LoginScreen> {
 
     _passwordController.dispose();
     emailMobileTextController.dispose();
+    _pinPutController.dispose();
 
     super.dispose();
   }
@@ -355,6 +357,7 @@ class LoginScreenState extends State<LoginScreen> {
               if (isOtpSent) {
                 setState(() {
                   isOtpSent = false;
+                  _pinPutController.clear();
                   isMobileNumberField = true;
                 });
               } else if (sendMailClicked) {
@@ -907,6 +910,7 @@ class LoginScreenState extends State<LoginScreen> {
         setState(() {
           isOtpSent = false;
           otp = "";
+          _pinPutController.clear();
         });
       } else {
         return Future.value(true);
@@ -916,15 +920,40 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Widget otpInput() {
-    return CustomOtpField(
-        currentCode: otp,
-        onCodeChanged: (String? code) {
+    return Center(
+      child: Pinput(
+        length: 6,
+        controller: _pinPutController,
+        onChanged: (String? code) {
           otp = code;
         },
-        onCodeSubmitted: (String code) {
+        onCompleted: (String code) {
           otp = code;
-          // Optionally submit here
-        });
+        },
+        defaultPinTheme: PinTheme(
+          width: 50,
+          height: 50,
+          textStyle: TextStyle(
+            fontSize: 20,
+            color: context.color.textColorDark,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: context.color.territoryColor,
+                width: 2.0,
+              ),
+            ),
+          ),
+        ),
+        // androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
+        // listenForMultipleSmsOnAndroid: true,
+        showCursor: true,
+        hapticFeedbackType: HapticFeedbackType.lightImpact,
+        // listenForMultipleSmsOnAndroid: true,
+      ),
+    );
   }
 
   Widget verifyOTPWidget() {
@@ -981,7 +1010,13 @@ class LoginScreenState extends State<LoginScreen> {
                       .underline()
                       .color(context.color.territoryColor)
                       .size(context.font.large),
-                  onTap: () => Navigator.pushNamed(context, Routes.login)),
+                  onTap: () {
+                    setState(() {
+                      isOtpSent = false;
+                      otp = "";
+                      _pinPutController.clear();
+                    });
+                  }),
             ],
           ),
           const SizedBox(
