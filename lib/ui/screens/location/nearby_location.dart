@@ -203,10 +203,16 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
               latLng?.longitude ?? _cameraPosition!.target.longitude))
           .first;
 
+      // USER REQUEST: Use subAdministrativeArea as City if available
+      String? city = placeMark.subAdministrativeArea;
+      if (city == null || city.isEmpty) {
+        city = placeMark.locality;
+      }
+
       formatedAddress = AddressComponent(
           area: placeMark.subLocality,
           areaId: null,
-          city: placeMark.locality,
+          city: city,
           country: placeMark.country,
           state: placeMark.administrativeArea);
 

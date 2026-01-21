@@ -786,24 +786,32 @@ class _ChatScreenState extends State<ChatScreen>
 
                                             //////////////////////////////////////////
                                             ChatMessageHandler.addchat(
-                                                ChatMessage(
-                                              key: ValueKey(DateTime.now()
-                                                  .millisecondsSinceEpoch),
-                                              message: text,
-                                              senderId: int.tryParse(
-                                                      HiveUtils.getUserId() ??
-                                                          "0") ??
-                                                  0,
-                                              createdAt:
-                                                  DateTime.now().toString(),
-                                              updatedAt:
-                                                  DateTime.now().toString(),
-                                              isSentNow: true,
-                                              audio: "",
-                                              file:
-                                                  messageAttachment?.path ?? "",
-                                              itemOfferId: widget.itemOfferId,
-                                            ));
+                                              BlocProvider(
+                                                create: (context) =>
+                                                    SendMessageCubit(),
+                                                child: ChatMessage(
+                                                  key: ValueKey(DateTime.now()
+                                                      .millisecondsSinceEpoch),
+                                                  message: text,
+                                                  senderId: int.tryParse(
+                                                          HiveUtils
+                                                                  .getUserId() ??
+                                                              "0") ??
+                                                      0,
+                                                  createdAt:
+                                                      DateTime.now().toString(),
+                                                  updatedAt:
+                                                      DateTime.now().toString(),
+                                                  isSentNow: true,
+                                                  audio: "",
+                                                  file:
+                                                      messageAttachment?.path ??
+                                                          "",
+                                                  itemOfferId:
+                                                      widget.itemOfferId,
+                                                ),
+                                              ),
+                                            );
                                             _socketService.sendMessage(
                                                 widget.itemOfferId, text);
                                             controller.clear();

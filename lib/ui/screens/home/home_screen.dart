@@ -19,8 +19,6 @@ import 'package:Ebozor/data/model/home/home_screen_section.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
-import 'package:Ebozor/utils/notification/awsomeNotification.dart';
-import 'package:Ebozor/utils/notification/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -121,10 +119,10 @@ class HomeScreenState extends State<HomeScreen>
     initializeSettings();
     addPageScrollListener();
     notificationPermissionChecker();
-    LocalAwsomeNotification().init(context);
+    // LocalAwsomeNotification().init(context); // Removed redundant init call
     ///////////////////////////////////////
 
-    NotificationService.init(context);
+    // NotificationService.init(context); // Removed redundant init call
     context.read<SliderCubit>().fetchSlider(context);
     context.read<FetchCategoryCubit>().fetchCategories();
     _refreshData();

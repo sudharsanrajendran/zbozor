@@ -97,13 +97,30 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
 
       if (placemarks.isNotEmpty) {
         Placemark placemark = placemarks[0];
+
+        print("//////////////////// print before store ");
+
+        print('Area      : ${placemark.subLocality}');
+        print('City      : ${placemark.locality}');
+        print('State     : ${placemark.administrativeArea}');
+        print('Country   : ${placemark.country}');
+        print('Latitude  : $latitude');
+        print('Longitude : $longitude');
+        print("//////////////////// print before store");
+
         if (Constant.isDemoModeOn) {
           UiUtils.setDefaultLocationValue(
               isCurrent: false, isHomeUpdate: false, context: context);
         } else {
+          // USER REQUEST: Use subAdministrativeArea as City if available
+          String? city = placemark.subAdministrativeArea;
+          if (city == null || city.isEmpty) {
+            city = placemark.locality;
+          }
+
           HiveUtils.setLocation(
             area: placemark.subLocality,
-            city: placemark.locality!,
+            city: city,
             state: placemark.administrativeArea!,
             country: placemark.country!,
             latitude: latitude,
@@ -163,13 +180,34 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen>
 
       if (placemarks.isNotEmpty) {
         Placemark placemark = placemarks[0];
+
+        print(
+            "//////////////////// print before store (getCurrentLocationAndNavigate) ");
+        print('position${position}');
+        print('placemark${placemark}');
+
+        print('Area      : ${placemark.subLocality}');
+        print('City      : ${placemark.locality}');
+        print('State     : ${placemark.administrativeArea}');
+        print('Country   : ${placemark.country}');
+        print('Latitude  : ${position.latitude}');
+        print('Longitude : ${position.longitude}');
+        print(
+            "//////////////////// print before store (getCurrentLocationAndNavigate)");
+
         if (Constant.isDemoModeOn) {
           UiUtils.setDefaultLocationValue(
               isCurrent: false, isHomeUpdate: false, context: context);
         } else {
+          // USER REQUEST: Use subAdministrativeArea as City if available
+          String? city = placemark.subAdministrativeArea;
+          if (city == null || city.isEmpty) {
+            city = placemark.locality;
+          }
+
           HiveUtils.setLocation(
             area: placemark.subLocality,
-            city: placemark.locality!,
+            city: city,
             state: placemark.administrativeArea!,
             country: placemark.country!,
             latitude: position.latitude,

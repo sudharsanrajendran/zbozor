@@ -187,7 +187,11 @@ class NotificationService {
     }
   }
 
+  static bool _isInitialized = false;
+
   static void init(context) {
+    if (_isInitialized) return; // Prevent multiple initializations
+    _isInitialized = true;
     localNotification.init(context);
     registerListeners(context);
   }
