@@ -138,7 +138,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
             }
           } else {
             if (mounted) {
-              HelperUtils.showSnackBarMessage(context, "Entered otp is invalid",
+              HelperUtils.showSnackBarMessage(
+                  context, "Something went wrong: ${state.error.toString()}",
                   type: MessageType.error);
             }
           }
@@ -353,6 +354,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
                   context, "Please enter the 6 digits.");
               return;
             }
+            phoneLoginPayload.setOTP(otp!.trim());
             context.read<AuthenticationCubit>().setData(
                 payload: phoneLoginPayload, type: AuthenticationType.phone);
             context.read<AuthenticationCubit>().authenticate();
@@ -495,7 +497,18 @@ class LoginScreenState extends State<SignUpMainScreen> {
                 listener: (context, state) {
                   if (state is AuthenticationSuccess) {
                     Widgets.hideLoder(context);
-                    Navigator.pushNamed(context, Routes.login);
+                    if (state.credential.additionalUserInfo?.isNewUser ==
+                        false) {
+                      HelperUtils.showSnackBarMessage(context,
+                          "This number is already registered. Redirecting to login...",
+                          type: MessageType.warning);
+                      FirebaseAuth.instance.signOut();
+                      Future.delayed(const Duration(seconds: 1), () {
+                        Navigator.pushReplacementNamed(context, Routes.login);
+                      });
+                    } else {
+                      Navigator.pushNamed(context, Routes.login);
+                    }
                   }
                   if (state is AuthenticationFail) {
                     Widgets.hideLoder(context);
