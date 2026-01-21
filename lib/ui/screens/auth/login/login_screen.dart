@@ -115,7 +115,7 @@ class LoginScreenState extends State<LoginScreen> {
 
       if (state is MFail) {
         hasErrorOccurred = true;
-        Widgets.hideLoder(context);
+        if (mounted) Widgets.hideLoder(context);
         if (state.error == "google-cancelled") {
           return;
         }
@@ -429,7 +429,7 @@ class LoginScreenState extends State<LoginScreen> {
               child: BlocConsumer<AuthenticationCubit, AuthenticationState>(
                 listener: (context, state) {
                   if (state is AuthenticationSuccess) {
-                    Widgets.hideLoder(context);
+                    if (mounted) Widgets.hideLoder(context);
 
                     if (state.type == AuthenticationType.email) {
                       //FirebaseAuth.instance.currentUser?.sendEmailVerification();
@@ -476,7 +476,7 @@ class LoginScreenState extends State<LoginScreen> {
                   }
 
                   if (state is AuthenticationFail) {
-                    Widgets.hideLoder(context);
+                    if (mounted) Widgets.hideLoder(context);
 
                     // 🔴 EXACT LOGIN ERROR PRINT HERE
                     debugPrint('========== LOGIN ERROR ==========');
@@ -495,7 +495,7 @@ class LoginScreenState extends State<LoginScreen> {
                   }
 
                   if (state is AuthenticationInProcess) {
-                    Widgets.showLoader(context);
+                    if (mounted) Widgets.showLoader(context);
                   }
                 },
                 builder: (context, state) {
