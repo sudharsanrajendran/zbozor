@@ -587,7 +587,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Similar Ads")
+          Text("similarAds".translate(context))
               .size(context.font.large)
               .bold(weight: FontWeight.w600)
               .setMaxLines(lines: 1),
@@ -991,7 +991,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
     return Padding(
       padding: const EdgeInsets.only(top: 7.0),
       child: Stack(
-        alignment: Alignment.topLeft,
+        alignment: AlignmentDirectional.topStart,
         children: [
           if (model.isActive!)
             Padding(

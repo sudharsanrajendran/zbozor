@@ -154,13 +154,14 @@ class LoginScreenState extends State<LoginScreen> {
             } else {
               if (mounted) {
                 HelperUtils.showSnackBarMessage(
-                    context, "Verify Failed: ${e.message}",
+                    context, "loginFailed".translate(context),
                     type: MessageType.error);
               }
             }
           } else {
             if (mounted) {
-              HelperUtils.showSnackBarMessage(context, "Entered otp is invalid",
+              HelperUtils.showSnackBarMessage(
+                  context, "loginFailed".translate(context),
                   type: MessageType.error);
             }
           }

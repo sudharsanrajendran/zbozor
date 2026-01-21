@@ -1070,7 +1070,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
               // 2. View All Button (Below the list, Blue color)
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: InkWell(
                   onTap: () async {
                     final result = await Navigator.push(

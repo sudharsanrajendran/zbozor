@@ -135,14 +135,14 @@ class LoginScreenState extends State<SignUpMainScreen> {
             } else {
               if (mounted) {
                 HelperUtils.showSnackBarMessage(
-                    context, "Verify Failed: ${e.message}",
+                    context, "loginFailed".translate(context),
                     type: MessageType.error);
               }
             }
           } else {
             if (mounted) {
               HelperUtils.showSnackBarMessage(
-                  context, "Something went wrong: ${state.error.toString()}",
+                  context, "loginFailed".translate(context),
                   type: MessageType.error);
             }
           }

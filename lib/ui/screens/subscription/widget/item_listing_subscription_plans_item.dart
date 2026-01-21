@@ -21,7 +21,6 @@ import 'package:Ebozor/utils/payment/gatways/payment_webview.dart';
 import 'package:Ebozor/utils/payment/gatways/stripe_service.dart';
 import 'package:Ebozor/data/helper/widgets.dart';
 
-
 class ItemListingSubscriptionPlansItem extends StatefulWidget {
   final int itemIndex, index;
   final SubscriptionPackageModel model;
@@ -110,7 +109,7 @@ class _ItemListingSubscriptionPlansItemState
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => PaymentWebView(
                       authorizationUrl:
-                      state.paymentIntent["payment_gateway_response"],
+                          state.paymentIntent["payment_gateway_response"],
                       onSuccess: (reference) {
                         HelperUtils.showSnackBarMessage(context,
                             "paymentSuccessfullyCompleted".translate(context));
@@ -378,7 +377,7 @@ class _ItemListingSubscriptionPlansItemState
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   widget.model.description!,
                   textAlign: TextAlign.start,
@@ -420,7 +419,7 @@ class _ItemListingSubscriptionPlansItemState
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Text(
                   widget.model.description!,
                   textAlign: TextAlign.start,

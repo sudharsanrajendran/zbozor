@@ -19,7 +19,6 @@ import 'package:Ebozor/utils/payment/gatways/stripe_service.dart';
 import 'package:Ebozor/data/helper/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class FeaturedAdsSubscriptionPlansItem extends StatefulWidget {
   final List<SubscriptionPackageModel> modelList;
   final InAppPurchaseManager inAppPurchaseManager;
@@ -290,7 +289,7 @@ class _FeaturedAdsSubscriptionPlansItemState
     return Padding(
       padding: const EdgeInsets.only(top: 7.0),
       child: Stack(
-        alignment: Alignment.topLeft,
+        alignment: AlignmentDirectional.topStart,
         children: [
           if (widget.modelList[index].isActive!)
             Padding(

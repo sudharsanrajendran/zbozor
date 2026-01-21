@@ -305,7 +305,7 @@ class _SellerVerificationScreenState
             // Second part (overlaying progress indicator for the remaining 50%)
             Positioned.fill(
               child: Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: FractionallySizedBox(
                   widthFactor: fillValue,
                   // This limits the width of the second indicator to 50%
