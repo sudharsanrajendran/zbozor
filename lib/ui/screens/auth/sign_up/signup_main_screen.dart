@@ -19,6 +19,8 @@ import 'package:Ebozor/utils/login/lib/login_status.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
 import 'package:Ebozor/data/cubits/auth/authentication_cubit.dart';
 import 'package:Ebozor/data/cubits/auth/login_cubit.dart';
+import 'package:Ebozor/data/cubits/system/user_details.dart';
+import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -494,42 +496,91 @@ class LoginScreenState extends State<SignUpMainScreen> {
             backgroundColor: context.color.backgroundColor,
             bottomNavigationBar: _buildStaticFooter(),
             body: Builder(builder: (context) {
-              return BlocListener<AuthenticationCubit, AuthenticationState>(
+              return BlocListener<LoginCubit, LoginState>(
                 listener: (context, state) {
-                  if (state is AuthenticationSuccess) {
-                    if (mounted) Widgets.hideLoder(context);
-                    if (state.credential.additionalUserInfo?.isNewUser ==
-                        false) {
-                      FirebaseAuth.instance.signOut();
-                      Future.delayed(const Duration(seconds: 1), () {
-                        Navigator.pushReplacementNamed(context, Routes.login);
-                      });
+                  if (state is LoginSuccess) {
+                    HiveUtils.setUserIsAuthenticated(true);
+                    context
+                        .read<UserDetailsCubit>()
+                        .fill(HiveUtils.getUserDetails());
+
+                    if (state.isProfileCompleted) {
+                      if (HiveUtils.getCityName() != null &&
+                          HiveUtils.getCityName() != "") {
+                        HelperUtils.killPreviousPages(
+                            context, Routes.main, {"from": "login"});
+                      } else {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            Routes.locationPermissionScreen, (route) => false);
+                      }
                     } else {
-                      Navigator.pushNamed(context, Routes.login);
+                      Navigator.pushNamed(
+                        context,
+                        Routes.completeProfile,
+                        arguments: {
+                          "from": "login",
+                          "popToCurrent": false,
+                          "type": isMobileNumberField
+                              ? AuthenticationType.phone
+                              : AuthenticationType.email,
+                          "extraData": {
+                            "email": state.credential.user?.email ??
+                                state.apiResponse['email'],
+                            "username": state.apiResponse['name'],
+                            "mobile": state.apiResponse['mobile'],
+                            "countryCode": countryCode
+                          }
+                        },
+                      );
                     }
                   }
-                  if (state is AuthenticationFail) {
-                    if (mounted) Widgets.hideLoder(context);
-                    /*HelperUtils.showSnackBarMessage(context, "Signup Failed",
-                        type: MessageType.error);*/
-                  }
-                  if (state is AuthenticationInProcess) {
-                    if (mounted) Widgets.showLoader(context);
+                  if (state is LoginFailure) {
+                    // Logic to handle if login fails (likely new user needing registration)
+                    Navigator.pushNamed(context, Routes.signup, arguments: {
+                      "emailId":
+                          emailMobileTextController.text.toString().trim()
+                    });
                   }
                 },
-                child: Form(
-                  key: _formKey,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 500),
-                    switchInCurve: Curves.easeInOut,
-                    switchOutCurve: Curves.easeInOut,
-                    child: isOtpSent
-                        ? KeyedSubtree(
-                            key: const ValueKey("otp"),
-                            child: verifyOTPWidget())
-                        : KeyedSubtree(
-                            key: const ValueKey("signup"),
-                            child: buildLoginWidget()),
+                child: BlocListener<AuthenticationCubit, AuthenticationState>(
+                  listener: (context, state) {
+                    if (state is AuthenticationSuccess) {
+                      if (mounted) Widgets.hideLoder(context);
+                      // Trigger Login instead of redirecting
+                      context.read<LoginCubit>().login(
+                            phoneNumber: (state.payload as PhoneLoginPayload)
+                                .phoneNumber,
+                            firebaseUserId: state.credential.user!.uid,
+                            type: state.type.name,
+                            credential: state.credential,
+                            countryCode:
+                                "+${(state.payload as PhoneLoginPayload).countryCode}",
+                            name: null,
+                          );
+                    }
+                    if (state is AuthenticationFail) {
+                      if (mounted) Widgets.hideLoder(context);
+                      /*HelperUtils.showSnackBarMessage(context, "Signup Failed",
+                        type: MessageType.error);*/
+                    }
+                    if (state is AuthenticationInProcess) {
+                      if (mounted) Widgets.showLoader(context);
+                    }
+                  },
+                  child: Form(
+                    key: _formKey,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      switchInCurve: Curves.easeInOut,
+                      switchOutCurve: Curves.easeInOut,
+                      child: isOtpSent
+                          ? KeyedSubtree(
+                              key: const ValueKey("otp"),
+                              child: verifyOTPWidget())
+                          : KeyedSubtree(
+                              key: const ValueKey("signup"),
+                              child: buildLoginWidget()),
+                    ),
                   ),
                 ),
               );
