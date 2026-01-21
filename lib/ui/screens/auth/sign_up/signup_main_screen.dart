@@ -94,7 +94,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
 
       if (state is MFail) {
         hasErrorOccurred = true;
-        Widgets.hideLoder(context);
+        if (mounted) Widgets.hideLoder(context);
         if (state.error == "google-cancelled") {
           return;
         }
@@ -293,7 +293,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
           ),
           Row(
             children: [
-              Text("+${phoneLoginPayload.countryCode}\t${phoneLoginPayload.phoneNumber}")
+              Text("+${phoneLoginPayload.countryCode} ${phoneLoginPayload.phoneNumber}")
                   .size(context.font.large),
               const SizedBox(
                 width: 5,
@@ -374,7 +374,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
   @override
   void dispose() {
     _authListenerCancel?.call();
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    // ScaffoldMessenger.of(context).removeCurrentSnackBar(); // Unsafe in dispose
     SmsAutoFill().unregisterListener();
     if (timer != null) {
       timer!.cancel();
@@ -496,12 +496,9 @@ class LoginScreenState extends State<SignUpMainScreen> {
               return BlocListener<AuthenticationCubit, AuthenticationState>(
                 listener: (context, state) {
                   if (state is AuthenticationSuccess) {
-                    Widgets.hideLoder(context);
+                    if (mounted) Widgets.hideLoder(context);
                     if (state.credential.additionalUserInfo?.isNewUser ==
                         false) {
-                      HelperUtils.showSnackBarMessage(context,
-                          "This number is already registered. Redirecting to login...",
-                          type: MessageType.warning);
                       FirebaseAuth.instance.signOut();
                       Future.delayed(const Duration(seconds: 1), () {
                         Navigator.pushReplacementNamed(context, Routes.login);
@@ -511,12 +508,12 @@ class LoginScreenState extends State<SignUpMainScreen> {
                     }
                   }
                   if (state is AuthenticationFail) {
-                    Widgets.hideLoder(context);
+                    if (mounted) Widgets.hideLoder(context);
                     /*HelperUtils.showSnackBarMessage(context, "Signup Failed",
                         type: MessageType.error);*/
                   }
                   if (state is AuthenticationInProcess) {
-                    Widgets.showLoader(context);
+                    if (mounted) Widgets.showLoader(context);
                   }
                 },
                 child: Form(
