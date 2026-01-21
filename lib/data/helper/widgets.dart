@@ -4,16 +4,18 @@ import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:Ebozor/utils/constant.dart';
+
 class Widgets {
   static bool isLoadingShowing = false;
   static void showLoader(BuildContext context) async {
-    if (!context.mounted) return;
+    // if (!context.mounted) return;
     if (isLoadingShowing) {
       return;
     }
     isLoadingShowing = true;
     showDialog(
-        context: context,
+        context: Constant.navigatorKey.currentContext ?? context,
         barrierDismissible: false,
         useSafeArea: true,
         builder: (BuildContext context) {
@@ -46,9 +48,7 @@ class Widgets {
   static void hideLoder(BuildContext context) {
     if (isLoadingShowing) {
       isLoadingShowing = false;
-      if (context.mounted) {
-        Navigator.of(context).pop();
-      }
+      Navigator.of(Constant.navigatorKey.currentContext ?? context).pop();
     }
   }
 

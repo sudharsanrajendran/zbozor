@@ -61,7 +61,10 @@ class PhoneLogin extends LoginSystem {
             forceResendingToken = resendToken;
             this.verificationId = verificationId;
           },
-          codeAutoRetrievalTimeout: (String verificationId) {},
+          codeAutoRetrievalTimeout: (String verificationId) {
+            this.verificationId = verificationId;
+            super.requestVerification();
+          },
           forceResendingToken: forceResendingToken,
         )
         .then((value) {});

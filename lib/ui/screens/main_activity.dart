@@ -12,6 +12,8 @@ import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
+import 'package:Ebozor/data/cubits/chat/get_buyer_chat_users_cubit.dart';
+import 'package:Ebozor/data/cubits/chat/get_seller_chat_users_cubit.dart';
 import 'package:Ebozor/utils/svg/svg_edit.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -411,6 +413,9 @@ class MainActivityState extends State<MainActivity>
       if (SearchScreenState.searchController.hasListeners) {
         SearchScreenState.searchController.text = "";
       }
+    } else {
+      context.read<GetBuyerChatListCubit>().fetch();
+      context.read<GetSellerChatListCubit>().fetch();
     }
     searchbody = {};
     if (index == 1 || index == 2) {

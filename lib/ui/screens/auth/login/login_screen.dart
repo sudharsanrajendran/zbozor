@@ -23,6 +23,7 @@ import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/utils/cloudState/cloud_state.dart';
 import 'package:Ebozor/utils/login/lib/login_status.dart';
+import 'package:Ebozor/utils/login/lib/login_system.dart';
 import 'package:Ebozor/utils/login/lib/payloads.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -226,9 +227,14 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     _authListenerCancel?.call();
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    // ScaffoldMessenger.of(context).removeCurrentSnackBar(); // Removed unsafe call
     SmsAutoFill().unregisterListener();
     if (timer != null) {
       timer!.cancel();
@@ -242,6 +248,7 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _onTapContinue() async {
+    forceResendingToken = null;
     if (emailMobileTextController.text.trim().isEmpty) {
       HelperUtils.showSnackBarMessage(
           context, "pleaseEnterEmailOrPhoneNumber".translate(context),

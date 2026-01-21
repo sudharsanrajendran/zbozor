@@ -112,15 +112,15 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
   void addNewChat(ChatedUser user) {
     //this will create new chat in chat list if there is no already
     if (state is GetSellerChatListSuccess) {
-      List<ChatedUser> chatedUserList =
-          (state as GetSellerChatListSuccess).chatedUserList;
+      final currentState = state as GetSellerChatListSuccess;
+      List<ChatedUser> chatedUserList = List.from(currentState.chatedUserList);
       bool contains = chatedUserList.any(
         (element) => element.sellerId == user.sellerId,
       );
       if (contains == false) {
         chatedUserList.insert(0, user);
-        emit((state as GetSellerChatListSuccess)
-            .copyWith(chatedUserList: chatedUserList));
+        emit(currentState.copyWith(
+            chatedUserList: chatedUserList, total: currentState.total + 1));
       }
     }
   }
