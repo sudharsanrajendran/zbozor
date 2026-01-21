@@ -1,0 +1,32 @@
+{
+  "name": "phone_number",
+  "version": "2.0.1",
+  "summary": "Flutter plugin for phone number validation",
+  "description": "Flutter plugin for phone number validation",
+  "homepage": "http://example.com",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "Your Company": "email@example.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "dependencies": {
+    "Flutter": [],
+    "PhoneNumberKit/PhoneNumberKitCore": [
+      "3.6.6"
+    ]
+  },
+  "platforms": {
+    "ios": "9.0"
+  },
+  "pod_target_xcconfig": {
+    "DEFINES_MODULE": "YES",
+    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "i386"
+  },
+  "swift_versions": "5.0",
+  "swift_version": "5.0"
+}

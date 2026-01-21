@@ -1,6 +1,9 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:Ebozor/data/cubits/category/fetch_sub_categories_cubit.dart';
 import 'package:Ebozor/data/cubits/item/fetch_item_from_category_cubit.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:Ebozor/data/cubits/category/fetch_category_cubit.dart';
+import 'package:Ebozor/data/cubits/system/fetch_system_settings_cubit.dart';
+import 'dart:ui';
 import 'package:Ebozor/data/cubits/auth/authentication_cubit.dart';
 import 'package:Ebozor/data/repositories/category_repository.dart';
 import 'package:Ebozor/data/repositories/item/item_repository.dart';
@@ -80,7 +83,9 @@ class MockMultiAuthentication extends MMultiAuthentication {
   void init() {}
 
   @override
-  void listen(Function(MLoginState state) fn) {}
+  VoidCallback listen(Function(MLoginState state) fn) {
+    return () {};
+  }
 }
 
 // --- TESTS ---

@@ -21,7 +21,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:Ebozor/utils/helper_utils.dart';
-import 'package:Ebozor/utils/google_geocoding_helper.dart';
+
 import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
 import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
 import 'package:Ebozor/ui/screens/item/add_item_screen/confirm_location_screen.dart';
@@ -198,31 +198,17 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
 
   Future<void> getLocationFromLatitudeLongitude({LatLng? latLng}) async {
     try {
-      if (Platform.isIOS) {
-        var googleAddress = await GoogleGeocodingHelper.getAddress(
-            latLng?.latitude ?? _cameraPosition!.target.latitude,
-            latLng?.longitude ?? _cameraPosition!.target.longitude);
-        if (googleAddress != null) {
-          formatedAddress = AddressComponent(
-              area: googleAddress['area'],
-              areaId: null,
-              city: googleAddress['city'],
-              country: googleAddress['country'],
-              state: googleAddress['state']);
-        }
-      } else {
-        Placemark? placeMark = (await placemarkFromCoordinates(
-                latLng?.latitude ?? _cameraPosition!.target.latitude,
-                latLng?.longitude ?? _cameraPosition!.target.longitude))
-            .first;
+      Placemark? placeMark = (await placemarkFromCoordinates(
+              latLng?.latitude ?? _cameraPosition!.target.latitude,
+              latLng?.longitude ?? _cameraPosition!.target.longitude))
+          .first;
 
-        formatedAddress = AddressComponent(
-            area: placeMark.subLocality,
-            areaId: null,
-            city: placeMark.locality,
-            country: placeMark.country,
-            state: placeMark.administrativeArea);
-      }
+      formatedAddress = AddressComponent(
+          area: placeMark.subLocality,
+          areaId: null,
+          city: placeMark.locality,
+          country: placeMark.country,
+          state: placeMark.administrativeArea);
 
       // Update Search Text Only if not focusing? No, user wants to see current location text probably.
       // But if user is typing, we shouldn't overwrite.

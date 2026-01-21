@@ -21,6 +21,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:intl_phone_number_input/src/utils/phone_number/phone_number_util.dart';
 import 'package:Ebozor/utils/constant.dart';
 
 enum MessageType {
@@ -491,6 +493,16 @@ class HelperUtils {
       if (context.mounted) {
         showSnackBarMessage(context, e.toString(), type: MessageType.error);
       }
+    }
+  }
+
+  static Future<bool> validatePhone(String phone, String isoCode) async {
+    try {
+      bool? isValid = await PhoneNumberUtil.isValidNumber(
+          phoneNumber: phone, isoCode: isoCode.toUpperCase());
+      return isValid ?? false;
+    } catch (e) {
+      return false;
     }
   }
 }

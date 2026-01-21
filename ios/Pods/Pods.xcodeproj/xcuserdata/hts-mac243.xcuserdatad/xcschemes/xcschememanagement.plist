@@ -229,6 +229,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>PhoneNumberKit.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Runner.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -625,6 +630,11 @@
 			<false/>
 		</dict>
 		<key>permission_handler_apple.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>phone_number.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

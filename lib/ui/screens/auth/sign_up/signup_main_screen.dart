@@ -82,8 +82,10 @@ class LoginScreenState extends State<SignUpMainScreen> {
           isOtpSent = true;
           setState(() {});
           if (isMobileNumberField) {
-            HelperUtils.showSnackBarMessage(
-                context, "optsentsuccessflly".translate(context));
+            if (isMobileNumberField) {
+              HelperUtils.showSnackBarMessage(
+                  context, "optsentsuccessflly".translate(context));
+            }
           }
         }
       }
@@ -98,8 +100,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
         if (mounted) ScaffoldMessenger.of(context).removeCurrentSnackBar();
         if (isOtpSent && (otp == null || otp!.trim().isEmpty)) {
           if (mounted) {
-            HelperUtils.showSnackBarMessage(context,
-                "${"weSentCodeOnNumber".translate(context)}\t${emailMobileTextController.text}",
+            HelperUtils.showSnackBarMessage(context, "OTP Send Failed",
                 type: MessageType.error);
           }
         } else {
@@ -115,17 +116,29 @@ class LoginScreenState extends State<SignUpMainScreen> {
                     type: MessageType.error);
               }
             } else if (e.code == 'invalid-phone-number') {
-              HelperUtils.showSnackBarMessage(
-                  context, "Invalid Phone Number or Country Code",
-                  type: MessageType.error);
+              if (mounted) {
+                HelperUtils.showSnackBarMessage(
+                    context, "Invalid Phone Number or Country Code",
+                    type: MessageType.error);
+              }
+            } else if (e.code == 'invalid-verification-code') {
+              if (mounted) {
+                HelperUtils.showSnackBarMessage(
+                    context, "Entered otp is invalid",
+                    type: MessageType.error);
+              }
             } else {
-              HelperUtils.showSnackBarMessage(
-                  context, "Verify Failed: ${e.message}",
-                  type: MessageType.error);
+              if (mounted) {
+                HelperUtils.showSnackBarMessage(
+                    context, "Verify Failed: ${e.message}",
+                    type: MessageType.error);
+              }
             }
           } else {
-            HelperUtils.showSnackBarMessage(context, "Verify Failed",
-                type: MessageType.error);
+            if (mounted) {
+              HelperUtils.showSnackBarMessage(context, "Entered otp is invalid",
+                  type: MessageType.error);
+            }
           }
         }
       }
@@ -136,6 +149,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
     getSimCountry().then((value) {
       simCountry = value;
       countryCode = value.phoneCode;
+      countryName = value.countryCode;
 
       flagEmoji = value.flagEmoji;
       setState(() {});
@@ -193,6 +207,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
     if (isOtpSent == true) {
       setState(() {
         isOtpSent = false;
+        otp = "";
       });
     } else {
       return Future.value(true);
@@ -310,9 +325,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
             }
             if (otp!.trim().length < 6) {
               HelperUtils.showSnackBarMessage(
-                  context,
-                  "invalidOtp".translate(
-                      context)); // Ensure this key exists or use hardcoded string temporarily and ask user to add key
+                  context, "Please enter the 6 digits.");
               return;
             }
             context.read<AuthenticationCubit>().setData(
@@ -345,21 +358,25 @@ class LoginScreenState extends State<SignUpMainScreen> {
     super.dispose();
   }
 
-  void _onTapContinue() {
+  Future<void> _onTapContinue() async {
+    if (emailMobileTextController.text.trim().isEmpty) {
+      HelperUtils.showSnackBarMessage(
+          context, "pleaseEnterEmailOrPhoneNumber".translate(context),
+          type: MessageType.warning);
+      return;
+    }
     if (isMobileNumberField) {
       hasErrorOccurred = false;
-      String phoneNumber = emailMobileTextController.text
-          .trim()
-          .replaceAll(RegExp(r'[^0-9]'), '');
-      bool isValid = true;
 
-      // Basic validation based on country code (Mocking strict validation)
-      if (countryCode == '91' && phoneNumber.length != 10) {
-        isValid = false;
-      } else if (countryCode == '1' && phoneNumber.length != 10) {
-        isValid = false;
-      } else if (phoneNumber.length < 7 || phoneNumber.length > 15) {
-        isValid = false;
+      bool isValid = await HelperUtils.validatePhone(
+          emailMobileTextController.text.trim(), countryName!);
+
+      if (!isValid && countryCode == "1") {
+        if (emailMobileTextController.text.trim().length != 10) {
+          isValid = false;
+        } else {
+          isValid = true;
+        }
       }
 
       if (!isValid) {
@@ -433,6 +450,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
               setState(() {
                 isOtpSent = false;
                 isMobileNumberField = true;
+                otp = "";
               });
               return;
             }
@@ -453,8 +471,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
                   }
                   if (state is AuthenticationFail) {
                     Widgets.hideLoder(context);
-                    HelperUtils.showSnackBarMessage(context, "Signup Failed",
-                        type: MessageType.error);
+                    /*HelperUtils.showSnackBarMessage(context, "Signup Failed",
+                        type: MessageType.error);*/
                   }
                   if (state is AuthenticationInProcess) {
                     Widgets.showLoader(context);
@@ -558,7 +576,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
             onPressed: sendVerificationCode,
             buttonTitle: "continue".translate(context),
             radius: 10,
-            disabled: numberOrEmail.isEmpty,
+            disabled: false,
             disabledColor: context.color.territoryColor),
       ],
     );
@@ -813,6 +831,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
       onSelect: (Country value) {
         flagEmoji = value.flagEmoji;
         countryCode = value.phoneCode;
+        countryName = value.countryCode;
         setState(() {});
       },
     );

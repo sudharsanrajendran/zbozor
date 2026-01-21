@@ -245,6 +245,10 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.3.0):
     - Flutter
+  - phone_number (2.0.1):
+    - Flutter
+    - PhoneNumberKit/PhoneNumberKitCore (= 3.6.6)
+  - PhoneNumberKit/PhoneNumberKitCore (3.6.6)
   - PromisesObjC (2.4.0)
   - razorpay-core-pod (1.0.3)
   - razorpay-pod (1.5.2):
@@ -376,6 +380,7 @@ DEPENDENCIES:
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - phone_number (from `.symlinks/plugins/phone_number/ios`)
   - razorpay_flutter (from `.symlinks/plugins/razorpay_flutter/ios`)
   - record_ios (from `.symlinks/plugins/record_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
@@ -419,6 +424,7 @@ SPEC REPOS:
     - Mantle
     - nanopb
     - OrderedSet
+    - PhoneNumberKit
     - PromisesObjC
     - razorpay-core-pod
     - razorpay-pod
@@ -501,6 +507,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  phone_number:
+    :path: ".symlinks/plugins/phone_number/ios"
   razorpay_flutter:
     :path: ".symlinks/plugins/razorpay_flutter/ios"
   record_ios:
@@ -588,6 +596,8 @@ SPEC CHECKSUMS:
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  phone_number: 3768a56d2f5ae18d44abddfd0c82e0e56e6d74e7
+  PhoneNumberKit: 5b1be7ee4955dfeeb855f51eecdd829ab24b3484
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   razorpay-core-pod: ef0309dbf8e3e5a1330f6cad89dcf9226d8ef758
   razorpay-pod: a9cb6e158aee8754053b147008eff6b4897789c8
