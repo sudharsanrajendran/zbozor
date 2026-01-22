@@ -101,7 +101,7 @@ class SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> startTimer() async {
-    Timer(const Duration(seconds: 1), () {
+    Timer(const Duration(milliseconds: 500), () {
       isTimerCompleted = true;
       if (mounted) setState(() {});
     });
@@ -118,53 +118,40 @@ class SplashScreenState extends State<SplashScreen>
             .read<FetchSystemSettingsCubit>()
             .getSetting(SystemSetting.maintenanceMode) ==
         "1") {
-      Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) {
-          Navigator.of(context).pushReplacementNamed(Routes.maintenanceMode);
-        }
-      });
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed(Routes.maintenanceMode);
+      }
     } else if (HiveUtils.isUserFirstTime() == true) {
-      Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) {
-          Navigator.of(context).pushReplacementNamed(Routes.onboarding);
-        }
-      });
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed(Routes.onboarding);
+      }
     } else if (HiveUtils.isUserAuthenticated()) {
       if ((HiveUtils.getUserDetails().name == null ||
               HiveUtils.getUserDetails().name == "") ||
           (HiveUtils.getUserDetails().email == null ||
               HiveUtils.getUserDetails().email == "")) {
-        Future.delayed(
-          const Duration(seconds: 1),
-          () {
-            Navigator.pushReplacementNamed(
-              context,
-              Routes.completeProfile,
-              arguments: {
-                "from": "login",
-              },
-            );
+        Navigator.pushReplacementNamed(
+          context,
+          Routes.completeProfile,
+          arguments: {
+            "from": "login",
           },
         );
       } else {
-        Future.delayed(const Duration(seconds: 1), () {
-          if (mounted) {
-            Navigator.of(context)
-                .pushReplacementNamed(Routes.main, arguments: {'from': "main"});
-          }
-        });
+        if (mounted) {
+          Navigator.of(context)
+              .pushReplacementNamed(Routes.main, arguments: {'from': "main"});
+        }
       }
     } else {
-      Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) {
-          if (HiveUtils.isUserSkip() == true) {
-            Navigator.of(context)
-                .pushReplacementNamed(Routes.main, arguments: {'from': "main"});
-          } else {
-            Navigator.of(context).pushReplacementNamed(Routes.login);
-          }
+      if (mounted) {
+        if (HiveUtils.isUserSkip() == true) {
+          Navigator.of(context)
+              .pushReplacementNamed(Routes.main, arguments: {'from': "main"});
+        } else {
+          Navigator.of(context).pushReplacementNamed(Routes.login);
         }
-      });
+      }
     }
   }
 

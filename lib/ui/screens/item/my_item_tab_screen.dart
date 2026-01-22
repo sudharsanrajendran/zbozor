@@ -34,8 +34,12 @@ class MyItemTab extends StatefulWidget {
   CloudState<MyItemTab> createState() => _MyItemTabState();
 }
 
-class _MyItemTabState extends CloudState<MyItemTab> {
+class _MyItemTabState extends CloudState<MyItemTab>
+    with AutomaticKeepAliveClientMixin {
   late final ScrollController _pageScrollController = ScrollController();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -220,6 +224,7 @@ class _MyItemTabState extends CloudState<MyItemTab> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return RefreshIndicator(
       onRefresh: () async {
         context.read<FetchMyItemsCubit>().fetchMyItems(
