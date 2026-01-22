@@ -109,7 +109,9 @@ class SplashScreenState extends State<SplashScreen>
 
   void navigateCheck() {
     if (isTimerCompleted && isSettingsLoaded && isLanguageLoaded) {
-      navigateToScreen();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        navigateToScreen();
+      });
     }
   }
 

@@ -72,7 +72,7 @@ class MockMultiAuthentication extends MMultiAuthentication {
   MockMultiAuthentication(Map<String, LoginSystem> systems) : super(systems);
 
   @override
-  Future<UserCredential?> login() async {
+  Future<UserCredential?>login() async {
     if (shouldFail) {
       throw Exception("Login Failed");
     }
