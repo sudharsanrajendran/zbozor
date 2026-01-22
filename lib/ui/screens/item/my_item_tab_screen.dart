@@ -224,6 +224,7 @@ class _MyItemTabState extends CloudState<MyItemTab> {
       onRefresh: () async {
         context.read<FetchMyItemsCubit>().fetchMyItems(
               getItemsWithStatus: widget.getItemsWithStatus,
+              forceRefresh: true, // [FIX] Force refresh on pull-to-refresh
             );
 
         setReferenceOfCubit();
@@ -241,7 +242,8 @@ class _MyItemTabState extends CloudState<MyItemTab> {
                 return NoInternet(
                   onRetry: () {
                     context.read<FetchMyItemsCubit>().fetchMyItems(
-                        getItemsWithStatus: widget.getItemsWithStatus);
+                        getItemsWithStatus: widget.getItemsWithStatus,
+                        forceRefresh: true);
                   },
                 );
               }
@@ -257,7 +259,8 @@ class _MyItemTabState extends CloudState<MyItemTab> {
                 subMessage: "noAdsAvailable".translate(context),
                 onTap: () {
                   context.read<FetchMyItemsCubit>().fetchMyItems(
-                      getItemsWithStatus: widget.getItemsWithStatus);
+                      getItemsWithStatus: widget.getItemsWithStatus,
+                      forceRefresh: true);
                 },
               );
             }
@@ -289,6 +292,8 @@ class _MyItemTabState extends CloudState<MyItemTab> {
                               context.read<FetchMyItemsCubit>().fetchMyItems(
                                     getItemsWithStatus:
                                         widget.getItemsWithStatus,
+                                    forceRefresh:
+                                        true, // [FIX] Force refresh if details screen asks for it
                                   );
 
                               setReferenceOfCubit();
@@ -318,7 +323,8 @@ class _MyItemTabState extends CloudState<MyItemTab> {
                                     height: double.infinity,
                                     child: UiUtils.getImage(item.image ?? "",
                                         height: double.infinity,
-                                        fit: BoxFit.cover),
+                                        fit: BoxFit.cover,
+                                        memCacheWidth: 400),
                                   ),
                                 ),
                                 Expanded(

@@ -72,8 +72,23 @@ class LocalAwsomeNotification {
   }) async {
     try {
       bool isChat = notificationData.data["type"] == "chat";
-      bool hasImage = notificationData.data["image"] != null ||
+      bool hasImage = notificationData.data["image"] != null &&
           notificationData.data["image"] != "";
+
+      // Logic for Large Icon (Sender Profile or Initial)
+      String? userProfile = notificationData.data['user_profile'];
+      String? userName = notificationData.data['user_name'];
+      String? largeIconUrl;
+
+      if (userProfile != null && userProfile.trim().isNotEmpty) {
+        largeIconUrl = userProfile;
+      } else {
+        String name =
+            (userName != null && userName.isNotEmpty) ? userName : "User";
+        // Use UI Avatars as fallback
+        largeIconUrl =
+            "https://ui-avatars.com/api/?name=${Uri.encodeComponent(name)}&background=random&color=fff&size=512";
+      }
 
       if (isChat) {
         int? senderId =
@@ -88,6 +103,7 @@ class LocalAwsomeNotification {
               id: isChat ? chatId : Random().nextInt(5000),
               title: notificationData.data["title"],
               icon: AppIcons.notificatinicon,
+              largeIcon: largeIconUrl, // Set the Large Icon
               hideLargeIconOnExpand: true,
               summary: "${notificationData.data['user_name']}",
               locked: isLocked,
@@ -111,6 +127,7 @@ class LocalAwsomeNotification {
                 id: Random().nextInt(5000),
                 title: notificationData.data["title"],
                 bigPicture: imageUrl,
+                largeIcon: largeIconUrl, // Set the Large Icon
                 hideLargeIconOnExpand: true,
                 summary: null,
                 locked: isLocked,
@@ -130,6 +147,7 @@ class LocalAwsomeNotification {
               content: NotificationContent(
                 id: Random().nextInt(5000),
                 title: notificationData.data["title"],
+                largeIcon: largeIconUrl, // Set the Large Icon
                 hideLargeIconOnExpand: true,
                 summary: null,
                 locked: isLocked,

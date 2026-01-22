@@ -125,6 +125,7 @@ class _ItemCardState extends State<ItemCard> {
                       widget.item?.image ?? "",
                       width: double.infinity,
                       fit: BoxFit.cover,
+                      memCacheWidth: 400,
                     ),
                   ),
                 ),

@@ -269,7 +269,6 @@ class _ChatScreenState extends State<ChatScreen>
                       ),
                       SizedBox(height: 16),
 
-
                       //////////review button are here
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -311,28 +310,25 @@ class _ChatScreenState extends State<ChatScreen>
               },
             ),
           ),
-          actions: [
 
-
-
-            ////////// here the review add panrom
-            ElevatedButton(
-              onPressed: _rating >= 1
-                  ? () {
-                      context.read<AddItemReviewCubit>().addItemReview(
-                          itemId: int.tryParse(widget.itemId) ?? 0,
-                          rating: _rating,
-                          review: _feedbackController.text.trim());
-                    }
-                  : null, // Disable button if rating is less than 1
-              style: ElevatedButton.styleFrom(
-                backgroundColor: _rating >= 1
-                    ? context.color.territoryColor
-                    : context.color.deactivateColor,
-              ),
-              child: Text("submitBtnLbl".translate(context)),
-            ),
-          ],
+          ////////// here the review add panrom
+          /*
+            UiUtils.buildButton(context, showElevation: false, onPressed: () {
+              context.read<AddItemReviewCubit>().addItemReview(
+                  itemId: int.tryParse(widget.itemId) ?? 0,
+                  rating: _rating,
+                  review: _feedbackController.text.trim());
+            },
+                fontSize: 12,
+                disabled: _rating < 1,
+                disabledColor: context.color.deactivateColor,
+                buttonTitle: "submitBtnLbl".translate(context),
+                radius: 8,
+                width:
+                    context.screenWidth / 2.5, // Adjusted width for better look
+                textColor: context.color.secondaryColor,
+                buttonColor: context.color.territoryColor,
+                height: 39),*/
         );
       },
     );

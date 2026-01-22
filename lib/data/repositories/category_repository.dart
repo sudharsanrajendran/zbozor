@@ -3,11 +3,23 @@ import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
 
 class CategoryRepository {
+  // Simple in-memory cache to store category responses
+  static final Map<String, DataOutput<CategoryModel>> _categoryCache = {};
+
   Future<DataOutput<CategoryModel>> fetchCategories({
     required int page,
     int? categoryId,
+    bool forceRefresh = false, // Add forceRefresh to bypass cache if needed
   }) async {
     try {
+      // Generate a unique cache key
+      final String cacheKey = "page:$page-cat:$categoryId";
+
+      // Return cached data if available and not forcing refresh
+      if (!forceRefresh && _categoryCache.containsKey(cacheKey)) {
+        return _categoryCache[cacheKey]!;
+      }
+
       Map<String, dynamic> parameters = {
         Api.page: page,
       };
@@ -31,11 +43,16 @@ class CategoryRepository {
         selfCategory = CategoryModel.fromJson(response['self_category']);
       }
 
-      return DataOutput(
+      final result = DataOutput(
         total: response['data']['total'] ?? 0,
         modelList: modelList,
         extraData: selfCategory != null ? ExtraData(data: selfCategory) : null,
       );
+
+      // Save to cache
+      _categoryCache[cacheKey] = result;
+
+      return result;
     } catch (e) {
       rethrow;
     }

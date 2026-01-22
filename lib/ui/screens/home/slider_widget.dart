@@ -322,6 +322,7 @@ class _SliderWidgetState extends State<SliderWidget>
                               UiUtils.getImage(
                                 state.sliderlist[index].image ?? "",
                                 fit: BoxFit.fill,
+                                memCacheWidth: 1000,
                               ),
                               PositionedDirectional(
                                 bottom: 30, // Adjusted to match image

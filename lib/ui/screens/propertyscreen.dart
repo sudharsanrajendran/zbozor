@@ -147,8 +147,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
   /// [NEW] Generic method to fetch children for any category level
   Future<void> _fetchChildrenFor(CategoryModel category) async {
-    // [MODIFIED] Always fetch to ensure fresh data/filters
-    // if (category.children != null && category.children!.isNotEmpty) return;
+    // [MODIFIED] Use cached children if available for instant UI
+    if (category.children != null && category.children!.isNotEmpty) return;
 
     // If no potential children, do nothing
     // [MODIFIED] Force fetch even if count is 0 to ensure we attempt to get dynamic data/filters

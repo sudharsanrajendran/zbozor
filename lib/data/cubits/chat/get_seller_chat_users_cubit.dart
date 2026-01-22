@@ -86,8 +86,11 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
     _chatRepository.setContext(context);
   }
 
-  void fetch() async {
+  void fetch({bool forceRefresh = false}) async {
     try {
+      if (!forceRefresh && state is GetSellerChatListSuccess) {
+        return;
+      }
       emit(GetSellerChatListInProgress());
 
       DataOutput<ChatedUser> result =

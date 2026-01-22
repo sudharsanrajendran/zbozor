@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+
 import 'package:dio/dio.dart';
 import 'package:Ebozor/data/model/item_filter_model.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
@@ -17,16 +19,18 @@ class ItemRepository {
       Map<String, dynamic> parameters = {};
       parameters.addAll(itemDetails);
 
-      // Main image
-      //MultipartFile image = await MultipartFile.fromFile(mainImage.path);
-      MultipartFile image = await MultipartFile.fromFile(mainImage.path,
-          filename: path.basename(mainImage.path));
+      // Main image compression
+      File? compressedMain = await _compressImage(mainImage);
+      MultipartFile image = await MultipartFile.fromFile(
+          compressedMain?.path ?? mainImage.path,
+          filename: path.basename(compressedMain?.path ?? mainImage.path));
 
       if (otherImages != null && otherImages.isNotEmpty) {
-        List<Future<MultipartFile>> futures = otherImages.map((imageFile) {
-          //return MultipartFile.fromFile(imageFile.path);
-          return MultipartFile.fromFile(imageFile.path,
-              filename: path.basename(imageFile.path));
+        List<Future<MultipartFile>> futures =
+            otherImages.map((imageFile) async {
+          File? compressed = await _compressImage(imageFile);
+          return MultipartFile.fromFile(compressed?.path ?? imageFile.path,
+              filename: path.basename(compressed?.path ?? imageFile.path));
         }).toList();
 
         List<MultipartFile> galleryImages = await Future.wait(futures);
@@ -432,5 +436,25 @@ class ItemRepository {
       multipartFileList.add(await MultipartFile.fromFile(file.path));
     }
     return multipartFileList;
+  }
+
+  Future<File?> _compressImage(File file) async {
+    try {
+      final String targetPath =
+          "${file.parent.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg";
+
+      var result = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path,
+        targetPath,
+        quality: 50,
+      );
+
+      if (result != null) {
+        return File(result.path);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 }

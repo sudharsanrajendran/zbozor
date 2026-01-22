@@ -144,6 +144,7 @@ class ItemHorizontalCard extends StatelessWidget {
                     height: 160,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    memCacheHeight: 400,
                   ),
                 ),
                 if (item.isFeature ?? false)

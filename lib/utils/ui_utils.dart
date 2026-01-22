@@ -211,14 +211,16 @@ class UiUtils {
       double? height,
       BoxFit? fit,
       String? blurHash,
-      bool? showFullScreenImage}) {
+      bool? showFullScreenImage,
+      int? memCacheWidth,
+      int? memCacheHeight}) {
     return CachedNetworkImage(
       imageUrl: url,
       fit: fit,
       width: width,
       height: height,
-      memCacheHeight: 1000,
-      memCacheWidth: 1000,
+      memCacheHeight: memCacheHeight ?? 1000,
+      memCacheWidth: memCacheWidth ?? 1000,
       placeholder: (context, url) {
         return Container(
             width: width,

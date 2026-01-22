@@ -101,7 +101,7 @@ class LoginCubit extends Cubit<LoginState> {
                 if (email != null && email.isNotEmpty) {
                   name = email.split('@')[0];
                 } else {
-                  name = "User";
+                  name = "";
                 }
               }
               return name;

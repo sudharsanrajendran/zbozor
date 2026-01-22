@@ -510,18 +510,9 @@ class ItemsListState extends State<ItemsList> {
       }
     }
 
-    // OPTIMIZATION: Check if we already have the data locally in the parent node of _currentChain
-    if (chainIndex > 0 &&
-        chainIndex - 1 < _currentChain.length &&
-        _currentChain[chainIndex - 1].children != null &&
-        _currentChain[chainIndex - 1].children!.isNotEmpty) {
-      // Use local data immediately
-      _chipFilterCubit.emitSuccess(_currentChain[chainIndex - 1].children!);
-    } else {
-      // Fetch from API if undefined
-      _chipFilterCubit.fetchSubCategories(
-          categoryId: int.tryParse(parentId) ?? 0);
-    }
+    // Fetch from API
+    _chipFilterCubit.fetchSubCategories(
+        categoryId: int.tryParse(parentId) ?? 0);
 
     showModalBottomSheet(
       context: context,
@@ -532,6 +523,7 @@ class ItemsListState extends State<ItemsList> {
       builder: (context) {
         // --- CASE 1: Simple Text Only (For Index 0 and Index > 1) ---
         if (chainIndex != 1) {
+          // [FIX] Ensure selectedCategory is initialized correctly for Index 0
           CategoryModel? selectedCategory;
           if (_currentChain.length > chainIndex) {
             selectedCategory = _currentChain[chainIndex];
@@ -704,8 +696,13 @@ class ItemsListState extends State<ItemsList> {
               if (selectedParent != null) {
                 final childCubit = context.read<FetchSubCategoriesCubit>();
                 if (childCubit.state is FetchSubCategoriesInitial) {
-                  childCubit.fetchSubCategories(
-                      categoryId: selectedParent!.id!);
+                  if (selectedParent!.children != null &&
+                      selectedParent!.children!.isNotEmpty) {
+                    childCubit.emitSuccess(selectedParent!.children!);
+                  } else {
+                    childCubit.fetchSubCategories(
+                        categoryId: selectedParent!.id!);
+                  }
                 }
               }
 
@@ -1254,6 +1251,7 @@ class ItemsListState extends State<ItemsList> {
               context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
                     categoryId: int.parse(widget.categoryId),
                     search: "",
+                    forceRefresh: true, // [FIX] Force refresh
                   );
             },
             color: context.color.territoryColor,

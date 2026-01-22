@@ -5,8 +5,6 @@ import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/ui/screens/chat/chat_audio/widgets/chat_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
-
 class LoadChatMessagesState {}
 
 class LoadChatMessagesInitial extends LoadChatMessagesState {}
@@ -59,12 +57,16 @@ class LoadChatMessagesFailed extends LoadChatMessagesState {
   });
 }
 
-class LoadChatMessagesCubit extends Cubit<LoadChatMessagesState>{
+class LoadChatMessagesCubit extends Cubit<LoadChatMessagesState> {
   LoadChatMessagesCubit() : super(LoadChatMessagesInitial());
   final ChatRepostiory _chatRepostiory = ChatRepostiory();
 
-  Future<void> load({required int itemOfferId}) async {
+  Future<void> load(
+      {required int itemOfferId, bool forceRefresh = false}) async {
     try {
+      if (!forceRefresh && state is LoadChatMessagesSuccess) {
+        return;
+      }
       emit(LoadChatMessagesInProgress());
       DataOutput<ChatMessage> result = await _chatRepostiory.getMessagesApi(
         itemOfferId: itemOfferId,

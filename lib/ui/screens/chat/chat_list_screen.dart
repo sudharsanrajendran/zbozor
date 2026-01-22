@@ -175,7 +175,7 @@ class _ChatListScreenState extends State<ChatListScreen>
       onRefresh: () async {
         context.read<GetBuyerChatListCubit>().setContext(context);
 
-        context.read<GetBuyerChatListCubit>().fetch();
+        context.read<GetBuyerChatListCubit>().fetch(forceRefresh: true);
       },
       color: context.color.territoryColor,
       child: BlocBuilder<GetBuyerChatListCubit, GetBuyerChatListState>(
@@ -271,7 +271,7 @@ class _ChatListScreenState extends State<ChatListScreen>
       onRefresh: () async {
         context.read<GetSellerChatListCubit>().setContext(context);
 
-        context.read<GetSellerChatListCubit>().fetch();
+        context.read<GetSellerChatListCubit>().fetch(forceRefresh: true);
       },
       color: context.color.territoryColor,
       child: BlocBuilder<GetSellerChatListCubit, GetSellerChatListState>(

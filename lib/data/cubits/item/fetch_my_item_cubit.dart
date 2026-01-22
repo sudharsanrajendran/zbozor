@@ -55,8 +55,18 @@ class FetchMyItemsCubit extends Cubit<FetchMyItemsState> {
   FetchMyItemsCubit() : super(FetchMyItemsInitial());
   final ItemRepository _itemRepository = ItemRepository();
 
-  void fetchMyItems({String? getItemsWithStatus}) async {
+  void fetchMyItems(
+      {String? getItemsWithStatus, bool forceRefresh = false}) async {
     try {
+      // If we already have success state and not forcing refresh,
+      // we could return immediately to be "fast" (if we had local storage).
+      // But since we want to be "fast" on UI load, we rely on the existing state if present.
+      if (!forceRefresh && state is FetchMyItemsSuccess) {
+        // [OPTIMIZATION] If we already have data, don't show loading, just return.
+        // This makes switching tabs instant if data is already there.
+        return;
+      }
+
       emit(FetchMyItemsInProgress());
       DataOutput<ItemModel> result = await _itemRepository.fetchMyItems(
         page: 1,

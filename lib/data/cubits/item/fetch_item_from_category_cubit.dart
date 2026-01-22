@@ -60,7 +60,8 @@ class FetchItemFromCategoryCubit extends Cubit<FetchItemFromCategoryState> {
       {required int categoryId,
       required String search,
       String? sortBy,
-      ItemFilterModel? filter}) async {
+      ItemFilterModel? filter,
+      bool forceRefresh = false}) async {
     try {
       emit(FetchItemFromCategoryInProgress());
 
