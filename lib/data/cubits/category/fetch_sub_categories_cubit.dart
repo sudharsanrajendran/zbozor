@@ -121,6 +121,15 @@ class FetchSubCategoriesCubit extends Cubit<FetchSubCategoriesState> {
     }
   }
 
+  void emitSuccess(List<CategoryModel> categories) {
+    emit(FetchSubCategoriesSuccess(
+        total: categories.length,
+        categories: categories,
+        page: 1,
+        hasError: false,
+        isLoadingMore: false));
+  }
+
   List<CategoryModel> getSubCategories() {
     if (state is FetchSubCategoriesSuccess) {
       return (state as FetchSubCategoriesSuccess).categories;

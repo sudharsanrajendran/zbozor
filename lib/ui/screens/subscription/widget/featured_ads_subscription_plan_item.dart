@@ -186,6 +186,7 @@ class _FeaturedAdsSubscriptionPlansItemState
                           Widgets.showLoader(context);
                         }
                       },
+                      /////////////// prduct id sending here
                       child: UiUtils.buildButton(context, onPressed: () {
                         UiUtils.checkUser(
                             onNotGuest: () {
@@ -195,6 +196,8 @@ class _FeaturedAdsSubscriptionPlansItemState
                                     0) {
                                   if (Platform.isIOS) {
                                     //_purchaseSubscription(widget.modelList[selectedIndex!]);
+                                    print(
+                                        "Attempting purchase with iOS Product ID: ${widget.modelList[selectedIndex!].iosProductId}");
                                     widget.inAppPurchaseManager.buy(
                                         widget.modelList[selectedIndex!]
                                             .iosProductId!,
@@ -286,6 +289,8 @@ class _FeaturedAdsSubscriptionPlansItemState
   }
 
   Widget itemData(int index) {
+    print(
+        "Rendering item $index with iOS Product ID: ${widget.modelList[index].iosProductId}");
     return Padding(
       padding: const EdgeInsets.only(top: 7.0),
       child: Stack(

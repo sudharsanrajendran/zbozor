@@ -516,6 +516,7 @@ class HomeScreenState extends State<HomeScreen>
   }
 }
 
+//// recently added
 class AllItemsWidget extends StatelessWidget {
   const AllItemsWidget({
     super.key,
@@ -546,6 +547,7 @@ class AllItemsWidget extends StatelessWidget {
                     if (isGrid) {
                       // Show ItemCard for grid items
                       return ItemCard(
+radius: 5,
                         item: item,
                       );
                     } else {

@@ -76,8 +76,11 @@ class LocalAwsomeNotification {
           notificationData.data["image"] != "";
 
       if (isChat) {
-        int chatId = int.parse(notificationData.data['sender_id']) +
-            int.parse(notificationData.data['item_id']);
+        int? senderId =
+            NotificationService.safeInt(notificationData.data['sender_id']);
+        int? itemId =
+            NotificationService.safeInt(notificationData.data['item_id']);
+        int chatId = (senderId ?? 0) + (itemId ?? 0);
 
         if (Platform.isAndroid) {
           await notification.createNotification(

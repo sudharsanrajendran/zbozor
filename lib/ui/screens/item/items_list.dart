@@ -237,7 +237,7 @@ class ItemsListState extends State<ItemsList> {
                   isDense: true,
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                  hintText: "Search any items ..",
+                  hintText: 'searchHintLbl'.translate(context),
                   prefixIcon: setSearchIcon(),
                   prefixIconConstraints:
                       const BoxConstraints(minHeight: 40, minWidth: 40),
@@ -377,9 +377,9 @@ class ItemsListState extends State<ItemsList> {
             Padding(
               padding: const EdgeInsets.only(right: 8),
               child: _buildChip(
-                label: "Price Range",
+                label: "budgetLbl".translate(context),
                 isActive: filter?.minPrice != null || filter?.maxPrice != null,
-                onTap: () => _onFilterChipTap("Price Range"),
+                onTap: () => _onFilterChipTap("price"),
               ),
             ),
 
@@ -417,7 +417,7 @@ class ItemsListState extends State<ItemsList> {
 
             // All Fields Chip
             _buildChip(
-                label: "All Fields",
+                label: "lblall".translate(context),
                 isActive: _isAllFieldsSelected,
                 onTap: _onAllFieldsTap),
 
@@ -426,7 +426,7 @@ class ItemsListState extends State<ItemsList> {
             // Reset Button
             GestureDetector(
               onTap: _onResetTap,
-              child: Text("Reset",
+              child: Text("reset".translate(context),
                   style: TextStyle(
                       color: (_selectedCustomFields.isNotEmpty ||
                               filter != null ||
@@ -510,8 +510,18 @@ class ItemsListState extends State<ItemsList> {
       }
     }
 
-    _chipFilterCubit.fetchSubCategories(
-        categoryId: int.tryParse(parentId) ?? 0);
+    // OPTIMIZATION: Check if we already have the data locally in the parent node of _currentChain
+    if (chainIndex > 0 &&
+        chainIndex - 1 < _currentChain.length &&
+        _currentChain[chainIndex - 1].children != null &&
+        _currentChain[chainIndex - 1].children!.isNotEmpty) {
+      // Use local data immediately
+      _chipFilterCubit.emitSuccess(_currentChain[chainIndex - 1].children!);
+    } else {
+      // Fetch from API if undefined
+      _chipFilterCubit.fetchSubCategories(
+          categoryId: int.tryParse(parentId) ?? 0);
+    }
 
     showModalBottomSheet(
       context: context,
@@ -550,7 +560,9 @@ class ItemsListState extends State<ItemsList> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                            chainIndex == 0 ? "Property type" : "Select Option",
+                            chainIndex == 0
+                                ? "type".translate(context)
+                                : "selectLbl".translate(context),
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -560,7 +572,7 @@ class ItemsListState extends State<ItemsList> {
                     if (chainIndex == 0) ...[
                       const SizedBox(height: 16),
                       Text(
-                        "Choose your Property Type",
+                        "chooseItemType".translate(context),
                         style: TextStyle(
                           fontSize: 14,
                           color:
@@ -716,7 +728,7 @@ class ItemsListState extends State<ItemsList> {
                       mainAxisAlignment: MainAxisAlignment
                           .spaceBetween, // ... (rest of header)
                       children: [
-                        Text("Property type",
+                        Text("type".translate(context),
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -735,7 +747,7 @@ class ItemsListState extends State<ItemsList> {
                             alignment: Alignment.centerRight,
                           ),
                           child: Text(
-                            "Reset",
+                            "reset".translate(context),
                             style: TextStyle(
                               color: context.color.territoryColor,
                               fontSize: 14,
@@ -748,7 +760,7 @@ class ItemsListState extends State<ItemsList> {
 
                     const SizedBox(height: 4),
                     Text(
-                      "Choose your Property Type",
+                      "chooseItemType".translate(context),
                       style: TextStyle(
                         fontSize: 14,
                         color: context.color.textDefaultColor.withOpacity(0.6),
@@ -1143,6 +1155,7 @@ class ItemsListState extends State<ItemsList> {
     );
   }
 
+////////////////// show verified belwlo
   Widget _buildVerifiedToggle() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1694,7 +1707,7 @@ class ItemsListState extends State<ItemsList> {
     if (filterName.toLowerCase().contains("price") ||
         filterName.toLowerCase().contains("budget")) {
       _showRangeFilterSheet(
-        title: "Price Range",
+        title: "budgetLbl".translate(context),
         min: 0,
         max: 1000000, // Default Max, maybe fetch from API?
         currentMin: double.tryParse(filter?.minPrice ?? "0"),
@@ -2268,7 +2281,7 @@ class ItemsListState extends State<ItemsList> {
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
           crossAxisCount: 2,
-          height: MediaQuery.of(context).size.height / 3.8.rh(context),
+          height: MediaQuery.of(context).size.height / 3.9.rh(context),
           mainAxisSpacing: 7,
           crossAxisSpacing: 5),
       itemCount: itemCount,

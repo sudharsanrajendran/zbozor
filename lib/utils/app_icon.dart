@@ -18,7 +18,7 @@ class AppIcons {
   }
 
   static String splashLogo = "assets/svg/Logo/splashlogo.png";
-  static String notificatinicon = "assets/svg/Logo/splashlogo.png";
+  static String notificatinicon = "resource://drawable/notification";
 
   //static String bin = _svgPath("bin");
   static String update = _svgPath("update");

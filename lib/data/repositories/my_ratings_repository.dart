@@ -3,6 +3,10 @@ import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/data/model/my_review_model.dart';
 
 class MyRatingsRepository {
+
+
+
+  /////////// fetch reviws
   Future<DataOutput<MyReviewModel>> fetchMyRatingsAllRatings(
       {required int page}) async {
     try {

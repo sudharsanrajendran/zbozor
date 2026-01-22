@@ -58,6 +58,7 @@ class NotificationService {
       return null;
     }
     if (price is String) {
+      if (price == "") return null;
       return double.tryParse(price);
     }
     if (price is int) {
@@ -67,6 +68,15 @@ class NotificationService {
       return price;
     }
     return null; // In case of unexpected types
+  }
+
+  static int? safeInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) {
+      return int.tryParse(value);
+    }
+    return null;
   }
 
   /* void updateFCM() async {
@@ -101,45 +111,45 @@ class NotificationService {
         (context as BuildContext)
             .read<GetBuyerChatListCubit>()
             .addNewChat(ChatedUser(
-              itemId: itemId is String ? int.parse(itemId) : itemId,
+              itemId: safeInt(itemId) ?? 0,
               amount: getPrice(itemOfferPrice),
               createdAt: date,
               userBlocked: false,
-              id: int.parse(itemOfferId),
+              id: safeInt(itemOfferId) ?? 0,
               /* sellerId: senderId,*/
               updatedAt: date,
               item: Item(
-                  id: int.parse(itemId),
+                  id: safeInt(itemId) ?? 0,
                   price: getPrice((itemPrice)),
                   name: itemName,
                   image: itemImage),
               /*seller: Seller(name: username, profile: userProfile),*/
-              buyerId: int.parse(senderId),
+              buyerId: safeInt(senderId) ?? 0,
               buyer: Buyer(
                   name: username,
                   profile: userProfile,
-                  id: int.parse(senderId)),
+                  id: safeInt(senderId) ?? 0),
             ));
       } else {
         (context as BuildContext)
             .read<GetBuyerChatListCubit>()
             .addNewChat(ChatedUser(
-              itemId: itemId is String ? int.parse(itemId) : itemId,
+              itemId: safeInt(itemId) ?? 0,
               userBlocked: false,
               amount: getPrice(itemOfferPrice),
               createdAt: date,
-              id: int.parse(itemOfferId),
-              sellerId: int.parse(senderId),
+              id: safeInt(itemOfferId) ?? 0,
+              sellerId: safeInt(senderId) ?? 0,
               updatedAt: date,
               item: Item(
-                  id: int.parse(itemId),
+                  id: safeInt(itemId) ?? 0,
                   price: getPrice((itemPrice)),
                   name: itemName,
                   image: itemImage),
               seller: Seller(
                   name: username,
                   profile: userProfile,
-                  id: int.parse(senderId)),
+                  id: safeInt(senderId) ?? 0),
             ));
       }
 
@@ -147,15 +157,15 @@ class NotificationService {
 
       if (senderId == currentlyChatingWith && itemId == currentlyChatItemId) {
         ChatMessageModal chatMessageModel = ChatMessageModal(
-            id: int.parse(message?.data['id']),
+            id: safeInt(message?.data['id']) ?? 0,
             updatedAt: message?.data['updated_at'],
             createdAt: message?.data['created_at'],
-            itemId: int.parse(message?.data['item_id']),
+            itemId: safeInt(message?.data['item_id']) ?? 0,
             audio: message?.data['audio'],
             file: message?.data['file'],
             message: message?.data['message'],
             receiverId: int.parse(HiveUtils.getUserId().toString()),
-            senderId: int.parse(message?.data['sender_id']));
+            senderId: safeInt(message?.data['sender_id']) ?? 0);
 
         ChatMessageHandler.addchat(BlocProvider(
           create: (context) => SendMessageCubit(),

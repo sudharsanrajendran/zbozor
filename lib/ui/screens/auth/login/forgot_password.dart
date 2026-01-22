@@ -29,99 +29,101 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.color.backgroundColor,
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: sidePadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: AlignmentDirectional.topEnd,
-                child: FittedBox(
-                  fit: BoxFit.none,
-                  child: MaterialButton(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(
-                        context,
-                        Routes.login,
-                      );
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: context.color.backgroundColor,
+        body: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: sidePadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: AlignmentDirectional.topEnd,
+                  child: FittedBox(
+                    fit: BoxFit.none,
+                    child: MaterialButton(
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(
+                          context,
+                          Routes.login,
+                        );
+                      },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      color: context.color.territoryColor,
+                      elevation: 0,
+                      height: 28,
+                      minWidth: 64,
+                      child: Text("login".translate(context)).color(Colors.white),
                     ),
-                    color: context.color.territoryColor,
-                    elevation: 0,
-                    height: 28,
-                    minWidth: 64,
-                    child: Text("login".translate(context)).color(Colors.white),
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Text("forgotPassword".translate(context))
-                  .size(context.font.extraLarge),
-              const SizedBox(
-                height: 20,
-              ),
-              Text("forgotHeadingTxt".translate(context))
-                  .size(context.font.large),
-              const SizedBox(
-                height: 8,
-              ),
-              Text("forgotSubHeadingTxt".translate(context))
-                  .size(context.font.small)
-                  .color(context.color.textLightColor),
-              const SizedBox(
-                height: 24,
-              ),
-              CustomTextFormField(
-                  controller: _emailController,
-                  keyboard: TextInputType.emailAddress,
-                  hintText: "emailAddress".translate(context),
-                  validator: CustomTextFieldValidator.email),
-              const SizedBox(
-                height: 15,
-              ),
-              UiUtils.buildButton(
-                context,
-                onPressed: () async {
-                  FocusScope.of(context).unfocus(); //dismiss keyboard
-
-                  Future.delayed(const Duration(seconds: 1)).then((_) async {
-                    if (_formKey.currentState!.validate()) {
-                      try {
-                        await _auth
-                            .sendPasswordResetEmail(
-                                email: _emailController.text)
-                            .then((value) {
-                          HelperUtils.showSnackBarMessage(context,
-                              "resetPasswordSuccess".translate(context),
-                              type: MessageType.success);
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              Routes.login, (route) => false);
-                        });
-                      } on FirebaseAuthException catch (e) {
-                        if (e.code == 'user-not-found') {
-                          HelperUtils.showSnackBarMessage(
-                              context, "userNotFound".translate(context),
-                              type: MessageType.error);
-                        } else {
-                          HelperUtils.showSnackBarMessage(context, e.toString(),
-                              type: MessageType.error);
+                const SizedBox(
+                  height: 20,
+                ),
+                Text("forgotPassword".translate(context))
+                    .size(context.font.extraLarge),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text("forgotHeadingTxt".translate(context))
+                    .size(context.font.large),
+                const SizedBox(
+                  height: 8,
+                ),
+                Text("forgotSubHeadingTxt".translate(context))
+                    .size(context.font.small)
+                    .color(context.color.textLightColor),
+                const SizedBox(
+                  height: 24,
+                ),
+                CustomTextFormField(
+                    controller: _emailController,
+                    keyboard: TextInputType.emailAddress,
+                    hintText: "emailAddress".translate(context),
+                    validator: CustomTextFieldValidator.email),
+                const SizedBox(
+                  height: 15,
+                ),
+                UiUtils.buildButton(
+                  context,
+                  onPressed: () async {
+                    FocusScope.of(context).unfocus(); //dismiss keyboard
+      
+                    Future.delayed(const Duration(seconds: 1)).then((_) async {
+                      if (_formKey.currentState!.validate()) {
+                        try {
+                          await _auth
+                              .sendPasswordResetEmail(
+                                  email: _emailController.text)
+                              .then((value) {
+                            HelperUtils.showSnackBarMessage(context,
+                                "resetPasswordSuccess".translate(context),
+                                type: MessageType.success);
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                Routes.login, (route) => false);
+                          });
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'user-not-found') {
+                            HelperUtils.showSnackBarMessage(
+                                context, "userNotFound".translate(context),
+                                type: MessageType.error);
+                          } else {
+                            HelperUtils.showSnackBarMessage(context, e.toString(),
+                                type: MessageType.error);
+                          }
                         }
                       }
-                    }
-                  });
-                },
-                buttonTitle: "submitBtnLbl".translate(context),
-                radius: 8,
-              ),
-            ],
+                    });
+                  },
+                  buttonTitle: "submitBtnLbl".translate(context),
+                  radius: 8,
+                ),
+              ],
+            ),
           ),
         ),
       ),

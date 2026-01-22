@@ -56,23 +56,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
 
       if (forceRefresh == true) {
         Map settings = await _systemRepository.fetchSystemSettings();
-        try {
-          var data = settings['data'];
-          if (data.containsKey('languages')) {
-            List languages = data['languages'];
-            if (!languages.any((element) => element['code'] == 'ar')) {
-              languages.add({
-                "code": "ar",
-                "name": "العربية",
-                "name_in_english": "Arabic",
-                "image": "https://flagcdn.com/w320/sa.png",
-                "rtl": true
-              });
-            }
-          }
-        } catch (e) {
-          print("Error injecting Arabic: $e");
-        }
+
         Constant.currencySymbol =
             _getSetting(settings, SystemSetting.currencySymbol);
         Constant.maintenanceMode =
@@ -123,23 +107,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
       } else {
         if (state is! FetchSystemSettingsSuccess) {
           Map settings = await _systemRepository.fetchSystemSettings();
-          try {
-            var data = settings['data'];
-            if (data.containsKey('languages')) {
-              List languages = data['languages'];
-              if (!languages.any((element) => element['code'] == 'ar')) {
-                languages.add({
-                  "code": "ar",
-                  "name": "العربية",
-                  "name_in_english": "Arabic",
-                  "image": "https://flagcdn.com/w320/sa.png",
-                  "rtl": true
-                });
-              }
-            }
-          } catch (e) {
-            print("Error injecting Arabic: $e");
-          }
+
           Constant.currencySymbol =
               _getSetting(settings, SystemSetting.currencySymbol);
           Constant.maintenanceMode =
@@ -191,23 +159,6 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
           await CheckInternet.check(
             onInternet: () async {
               Map settings = await _systemRepository.fetchSystemSettings();
-              try {
-                var data = settings['data'];
-                if (data.containsKey('languages')) {
-                  List languages = data['languages'];
-                  if (!languages.any((element) => element['code'] == 'ar')) {
-                    languages.add({
-                      "code": "ar",
-                      "name": "العربية",
-                      "name_in_english": "Arabic",
-                      "image": "https://flagcdn.com/w320/sa.png",
-                      "rtl": true
-                    });
-                  }
-                }
-              } catch (e) {
-                print("Error injecting Arabic: $e");
-              }
 
               Constant.currencySymbol =
                   _getSetting(settings, SystemSetting.currencySymbol);
