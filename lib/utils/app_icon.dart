@@ -17,11 +17,8 @@ class AppIcons {
     return "$_basePath$name.svg";
   }
 
-
-
   static String splashLogo = "assets/svg/Logo/splashlogo.png";
-  static String notificatinicon="assets/svg/Logo/splashlogo.png";
-
+  static String notificatinicon = "assets/svg/Logo/splashlogo.png";
 
   //static String bin = _svgPath("bin");
   static String update = _svgPath("update");
@@ -121,18 +118,16 @@ class AppIcons {
       _svgPath("Illustrators/user_verification");
 
   ///Bottom nav icons
-  static String homeNav = _svgPath("bottomnav/home");
-  static String homeNavActive = _svgPath("bottomnav/home_active");
-  static String chatNav = _svgPath("bottomnav/chat");
-  static String chatNavActive = _svgPath("bottomnav/chat_active");
-  static String myAdsNav = _svgPath("bottomnav/myads");
-  static String myAdsNavActive = _svgPath("bottomnav/myads_active");
-  static String profileNav = _svgPath("bottomnav/profile");
-  static String profileNavActive = _svgPath("bottomnav/profile_active");
+  ///Bottom nav icons
+
+  static String homeNavPng = "${_basePath}bottomnav/home.png";
+  static String chatNavPng = "${_basePath}bottomnav/chat.png";
+  static String myAdsNavPng = "${_basePath}bottomnav/myads.png";
+  static String profileNavPng = "${_basePath}bottomnav/profile.png";
 
   ///
-
 }
+
 //  below bng images
 class MainIcons {
   ////////

@@ -21,17 +21,29 @@ class AppLocalization {
 
   //to load json(language) from assets
   Future loadJson() async {
+    String jsonStringValues = "";
+    try {
+      jsonStringValues = await rootBundle
+          .loadString('assets/languages/${locale.languageCode}.json');
+    } catch (e) {
+      jsonStringValues =
+          await rootBundle.loadString('assets/languages/template.json');
+    }
 
-    String jsonStringValues =
-        await rootBundle.loadString('assets/languages/template.json');
-    // value from root-bundle will be encoded string
     Map<String, dynamic> mappedJson = {};
+    Map<String, dynamic> localJson = json.decode(jsonStringValues);
 
     if (HiveUtils.getLanguage() == null ||
         HiveUtils.getLanguage()['data'] == null) {
-      mappedJson = json.decode(jsonStringValues);
+      mappedJson = localJson;
     } else {
-      mappedJson = Map<String, dynamic>.from(HiveUtils.getLanguage()['data']);
+      Map<String, dynamic> hiveData =
+          Map<String, dynamic>.from(HiveUtils.getLanguage()['data']);
+
+      // Merge: start with local (full keys), overwrite with hive (dynamic values)
+      mappedJson = {}
+        ..addAll(localJson)
+        ..addAll(hiveData);
     }
     _localizedValues =
         mappedJson.map((key, value) => MapEntry(key, value.toString()));

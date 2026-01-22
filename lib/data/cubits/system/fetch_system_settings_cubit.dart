@@ -1,4 +1,3 @@
-
 import 'package:Ebozor/data/model/system_settings_model.dart';
 import 'package:Ebozor/data/repositories/system_repository.dart';
 import 'package:Ebozor/settings.dart';
@@ -57,6 +56,23 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
 
       if (forceRefresh == true) {
         Map settings = await _systemRepository.fetchSystemSettings();
+        try {
+          var data = settings['data'];
+          if (data.containsKey('languages')) {
+            List languages = data['languages'];
+            if (!languages.any((element) => element['code'] == 'ar')) {
+              languages.add({
+                "code": "ar",
+                "name": "العربية",
+                "name_in_english": "Arabic",
+                "image": "https://flagcdn.com/w320/sa.png",
+                "rtl": true
+              });
+            }
+          }
+        } catch (e) {
+          print("Error injecting Arabic: $e");
+        }
         Constant.currencySymbol =
             _getSetting(settings, SystemSetting.currencySymbol);
         Constant.maintenanceMode =
@@ -107,6 +123,23 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
       } else {
         if (state is! FetchSystemSettingsSuccess) {
           Map settings = await _systemRepository.fetchSystemSettings();
+          try {
+            var data = settings['data'];
+            if (data.containsKey('languages')) {
+              List languages = data['languages'];
+              if (!languages.any((element) => element['code'] == 'ar')) {
+                languages.add({
+                  "code": "ar",
+                  "name": "العربية",
+                  "name_in_english": "Arabic",
+                  "image": "https://flagcdn.com/w320/sa.png",
+                  "rtl": true
+                });
+              }
+            }
+          } catch (e) {
+            print("Error injecting Arabic: $e");
+          }
           Constant.currencySymbol =
               _getSetting(settings, SystemSetting.currencySymbol);
           Constant.maintenanceMode =
@@ -158,6 +191,23 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
           await CheckInternet.check(
             onInternet: () async {
               Map settings = await _systemRepository.fetchSystemSettings();
+              try {
+                var data = settings['data'];
+                if (data.containsKey('languages')) {
+                  List languages = data['languages'];
+                  if (!languages.any((element) => element['code'] == 'ar')) {
+                    languages.add({
+                      "code": "ar",
+                      "name": "العربية",
+                      "name_in_english": "Arabic",
+                      "image": "https://flagcdn.com/w320/sa.png",
+                      "rtl": true
+                    });
+                  }
+                }
+              } catch (e) {
+                print("Error injecting Arabic: $e");
+              }
 
               Constant.currencySymbol =
                   _getSetting(settings, SystemSetting.currencySymbol);
@@ -181,7 +231,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
               Constant.bannerAdIdIOS =
                   _getSetting(settings, SystemSetting.bannerAdiOSAd) ?? "";
               Constant.interstitialAdIdAndroid = _getSetting(
-                  settings, SystemSetting.interstitialAdAndroidAd) ??
+                      settings, SystemSetting.interstitialAdAndroidAd) ??
                   "";
               Constant.interstitialAdIdIOS =
                   _getSetting(settings, SystemSetting.interstitialAdiOSAd) ??
@@ -258,7 +308,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
 
       /// where selected is equals to type
       var selectedSettingData =
-      (settings[Constant.systemSettingKeys[selected]]);
+          (settings[Constant.systemSettingKeys[selected]]);
 
       return selectedSettingData;
     }
@@ -273,7 +323,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
 
   dynamic _getSetting(Map settings, SystemSetting selected) {
     var selectedSettingData =
-    settings['data'][Constant.systemSettingKeys[selected]];
+        settings['data'][Constant.systemSettingKeys[selected]];
 
     return selectedSettingData;
   }

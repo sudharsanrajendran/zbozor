@@ -493,16 +493,14 @@ class MainActivityState extends State<MainActivity>
           children: <Widget>[
             buildBottomNavigationbarItem(
               0,
-              AppIcons.homeNav,
-              AppIcons.homeNavActive,
-              //      "homeTab".translate(context),
+              "assets/svg/bottomnav/home.png",
+              "homeTab".translate(context),
             ),
 
             buildBottomNavigationbarItem(
               1,
-              AppIcons.chatNav,
-              AppIcons.chatNavActive,
-              //     "chat".translate(context),
+              "assets/svg/bottomnav/chat.png",
+              "chat".translate(context),
             ),
 
             /// CENTER BUTTON
@@ -581,16 +579,14 @@ class MainActivityState extends State<MainActivity>
 
             buildBottomNavigationbarItem(
               2,
-              AppIcons.myAdsNav,
-              AppIcons.myAdsNavActive,
-              //    "myAdsTab".translate(context),
+              "assets/svg/bottomnav/myads.png",
+              "myAdsTab".translate(context),
             ),
 
             buildBottomNavigationbarItem(
               3,
-              AppIcons.profileNav,
-              AppIcons.profileNavActive,
-              //   "profileTab".translate(context),
+              "assets/svg/bottomnav/profile.png",
+              "profileTab".translate(context),
             ),
           ],
         ),
@@ -600,9 +596,8 @@ class MainActivityState extends State<MainActivity>
 
   Widget buildBottomNavigationbarItem(
     int index,
-    String svgImage,
-    String activeSvg,
-    //  String title,
+    String imagePath,
+    String title,
   ) {
     return Expanded(
       child: Material(
@@ -615,19 +610,17 @@ class MainActivityState extends State<MainActivity>
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              if (currtab == index) ...{
-                UiUtils.getSvg(activeSvg, color: context.color.territoryColor),
-              } else ...{
-                UiUtils.getSvg(svgImage,
-                    color: context.color.textLightColor.darken(30)),
-              },
-              /*
+              Image.asset(
+                imagePath,
+                height: 20,
+                width: 20,
+              ),
               Text(
                 title,
                 textAlign: TextAlign.center,
               ).color(currtab == index
                   ? context.color.textDefaultColor
-                  : context.color.textLightColor.darken(30)),*/
+                  : context.color.textLightColor.darken(30)),
             ],
           ),
         ),

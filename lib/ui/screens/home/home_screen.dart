@@ -539,7 +539,7 @@ class AllItemsWidget extends StatelessWidget {
                   type: ListUiType.Mixed,
                   mixMode: true,
                   crossAxisCount: 2,
-                  height: MediaQuery.of(context).size.height / 3.5.rh(context),
+                  height: MediaQuery.of(context).size.height / 3.9.rh(context),
                   builder: (context, int index, bool isGrid) {
                     ItemModel? item = state.items[index];
 

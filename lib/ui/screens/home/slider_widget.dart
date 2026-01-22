@@ -334,7 +334,7 @@ class _SliderWidgetState extends State<SliderWidget>
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(22),
                                   ),
-                                  child: Text("VIEW NOW")
+                                  child: Text("viewNow".translate(context))
                                       .bold()
                                       .size(context.font.smaller)
                                       .color(context.color.territoryColor),
