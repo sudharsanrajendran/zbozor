@@ -187,7 +187,7 @@ class HiveUtils {
     }
   }
 
-  static void setLocation(
+  static Future<void> setLocation(
       {String? city,
       String? state,
       String? country,

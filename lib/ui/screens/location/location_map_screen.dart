@@ -15,6 +15,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/utils/google_geocoding_helper.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
+import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
 
 class LocationMapScreen extends StatefulWidget {
   const LocationMapScreen({super.key});
@@ -411,7 +414,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                 UiUtils.buildButton(
                   context,
                   outerPadding: const EdgeInsets.all(5),
-                  onPressed: () {
+                  onPressed: () async {
                     print("DEBUG: LocationMapScreen Apply Button Pressed");
                     print("DEBUG: Selected Location Details:");
                     print("City: ${formatedAddress?.city}");
@@ -433,19 +436,37 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                         });
                       }
                     } else if (formatedAddress != null) {
-                      HiveUtils.setLocation(
+                      await HiveUtils.setLocation(
                           city: formatedAddress!.city,
                           state: formatedAddress!.state,
                           country: formatedAddress!.country,
                           area: formatedAddress!.area,
                           latitude: latitude,
                           longitude: longitude);
+                      context.read<FetchHomeScreenCubit>().fetch(
+                          country: formatedAddress!.country,
+                          state: formatedAddress!.state,
+                          city: formatedAddress!.city,
+                          areaId: formatedAddress!.areaId);
+                      context.read<FetchHomeAllItemsCubit>().fetch(
+                          country: formatedAddress!.country,
+                          state: formatedAddress!.state,
+                          city: formatedAddress!.city,
+                          areaId: formatedAddress!.areaId,
+                          latitude: latitude,
+                          longitude: longitude,
+                          radius: HiveUtils.getNearbyRadius());
                       Navigator.pushNamedAndRemoveUntil(
                           context, Routes.main, (route) => false,
                           arguments: {"from": "login"});
                     } else {
-                      HiveUtils.setLocation(
+                      await HiveUtils.setLocation(
                           latitude: latitude, longitude: longitude);
+                      context.read<FetchHomeScreenCubit>().fetch();
+                      context.read<FetchHomeAllItemsCubit>().fetch(
+                          latitude: latitude,
+                          longitude: longitude,
+                          radius: HiveUtils.getNearbyRadius());
                       Navigator.pushNamedAndRemoveUntil(
                           context, Routes.main, (route) => false,
                           arguments: {"from": "login"});

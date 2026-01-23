@@ -366,6 +366,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    const SizedBox(height: 16),
                     profileHeader(),
                     const SizedBox(height: 16),
                     _buildActionRow(),
