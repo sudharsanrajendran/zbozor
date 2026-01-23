@@ -11,8 +11,10 @@ import 'package:Ebozor/data/cubits/system/language_cubit.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/constant.dart';
+import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
+import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/data/repositories/system_repository.dart';
 
 // import 'package:flutter/services.dart';
@@ -199,10 +201,10 @@ class SplashScreenState extends State<SplashScreen>
               },
               child: AnnotatedRegion(
                 value: SystemUiOverlayStyle(
-                  statusBarColor: Colors.white,
+                  statusBarColor: context.color.backgroundColor,
                 ),
                 child: Scaffold(
-                  backgroundColor: Colors.white,
+                  backgroundColor: context.color.backgroundColor,
                   // bottomNavigationBar: Padding(
                   //   padding: const EdgeInsets.symmetric(vertical: 10.0),
                   //   child: UiUtils.getSvg(AppIcons.companyLogo),

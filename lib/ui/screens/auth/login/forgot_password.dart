@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'package:Ebozor/app/routes.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
 import 'package:Ebozor/ui/screens/widgets/custom_text_form_field.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
@@ -56,7 +57,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       elevation: 0,
                       height: 28,
                       minWidth: 64,
-                      child: Text("login".translate(context)).color(Colors.white),
+                      child: Text("login".translate(context))
+                          .color(context.color.buttonColor),
                     ),
                   ),
                 ),
@@ -91,7 +93,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   context,
                   onPressed: () async {
                     FocusScope.of(context).unfocus(); //dismiss keyboard
-      
+
                     Future.delayed(const Duration(seconds: 1)).then((_) async {
                       if (_formKey.currentState!.validate()) {
                         try {
@@ -111,7 +113,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 context, "userNotFound".translate(context),
                                 type: MessageType.error);
                           } else {
-                            HelperUtils.showSnackBarMessage(context, e.toString(),
+                            HelperUtils.showSnackBarMessage(
+                                context, e.toString(),
                                 type: MessageType.error);
                           }
                         }

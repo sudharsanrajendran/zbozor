@@ -127,7 +127,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         ),
                         color: context.color.territoryColor,
                         child: Text("Go To Login".translate(context))
-                            .color(Colors.white)
+                            .color(context.color.buttonColor)
                             .size(context.font.large),
                       ),
                     ],

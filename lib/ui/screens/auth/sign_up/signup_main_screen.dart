@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'dart:io';
 
 import 'package:country_picker/country_picker.dart';
@@ -104,7 +105,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
         if (mounted) ScaffoldMessenger.of(context).removeCurrentSnackBar();
         if (isOtpSent && (otp == null || otp!.trim().isEmpty)) {
           if (mounted) {
-            HelperUtils.showSnackBarMessage(context, "OTP Send Failed",
+            HelperUtils.showSnackBarMessage(
+                context, "otpSendFailed".translate(context),
                 type: MessageType.error);
           }
         } else {
@@ -115,20 +117,20 @@ class LoginScreenState extends State<SignUpMainScreen> {
                 e.message?.contains("blocked all requests") == true ||
                 e.message?.contains("24 hours") == true) {
               if (mounted) {
-                HelperUtils.showSnackBarMessage(context,
-                    "Too many attempts. Please try again in some time.",
+                HelperUtils.showSnackBarMessage(
+                    context, "tooManyAttempts".translate(context),
                     type: MessageType.error);
               }
             } else if (e.code == 'invalid-phone-number') {
               if (mounted) {
                 HelperUtils.showSnackBarMessage(
-                    context, "Invalid Phone Number or Country Code",
+                    context, "invalidPhone".translate(context),
                     type: MessageType.error);
               }
             } else if (e.code == 'invalid-verification-code') {
               if (mounted) {
                 HelperUtils.showSnackBarMessage(
-                    context, "Entered otp is invalid",
+                    context, "invalidOtp".translate(context),
                     type: MessageType.error);
               }
             } else {
@@ -262,8 +264,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
 
   Widget verifyOTPWidget() {
     return Padding(
-      padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + 10, left: 18, right: 18),
+      padding: EdgeInsets.symmetric(horizontal: 18)
+          .copyWith(top: MediaQuery.of(context).padding.top + 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -283,7 +285,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
                 elevation: 0,
                 height: 28,
                 minWidth: 64,
-                child: Text("skip".translate(context)).color(Colors.white),
+                child: Text("skip".translate(context))
+                    .color(context.color.buttonColor),
               ),
             ),
           ),
@@ -352,7 +355,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
             }
             if (otp!.trim().length < 6) {
               HelperUtils.showSnackBarMessage(
-                  context, "Please enter the 6 digits.");
+                  context, "enter6Digits".translate(context));
               return;
             }
             phoneLoginPayload.setOTP(otp!.trim());
@@ -418,8 +421,11 @@ class LoginScreenState extends State<SignUpMainScreen> {
 
       if (simCountry != null && countryCode != simCountry!.phoneCode) {
         ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        HelperUtils.showSnackBarMessage(context,
-            "Please select the country matching your SIM card (+${simCountry!.phoneCode})",
+        HelperUtils.showSnackBarMessage(
+            context,
+            "simCountryError"
+                .translate(context)
+                .replaceFirst("{}", simCountry!.phoneCode),
             type: MessageType.error);
         return;
       }
@@ -676,10 +682,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
         minHeight: context.screenHeight - 50,
       ),
       child: Padding(
-        padding: EdgeInsets.only(
-            top: MediaQuery.of(context).padding.top + 10,
-            left: 18.0,
-            right: 18.0),
+        padding: EdgeInsets.symmetric(horizontal: 18.0)
+            .copyWith(top: MediaQuery.of(context).padding.top + 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -706,7 +710,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
                   elevation: 0,
                   height: 28,
                   minWidth: 64,
-                  child: Text("skip".translate(context)).color(Colors.white),
+                  child: Text("skip".translate(context))
+                      .color(context.color.buttonColor),
                 ),
               ),
             ),
@@ -765,14 +770,14 @@ class LoginScreenState extends State<SignUpMainScreen> {
                   ),
                   showElevation: false,
                   outerPadding: const EdgeInsets.only(top: 12),
-                  buttonColor: secondaryColor_,
+                  buttonColor: context.color.secondaryColor,
                   border: context.watch<AppThemeCubit>().state.appTheme !=
                           AppTheme.dark
                       ? BorderSide(
                           color:
                               context.color.textDefaultColor.withOpacity(0.5))
                       : null,
-                  textColor: textDarkColor, onPressed: () {
+                  textColor: context.color.textDefaultColor, onPressed: () {
                 context.read<AuthenticationCubit>().setData(
                     payload: GoogleLoginPayload(),
                     type: AuthenticationType.google);
@@ -793,14 +798,14 @@ class LoginScreenState extends State<SignUpMainScreen> {
                   ),
                   showElevation: false,
                   outerPadding: const EdgeInsets.only(top: 12),
-                  buttonColor: secondaryColor_,
+                  buttonColor: context.color.secondaryColor,
                   border: context.watch<AppThemeCubit>().state.appTheme !=
                           AppTheme.dark
                       ? BorderSide(
                           color:
                               context.color.textDefaultColor.withOpacity(0.5))
                       : null,
-                  textColor: textDarkColor, onPressed: () {
+                  textColor: context.color.textDefaultColor, onPressed: () {
                 context.read<AuthenticationCubit>().setData(
                     payload: AppleLoginPayload(),
                     type: AuthenticationType.apple);

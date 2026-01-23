@@ -222,12 +222,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                   // Logic to open URL if needed
                 },
                 child: Text("learnMoreVerification".translate(context),
-                    style: const TextStyle(
-                      color: Colors.blue,
+                    style: TextStyle(
+                      color: context.color.territoryColor,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
-                      decorationColor: Colors.blue,
+                      decorationColor: context.color.territoryColor,
                     )),
               ),
               const SizedBox(height: 14),
@@ -287,7 +287,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         child: Text(
                           "getVerified".translate(context),
                           style: TextStyle(
-                            color: const Color(0xffffffff),
+                            color: context.color.buttonColor,
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                           ),
@@ -323,7 +323,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black
+                    color: context.color.shadow
                         .withOpacity(0.05), // Fixed undefined shadowColor
                     blurRadius: 10,
                     offset: const Offset(0, 5),
@@ -333,7 +333,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               child: Row(
                 children: [
                   Stack(
-                    alignment: Alignment.bottomRight,
+                    alignment: AlignmentDirectional.bottomEnd,
                     children: [
                       ///////profile circle
                       Container(
@@ -384,7 +384,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   color: context.color.secondaryColor,
                                   width: 2),
                             ),
-                            child: Image.asset("assets/profileedit.png"),
+                            child: Image.asset("assets/profileedit.png",
+                                color: context.color.secondaryColor),
                           ),
                         ),
                     ],
@@ -396,7 +397,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       children: [
                         Text(HiveUtils.isUserAuthenticated()
                                 ? name
-                                : "Guest User")
+                                : "guestUser".translate(context))
                             .bold(weight: FontWeight.w700)
                             .size(context.font.larger)
                             .color(context.color.textColorDark),
@@ -426,8 +427,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 children: [
                                   Text(
                                     (HiveUtils.getUserDetails().isVerified == 1)
-                                        ? "Verified"
-                                        : "Get Verified",
+                                        ? "verifiedSimple".translate(context)
+                                        : "getVerified".translate(context),
                                     style: TextStyle(
                                       fontSize: context.font.small,
                                       color: context.color.textColorDark,
@@ -440,7 +441,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                       color: (HiveUtils.getUserDetails()
                                                   .isVerified ==
                                               1)
-                                          ? Colors.blue
+                                          ? context.color.territoryColor
                                           : context.color.textLightColor)
                                 ],
                               ),
@@ -451,7 +452,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           //date shows
                           const SizedBox(height: 4),
                           Text(
-                            "Joined on ${DateTime.tryParse(HiveUtils.getUserDetails().createdAt ?? "")?.year ?? '2025'}", // Simplified date
+                            "${"joinedOn".translate(context)} ${DateTime.tryParse(HiveUtils.getUserDetails().createdAt ?? "")?.year ?? '2025'}", // Simplified date
                             style: TextStyle(
                               color: context.color.textLightColor,
                               fontSize: context.font.small,
@@ -705,7 +706,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       },
                           textColor: context.color
                               .textColorDark, // Optional: highlight delete
-                          iconColor: const Color(0xFFEE2929)),
+                          iconColor: context.color.textDefaultColor),
                     ],
                     if (HiveUtils.isUserAuthenticated()) ...[
                       SizedBox(height: 10),
@@ -750,7 +751,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: context.color.shadow.withOpacity(0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   )
@@ -792,7 +793,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: context.color.shadow.withOpacity(0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   )

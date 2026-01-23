@@ -177,7 +177,8 @@ class _ItemCardState extends State<ItemCard> {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontSize: context.font.small,
-                                    color: context.color.deactivateColor,
+                                    color: context.color.textDefaultColor
+                                        .withOpacity(0.5),
                                     fontWeight: FontWeight.w400),
                               ),
                             ),
@@ -242,17 +243,19 @@ class _ItemCardState extends State<ItemCard> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: context.color.secondaryColor,
-                      boxShadow:
-                          context.watch<AppThemeCubit>().state.appTheme ==
-                                  AppTheme.dark
-                              ? null
-                              : [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  )
-                                ],
+                      boxShadow: context
+                                  .watch<AppThemeCubit>()
+                                  .state
+                                  .appTheme ==
+                              AppTheme.dark
+                          ? null
+                          : [
+                              BoxShadow(
+                                color: context.color.shadow.withOpacity(0.5),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              )
+                            ],
                     ),
                     child: state is UpdateFavoriteInProgress
                         ? Center(

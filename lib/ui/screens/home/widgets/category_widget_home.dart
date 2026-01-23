@@ -8,6 +8,7 @@ import 'package:Ebozor/ui/screens/home/widgets/category_home_card.dart';
 
 import 'package:shimmer/shimmer.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
+import 'package:Ebozor/utils/extensions/extensions.dart';
 
 class CategoryWidgetHome extends StatelessWidget {
   const CategoryWidgetHome({super.key});
@@ -104,7 +105,7 @@ class CategoryWidgetHome extends StatelessWidget {
                   height: 60, // Approx size of category circle/box
                   width: 60,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.color.secondaryColor,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -112,7 +113,7 @@ class CategoryWidgetHome extends StatelessWidget {
                 Container(
                   height: 10,
                   width: 50,
-                  color: Colors.white,
+                  color: context.color.secondaryColor,
                 ),
               ],
             );

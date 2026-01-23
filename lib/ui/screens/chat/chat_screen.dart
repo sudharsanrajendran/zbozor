@@ -1363,7 +1363,6 @@ class _ChatScreenState extends State<ChatScreen>
         return Align(
           alignment: AlignmentDirectional.topEnd,
           child: Container(
-              height: 71,
               margin: EdgeInsetsDirectional.only(top: 15, bottom: 15, end: 15),
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -1376,6 +1375,7 @@ class _ChatScreenState extends State<ChatScreen>
                       bottomRight: Radius.circular(8),
                       bottomLeft: Radius.circular(8))),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("yourOffer".translate(context))
@@ -1395,7 +1395,6 @@ class _ChatScreenState extends State<ChatScreen>
         return Align(
           alignment: AlignmentDirectional.topStart,
           child: Container(
-              height: 71,
               margin:
                   EdgeInsetsDirectional.only(top: 15, bottom: 15, start: 15),
               padding: EdgeInsets.all(12),
@@ -1409,6 +1408,7 @@ class _ChatScreenState extends State<ChatScreen>
                       bottomRight: Radius.circular(8),
                       bottomLeft: Radius.circular(8))),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("offerLbl".translate(context))

@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/cupertino.dart'; // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/model/category_model.dart';
@@ -254,7 +254,7 @@ class FilterScreenState extends State<FilterScreen> {
       child: SafeArea(
         child: Scaffold(
           backgroundColor: isProperty
-              ? Color(0xFFF9F9F9)
+              ? context.color.backgroundColor
               : Theme.of(context).colorScheme.primaryColor,
           appBar: UiUtils.buildAppBar(
             context,
@@ -288,8 +288,9 @@ class FilterScreenState extends State<FilterScreen> {
             ],
           ),
           bottomNavigationBar: BottomAppBar(
-            color:
-                isProperty ? Color(0xFFF9F9F9) : context.color.secondaryColor,
+            color: isProperty
+                ? context.color.backgroundColor
+                : context.color.secondaryColor,
             elevation: isProperty ? 0 : 3,
             child: UiUtils.buildButton(context,
                 outerPadding: const EdgeInsets.all(12),
@@ -335,9 +336,9 @@ class FilterScreenState extends State<FilterScreen> {
                 buttonTitle: "applyFilter".translate(context),
                 radius: 8,
                 buttonColor: isProperty
-                    ? Color(0xFFE52D2D)
+                    ? const Color(0xFFE52D2D)
                     : context.color.territoryColor,
-                textColor: Colors.white),
+                textColor: context.color.secondaryColor),
           ),
           body: isProperty
               ? propertyFilterBody()
@@ -409,7 +410,7 @@ class FilterScreenState extends State<FilterScreen> {
             const SizedBox(height: 10),
             locationWidgetProperty(context),
             const SizedBox(height: 20),
-            Text('Price Range')
+            Text('priceRange'.translate(context))
                 .bold(weight: FontWeight.w600)
                 .color(context.color.textDefaultColor),
             const SizedBox(height: 10),
@@ -418,7 +419,8 @@ class FilterScreenState extends State<FilterScreen> {
                 Expanded(child: minMaxTFFProperty("minLbl".translate(context))),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Text("To").color(context.color.textDefaultColor),
+                  child: Text("to".translate(context))
+                      .color(context.color.textDefaultColor),
                 ),
                 Expanded(child: minMaxTFFProperty("maxLbl".translate(context))),
               ],
@@ -469,13 +471,14 @@ class FilterScreenState extends State<FilterScreen> {
         height: 50,
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.color.secondaryColor,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: context.color.borderColor.darken(10)),
         ),
         child: Row(
           children: [
-            Icon(Icons.location_on_outlined, color: Colors.grey),
+            Icon(Icons.location_on_outlined,
+                color: context.color.textLightColor),
             const SizedBox(width: 10),
             Expanded(
               child: [area, city, _state, country]
@@ -488,10 +491,10 @@ class FilterScreenState extends State<FilterScreen> {
                               element != null && element.isNotEmpty)
                           .join(", "),
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.grey.shade600),
+                      style: TextStyle(color: context.color.textColorDark),
                     )
                   : Text("allCities".translate(context))
-                      .color(Colors.grey.shade400),
+                      .color(context.color.textLightColor),
             ),
           ],
         ),
@@ -503,9 +506,9 @@ class FilterScreenState extends State<FilterScreen> {
     return Container(
       height: 45,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.color.secondaryColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: context.color.borderColor.darken(10)),
       ),
       alignment: Alignment.center,
       child: TextField(
@@ -515,7 +518,7 @@ class FilterScreenState extends State<FilterScreen> {
             : maxController,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        style: TextStyle(color: Colors.black),
+        style: TextStyle(color: context.color.textColorDark),
         textAlign: TextAlign.center,
         onChanged: (value) {
           double? val = double.tryParse(value);
@@ -562,10 +565,11 @@ class FilterScreenState extends State<FilterScreen> {
         decoration: InputDecoration(
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-          suffixText: "AED",
-          suffixStyle: TextStyle(color: Colors.grey, fontSize: 12),
+          suffixText: Constant.currencySymbol,
+          suffixStyle:
+              TextStyle(color: context.color.textLightColor, fontSize: 12),
           hintText: "0",
-          hintStyle: TextStyle(color: Colors.grey.shade400),
+          hintStyle: TextStyle(color: context.color.textLightColor),
         ),
       ),
     );
@@ -587,20 +591,21 @@ class FilterScreenState extends State<FilterScreen> {
         height: 50,
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.color.secondaryColor,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: context.color.borderColor.darken(10)),
         ),
         child: Row(
           children: [
             Icon(Icons.calendar_today_outlined,
-                color: Colors.black54, size: 20),
+                color: context.color.textColorDark.withOpacity(0.54), size: 20),
             const SizedBox(width: 10),
             Expanded(
               child: Text(Constant.postedSince[index].status)
-                  .color(Colors.grey.shade600),
+                  .color(context.color.textColorDark),
             ),
-            Icon(Icons.keyboard_arrow_down, color: Colors.black54),
+            Icon(Icons.keyboard_arrow_down,
+                color: context.color.textColorDark.withOpacity(0.54)),
           ],
         ),
       ),
@@ -672,13 +677,14 @@ class FilterScreenState extends State<FilterScreen> {
           height: 50,
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.color.secondaryColor,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: context.color.borderColor.darken(10)),
           ),
           child: Row(
             children: [
-              Icon(Icons.location_on_outlined, color: Colors.grey),
+              Icon(Icons.location_on_outlined,
+                  color: context.color.textLightColor),
               const SizedBox(width: 10),
               Expanded(
                 child: [area, city, _state, country]
@@ -692,10 +698,10 @@ class FilterScreenState extends State<FilterScreen> {
                                 element != null && element.isNotEmpty)
                             .join(", "),
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: Colors.grey.shade600),
+                        style: TextStyle(color: context.color.textColorDark),
                       )
                     : Text("allCities".translate(context))
-                        .color(Colors.grey.shade400),
+                        .color(context.color.textLightColor),
               ),
             ],
           ),
@@ -725,9 +731,9 @@ class FilterScreenState extends State<FilterScreen> {
           height: 50,
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.color.secondaryColor,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: context.color.borderColor.darken(10)),
           ),
           child: Row(
             children: [
@@ -736,17 +742,19 @@ class FilterScreenState extends State<FilterScreen> {
                       height: 20, width: 20, fit: BoxFit.contain)
                   : /*UiUtils.getSvg(AppIcons.categoryIcon,
                       color: Colors.grey)*/
-                  Icon(Icons.grid_view, color: Colors.grey, size: 20),
+                  Icon(Icons.grid_view,
+                      color: context.color.textLightColor, size: 20),
               const SizedBox(width: 10),
               Expanded(
                 child: categoryList.isNotEmpty
                     ? Text("${categoryList.map((e) => e.name).join(' - ')}",
                             maxLines: 1, overflow: TextOverflow.ellipsis)
-                        .color(Colors.grey.shade600)
+                        .color(context.color.textColorDark)
                     : Text("allInClassified".translate(context))
-                        .color(Colors.grey.shade400),
+                        .color(context.color.textLightColor),
               ),
-              Icon(Icons.keyboard_arrow_down, color: Colors.black54),
+              Icon(Icons.keyboard_arrow_down,
+                  color: context.color.textColorDark.withOpacity(0.54)),
             ],
           ),
         ),

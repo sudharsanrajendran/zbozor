@@ -499,7 +499,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
           width: double.infinity,
           height: 50,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.color.secondaryColor,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: context.color.borderColor),
           ),
@@ -622,7 +622,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     height: 90, // 🔥 FIXED HEIGHT (important)
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.color.secondaryColor,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isSelected
@@ -819,7 +819,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                 padding: const EdgeInsets.only(right: 8),
                 child: ActionChip(
                   label: Text(child.name ?? ""),
-                  backgroundColor: Colors.white,
+                  backgroundColor: context.color.secondaryColor,
                   side: BorderSide(
                     color: isSelected
                         ? context.color.textDefaultColor
@@ -877,8 +877,10 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Text(
           "Show 12,000 Results",
-          style: const TextStyle(
-              color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: context.color.buttonColor,
+              fontSize: 16,
+              fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -1095,11 +1097,12 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                       });
                     }
                   },
-                  child: const Text(
+                  child: Text(
                     "View all >",
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.blue, // Requested Blue color
+                      color:
+                          context.color.territoryColor, // Requested Blue color
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1147,7 +1150,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
                           decoration: BoxDecoration(
-                            color: Colors.white, // White usually
+                            color:
+                                context.color.secondaryColor, // White usually
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(
                                 width: isSelected ? 1.5 : 1,
@@ -1354,10 +1358,12 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text("To",
-                        style: TextStyle(fontWeight: FontWeight.w500)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: context.color.textDefaultColor)),
                   ),
                   Expanded(
                     child: Container(

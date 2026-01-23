@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'package:Ebozor/app/routes.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/chat/blocked_users_list_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/get_buyer_chat_users_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/get_seller_chat_users_cubit.dart';
@@ -51,9 +52,9 @@ class _ChatListScreenState extends State<ChatListScreen>
       DateTime checkDate = DateTime(date.year, date.month, date.day);
 
       if (checkDate == today) {
-        return "Today";
+        return "today".translate(context);
       } else if (checkDate == yesterday) {
-        return "Yesterday";
+        return "yesterday".translate(context);
       } else {
         return DateFormat("MMM d").format(date);
       }
@@ -101,7 +102,7 @@ class _ChatListScreenState extends State<ChatListScreen>
         backgroundColor: context.color.backgroundColor,
         appBar: UiUtils.buildAppBar(
           context,
-          title: "Chats",
+          title: "chats".translate(context),
           bottomHeight: 0,
           actions: [
             InkWell(

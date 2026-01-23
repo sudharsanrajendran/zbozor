@@ -112,6 +112,8 @@ extension ColorPrefs on ColorScheme {
       : Colors.white.withOpacity(0.7);
 
   Color get bannerColor => bannerBlue;
+
+  Color get shadow => Colors.black;
 }
 
 // 10pt: Smaller

@@ -158,7 +158,7 @@ class LocationWidget extends StatelessWidget {
               child: UiUtils.getSvg(
                 AppIcons.location,
                 fit: BoxFit.none,
-                color: context.color.textLightColor,
+                color: context.color.textDefaultColor,
               ),
             ),
             SizedBox(
@@ -216,7 +216,7 @@ class LocationWidget extends StatelessWidget {
                         softWrap: true,
                         overflow: TextOverflow.ellipsis,
                       )
-                          .color(context.color.deactivateColor)
+                          .color(context.color.textDefaultColor)
                           .size(context.font.small)
                           .bold(weight: FontWeight.w600),
                     ],
