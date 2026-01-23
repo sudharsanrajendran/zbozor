@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/cupertino.dart'; // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -615,7 +615,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
           ),
           GridListAdapter(
             type: ListUiType.List,
-            height: MediaQuery.of(context).size.height / 3.9.rh(context),
+            height: 210,
             controller: _pageScrollController,
             listAxis: Axis.horizontal,
             listSaperator: (BuildContext p0, int p1) => const SizedBox(

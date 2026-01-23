@@ -100,10 +100,10 @@ dependency_overrides:
 
 dev_dependencies:
   rename: ^3.0.0
-  flutter_test:
-    sdk: flutter
-  integration_test:
-    sdk: flutter
+  #flutter_test:
+    #sdk: flutter
+  #integration_test:
+   # sdk: flutter
   flutter_lints: ^4.0.0
 
 

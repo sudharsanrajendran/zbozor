@@ -121,7 +121,7 @@ class ItemHorizontalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.5),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
@@ -185,7 +185,7 @@ class ItemHorizontalCard extends StatelessWidget {
                       .color(context.color.territoryColor)
                       .bold(weight: FontWeight.w700),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5),
 
                   // NAME
                   Text(item.name!.firstUpperCase())
@@ -194,7 +194,7 @@ class ItemHorizontalCard extends StatelessWidget {
                       .color(context.color.textDefaultColor)
                       .bold(weight: FontWeight.w500),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5),
 
                   // LOCATION
                   if (item.address != "")
@@ -217,6 +217,8 @@ class ItemHorizontalCard extends StatelessWidget {
                         ),
                       ],
                     ),
+
+                  const SizedBox(height: 5),
                 ],
               ),
             ),
