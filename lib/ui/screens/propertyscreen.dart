@@ -460,6 +460,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   child: Text(
                     widget.categoryList[index].name ?? "",
                     textAlign: TextAlign.center,
+                    maxLines: MediaQuery.of(context).size.width < 390 ? 2 : 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: _selectedTabIndex == index
                           ? context.color.textDefaultColor

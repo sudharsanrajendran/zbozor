@@ -200,7 +200,7 @@ class _ItemListingSubscriptionPlansItemState
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start, //temp
                         children: [
-                          SizedBox(height: 50.rh(context)),
+                          SizedBox(height: 30.rh(context)),
                           ClipPath(
                             clipper: HexagonClipper(),
                             child: Container(

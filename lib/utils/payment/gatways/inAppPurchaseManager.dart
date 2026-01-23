@@ -135,10 +135,13 @@ class InAppPurchaseManager {
     close();
   }
 
-  Future<ProductDetails> getProductByProductId(String productId) async {
+  Future<ProductDetails?> getProductByProductId(String productId) async {
     ProductDetailsResponse productDetailsResponse =
         await _inAppPurchase.queryProductDetails({productId});
 
+    if (productDetailsResponse.productDetails.isEmpty) {
+      return null;
+    }
     return productDetailsResponse.productDetails.first;
   }
 
@@ -242,9 +245,17 @@ class InAppPurchaseManager {
   }
 
   Future<void> buy(String productId, String packageId) async {
+    print(
+        'DEBUG: Attempting to buy Product ID: "$productId", Package ID: "$packageId"');
     bool _isAvailable = await _inAppPurchase.isAvailable();
     if (_isAvailable) {
-      ProductDetails productDetails = await getProductByProductId(productId);
+      ProductDetails? productDetails = await getProductByProductId(productId);
+
+      if (productDetails == null) {
+        HelperUtils.showSnackBarMessage(
+            Constant.navigatorKey.currentContext!, "Product not found");
+        return;
+      }
 
       this.packageId = packageId;
       this.productId = productId;

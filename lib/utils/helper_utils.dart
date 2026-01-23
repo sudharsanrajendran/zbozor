@@ -268,9 +268,15 @@ class HelperUtils {
     ScaffoldMessenger.maybeOf(context)?.clearSnackBars();
 
     var snackBar = SnackBar(
-      content: Text(message),
-      behavior: (isFloating ?? false) ? SnackBarBehavior.floating : null,
-      backgroundColor: type?.value,
+      content: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: const TextStyle(color: Colors.white, fontSize: 16.0),
+      ),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: context.color.territoryColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       duration: Duration(seconds: messageDuration),
     );
 

@@ -184,6 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             String profile = HiveUtils.getUserDetails().profile ?? "";
 
             return Container(
+              constraints: const BoxConstraints(minHeight: 110),
               width: double.infinity,
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
@@ -191,9 +192,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black
+                        .withOpacity(0.05), // Fixed undefined shadowColor
                     blurRadius: 10,
-                    offset: Offset(0, 5),
+                    offset: const Offset(0, 5),
                   )
                 ],
               ),
@@ -202,15 +204,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                   Stack(
                     alignment: Alignment.bottomRight,
                     children: [
+                      ///////profile circle
                       Container(
-                        width: 70,
-                        height: 70,
+                        width: 60,
+                        height: 60,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: Colors
-                                .transparent, // No visible border in design
-                            width: 0,
+                            color: context.color.borderColor,
+                            width: 1,
                           ),
                         ),
                         child: ClipOval(
@@ -222,11 +224,14 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   height: 70,
                                   fit: BoxFit.cover,
                                 )
-                              : UiUtils.getSvg(
-                                  AppIcons.defaultPersonLogo,
-                                  color: context.color.territoryColor,
-                                  width: 70,
-                                  height: 70,
+                              : Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: UiUtils.getSvg(
+                                    AppIcons.defaultPersonLogo,
+                                    color: context.color.textLightColor,
+                                    width: 70,
+                                    height: 70,
+                                  ),
                                 ),
                         ),
                       ),
@@ -238,24 +243,22 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 args: {"from": "profile"});
                           },
                           child: Container(
-                            height: 24,
-                            width: 24,
+                            height: 22,
+                            width: 22,
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: context
-                                  .color.textColorDark, // Dark bg for edit icon
+                              color: context.color.textColorDark,
                               shape: BoxShape.circle,
                               border: Border.all(
                                   color: context.color.secondaryColor,
                                   width: 2),
                             ),
-                            child: Icon(Icons.edit,
-                                size: 12, color: context.color.secondaryColor),
+                            child: Image.asset("assets/profileedit.png"),
                           ),
                         ),
                     ],
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,7 +267,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 ? name
                                 : "Guest User")
                             .bold(weight: FontWeight.w700)
-                            .size(context.font.large)
+                            .size(context.font.larger)
                             .color(context.color.textColorDark),
                         const SizedBox(height: 4),
 
@@ -284,6 +287,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     });
                               }
                             },
+                            //// ve
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 4),
@@ -291,7 +295,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 border: Border.all(
                                     color: context.color.textLightColor
                                         .withOpacity(0.3)),
-                                borderRadius: BorderRadius.circular(5),
+                                borderRadius: BorderRadius.circular(4),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -320,12 +324,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                           ),
 
                         if (HiveUtils.isUserAuthenticated()) ...[
+                          //date shows
                           const SizedBox(height: 4),
                           Text(
                             "Joined on ${DateTime.tryParse(HiveUtils.getUserDetails().createdAt ?? "")?.year ?? '2025'}", // Simplified date
                             style: TextStyle(
                               color: context.color.textLightColor,
-                              fontSize: context.font.smaller,
+                              fontSize: context.font.small,
                             ),
                           )
                         ]
@@ -343,244 +348,255 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return AnnotatedRegion(
-      value: UiUtils.getSystemUiOverlayStyle(
-          context: context, statusBarColor: context.color.backgroundColor),
-      child: Scaffold(
-        backgroundColor: context.color.backgroundColor, // App background color
-        body: SingleChildScrollView(
-          controller: profileScreenController,
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const SizedBox(height: 50), // Spacing for status bar area
-                profileHeader(),
-                const SizedBox(height: 20),
-                _buildActionRow(),
-                const SizedBox(height: 10),
+    return SafeArea(
+      child: AnnotatedRegion(
+        value: UiUtils.getSystemUiOverlayStyle(
+            context: context, statusBarColor: context.color.backgroundColor),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Scaffold(
+            backgroundColor:
+                context.color.backgroundColor, // App background color
+            body: SingleChildScrollView(
+              controller: profileScreenController,
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18.0, vertical: 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    profileHeader(),
+                    const SizedBox(height: 16),
+                    _buildActionRow(),
+                    const SizedBox(height: 10),
 
-                // Group 1
-                customTile(
-                  context,
-                  title: "transactionHistory".translate(context),
-                  svgImagePath: AppIcons.transaction,
-                  onTap: () {
-                    UiUtils.checkUser(
-                        onNotGuest: () {
-                          Navigator.pushNamed(
-                              context, Routes.transactionHistory);
-                        },
-                        context: context);
-                  },
-                ),
-                customTile(
-                  context,
-                  title: "myReview".translate(context),
-                  svgImagePath: AppIcons.myReviewIcon,
-                  onTap: () {
-                    UiUtils.checkUser(
-                        onNotGuest: () {
-                          Navigator.pushNamed(context, Routes.myReviewsScreen);
-                        },
-                        context: context);
-                  },
-                ),
-                const Divider(thickness: 0.5),
-
-                // Group 2
-                ValueListenableBuilder(
-                    valueListenable: isDarkTheme,
-                    builder: (context, v, c) {
-                      return customTile(
-                        context,
-                        title: "darkTheme".translate(context),
-                        svgImagePath: AppIcons.darkTheme,
-                        isSwitchBox: true,
-                        // For minimalist design, maybe we want an arrow for everything else, and switch for this
-                        onTapSwitch: (value) {
-                          context.read<AppThemeCubit>().changeTheme(
-                              value == true ? AppTheme.dark : AppTheme.light);
-                          setState(() {
-                            isDarkTheme.value = value;
-                          });
-                        },
-                        switchValue: v,
-                        onTap: () {},
-                      );
-                    }),
-                customTile(
-                  context,
-                  title: "language".translate(context),
-                  svgImagePath: AppIcons.language,
-                  onTap: () {
-                    Navigator.pushNamed(
-                        context, Routes.languageListScreenRoute);
-                  },
-                ),
-                const Divider(thickness: 0.5),
-
-                // Group 3
-                customTile(
-                  context,
-                  title: "blogs".translate(context),
-                  svgImagePath: AppIcons.articles,
-                  onTap: () {
-                    UiUtils.checkUser(
-                        onNotGuest: () {
-                          Navigator.pushNamed(
-                            context,
-                            Routes.blogsScreenRoute,
-                          );
-                        },
-                        context: context);
-                  },
-                ),
-                customTile(
-                  context,
-                  title: "favorites".translate(context),
-                  svgImagePath: AppIcons.favorites,
-                  onTap: () {
-                    UiUtils.checkUser(
-                        onNotGuest: () {
-                          Navigator.pushNamed(context, Routes.favoritesScreen);
-                        },
-                        context: context);
-                  },
-                ),
-                customTile(
-                  context,
-                  title: "faqsLbl".translate(context),
-                  svgImagePath: AppIcons.faqsIcon,
-                  onTap: () {
-                    UiUtils.checkUser(
-                        onNotGuest: () {
-                          Navigator.pushNamed(
-                            context,
-                            Routes.faqsScreen,
-                          );
-                        },
-                        context: context);
-                  },
-                ),
-                customTile(
-                  context,
-                  title: "shareApp".translate(context),
-                  svgImagePath: AppIcons.shareApp,
-                  onTap: shareApp,
-                ),
-                customTile(
-                  context,
-                  title: "rateUs".translate(context),
-                  svgImagePath: AppIcons.rateUs,
-                  onTap: rateUs,
-                ),
-                customTile(
-                  context,
-                  title: "contactUs".translate(context),
-                  svgImagePath: AppIcons.contactUs,
-                  onTap: () {
-                    Navigator.pushNamed(
+                    // Group 1
+                    customTile(
                       context,
-                      Routes.contactUs,
-                    );
-                  },
-                ),
-                customTile(
-                  context,
-                  title: "aboutUs".translate(context),
-                  svgImagePath: AppIcons.aboutUs,
-                  onTap: () {
-                    Navigator.pushNamed(context, Routes.profileSettings,
-                        arguments: {
-                          'title': "aboutUs".translate(context),
-                          'param': Api.aboutUs
-                        });
-                  },
-                ),
-                customTile(
-                  context,
-                  title: "termsConditions".translate(context),
-                  svgImagePath: AppIcons.terms,
-                  onTap: () {
-                    Navigator.pushNamed(context, Routes.profileSettings,
-                        arguments: {
-                          'title': "termsConditions".translate(context),
-                          'param': Api.termsAndConditions
-                        });
-                  },
-                ),
-                customTile(
-                  context,
-                  title: "privacyPolicy".translate(context),
-                  svgImagePath: AppIcons.privacy,
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      Routes.profileSettings,
-                      arguments: {
-                        'title': "privacyPolicy".translate(context),
-                        'param': Api.privacyPolicy
+                      title: "transactionHistory".translate(context),
+                      svgImagePath: AppIcons.transaction,
+                      onTap: () {
+                        UiUtils.checkUser(
+                            onNotGuest: () {
+                              Navigator.pushNamed(
+                                  context, Routes.transactionHistory);
+                            },
+                            context: context);
                       },
-                    );
-                  },
-                ),
+                    ),
+                    customTile(
+                      context,
+                      title: "myReview".translate(context),
+                      svgImagePath: AppIcons.myReviewIcon,
+                      onTap: () {
+                        UiUtils.checkUser(
+                            onNotGuest: () {
+                              Navigator.pushNamed(
+                                  context, Routes.myReviewsScreen);
+                            },
+                            context: context);
+                      },
+                    ),
+                    const Divider(thickness: 0.5),
 
-                if (Constant.isUpdateAvailable == true) ...[
-                  updateTile(
-                    context,
-                    isUpdateAvailable: Constant.isUpdateAvailable,
-                    title: "update".translate(context),
-                    newVersion: Constant.newVersionNumber,
-                    svgImagePath: AppIcons.update,
-                    onTap: () async {
-                      if (Platform.isIOS) {
-                        await launchUrl(Uri.parse(Constant.appstoreURLios));
-                      } else if (Platform.isAndroid) {
-                        await launchUrl(
-                            Uri.parse(Constant.playstoreURLAndroid));
-                      }
-                    },
-                  ),
-                ],
+                    // Group 2
+                    ValueListenableBuilder(
+                        valueListenable: isDarkTheme,
+                        builder: (context, v, c) {
+                          return customTile(
+                            context,
+                            title: "darkTheme".translate(context),
+                            svgImagePath: AppIcons.darkTheme,
+                            isSwitchBox: true,
+                            // For minimalist design, maybe we want an arrow for everything else, and switch for this
+                            onTapSwitch: (value) {
+                              context.read<AppThemeCubit>().changeTheme(
+                                  value == true
+                                      ? AppTheme.dark
+                                      : AppTheme.light);
+                              setState(() {
+                                isDarkTheme.value = value;
+                              });
+                            },
+                            switchValue: v,
+                            onTap: () {},
+                          );
+                        }),
+                    customTile(
+                      context,
+                      title: "language".translate(context),
+                      svgImagePath: AppIcons.language,
+                      onTap: () {
+                        Navigator.pushNamed(
+                            context, Routes.languageListScreenRoute);
+                      },
+                    ),
+                    const Divider(thickness: 0.5),
 
-                // Delete Account
-                const SizedBox(height: 20),
-                if (HiveUtils.isUserAuthenticated()) ...[
-                  customTile(context,
-                      title: "deleteAccount".translate(context),
-                      svgImagePath: AppIcons.delete, onTap: () {
-                    if (Constant.isDemoModeOn) {
-                      if (HiveUtils.getUserDetails().mobile !=
-                          null) if (Constant
-                              .demoMobileNumber ==
-                          (HiveUtils.getUserDetails().mobile!.replaceFirst(
-                              "+${HiveUtils.getCountryCode()}", ""))) {
-                        HelperUtils.showSnackBarMessage(context,
-                            "thisActionNotValidDemo".translate(context));
-                        return;
-                      }
-                    }
-                    deleteConfirmWidget();
-                  },
-                      textColor: Colors.red, // Optional: highlight delete
-                      iconColor: Colors.red),
-                ],
-                if (HiveUtils.isUserAuthenticated()) ...[
-                  SizedBox(height: 10),
-                  Center(
-                      child: TextButton(
-                          onPressed: () {
-                            logOutConfirmWidget();
+                    // Group 3
+                    customTile(
+                      context,
+                      title: "blogs".translate(context),
+                      svgImagePath: AppIcons.articles,
+                      onTap: () {
+                        UiUtils.checkUser(
+                            onNotGuest: () {
+                              Navigator.pushNamed(
+                                context,
+                                Routes.blogsScreenRoute,
+                              );
+                            },
+                            context: context);
+                      },
+                    ),
+                    customTile(
+                      context,
+                      title: "favorites".translate(context),
+                      svgImagePath: AppIcons.favorites,
+                      onTap: () {
+                        UiUtils.checkUser(
+                            onNotGuest: () {
+                              Navigator.pushNamed(
+                                  context, Routes.favoritesScreen);
+                            },
+                            context: context);
+                      },
+                    ),
+                    customTile(
+                      context,
+                      title: "faqsLbl".translate(context),
+                      svgImagePath: AppIcons.faqsIcon,
+                      onTap: () {
+                        UiUtils.checkUser(
+                            onNotGuest: () {
+                              Navigator.pushNamed(
+                                context,
+                                Routes.faqsScreen,
+                              );
+                            },
+                            context: context);
+                      },
+                    ),
+                    customTile(
+                      context,
+                      title: "shareApp".translate(context),
+                      svgImagePath: AppIcons.shareApp,
+                      onTap: shareApp,
+                    ),
+                    customTile(
+                      context,
+                      title: "rateUs".translate(context),
+                      svgImagePath: AppIcons.rateUs,
+                      onTap: rateUs,
+                    ),
+                    customTile(
+                      context,
+                      title: "contactUs".translate(context),
+                      svgImagePath: AppIcons.contactUs,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          Routes.contactUs,
+                        );
+                      },
+                    ),
+                    customTile(
+                      context,
+                      title: "aboutUs".translate(context),
+                      svgImagePath: AppIcons.aboutUs,
+                      onTap: () {
+                        Navigator.pushNamed(context, Routes.profileSettings,
+                            arguments: {
+                              'title': "aboutUs".translate(context),
+                              'param': Api.aboutUs
+                            });
+                      },
+                    ),
+                    customTile(
+                      context,
+                      title: "termsConditions".translate(context),
+                      svgImagePath: AppIcons.terms,
+                      onTap: () {
+                        Navigator.pushNamed(context, Routes.profileSettings,
+                            arguments: {
+                              'title': "termsConditions".translate(context),
+                              'param': Api.termsAndConditions
+                            });
+                      },
+                    ),
+                    customTile(
+                      context,
+                      title: "privacyPolicy".translate(context),
+                      svgImagePath: AppIcons.privacy,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          Routes.profileSettings,
+                          arguments: {
+                            'title': "privacyPolicy".translate(context),
+                            'param': Api.privacyPolicy
                           },
-                          child: Text("logout".translate(context))
-                              .color(Colors.red)
-                              .bold()))
-                ],
-                const SizedBox(height: 40),
-              ],
+                        );
+                      },
+                    ),
+
+                    if (Constant.isUpdateAvailable == true) ...[
+                      updateTile(
+                        context,
+                        isUpdateAvailable: Constant.isUpdateAvailable,
+                        title: "update".translate(context),
+                        newVersion: Constant.newVersionNumber,
+                        svgImagePath: AppIcons.update,
+                        onTap: () async {
+                          if (Platform.isIOS) {
+                            await launchUrl(Uri.parse(Constant.appstoreURLios));
+                          } else if (Platform.isAndroid) {
+                            await launchUrl(
+                                Uri.parse(Constant.playstoreURLAndroid));
+                          }
+                        },
+                      ),
+                    ],
+
+                    // Delete Account
+
+                    if (HiveUtils.isUserAuthenticated()) ...[
+                      customTile(context,
+                          title: "deleteAccount".translate(context),
+                          svgImagePath: AppIcons.delete, onTap: () {
+                        if (Constant.isDemoModeOn) {
+                          if (HiveUtils.getUserDetails().mobile !=
+                              null) if (Constant
+                                  .demoMobileNumber ==
+                              (HiveUtils.getUserDetails().mobile!.replaceFirst(
+                                  "+${HiveUtils.getCountryCode()}", ""))) {
+                            HelperUtils.showSnackBarMessage(context,
+                                "thisActionNotValidDemo".translate(context));
+                            return;
+                          }
+                        }
+                        deleteConfirmWidget();
+                      },
+                          textColor: context.color
+                              .textColorDark, // Optional: highlight delete
+                          iconColor: context.color.territoryColor),
+                    ],
+                    if (HiveUtils.isUserAuthenticated()) ...[
+                      SizedBox(height: 10),
+                      Center(
+                          child: TextButton(
+                              onPressed: () {
+                                logOutConfirmWidget();
+                              },
+                              child: Text("logout".translate(context))
+                                  .color(context.color.territoryColor)
+                                  .bold()))
+                    ],
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -603,15 +619,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                   context: context);
             },
             child: Container(
-              height: 100,
+              constraints: const BoxConstraints(minHeight: 78),
               decoration: BoxDecoration(
                 color: context.color.secondaryColor,
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
                     blurRadius: 10,
-                    offset: Offset(0, 5),
+                    offset: const Offset(0, 5),
                   )
                 ],
               ),
@@ -619,10 +635,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   UiUtils.getSvg(AppIcons.promoted,
-                      width: 30,
-                      height: 30,
+                      width: 24,
+                      height: 24,
                       color: context.color.territoryColor),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text("myFeaturedAds".translate(context))
                       .size(context.font.normal)
                       .color(context.color.textColorDark)
@@ -633,7 +649,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
           ),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         Expanded(
           child: GestureDetector(
             onTap: () async {
@@ -645,7 +661,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   context: context);
             },
             child: Container(
-              height: 100,
+              constraints: const BoxConstraints(minHeight: 78),
               decoration: BoxDecoration(
                 color: context.color.secondaryColor,
                 borderRadius: BorderRadius.circular(15),
@@ -653,7 +669,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
                     blurRadius: 10,
-                    offset: Offset(0, 5),
+                    offset: const Offset(0, 5),
                   )
                 ],
               ),
@@ -661,10 +677,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   UiUtils.getSvg(AppIcons.subscription,
-                      width: 30,
-                      height: 30,
+                      width: 24,
+                      height: 24,
                       color: context.color.territoryColor),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text("subscription".translate(context))
                       .size(context.font.normal)
                       .centerAlign()
@@ -689,66 +705,69 @@ class _ProfileScreenState extends State<ProfileScreen>
       Color? iconColor,
       dynamic switchValue,
       required VoidCallback onTap}) {
-    return Container(
-      height: 60,
-      margin: const EdgeInsets.only(top: 0.5, bottom: 3),
-      decoration: BoxDecoration(
-        color: Colors.transparent, // Minimalist: No background
-        // border: Border(bottom: BorderSide(color: context.color.borderColor.withOpacity(0.5))),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: 0.0), // Reduced internal padding
-        child: GestureDetector(
-          onTap: onTap,
-          behavior: HitTestBehavior.opaque,
-          child: AbsorbPointer(
-            absorbing: !(isSwitchBox ?? false),
-            child: Row(
-              children: [
-                // Icon without box
-                FittedBox(
-                    fit: BoxFit.none,
-                    child: UiUtils.getSvg(svgImagePath,
-                        height: 24,
-                        width: 24,
-                        color: iconColor ?? context.color.territoryColor)),
-                SizedBox(
-                  width: 16,
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Text(title)
-                      .bold(
-                          weight:
-                              FontWeight.w600) // Slightly less bold than 700
-                      .color(textColor ?? context.color.textColorDark),
-                ),
-                const Spacer(),
-                if (isSwitchBox != true)
-                  SizedBox(
-                    width: 12,
-                    height: 12,
-                    child: UiUtils.getSvg(
-                      AppIcons.arrowRight, // Should verify if this is a chevron
-                      color: context.color.textLightColor,
-                    ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 38),
+        margin: const EdgeInsets.only(top: 0.5, bottom: 3),
+        decoration: BoxDecoration(
+          color: Colors.transparent, // Minimalist: No background
+          // border: Border(bottom: BorderSide(color: context.color.borderColor.withOpacity(0.5))),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 0.0),
+          child: GestureDetector(
+            onTap: onTap,
+            behavior: HitTestBehavior.opaque,
+            child: AbsorbPointer(
+              absorbing: !(isSwitchBox ?? false),
+              child: Row(
+                children: [
+                  // Icon without box
+                  FittedBox(
+                      fit: BoxFit.none,
+                      child: UiUtils.getSvg(svgImagePath,
+                          height: 24,
+                          width: 24,
+                          color: iconColor ?? context.color.territoryColor)),
+                  const SizedBox(
+                    width: 16,
                   ),
-
-                if (isSwitchBox ?? false)
-                  // CupertinoSwitch(value: value, onChanged: onChanged)
-                  SizedBox(
-                    height: 40,
-                    width: 30,
-                    child: CupertinoSwitch(
-                      activeTrackColor: context.color.territoryColor,
-                      value: switchValue ?? false,
-                      onChanged: (value) {
-                        onTapSwitch?.call(value);
-                      },
+                  Expanded(
+                    flex: 3,
+                    child: Text(title)
+                        .bold(
+                            weight:
+                                FontWeight.w600) // Slightly less bold than 700
+                        .color(textColor ?? context.color.textColorDark),
+                  ),
+                  const Spacer(),
+                  if (isSwitchBox != true)
+                    SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: UiUtils.getSvg(
+                        AppIcons
+                            .arrowRight, // Should verify if this is a chevron
+                        color: context.color.textLightColor,
+                      ),
                     ),
-                  )
-              ],
+
+                  if (isSwitchBox ?? false)
+                    // CupertinoSwitch(value: value, onChanged: onChanged)
+                    SizedBox(
+                      height: 40,
+                      width: 30,
+                      child: CupertinoSwitch(
+                        activeTrackColor: context.color.territoryColor,
+                        value: switchValue ?? false,
+                        onChanged: (value) {
+                          onTapSwitch?.call(value);
+                        },
+                      ),
+                    )
+                ],
+              ),
             ),
           ),
         ),
