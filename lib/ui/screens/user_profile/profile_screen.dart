@@ -581,7 +581,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       },
                           textColor: context.color
                               .textColorDark, // Optional: highlight delete
-                          iconColor: context.color.territoryColor),
+                          iconColor: const Color(0xFFEE2929)),
                     ],
                     if (HiveUtils.isUserAuthenticated()) ...[
                       SizedBox(height: 10),
@@ -877,6 +877,8 @@ class _ProfileScreenState extends State<ProfileScreen>
             : 'logout'.translate(context),
         cancelTextColor: context.color.textColorDark,
         svgImagePath: AppIcons.deleteIcon,
+        svgImageColor: const Color(0xFFEE2929),
+        useAdaptiveColor: true,
         isAcceptContainesPush: true,
         onAccept: () async {
           (_auth.currentUser != null)

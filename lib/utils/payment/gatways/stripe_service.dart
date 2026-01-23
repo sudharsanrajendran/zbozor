@@ -68,11 +68,13 @@ class StripeService {
       });
     } on Exception catch (e) {
       if (e is StripeException) {
+        debugPrint("Stripe Error: ${e.error.localizedMessage}");
         HelperUtils.showSnackBarMessage(Constant.navigatorKey.currentContext!,
-            'Error from Stripe: ${e.error.localizedMessage}');
+            "paymentDeclined".translate(context));
       } else {
-        HelperUtils.showSnackBarMessage(
-            Constant.navigatorKey.currentContext!, 'Unforeseen error: ${e}');
+        debugPrint("Payment Error: $e");
+        HelperUtils.showSnackBarMessage(Constant.navigatorKey.currentContext!,
+            "paymentDeclined".translate(context));
       }
     }
   }

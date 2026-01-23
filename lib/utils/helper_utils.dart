@@ -271,12 +271,14 @@ class HelperUtils {
       content: Text(
         message,
         textAlign: TextAlign.center,
-        style: const TextStyle(color: Colors.white, fontSize: 16.0),
+        style: const TextStyle(color: Colors.white, fontSize: 14.0),
       ),
       behavior: SnackBarBehavior.floating,
       backgroundColor: context.color.territoryColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+      margin: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.2, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       duration: Duration(seconds: messageDuration),
     );
 
