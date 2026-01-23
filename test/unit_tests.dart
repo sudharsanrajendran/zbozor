@@ -26,7 +26,7 @@ class MockCategoryRepository implements CategoryRepository {
   ];
 
   @override
-  Future<DataOutput<CategoryModel>> fetchCategories({
+  Future<DataOutput<CategoryModel>>fetchCategories({
     required int page,
     int? categoryId,
   }) async {

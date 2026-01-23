@@ -1,7 +1,6 @@
-import 'dart:io';
+import 'package:flutter/cupertino.dart';import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +20,7 @@ class PdfViewer extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? arguments = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (_) => PdfViewer(
         url: arguments?['url'],
         // from: arguments?['from'],

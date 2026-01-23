@@ -1,11 +1,10 @@
-
+import 'package:flutter/cupertino.dart';
 import 'package:Ebozor/ui/screens/filter_screen.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Ebozor/utils/ui_utils.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
 class PostedSinceFilterScreen extends StatefulWidget {
   final List<PostedSinceItem> list;
@@ -24,7 +23,7 @@ class PostedSinceFilterScreen extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? args = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (_) => PostedSinceFilterScreen(
         list: args?['list'],
         postedSince: args?['postedSince'],

@@ -1,10 +1,9 @@
-import 'package:Ebozor/app/routes.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/chat/blocked_users_list_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/get_buyer_chat_users_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/get_seller_chat_users_cubit.dart';
 import 'package:Ebozor/data/model/chat/chated_user_model.dart';
 import 'package:Ebozor/ui/screens/chat/chatTile.dart' show ChatTile;
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
 import 'package:Ebozor/ui/screens/widgets/shimmerLoadingContainer.dart'
@@ -26,7 +25,7 @@ class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
 
   static Route route(RouteSettings settings) {
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return const ChatListScreen();
       },

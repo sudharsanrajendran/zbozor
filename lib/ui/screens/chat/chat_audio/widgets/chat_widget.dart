@@ -105,7 +105,6 @@ class ChatMessageState extends State<ChatMessage>
   final ValueNotifier _linkAddNotifier = ValueNotifier("");
 
   @override
-
   void initState() {
     if (widget.senderId.toString() == HiveUtils.getUserId() &&
         (widget.isSentNow == true) &&
@@ -194,14 +193,16 @@ class ChatMessageState extends State<ChatMessage>
   Widget build(BuildContext context) {
     super.build(context);
 
-    bool isDark = context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark;
+    bool isDark =
+        context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark;
     bool isSelf = widget.senderId.toString() == HiveUtils.getUserId();
     Color msgTextColor = isSelf
-        ? (isDark ? Colors.black : Colors.white)
-        : Colors.black; // Other: Always Black
+        ? Colors.black // Sender: Always Black
+        : Colors
+            .black; // Others: Always Black (as per request "text black use pannu")
     Color bubbleColor = isSelf
-        ? (isDark ? Colors.white : Colors.green)
-        : (isDark ? Colors.white : Colors.grey.shade200); // Other: Always Light
+        ? const Color(0xFFFFDDDD) // Sender: 0xFFFFDDDD
+        : (isDark ? Colors.white : Colors.grey.shade200);
 
     return GestureDetector(
       onLongPress: () {
@@ -248,7 +249,8 @@ class ChatMessageState extends State<ChatMessage>
                         child: widget.audio != ""
                             ? RecordMessage(
                                 url: widget.audio ?? "",
-                                isSentByMe: widget.senderId.toString() == HiveUtils.getUserId(),
+                                isSentByMe: widget.senderId.toString() ==
+                                    HiveUtils.getUserId(),
                                 textColor: msgTextColor,
                               )
                             : Column(
@@ -289,8 +291,7 @@ class ChatMessageState extends State<ChatMessage>
                                       }),
                                   SelectableText.rich(
                                     TextSpan(
-                                      style: TextStyle(
-                                          color: msgTextColor),
+                                      style: TextStyle(color: msgTextColor),
                                       children: _replaceLink().map((data) {
                                         //This will add link to msg
                                         if (_isLink(data)) {
@@ -306,7 +307,8 @@ class ChatMessageState extends State<ChatMessage>
                                                       Uri.parse(data));
                                                 },
                                               style: TextStyle(
-                                                  decoration: TextDecoration.underline,
+                                                  decoration:
+                                                      TextDecoration.underline,
                                                   color: Colors.blue[800]));
                                         }
                                         //This will make text bold
@@ -314,13 +316,17 @@ class ChatMessageState extends State<ChatMessage>
                                           text: "",
                                           children:
                                               _matchAstric(data).map((text) {
-                                            if (text.toString().startsWith("*") && text.toString().endsWith("*")) {
+                                            if (text
+                                                    .toString()
+                                                    .startsWith("*") &&
+                                                text.toString().endsWith("*")) {
                                               return TextSpan(
                                                   text:
                                                       text.replaceAll("*", ""),
                                                   style: TextStyle(
                                                       color: msgTextColor,
-                                                      fontWeight: FontWeight.w800));
+                                                      fontWeight:
+                                                          FontWeight.w800));
                                             }
 
                                             return TextSpan(
@@ -328,13 +334,11 @@ class ChatMessageState extends State<ChatMessage>
                                                 style: TextStyle(
                                                     color: msgTextColor));
                                           }).toList(),
-                                          style: TextStyle(
-                                              color: msgTextColor),
+                                          style: TextStyle(color: msgTextColor),
                                         );
                                       }).toList(),
                                     ),
-                                    style: TextStyle(
-                                        color: msgTextColor),
+                                    style: TextStyle(color: msgTextColor),
                                   ),
                                 ],
                               ),
@@ -356,8 +360,9 @@ class ChatMessageState extends State<ChatMessage>
 
                             /*ChatMessageHandler.updateMessageId(
                                 uniqueIdentifier.value, state.messageId);*/
-                            
-                            ChatSocketService().sendMessageFromApi(widget.itemOfferId, state.responseData);
+
+                            ChatSocketService().sendMessageFromApi(
+                                widget.itemOfferId, state.responseData);
 
                             WidgetsBinding.instance
                                 .addPostFrameCallback((timeStamp) {
@@ -414,7 +419,8 @@ class ChatMessageState extends State<ChatMessage>
                   style: TextStyle(
                       color: isSelf
                           ? context.color.textLightColor.withOpacity(0.7)
-                          : context.color.textLightColor), // this is time showing colors
+                          : context.color
+                              .textLightColor), // this is time showing colors
                 ).size(context.font.smaller),
               ),
             ],

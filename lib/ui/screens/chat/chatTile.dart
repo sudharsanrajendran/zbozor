@@ -1,7 +1,6 @@
-import 'package:Ebozor/data/cubits/chat/delete_message_cubit.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/data/cubits/chat/delete_message_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/load_chat_messages.dart';
 import 'package:Ebozor/ui/screens/chat/chat_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/extensions/lib/build_context.dart';
@@ -50,7 +49,7 @@ class ChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, BlurredRouter(
+        Navigator.push(context, CupertinoPageRoute(
           builder: (context) {
             currentlyChatingWith = id;
             currentlyChatItemId = itemId;

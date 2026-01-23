@@ -1,10 +1,9 @@
-import 'dart:io';
+import 'package:flutter/cupertino.dart';import 'dart:io';
 
 import 'package:Ebozor/app/app_theme.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/auth/authentication_cubit.dart';
 import 'package:Ebozor/data/cubits/system/app_theme_cubit.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/custom_text_form_field.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
@@ -27,9 +26,9 @@ class SignupScreen extends StatefulWidget {
 
   const SignupScreen({super.key, this.emailId});
 
-  static BlurredRouter route(RouteSettings settings) {
+  static CupertinoPageRoute route(RouteSettings settings) {
     Map? args = settings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return SignupScreen(
           emailId: args!['emailId'],
@@ -81,7 +80,7 @@ class _SignupScreenState extends CloudState<SignupScreen> {
                   FirebaseAuth.instance.currentUser?.sendEmailVerification();
 
                   // Navigator.pushReplacementNamed(context, Routes.);
-                  Navigator.push<dynamic>(context, BlurredRouter(
+                  Navigator.push<dynamic>(context, CupertinoPageRoute(
                     builder: (context) {
                       return EmailVerificationScreen(
                         username: _usernameController.text,

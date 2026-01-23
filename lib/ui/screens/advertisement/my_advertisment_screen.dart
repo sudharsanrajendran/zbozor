@@ -1,4 +1,4 @@
-
+import 'package:flutter/cupertino.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/delete_advertisment_cubit.dart';
 import 'package:Ebozor/data/cubits/item/fetch_my_promoted_items_cubit.dart';
@@ -6,7 +6,6 @@ import 'package:Ebozor/data/cubits/utility/item_edit_global.dart';
 import 'package:Ebozor/data/model/item/item_model.dart';
 import 'package:Ebozor/data/repositories/advertisement_repository.dart';
 import 'package:Ebozor/ui/screens/home/widgets/item_horizontal_card.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
@@ -24,7 +23,7 @@ class MyAdvertisementScreen extends StatefulWidget {
   const MyAdvertisementScreen({super.key});
 
   static Route route(RouteSettings settings) {
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return BlocProvider(
           create: (context) => FetchMyPromotedItemsCubit(),

@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/cupertino.dart';import 'dart:io';
 
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
@@ -14,7 +14,6 @@ import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
 class LocationPermissionScreen extends StatefulWidget {
   const LocationPermissionScreen({super.key});
@@ -24,7 +23,7 @@ class LocationPermissionScreen extends StatefulWidget {
       LocationPermissionScreenState();
 
   static Route route(RouteSettings routeSettings) {
-    return BlurredRouter(builder: (_) => const LocationPermissionScreen());
+    return CupertinoPageRoute(builder: (_) => const LocationPermissionScreen());
   }
 }
 

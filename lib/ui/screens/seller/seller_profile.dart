@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
@@ -18,7 +18,6 @@ import 'package:Ebozor/utils/customHeroAnimation.dart';
 import 'package:Ebozor/utils/sliver_grid_delegate_with_fixed_cross_axis_count_and_fixed_height.dart';
 
 import 'package:Ebozor/ui/screens/home/widgets/home_sections_adapter.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'dart:ui' as ui;
 import 'package:intl/intl.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
@@ -41,7 +40,7 @@ class SellerProfileScreen extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? arguments = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
         builder: (_) => MultiBlocProvider(
               providers: [
                 BlocProvider(

@@ -1,4 +1,4 @@
-import 'package:Ebozor/ui/theme/theme.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,7 +11,6 @@ import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/ui/screens/item/add_item_screen/widgets/category.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
 class CategoryList extends StatefulWidget {
   final String? from;
@@ -23,7 +22,7 @@ class CategoryList extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? args = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (_) => CategoryList(from: args?['from']),
     );
   }

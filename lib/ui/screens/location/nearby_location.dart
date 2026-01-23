@@ -1,4 +1,4 @@
-import 'dart:async'; // Search debounce
+import 'package:flutter/cupertino.dart';import 'dart:async'; // Search debounce
 import 'dart:developer';
 import 'dart:io';
 
@@ -25,7 +25,6 @@ import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
 import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
 import 'package:Ebozor/ui/screens/item/add_item_screen/confirm_location_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
 class NearbyLocationScreen extends StatefulWidget {
   final String from;
@@ -38,7 +37,7 @@ class NearbyLocationScreen extends StatefulWidget {
   static Route route(RouteSettings settings) {
     Map? arguments = settings.arguments as Map?;
 
-    return BlurredRouter(
+    return CupertinoPageRoute(
         builder: (context) => NearbyLocationScreen(
               from: arguments?['from'],
             ));

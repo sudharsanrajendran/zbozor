@@ -138,12 +138,14 @@ class ChatMessageHandler {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Center(
           child: Container(
+        padding: EdgeInsets.symmetric(
+            vertical: 5, horizontal: 10), // Added horizontal padding
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(7),
-            color: context.color.territoryColor.withOpacity(0.3)),
+            color: context.color.territoryColor), // Territory color used
         child: Padding(
           padding: const EdgeInsets.all(5.0),
-          child: Text(formattedDate),
+          child: Text(formattedDate).color(Colors.white),
         ),
       )),
     );

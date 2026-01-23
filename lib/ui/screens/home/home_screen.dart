@@ -1,14 +1,17 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
+import 'dart:math' hide log;
 import 'dart:developer';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:Ebozor/ui/screens/native_ads_screen.dart';
 
 //import 'package:app_links/app_links.dart';
-import 'package:Ebozor/app/routes.dart';
+
 import 'package:Ebozor/data/cubits/category/fetch_category_cubit.dart';
 import 'package:Ebozor/data/cubits/slider_cubit.dart';
 import 'package:Ebozor/data/cubits/system/fetch_system_settings_cubit.dart';
 import 'package:Ebozor/data/cubits/system/get_api_keys_cubit.dart';
-import 'package:Ebozor/ui/screens/home/widgets/grid_list_adapter.dart';
+
 import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
 import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
 import 'package:Ebozor/data/cubits/favorite/favorite_cubit.dart';
@@ -33,16 +36,16 @@ import 'package:Ebozor/data/model/item/item_model.dart';
 import 'package:Ebozor/data/model/system_settings_model.dart';
 
 import 'package:Ebozor/utils/extensions/extensions.dart';
-import 'package:Ebozor/utils/responsiveSize.dart';
+
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/ui/screens/ad_banner_screen.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
 import 'package:Ebozor/ui/screens/widgets/shimmerLoadingContainer.dart';
-import 'package:Ebozor/ui/screens/home/widgets/item_horizontal_card.dart';
+import 'package:Ebozor/ui/screens/home/widgets/home_sections_adapter.dart';
 import 'package:Ebozor/ui/screens/home/widgets/category_widget_home.dart';
 import 'package:Ebozor/ui/screens/home/widgets/home_search.dart';
-import 'package:Ebozor/ui/screens/home/widgets/home_sections_adapter.dart';
+
 import 'package:Ebozor/ui/screens/home/widgets/home_shimmers.dart';
 
 import 'package:Ebozor/ui/screens/home/slider_widget.dart';
@@ -213,16 +216,14 @@ class HomeScreenState extends State<HomeScreen>
         backgroundColor: context.color.backgroundColor,
         body: RefreshIndicator(
           key: _refreshIndicatorKey,
-
           color: context.color.territoryColor,
-          //triggerMode: RefreshIndicatorTriggerMode.onEdge,
           onRefresh: _refreshData,
-          child: SingleChildScrollView(
+          child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             controller: _scrollController,
-            child: Column(
-              children: [
-                BlocBuilder<FetchHomeScreenCubit, FetchHomeScreenState>(
+            slivers: [
+              SliverToBoxAdapter(
+                child: BlocBuilder<FetchHomeScreenCubit, FetchHomeScreenState>(
                   builder: (context, state) {
                     if (state is FetchHomeScreenInProgress) {
                       return shimmerEffect();
@@ -231,11 +232,9 @@ class HomeScreenState extends State<HomeScreen>
                       return Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // seach widget at home scree
                           const HomeSearchField(),
                           const SliderWidget(),
                           const CategoryWidgetHome(),
-
                           if (HiveUtils.isUserAuthenticated())
                             BlocBuilder<FetchVerificationRequestsCubit,
                                 FetchVerificationRequestState>(
@@ -270,8 +269,7 @@ class HomeScreenState extends State<HomeScreen>
                             Container(
                               padding: EdgeInsets.only(top: 5),
                               margin: EdgeInsets.symmetric(vertical: 10),
-                              child:
-                                  AdBannerWidget(), // Custom widget for banner ad
+                              child: AdBannerWidget(),
                             )
                           ] else ...[
                             SizedBox(
@@ -281,22 +279,17 @@ class HomeScreenState extends State<HomeScreen>
                         ],
                       );
                     }
-
                     if (state is FetchHomeScreenFail) {
                       print('hey bro ${state.error}');
                     }
                     return SizedBox.shrink();
                   },
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                const AllItemsWidget(),
-                const SizedBox(
-                  height: 30,
-                )
-              ],
-            ),
+              ),
+              SliverToBoxAdapter(child: SizedBox(height: 10)),
+              const AllItemsSliverWidget(),
+              SliverToBoxAdapter(child: SizedBox(height: 30)),
+            ],
           ),
         ),
       ),
@@ -517,10 +510,8 @@ class HomeScreenState extends State<HomeScreen>
 }
 
 //// recently added
-class AllItemsWidget extends StatelessWidget {
-  const AllItemsWidget({
-    super.key,
-  });
+class AllItemsSliverWidget extends StatelessWidget {
+  const AllItemsSliverWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -528,67 +519,111 @@ class AllItemsWidget extends StatelessWidget {
       builder: (context, state) {
         if (state is FetchHomeAllItemsSuccess) {
           if (state.items.isNotEmpty) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TitleHeader(
-                  title: "recentlyAdded".translate(context),
-                  onTap: () {},
-                  hideSeeAll: true,
-                ),
-                GridListAdapter(
-                  type: ListUiType.Mixed,
-                  mixMode: true,
-                  crossAxisCount: 2,
-                  height: MediaQuery.of(context).size.height / 3.9.rh(context),
-                  builder: (context, int index, bool isGrid) {
-                    ItemModel? item = state.items[index];
+            // Flatten items into Headers, Rows, and Ads
+            List<dynamic> cachedList = [];
 
-                    if (isGrid) {
-                      // Show ItemCard for grid items
-                      return ItemCard(
-radius: 5,
-                        item: item,
-                      );
-                    } else {
-                      // Show ItemHorizontalCard for list items
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            Routes.adDetailsScreen,
-                            arguments: {
-                              'model': item,
-                            },
-                          );
-                        },
-                        child: ItemHorizontalCard(
-                          item: item,
-                          showLikeButton: true,
-                          additionalImageWidth: 8,
-                        ),
-                      );
-                    }
-                    // }
-                  },
-                  total: state.items.length,
-                ),
-                if (state.isLoadingMore) UiUtils.progress(),
-              ],
+            // 1. Header
+            cachedList.add("Header");
+
+            // 2. Items paired into Rows, with Ads interspersed
+            int gridCount = Constant.nativeAdsAfterItemNumber;
+            int total = state.items.length;
+            int itemIndex = 0;
+
+            // We assume crossAxisCount = 2
+
+            while (itemIndex < total) {
+              // Add a chunk of items (up to gridCount)
+              int chunkEnd = min(itemIndex + gridCount, total);
+
+              // Process this chunk as Pairs (Rows)
+              for (int i = itemIndex; i < chunkEnd; i += 2) {
+                List<ItemModel> pair = [];
+                pair.add(state.items[i]);
+                if (i + 1 < chunkEnd) {
+                  pair.add(state.items[i + 1]);
+                }
+                cachedList.add(pair);
+              }
+
+              itemIndex = chunkEnd;
+
+              // If we are not at end, add Ad
+              if (itemIndex < total) {
+                cachedList.add("Ad");
+              }
+            }
+
+            if (state.isLoadingMore) {
+              cachedList.add("Loading");
+            }
+
+            return SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  var obj = cachedList[index];
+
+                  if (obj == "Header") {
+                    return TitleHeader(
+                      title: "recentlyAdded".translate(context),
+                      onTap: () {},
+                      hideSeeAll: true,
+                    );
+                  }
+
+                  if (obj == "Ad") {
+                    return NativeAdWidget(type: TemplateType.medium);
+                  }
+
+                  if (obj == "Loading") {
+                    return UiUtils.progress();
+                  }
+
+                  if (obj is List<ItemModel>) {
+                    // Render Row of Items
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: sidePadding, vertical: 8),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ItemCard(
+                              radius: 5,
+                              item: obj[0],
+                            ),
+                          ),
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: obj.length > 1
+                                ? ItemCard(
+                                    radius: 5,
+                                    item: obj[1],
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return SizedBox.shrink();
+                },
+                childCount: cachedList.length,
+              ),
             );
           } else {
-            return SizedBox.shrink();
+            return SliverToBoxAdapter(child: SizedBox.shrink());
           }
         }
         if (state is FetchHomeAllItemsFail) {
           if (state.error is ApiException) {
             if (state.error.error == "no-internet") {
-              return Center(child: NoInternet());
+              return SliverToBoxAdapter(child: Center(child: NoInternet()));
             }
           }
-          return const SomethingWentWrong();
+          return SliverToBoxAdapter(child: const SomethingWentWrong());
         }
-        return SizedBox.shrink();
+        return SliverToBoxAdapter(child: SizedBox.shrink());
       },
     );
   }

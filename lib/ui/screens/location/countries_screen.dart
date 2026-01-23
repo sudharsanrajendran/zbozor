@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'package:flutter/cupertino.dart';import 'dart:async';
 
 import 'package:Ebozor/app/app_theme.dart';
 import 'package:Ebozor/app/routes.dart';
@@ -23,7 +23,6 @@ import 'package:Ebozor/utils/ApiService/api.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
 
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
@@ -44,7 +43,7 @@ class CountriesScreen extends StatefulWidget {
   static Route route(RouteSettings settings) {
     Map? arguments = settings.arguments as Map?;
 
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) => BlocProvider(
           create: (context) => FetchCountriesCubit(),
           child: CountriesScreen(

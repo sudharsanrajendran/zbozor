@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'package:flutter/cupertino.dart';import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:Ebozor/app/routes.dart';
@@ -31,7 +31,6 @@ import 'package:Ebozor/utils/validator.dart';
 
 import 'package:Ebozor/data/helper/widgets.dart';
 import 'package:Ebozor/data/model/item/item_model.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
 import 'package:Ebozor/ui/screens/widgets/blurred_dialoge_box.dart';
 import 'package:Ebozor/ui/screens/item/my_item_tab_screen.dart';
@@ -48,10 +47,10 @@ class ConfirmLocationScreen extends StatefulWidget {
     required this.otherImage,
   }) : super(key: key);
 
-  static BlurredRouter route(RouteSettings settings) {
+  static CupertinoPageRoute route(RouteSettings settings) {
     Map? arguments = settings.arguments as Map?;
 
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return BlocProvider(
           create: (context) => ManageItemCubit(),

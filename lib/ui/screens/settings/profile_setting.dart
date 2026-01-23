@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +10,7 @@ import 'package:Ebozor/data/cubits/profile_setting_cubit.dart';
 import 'package:Ebozor/data/helper/widgets.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
+import 'package:Ebozor/ui/screens/widgets/shimmerLoadingContainer.dart';
 
 class ProfileSettings extends StatefulWidget {
   final String? title;
@@ -22,7 +23,7 @@ class ProfileSettings extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? arguments = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (_) => ProfileSettings(
         title: arguments?['title'] as String,
         param: arguments?['param'] as String,
@@ -53,9 +54,20 @@ class ProfileSettingsState extends State<ProfileSettings> {
       body: BlocBuilder<ProfileSettingCubit, ProfileSettingState>(
           builder: (context, state) {
         if (state is ProfileSettingFetchProgress) {
-          return Center(
-            child: UiUtils.progress(
-                normalProgressColor: context.color.territoryColor),
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: List.generate(10, (index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: CustomShimmer(
+                    height: 20,
+                    width: double.infinity,
+                    borderRadius: 5,
+                  ),
+                );
+              }),
+            ),
           );
         } else if (state is ProfileSettingFetchSuccess) {
           return contentWidget(state, context);

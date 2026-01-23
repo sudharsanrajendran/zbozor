@@ -1,6 +1,5 @@
-import 'package:Ebozor/app/routes.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/custom_text_form_field.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
@@ -12,8 +11,8 @@ import 'package:flutter/material.dart';
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 
-  static BlurredRouter route(RouteSettings routeSettings) {
-    return BlurredRouter(
+  static CupertinoPageRoute route(RouteSettings routeSettings) {
+    return CupertinoPageRoute(
       builder: (_) => const ForgotPasswordScreen(),
     );
   }

@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Ebozor/ui/screens/widgets/blurred_dialoge_box.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
@@ -14,7 +14,6 @@ import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/utils/customHeroAnimation.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/data/cubits/item/change_my_items_status_cubit.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/animated_routes/transparant_route.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
 
@@ -33,7 +32,7 @@ class SoldOutBoughtScreen extends StatefulWidget {
 
   static Route route(RouteSettings settings) {
     Map? arguments = settings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return BlocProvider(
           create: (context) {

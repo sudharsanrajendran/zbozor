@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'package:flutter/cupertino.dart';import 'dart:async';
 import 'dart:io';
 
 import 'package:country_picker/country_picker.dart';
@@ -8,7 +8,6 @@ import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/system/app_theme_cubit.dart';
 import 'package:Ebozor/data/cubits/system/fetch_system_settings_cubit.dart';
 import 'package:Ebozor/data/helper/widgets.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/custom_text_form_field.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
@@ -37,8 +36,8 @@ class SignUpMainScreen extends StatefulWidget {
   @override
   State<SignUpMainScreen> createState() => LoginScreenState();
 
-  static BlurredRouter route(RouteSettings routeSettings) {
-    return BlurredRouter(builder: (_) => SignUpMainScreen());
+  static CupertinoPageRoute route(RouteSettings routeSettings) {
+    return CupertinoPageRoute(builder: (_) => SignUpMainScreen());
   }
 }
 

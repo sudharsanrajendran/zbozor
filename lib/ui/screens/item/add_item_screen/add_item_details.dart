@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/cupertino.dart';import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:Ebozor/app/routes.dart';
@@ -27,7 +27,6 @@ import 'package:Ebozor/utils/ui_utils.dart';
 
 import 'package:Ebozor/data/model/category_model.dart';
 
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
 class AddItemDetails extends StatefulWidget {
   final List<CategoryModel>? breadCrumbItems;
@@ -42,7 +41,7 @@ class AddItemDetails extends StatefulWidget {
   static Route route(RouteSettings settings) {
     Map<String, dynamic>? arguments =
         settings.arguments as Map<String, dynamic>?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return BlocProvider(
           create: (context) => FetchCustomFieldsCubit(),

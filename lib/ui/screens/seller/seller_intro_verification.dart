@@ -1,11 +1,10 @@
-import 'package:Ebozor/ui/theme/theme.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
 class SellerIntroVerificationScreen extends StatefulWidget {
   final bool isResubmitted;
@@ -17,7 +16,7 @@ class SellerIntroVerificationScreen extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? arguments = routeSettings.arguments as Map?;
-    return BlurredRouter(builder: (_) => SellerIntroVerificationScreen(isResubmitted: arguments?["isResubmitted"]));
+    return CupertinoPageRoute(builder: (_) => SellerIntroVerificationScreen(isResubmitted: arguments?["isResubmitted"]));
   }
 }
 

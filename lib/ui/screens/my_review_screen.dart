@@ -1,6 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
@@ -34,7 +33,7 @@ class MyReviewScreen extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? arguments = routeSettings.arguments as Map?;
-    return BlurredRouter(builder: (_) => MyReviewScreen());
+    return CupertinoPageRoute(builder: (_) => MyReviewScreen());
   }
 }
 

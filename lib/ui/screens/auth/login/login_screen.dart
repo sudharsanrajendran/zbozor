@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'package:flutter/cupertino.dart';import 'dart:async';
 import 'dart:io';
 import 'package:country_picker/country_picker.dart';
 import 'package:device_region/device_region.dart';
@@ -12,7 +12,6 @@ import 'package:Ebozor/data/cubits/system/fetch_system_settings_cubit.dart';
 import 'package:Ebozor/data/cubits/system/user_details.dart';
 import 'package:Ebozor/data/helper/widgets.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/custom_text_form_field.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
@@ -42,9 +41,9 @@ class LoginScreen extends StatefulWidget {
   @override
   State<LoginScreen> createState() => LoginScreenState();
 
-  static BlurredRouter route(RouteSettings routeSettings) {
+  static CupertinoPageRoute route(RouteSettings routeSettings) {
     Map? args = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
         builder: (_) => LoginScreen(
               isDeleteAccount: args?['isDeleteAccount'],
               popToCurrent: args?['popToCurrent'],

@@ -1,4 +1,4 @@
-import 'package:Ebozor/app/routes.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/category/fetch_category_cubit.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
@@ -15,7 +15,6 @@ import 'package:Ebozor/utils/ApiService/api.dart';
 import 'package:Ebozor/utils/cloudState/cloud_state.dart';
 import 'package:Ebozor/utils/touch_manager.dart';
 import 'package:Ebozor/data/cubits/category/fetch_sub_categories_cubit.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
@@ -28,7 +27,7 @@ class SelectCategoryScreen extends StatefulWidget {
   static Route route(RouteSettings settings) {
     Map<String, dynamic> apiParameters =
         settings.arguments as Map<String, dynamic>;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return const SelectCategoryScreen();
       },
@@ -247,7 +246,7 @@ class SelectNestedCategory extends StatefulWidget {
 
   static Route route(RouteSettings settings) {
     Map<String, dynamic> arguments = settings.arguments as Map<String, dynamic>;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return SelectNestedCategory(
           current: arguments['current'],

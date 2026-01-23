@@ -1,4 +1,4 @@
-import 'package:Ebozor/app/routes.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
@@ -7,7 +7,6 @@ import 'package:Ebozor/data/model/item/item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/main_activity.dart';
 
 class SuccessItemScreen extends StatefulWidget {
@@ -19,7 +18,7 @@ class SuccessItemScreen extends StatefulWidget {
 
   static Route route(RouteSettings settings) {
     Map? arguments = settings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return SuccessItemScreen(
           model: arguments!['model'],

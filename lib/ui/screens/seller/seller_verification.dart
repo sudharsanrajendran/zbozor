@@ -1,4 +1,4 @@
-import 'package:Ebozor/ui/theme/theme.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
@@ -15,7 +15,6 @@ import 'package:Ebozor/data/helper/widgets.dart';
 import 'package:Ebozor/data/model/verification_request_model.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
 import 'package:Ebozor/ui/screens/item/add_item_screen/custom_filed_structure/custom_field.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/dynamic_field/dynamic_field.dart';
 import 'package:Ebozor/ui/screens/widgets/custom_text_form_field.dart';
 
@@ -30,7 +29,7 @@ class SellerVerificationScreen extends StatefulWidget {
 
   static Route route(RouteSettings settings) {
     Map? arguments = settings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return SellerVerificationScreen(
           isResubmitted: arguments?["isResubmitted"],

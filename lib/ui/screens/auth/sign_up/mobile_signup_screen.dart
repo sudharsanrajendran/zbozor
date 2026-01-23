@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'package:flutter/cupertino.dart';import 'dart:async';
 import 'dart:io';
 
 import 'package:country_picker/country_picker.dart';
@@ -9,7 +9,6 @@ import 'package:Ebozor/data/cubits/system/app_theme_cubit.dart';
 import 'package:Ebozor/data/cubits/system/fetch_system_settings_cubit.dart';
 import 'package:Ebozor/data/helper/widgets.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/constant.dart';
@@ -38,9 +37,9 @@ class MobileSignUpScreen extends StatefulWidget {
   @override
   State<MobileSignUpScreen> createState() => MobileSignUpScreenState();
 
-  static BlurredRouter route(RouteSettings routeSettings) {
+  static CupertinoPageRoute route(RouteSettings routeSettings) {
     Map? args = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
         builder: (_) => MobileSignUpScreen(
               mobile: args?['mobile'],
               countryCode: args?['countryCode'],

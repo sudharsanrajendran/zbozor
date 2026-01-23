@@ -1,5 +1,4 @@
-
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +18,7 @@ class FaqsScreen extends StatefulWidget {
   const FaqsScreen({super.key});
 
   static Route route(RouteSettings settings) {
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return const FaqsScreen();
       },

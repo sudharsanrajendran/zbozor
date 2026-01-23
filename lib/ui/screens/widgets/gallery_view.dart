@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +21,7 @@ class GalleryViewWidget extends StatefulWidget {
 
 /*  static Route route(RouteSettings routeSettings) {
     Map? arguments = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
         builder: (_) => GalleryViewWidget(
             images: arguments?['images'],
             initalIndex: arguments?['initalIndex']));

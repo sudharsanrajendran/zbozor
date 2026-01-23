@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:flutter/material.dart';
@@ -9,16 +10,16 @@ import 'package:Ebozor/data/model/transaction_model.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/ui/screens/widgets/intertitial_ads_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
+import 'package:Ebozor/ui/screens/widgets/shimmerLoadingContainer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TransactionHistory extends StatefulWidget {
   const TransactionHistory({super.key});
 
   static Route route(RouteSettings settings) {
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return BlocProvider(
           create: (context) {
@@ -61,8 +62,20 @@ class _TransactionHistoryState extends State<TransactionHistory> {
       body: BlocBuilder<FetchTransactionsCubit, FetchTransactionsState>(
         builder: (context, state) {
           if (state is FetchTransactionsInProgress) {
-            return Center(
-              child: UiUtils.progress(),
+            return ListView.builder(
+              itemCount: 10,
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(16),
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: CustomShimmer(
+                    height: 100,
+                    width: double.infinity,
+                    borderRadius: 10,
+                  ),
+                );
+              },
             );
           }
           if (state is FetchTransactionsFailure) {
@@ -145,10 +158,12 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: context.color.territoryColor.withOpacity(0.1)),
-                    padding: EdgeInsets.symmetric(vertical: 3,horizontal: 7),
+                    padding: EdgeInsets.symmetric(vertical: 3, horizontal: 7),
                     child: Text(
                       transaction.paymentGateway!,
-                    ).size(context.font.small).color(context.color.territoryColor),
+                    )
+                        .size(context.font.small)
+                        .color(context.color.territoryColor),
                   ),
                   const SizedBox(height: 4),
                   Row(

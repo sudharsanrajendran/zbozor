@@ -1,4 +1,4 @@
-import 'dart:ui' as ui;
+import 'package:flutter/cupertino.dart';import 'dart:ui' as ui;
 
 import 'package:Ebozor/app/app_theme.dart';
 import 'package:Ebozor/data/cubits/company_cubit.dart';
@@ -13,7 +13,6 @@ import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/custom_text_form_field.dart';
 
 class ContactUs extends StatefulWidget {
@@ -23,7 +22,7 @@ class ContactUs extends StatefulWidget {
   ContactUsState createState() => ContactUsState();
 
   static Route route(RouteSettings routeSettings) {
-    return BlurredRouter(builder: (_) => const ContactUs());
+    return CupertinoPageRoute(builder: (_) => const ContactUs());
   }
 }
 
@@ -126,7 +125,7 @@ class ContactUsState extends State<ContactUs> {
   void showEmailDialoge(email) {
     Navigator.push(
         context,
-        BlurredRouter(
+        CupertinoPageRoute(
           builder: (context) => EmailSendWidget(email: email),
         ));
   }

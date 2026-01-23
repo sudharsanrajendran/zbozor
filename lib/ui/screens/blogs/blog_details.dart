@@ -1,5 +1,4 @@
-import 'package:Ebozor/data/model/blog_model.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/data/model/blog_model.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
@@ -16,7 +15,7 @@ class BlogDetails extends StatelessWidget {
 
   static Route route(RouteSettings settings) {
     Map? arguments = settings.arguments as Map;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return BlogDetails(
           blog: arguments['model'],

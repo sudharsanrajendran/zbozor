@@ -1,4 +1,4 @@
-/*
+import 'package:flutter/cupertino.dart';/*
 import 'dart:async';
 
 import 'package:dio/dio.dart';
@@ -20,14 +20,13 @@ import '../../../data/Repositories/Item/item_repository.dart';
 import '../../../data/model/google_place_model.dart';
 import '../../../data/model/item/item_model.dart';
 import '../../../utils/app_icon.dart';
-import '../widgets/AnimatedRoutes/blur_page_route.dart';
 
 class ChooseLocationMap extends StatefulWidget {
   const ChooseLocationMap({super.key});
 
   static Route route(RouteSettings settings) {
     // Map? arguments = settings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return const ChooseLocationMap();
       },

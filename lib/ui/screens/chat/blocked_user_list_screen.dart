@@ -1,8 +1,7 @@
-import 'package:Ebozor/data/cubits/chat/blocked_users_list_cubit.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/data/cubits/chat/blocked_users_list_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/unblock_user_cubit.dart';
 import 'package:Ebozor/data/model/chat/chated_user_model.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/blurred_dialoge_box.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
@@ -23,7 +22,7 @@ class BlockedUserListScreen extends StatefulWidget {
   const BlockedUserListScreen({super.key});
 
   static Route route(RouteSettings settings) {
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return const BlockedUserListScreen();
       },

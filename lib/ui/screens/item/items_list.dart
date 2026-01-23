@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'package:flutter/cupertino.dart';import 'dart:async';
 import 'dart:math';
 
 import 'package:Ebozor/app/routes.dart';
@@ -31,7 +31,6 @@ import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
 import 'package:Ebozor/ui/screens/home/widgets/item_horizontal_card.dart';
 import 'package:Ebozor/ui/screens/main_activity.dart';
 import 'package:Ebozor/ui/screens/native_ads_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/shimmerLoadingContainer.dart';
 
 class ItemsList extends StatefulWidget {
@@ -53,7 +52,7 @@ class ItemsList extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? arguments = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (_) => ItemsList(
         categoryId: arguments?['catID'] as String,
         categoryName: arguments?['catName'],
@@ -1688,7 +1687,6 @@ class ItemsListState extends State<ItemsList> {
                       },
                     ),*/
                 ),
-            if (state.isLoadingMore) UiUtils.progress()
           ],
         );
       }
@@ -2228,68 +2226,72 @@ class ItemsListState extends State<ItemsList> {
   }
 
   Widget mainChildren(List<ItemModel> items) {
-    List<Widget> children = [];
+    List<Widget> slivers = [];
     int gridCount = Constant.nativeAdsAfterItemNumber;
     int total = items.length;
 
-    for (int i = 0; i < total; i += gridCount /* + listCount*/) {
+    for (int i = 0; i < total; i += gridCount) {
       if (isList) {
-        children.add(_buildListViewSection(
+        slivers.add(_buildSliverListSection(
             context, i, min(gridCount, total - i), items));
       } else {
-        children.add(_buildGridViewSection(
+        slivers.add(_buildSliverGridSection(
             context, i, min(gridCount, total - i), items));
       }
 
       int remainingItems = total - i - gridCount;
       if (remainingItems > 0) {
-        children.add(NativeAdWidget(type: TemplateType.medium));
+        slivers.add(SliverToBoxAdapter(
+            child: NativeAdWidget(type: TemplateType.medium)));
       }
     }
 
-    return SingleChildScrollView(
+    var state = context.read<FetchItemFromCategoryCubit>().state;
+    if (state is FetchItemFromCategorySuccess && state.isLoadingMore) {
+      slivers.add(SliverToBoxAdapter(child: UiUtils.progress()));
+    }
+
+    return CustomScrollView(
       controller: controller,
-      physics: BouncingScrollPhysics(),
-      child: Column(children: children),
+      physics: const BouncingScrollPhysics(),
+      slivers: slivers,
     );
   }
 
-  Widget _buildListViewSection(BuildContext context, int startIndex,
+  Widget _buildSliverListSection(BuildContext context, int startIndex,
       int itemCount, List<ItemModel> items) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
-      itemCount: itemCount,
-      itemBuilder: (context, index) {
-        ItemModel item = items[startIndex + index];
-        return GestureDetector(
-          onTap: () => _navigateToDetails(context, item),
-          child: ItemHorizontalCard(item: item),
-        );
-      },
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          ItemModel item = items[startIndex + index];
+          return GestureDetector(
+            onTap: () => _navigateToDetails(context, item),
+            child: ItemHorizontalCard(item: item),
+          );
+        },
+        childCount: itemCount,
+      ),
     );
   }
 
-  Widget _buildGridViewSection(BuildContext context, int startIndex,
+  Widget _buildSliverGridSection(BuildContext context, int startIndex,
       int itemCount, List<ItemModel> items) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+    return SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
           crossAxisCount: 2,
           height: MediaQuery.of(context).size.height / 3.9.rh(context),
           mainAxisSpacing: 7,
           crossAxisSpacing: 5),
-      itemCount: itemCount,
-      itemBuilder: (context, index) {
-        ItemModel item = items[startIndex + index];
-        return GestureDetector(
-          onTap: () => _navigateToDetails(context, item),
-          child: ItemCard(item: item, radius: 5),
-        );
-      },
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          ItemModel item = items[startIndex + index];
+          return GestureDetector(
+            onTap: () => _navigateToDetails(context, item),
+            child: ItemCard(item: item, radius: 5),
+          );
+        },
+        childCount: itemCount,
+      ),
     );
   }
 

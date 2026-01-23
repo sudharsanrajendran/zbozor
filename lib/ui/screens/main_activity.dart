@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member
+import 'package:flutter/cupertino.dart';// ignore_for_file: invalid_use_of_protected_member
 
 import 'dart:async';
 import 'dart:io';
@@ -8,7 +8,6 @@ import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/item/search_item_cubit.dart';
 import 'package:Ebozor/data/cubits/system/fetch_system_settings_cubit.dart';
 import 'package:Ebozor/ui/screens/widgets/maintenance_mode.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
@@ -79,7 +78,7 @@ class MainActivity extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map arguments = routeSettings.arguments as Map;
-    return BlurredRouter(
+    return CupertinoPageRoute(
         builder: (_) => MainActivity(from: arguments['from'] as String));
   }
 }

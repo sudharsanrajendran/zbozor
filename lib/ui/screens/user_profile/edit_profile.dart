@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/cupertino.dart';import 'dart:io';
 
 import 'package:country_picker/country_picker.dart';
 import 'package:Ebozor/app/routes.dart';
@@ -23,7 +23,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:Ebozor/utils/helper_utils.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String from;
@@ -46,7 +45,7 @@ class UserProfileScreen extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map arguments = routeSettings.arguments as Map;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (_) => UserProfileScreen(
         from: arguments['from'] as String,
         popToCurrent: arguments['popToCurrent'] as bool?,

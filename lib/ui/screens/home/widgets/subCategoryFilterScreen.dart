@@ -1,10 +1,9 @@
-import 'package:Ebozor/ui/theme/theme.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/data/model/category_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:Ebozor/utils/ui_utils.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
 class SubCategoryFilterScreen extends StatefulWidget {
   final List<CategoryModel> selection;
@@ -19,7 +18,7 @@ class SubCategoryFilterScreen extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? args = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (_) => SubCategoryFilterScreen(
         selection: args!["selection"],
         model: args["model"],

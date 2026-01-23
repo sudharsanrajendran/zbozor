@@ -1,4 +1,4 @@
-import 'package:Ebozor/data/cubits/category/fetch_sub_categories_cubit.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/data/cubits/category/fetch_sub_categories_cubit.dart';
 import 'package:Ebozor/ui/screens/propertyscreen.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,6 @@ import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
 
 class SubCategoryScreenOne extends StatefulWidget {
@@ -34,7 +33,7 @@ class SubCategoryScreenOne extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? args = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (_) => SubCategoryScreenOne(
         categoryList: args?['categoryList'],
         catName: args?['catName'],

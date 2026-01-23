@@ -490,10 +490,11 @@ class _ItemListingSubscriptionPlansItemState
         children: [
           UiUtils.getSvg(
             AppIcons.active_mark,
-            //(boolVariable) ? AppIcons.active_mark : AppIcons.deactive_mark,
+            width: 18,
+            height: 18,
           ),
           //  const Icon(Icons.check_box_rounded, size: 25.0, color: Colors.cyan), //TODO: change it to given icon and fill according to status passed
-          SizedBox(width: 8.rw(context)),
+          const SizedBox(width: 8),
           Expanded(
               child: Text(
             text,

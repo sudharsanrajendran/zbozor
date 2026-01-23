@@ -1,6 +1,5 @@
-import 'package:Ebozor/ui/screens/item/my_item_tab_screen.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/ui/screens/item/my_item_tab_screen.dart';
 import 'package:Ebozor/data/cubits/item/fetch_my_item_cubit.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +14,7 @@ class ItemsScreen extends StatefulWidget {
   State<ItemsScreen> createState() => MyItemState();
 
   static Route route(RouteSettings routeSettings) {
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (_) => const ItemsScreen(),
     );
   }

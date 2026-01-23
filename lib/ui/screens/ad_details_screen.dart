@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/cupertino.dart';// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -6,7 +6,6 @@ import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/report/fetch_item_report_reason_list.dart';
 import 'package:Ebozor/data/cubits/subscription/fetch_ads_listing_subscription_packages_cubit.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/blurred_dialoge_box.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
@@ -78,7 +77,7 @@ class AdDetailsScreen extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? arguments = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
         builder: (_) => MultiBlocProvider(
               providers: [
                 BlocProvider(
@@ -1556,7 +1555,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                       seller: Seller.fromJson(data['seller'])));
                 }
 
-                Navigator.push(context, BlurredRouter(
+                Navigator.push(context, CupertinoPageRoute(
                   builder: (context) {
                     return MultiBlocProvider(
                       providers: [
@@ -1612,7 +1611,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                     UiUtils.checkUser(
                         onNotGuest: () {
                           if (chatedUser != null) {
-                            Navigator.push(context, BlurredRouter(
+                            Navigator.push(context, CupertinoPageRoute(
                               builder: (context) {
                                 return MultiBlocProvider(
                                   providers: [
@@ -2416,8 +2415,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
   void _navigateToGoogleMapScreen(BuildContext context) {
     Navigator.push(
       context,
-      BlurredRouter(
-        barrierDismiss: true,
+      CupertinoPageRoute(
+        barrierDismissible: true,
         builder: (context) {
           return GoogleMapScreen(
             item: model,

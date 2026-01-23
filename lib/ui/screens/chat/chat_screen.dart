@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/services.dart' as services;
 
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/add_item_review_cubit.dart';
@@ -433,325 +434,389 @@ class _ChatScreenState extends State<ChatScreen>
       return true;
     },*/
       child: SafeArea(
-        child: Scaffold(
-          backgroundColor: context.color.backgroundColor,
-          bottomNavigationBar: Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {},
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (messageAttachment != null) ...[
-                    if (supportedImageTypes.contains(attachmentMIME)) ...[
-                      Container(
-                        decoration: BoxDecoration(
-                            color: context.color.secondaryColor,
-                            border: Border.all(
-                                color: context.color.borderColor, width: 1.5)),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: SizedBox(
-                                  height: 100,
-                                  width: 100,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      UiUtils.showFullScreenImage(context,
-                                          provider: FileImage(File(
-                                            messageAttachment?.path ?? "",
-                                          )));
-                                    },
-                                    child: Image.file(
-                                      File(
-                                        messageAttachment?.path ?? "",
+        top: false,
+        child: AnnotatedRegion<services.SystemUiOverlayStyle>(
+          value: services.SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: context.color.brightness == Brightness.dark
+                ? Brightness.light
+                : Brightness.dark,
+          ),
+          child: Scaffold(
+            backgroundColor: context.color.backgroundColor,
+            bottomNavigationBar: Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {},
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (messageAttachment != null) ...[
+                      if (supportedImageTypes.contains(attachmentMIME)) ...[
+                        Container(
+                          decoration: BoxDecoration(
+                              color: context.color.secondaryColor,
+                              border: Border.all(
+                                  color: context.color.borderColor,
+                                  width: 1.5)),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(24.0),
+                                child: SizedBox(
+                                    height: 100,
+                                    width: 100,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        UiUtils.showFullScreenImage(context,
+                                            provider: FileImage(File(
+                                              messageAttachment?.path ?? "",
+                                            )));
+                                      },
+                                      child: Image.file(
+                                        File(
+                                          messageAttachment?.path ?? "",
+                                        ),
+                                        fit: BoxFit.cover,
                                       ),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(messageAttachment?.name ?? ""),
-                                  Text(HelperUtils.getFileSizeString(
-                                    bytes: messageAttachment!.size,
-                                  ).toString()),
-                                ],
+                                    )),
                               ),
-                            )
-                          ],
-                        ),
-                      )
-                    ] else ...[
-                      Container(
-                        color: context.color.secondaryColor,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: AttachmentMessage(
-                            url: messageAttachment!.path!,
-                            textColor: context.color.textDefaultColor,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(messageAttachment?.name ?? ""),
+                                    Text(HelperUtils.getFileSizeString(
+                                      bytes: messageAttachment!.size,
+                                    ).toString()),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      ] else ...[
+                        Container(
+                          color: context.color.secondaryColor,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: AttachmentMessage(
+                              url: messageAttachment!.path!,
+                              textColor: context.color.textDefaultColor,
+                            ),
                           ),
                         ),
+                      ],
+                      const SizedBox(
+                        height: 10,
                       ),
                     ],
-                    const SizedBox(
-                      height: 10,
-                    ),
-                  ],
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsetsDirectional.all(15),
-                    decoration: BoxDecoration(
-                      color: context.color.secondaryColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                          offset: const Offset(0, -1),
-                        ),
-                      ],
-                    ),
-                    child: Directionality(
-                      textDirection: Directionality.of(context),
-                      child: widget.status == "review" ||
-                              widget.status == "rejected" ||
-                              widget.status == "sold out" ||
-                              widget.status == "inactive"
-                          ? Container(
-                              height: 40,
-                              width: double.maxFinite,
-                              color: context.color.secondaryColor,
-                              alignment: Alignment.center,
-                              child: Text(
-                                      "${"thisItemIs".translate(context)} ${widget.status}")
-                                  .size(context.font.large))
-                          : Column(
-                              children: [
-                                BlocProvider(
-                                    create: (context) => UnblockUserCubit(),
-                                    child: Builder(builder: (context) {
-                                      bool isBlocked = context
-                                          .read<BlockedUsersListCubit>()
-                                          .isUserBlocked(
-                                              int.tryParse(widget.userId) ?? 0);
-                                      return BlocConsumer<BlockedUsersListCubit,
-                                              BlockedUsersListState>(
-                                          listener: (context, state) {
-                                        if (state is BlockedUsersListSuccess) {
-                                          isBlocked = context
-                                              .read<BlockedUsersListCubit>()
-                                              .isUserBlocked(
-                                                  int.tryParse(widget.userId) ??
-                                                      0);
-                                        }
-                                      }, builder:
-                                              (context, blockedUsersListState) {
-                                        return isBlocked
-                                            ? BlocListener<UnblockUserCubit,
-                                                    UnblockUserState>(
-                                                listener:
-                                                    (context, unblockState) {
-                                                  if (unblockState
-                                                      is UnblockUserSuccess) {
-                                                    // Remove the unblocked user from the list
-                                                    context
-                                                        .read<
-                                                            BlockedUsersListCubit>()
-                                                        .unblockUser(
-                                                            int.tryParse(widget
-                                                                    .userId) ??
-                                                                0);
-                                                    HelperUtils
-                                                        .showSnackBarMessage(
-                                                            context,
-                                                            unblockState
-                                                                .message);
-                                                  } else if (unblockState
-                                                      is UnblockUserFail) {
-                                                    HelperUtils
-                                                        .showSnackBarMessage(
-                                                            context,
-                                                            unblockState.error
-                                                                .toString());
-                                                  }
-                                                },
-                                                child: InkWell(
-                                                  child: Text(
-                                                          "youBlockedThisContact"
-                                                              .translate(
-                                                                  context))
-                                                      .color(context
-                                                          .color.textColorDark
-                                                          .withOpacity(0.7)),
-                                                  onTap: () async {
-                                                    var unBlock = await UiUtils
-                                                        .showBlurredDialoge(
-                                                      context,
-                                                      dialoge: BlurredDialogBox(
-                                                        acceptButtonName:
-                                                            "unBlockLbl"
-                                                                .translate(
-                                                                    context),
-                                                        content: Text(
-                                                          "${"unBlockLbl".translate(context)}\t${widget.userName}\t${"toSendMessage".translate(context)}"
-                                                              .translate(
-                                                                  context),
-                                                        ),
-                                                      ),
-                                                    );
-                                                    if (unBlock == true) {
-                                                      Future.delayed(
-                                                          Duration.zero, () {
-                                                        context
-                                                            .read<
-                                                                UnblockUserCubit>()
-                                                            .unBlockUser(
-                                                              blockUserId: int
-                                                                  .parse(widget
-                                                                      .userId),
-                                                            );
-                                                      });
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsetsDirectional.all(15),
+                      decoration: BoxDecoration(
+                        color: context.color.secondaryColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 3,
+                            offset: const Offset(0, -1),
+                          ),
+                        ],
+                      ),
+                      child: Directionality(
+                        textDirection: Directionality.of(context),
+                        child: widget.status == "review" ||
+                                widget.status == "rejected" ||
+                                widget.status == "sold out" ||
+                                widget.status == "inactive"
+                            ? Container(
+                                height: 40,
+                                width: double.maxFinite,
+                                color: context.color.secondaryColor,
+                                alignment: Alignment.center,
+                                child: Text(
+                                        "${"thisItemIs".translate(context)} ${widget.status}")
+                                    .size(context.font.large))
+                            : Column(
+                                children: [
+                                  BlocProvider(
+                                      create: (context) => UnblockUserCubit(),
+                                      child: Builder(builder: (context) {
+                                        bool isBlocked = context
+                                            .read<BlockedUsersListCubit>()
+                                            .isUserBlocked(
+                                                int.tryParse(widget.userId) ??
+                                                    0);
+                                        return BlocConsumer<
+                                                BlockedUsersListCubit,
+                                                BlockedUsersListState>(
+                                            listener: (context, state) {
+                                          if (state
+                                              is BlockedUsersListSuccess) {
+                                            isBlocked = context
+                                                .read<BlockedUsersListCubit>()
+                                                .isUserBlocked(int.tryParse(
+                                                        widget.userId) ??
+                                                    0);
+                                          }
+                                        }, builder: (context,
+                                                blockedUsersListState) {
+                                          return isBlocked
+                                              ? BlocListener<UnblockUserCubit,
+                                                      UnblockUserState>(
+                                                  listener:
+                                                      (context, unblockState) {
+                                                    if (unblockState
+                                                        is UnblockUserSuccess) {
+                                                      // Remove the unblocked user from the list
+                                                      context
+                                                          .read<
+                                                              BlockedUsersListCubit>()
+                                                          .unblockUser(
+                                                              int.tryParse(widget
+                                                                      .userId) ??
+                                                                  0);
+                                                      HelperUtils
+                                                          .showSnackBarMessage(
+                                                              context,
+                                                              unblockState
+                                                                  .message);
+                                                    } else if (unblockState
+                                                        is UnblockUserFail) {
+                                                      HelperUtils
+                                                          .showSnackBarMessage(
+                                                              context,
+                                                              unblockState.error
+                                                                  .toString());
                                                     }
                                                   },
-                                                ))
-                                            : SizedBox();
-                                      });
-                                    })),
+                                                  child: InkWell(
+                                                    child: Text(
+                                                            "youBlockedThisContact"
+                                                                .translate(
+                                                                    context))
+                                                        .color(context
+                                                            .color.textColorDark
+                                                            .withOpacity(0.7)),
+                                                    onTap: () async {
+                                                      var unBlock = await UiUtils
+                                                          .showBlurredDialoge(
+                                                        context,
+                                                        dialoge:
+                                                            BlurredDialogBox(
+                                                          acceptButtonName:
+                                                              "unBlockLbl"
+                                                                  .translate(
+                                                                      context),
+                                                          content: Text(
+                                                            "${"unBlockLbl".translate(context)}\t${widget.userName}\t${"toSendMessage".translate(context)}"
+                                                                .translate(
+                                                                    context),
+                                                          ),
+                                                        ),
+                                                      );
+                                                      if (unBlock == true) {
+                                                        Future.delayed(
+                                                            Duration.zero, () {
+                                                          context
+                                                              .read<
+                                                                  UnblockUserCubit>()
+                                                              .unBlockUser(
+                                                                blockUserId: int
+                                                                    .parse(widget
+                                                                        .userId),
+                                                              );
+                                                        });
+                                                      }
+                                                    },
+                                                  ))
+                                              : SizedBox();
+                                        });
+                                      })),
 
-                                //// typing status showing
-                                ValueListenableBuilder<Map<String, String>?>(
-                                  valueListenable: _socketService.typingStatus,
-                                  builder: (context, typingStatus, child) {
-                                    if (typingStatus != null &&
-                                        typingStatus['userId'] ==
-                                            widget.userId) {
-                                      return Padding(
-                                        padding: const EdgeInsets.only(
-                                            bottom: 5.0, left: 10, right: 10),
-                                        child: Text(
-                                          "${widget.userName} ${"isTyping".translate(context)} ...",
-                                          style: TextStyle(
-                                            color:
-                                                context.color.textDefaultColor,
-                                            fontSize: 12,
-                                            fontStyle: FontStyle.italic,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  },
-                                ),
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(bottom: 10),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextField(
-                                          controller: controller,
-                                          onChanged: (value) {
-                                            if (value.isNotEmpty) {
-                                              if (!_isTyping) {
-                                                _socketService.typingStart(
-                                                    widget.itemOfferId);
-                                                _isTyping = true;
-                                              }
-                                              _typingTimer?.cancel();
-                                              _typingTimer = Timer(
-                                                  const Duration(
-                                                      milliseconds: 2000), () {
-                                                _socketService.typingStop(
-                                                    widget.itemOfferId);
-                                                _isTyping = false;
-                                              });
-                                            } else {
-                                              // If text is empty, send stop immediately
-                                              _typingTimer?.cancel();
-                                              if (_isTyping) {
-                                                _socketService.typingStop(
-                                                    widget.itemOfferId);
-                                                _isTyping = false;
-                                              }
-                                            }
-                                          },
-                                          cursorColor:
-                                              context.color.territoryColor,
-                                          onTap: () {
-                                            showDeletebutton.value = false;
-                                          },
-                                          textInputAction:
-                                              TextInputAction.newline,
-                                          minLines: 1,
-                                          maxLines: null,
-                                          decoration: InputDecoration(
-                                            suffixIconColor:
-                                                context.color.textLightColor,
-                                            suffixIcon: IconButton(
-                                              onPressed: () {
-                                                if (messageAttachment == null) {
-                                                  _showAttachmentBottomSheet();
-                                                } else {
-                                                  messageAttachment = null;
-                                                  showRecordButton = true;
-                                                  setState(() {});
-                                                }
-                                              },
-                                              icon: messageAttachment != null
-                                                  ? const Icon(Icons.close)
-                                                  : Transform.rotate(
-                                                      angle: -3.14 / 5.0,
-                                                      child: const Icon(
-                                                        Icons.attachment,
-                                                      ),
-                                                    ),
+                                  //// typing status showing
+                                  ValueListenableBuilder<Map<String, String>?>(
+                                    valueListenable:
+                                        _socketService.typingStatus,
+                                    builder: (context, typingStatus, child) {
+                                      if (typingStatus != null &&
+                                          typingStatus['userId'] ==
+                                              widget.userId) {
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 5.0, left: 10, right: 10),
+                                          child: Text(
+                                            "${widget.userName} ${"isTyping".translate(context)} ...",
+                                            style: TextStyle(
+                                              color: context
+                                                  .color.textDefaultColor,
+                                              fontSize: 12,
+                                              fontStyle: FontStyle.italic,
                                             ),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    vertical: 6, horizontal: 8),
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                borderSide: BorderSide(
-                                                    color: context
-                                                        .color.territoryColor)),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                borderSide: BorderSide(
-                                                    color: context
-                                                        .color.territoryColor)),
-                                            hintText:
-                                                "writeHere".translate(context),
+                                          ),
+                                        );
+                                      }
+                                      return const SizedBox.shrink();
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 10),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextField(
+                                            controller: controller,
+                                            onChanged: (value) {
+                                              if (value.isNotEmpty) {
+                                                if (!_isTyping) {
+                                                  _socketService.typingStart(
+                                                      widget.itemOfferId);
+                                                  _isTyping = true;
+                                                }
+                                                _typingTimer?.cancel();
+                                                _typingTimer = Timer(
+                                                    const Duration(
+                                                        milliseconds: 2000),
+                                                    () {
+                                                  _socketService.typingStop(
+                                                      widget.itemOfferId);
+                                                  _isTyping = false;
+                                                });
+                                              } else {
+                                                // If text is empty, send stop immediately
+                                                _typingTimer?.cancel();
+                                                if (_isTyping) {
+                                                  _socketService.typingStop(
+                                                      widget.itemOfferId);
+                                                  _isTyping = false;
+                                                }
+                                              }
+                                            },
+                                            cursorColor:
+                                                context.color.territoryColor,
+                                            onTap: () {
+                                              showDeletebutton.value = false;
+                                            },
+                                            textInputAction:
+                                                TextInputAction.newline,
+                                            minLines: 1,
+                                            maxLines: null,
+                                            decoration: InputDecoration(
+                                              suffixIconColor:
+                                                  context.color.textLightColor,
+                                              suffixIcon: IconButton(
+                                                onPressed: () {
+                                                  if (messageAttachment ==
+                                                      null) {
+                                                    _showAttachmentBottomSheet();
+                                                  } else {
+                                                    messageAttachment = null;
+                                                    showRecordButton = true;
+                                                    setState(() {});
+                                                  }
+                                                },
+                                                icon: messageAttachment != null
+                                                    ? const Icon(Icons.close)
+                                                    : Transform.rotate(
+                                                        angle: -3.14 / 5.0,
+                                                        child: const Icon(
+                                                          Icons.attachment,
+                                                        ),
+                                                      ),
+                                              ),
+                                              contentPadding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6,
+                                                      horizontal: 8),
+                                              border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  borderSide: BorderSide(
+                                                      color: context.color
+                                                          .territoryColor)),
+                                              focusedBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  borderSide: BorderSide(
+                                                      color: context.color
+                                                          .territoryColor)),
+                                              hintText: "writeHere"
+                                                  .translate(context),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        width: 9.5,
-                                      ),
-                                      if (showRecordButton)
-                                        RecordButton(
-                                          controller: _recordButtonAnimation,
-                                          callback: (path) {
-                                            //This is adding Chat widget in stream with BlocProvider , because we will need to do api process to store chat message to server, when it will be added to list it's initState method will be called
-                                            ChatMessageHandler.addchat(
-                                              BlocProvider(
-                                                create: (context) =>
-                                                    SendMessageCubit(),
-                                                child: ChatMessage(
+                                        const SizedBox(
+                                          width: 9.5,
+                                        ),
+                                        if (showRecordButton)
+                                          RecordButton(
+                                            controller: _recordButtonAnimation,
+                                            callback: (path) {
+                                              //This is adding Chat widget in stream with BlocProvider , because we will need to do api process to store chat message to server, when it will be added to list it's initState method will be called
+                                              ChatMessageHandler.addchat(
+                                                BlocProvider(
+                                                  create: (context) =>
+                                                      SendMessageCubit(),
+                                                  child: ChatMessage(
+                                                      key: ValueKey(
+                                                          DateTime.now()
+                                                              .toString()
+                                                              .toString()),
+                                                      message: controller.text,
+                                                      senderId: int.tryParse(
+                                                              HiveUtils
+                                                                      .getUserId() ??
+                                                                  "0") ??
+                                                          0,
+                                                      createdAt: DateTime.now()
+                                                          .toString(),
+                                                      isSentNow: true,
+                                                      audio: path,
+                                                      itemOfferId:
+                                                          widget.itemOfferId,
+                                                      file: "",
+                                                      updatedAt: DateTime.now()
+                                                          .toString()),
+                                                ),
+                                              );
+                                              totalMessageCount++;
+
+                                              setState(() {});
+                                            },
+                                            isSending: false,
+                                          ),
+                                        if (!showRecordButton)
+                                          GestureDetector(
+                                            onTap: () {
+                                              if (controller.text
+                                                      .trim()
+                                                      .isEmpty &&
+                                                  messageAttachment == null)
+                                                return;
+
+                                              final text =
+                                                  controller.text.trim();
+                                              _socketService.typingStop(
+                                                  widget.itemOfferId);
+
+                                              //////////////////////////////////////////
+                                              ChatMessageHandler.addchat(
+                                                BlocProvider(
+                                                  create: (context) =>
+                                                      SendMessageCubit(),
+                                                  child: ChatMessage(
                                                     key: ValueKey(DateTime.now()
-                                                        .toString()
-                                                        .toString()),
-                                                    message: controller.text,
+                                                        .millisecondsSinceEpoch),
+                                                    message: text,
                                                     senderId: int.tryParse(
                                                             HiveUtils
                                                                     .getUserId() ??
@@ -759,213 +824,172 @@ class _ChatScreenState extends State<ChatScreen>
                                                         0,
                                                     createdAt: DateTime.now()
                                                         .toString(),
+                                                    updatedAt: DateTime.now()
+                                                        .toString(),
                                                     isSentNow: true,
-                                                    audio: path,
+                                                    audio: "",
+                                                    file: messageAttachment
+                                                            ?.path ??
+                                                        "",
                                                     itemOfferId:
                                                         widget.itemOfferId,
-                                                    file: "",
-                                                    updatedAt: DateTime.now()
-                                                        .toString()),
-                                              ),
-                                            );
-                                            totalMessageCount++;
-
-                                            setState(() {});
-                                          },
-                                          isSending: false,
-                                        ),
-                                      if (!showRecordButton)
-                                        GestureDetector(
-                                          onTap: () {
-                                            if (controller.text
-                                                    .trim()
-                                                    .isEmpty &&
-                                                messageAttachment == null)
-                                              return;
-
-                                            final text = controller.text.trim();
-                                            _socketService
-                                                .typingStop(widget.itemOfferId);
-
-                                            //////////////////////////////////////////
-                                            ChatMessageHandler.addchat(
-                                              BlocProvider(
-                                                create: (context) =>
-                                                    SendMessageCubit(),
-                                                child: ChatMessage(
-                                                  key: ValueKey(DateTime.now()
-                                                      .millisecondsSinceEpoch),
-                                                  message: text,
-                                                  senderId: int.tryParse(
-                                                          HiveUtils
-                                                                  .getUserId() ??
-                                                              "0") ??
-                                                      0,
-                                                  createdAt:
-                                                      DateTime.now().toString(),
-                                                  updatedAt:
-                                                      DateTime.now().toString(),
-                                                  isSentNow: true,
-                                                  audio: "",
-                                                  file:
-                                                      messageAttachment?.path ??
-                                                          "",
-                                                  itemOfferId:
-                                                      widget.itemOfferId,
+                                                  ),
                                                 ),
+                                              );
+                                              _socketService.sendMessage(
+                                                  widget.itemOfferId, text);
+                                              controller.clear();
+                                              messageAttachment = null;
+                                              FocusScope.of(context).unfocus();
+                                              setState(() {});
+                                            },
+                                            child: CircleAvatar(
+                                              radius: 20,
+                                              backgroundColor:
+                                                  context.color.territoryColor,
+                                              child: Icon(
+                                                Icons.send,
+                                                color:
+                                                    context.color.buttonColor,
                                               ),
-                                            );
-                                            _socketService.sendMessage(
-                                                widget.itemOfferId, text);
-                                            controller.clear();
-                                            messageAttachment = null;
-                                            FocusScope.of(context).unfocus();
-                                            setState(() {});
-                                          },
-                                          child: CircleAvatar(
-                                            radius: 20,
-                                            backgroundColor:
-                                                context.color.territoryColor,
-                                            child: Icon(
-                                              Icons.send,
-                                              color: context.color.buttonColor,
                                             ),
-                                          ),
-                                        )
-                                    ],
+                                          )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          appBar: AppBar(
-            centerTitle: false,
-            automaticallyImplyLeading: false,
-            leading: Material(
-              clipBehavior: Clip.antiAlias,
-              color: Colors.transparent,
-              type: MaterialType.circle,
-              child: InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Padding(
-                      padding: EdgeInsetsDirectional.only(start: 15),
-                      child: Directionality(
-                        textDirection: Directionality.of(context),
-                        child: RotatedBox(
-                          quarterTurns:
-                              Directionality.of(context) == TextDirection.rtl
-                                  ? 2
-                                  : -4,
-                          child: UiUtils.getSvg(AppIcons.arrowLeft,
-                              fit: BoxFit.none,
-                              color: context.color.textDefaultColor),
-                        ),
-                      ))),
-            ),
-            backgroundColor: context.color.secondaryColor,
-            elevation: 0,
-            iconTheme: IconThemeData(color: context.color.territoryColor),
-            bottom: PreferredSize(
-              preferredSize: Size.fromHeight(70),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Divider(
-                    color: context.color.borderColor.darken(40),
-                    thickness: 1,
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-                    color: context.color.secondaryColor,
-                    height: 63,
-                    child: Row(
-                      children: [
-                        FittedBox(
-                          fit: BoxFit.none,
-                          child: GestureDetector(
-                            onTap: () async {
-                              try {
-                                Widgets.showLoader(context);
+            appBar: AppBar(
+              centerTitle: false,
+              automaticallyImplyLeading: false,
+              leading: Material(
+                clipBehavior: Clip.antiAlias,
+                color: Colors.transparent,
+                type: MaterialType.circle,
+                child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Padding(
+                        padding: EdgeInsetsDirectional.only(start: 15),
+                        child: Directionality(
+                          textDirection: Directionality.of(context),
+                          child: RotatedBox(
+                            quarterTurns:
+                                Directionality.of(context) == TextDirection.rtl
+                                    ? 2
+                                    : -4,
+                            child: UiUtils.getSvg(AppIcons.arrowLeft,
+                                fit: BoxFit.none,
+                                color: context.color.textDefaultColor),
+                          ),
+                        ))),
+              ),
+              backgroundColor: context.color.secondaryColor,
+              elevation: 0,
+              iconTheme: IconThemeData(color: context.color.territoryColor),
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(70),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Divider(
+                      color: context.color.borderColor.darken(40),
+                      thickness: 1,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+                      color: context.color.secondaryColor,
+                      height: 63,
+                      child: Row(
+                        children: [
+                          FittedBox(
+                            fit: BoxFit.none,
+                            child: GestureDetector(
+                              onTap: () async {
+                                try {
+                                  Widgets.showLoader(context);
 
-                                DataOutput<ItemModel> dataOutput =
-                                    await ItemRepository().fetchItemFromItemId(
-                                        int.tryParse(widget.itemId) ?? 0);
+                                  DataOutput<ItemModel> dataOutput =
+                                      await ItemRepository()
+                                          .fetchItemFromItemId(
+                                              int.tryParse(widget.itemId) ?? 0);
 
-                                Future.delayed(
-                                  Duration.zero,
-                                  () {
-                                    Widgets.hideLoder(context);
-                                    Navigator.pushNamed(
-                                        context, Routes.adDetailsScreen,
-                                        arguments: {
-                                          "model": dataOutput.modelList[0],
-                                        });
-                                  },
-                                );
-                              } catch (e) {
-                                Widgets.hideLoder(context);
-                              }
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(24),
-                              child: SizedBox(
-                                width: 47,
-                                height: 47,
-                                child: UiUtils.getImage(
-                                  widget.itemImage,
-                                  fit: BoxFit.cover,
+                                  Future.delayed(
+                                    Duration.zero,
+                                    () {
+                                      Widgets.hideLoder(context);
+                                      Navigator.pushNamed(
+                                          context, Routes.adDetailsScreen,
+                                          arguments: {
+                                            "model": dataOutput.modelList[0],
+                                          });
+                                    },
+                                  );
+                                } catch (e) {
+                                  Widgets.hideLoder(context);
+                                }
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(24),
+                                child: SizedBox(
+                                  width: 47,
+                                  height: 47,
+                                  child: UiUtils.getImage(
+                                    widget.itemImage,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
 
-                        SizedBox(width: 10),
-                        // Adding horizontal space between items
-                        Expanded(
-                          child: Container(
-                            color: context.color.secondaryColor,
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    widget.itemTitle,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    softWrap: true,
-                                  )
-                                      .color(context.color.textDefaultColor)
-                                      .size(context.font.large),
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsetsDirectional.only(start: 15.0),
-                                  child: Text(
-                                    Constant.currencySymbol.toString() +
-                                        widget.itemPrice
-                                            .toString(), // Replace with your item price
-                                  )
-                                      .color(context.color.textDefaultColor)
-                                      .size(context.font.large)
-                                      .bold(),
-                                ),
-                              ],
+                          SizedBox(width: 10),
+                          // Adding horizontal space between items
+                          Expanded(
+                            child: Container(
+                              color: context.color.secondaryColor,
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      widget.itemTitle,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: true,
+                                    )
+                                        .color(context.color.textDefaultColor)
+                                        .size(context.font.large),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsetsDirectional.only(start: 15.0),
+                                    child: Text(
+                                      Constant.currencySymbol.toString() +
+                                          widget.itemPrice
+                                              .toString(), // Replace with your item price
+                                    )
+                                        .color(context.color.textDefaultColor)
+                                        .size(context.font.large)
+                                        .bold(),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  /*  isNotificationPermissionGranted
+                    /*  isNotificationPermissionGranted
                       ? SizedBox.shrink()
                       : FittedBox(
                           fit: BoxFit.cover,
@@ -979,342 +1003,352 @@ class _ChatScreenState extends State<ChatScreen>
                             ),
                           ),
                         ),*/
-                ],
-              ),
-            ),
-            actions: [
-              MultiBlocProvider(
-                providers: [
-                  BlocProvider(create: (context) => UnblockUserCubit()),
-                  BlocProvider(create: (context) => BlockUserCubit()),
-                ],
-                child: Builder(builder: (context) {
-                  bool isBlocked = context
-                      .read<BlockedUsersListCubit>()
-                      .isUserBlocked(int.tryParse(widget.userId) ?? 0);
-                  return BlocConsumer<BlockedUsersListCubit,
-                      BlockedUsersListState>(
-                    listener: (context, state) {
-                      if (state is BlockedUsersListSuccess) {
-                        isBlocked = context
-                            .read<BlockedUsersListCubit>()
-                            .isUserBlocked(int.tryParse(widget.userId) ?? 0);
-                      }
-                    },
-                    builder: (context, blockedUsersListState) {
-                      return BlocListener<BlockUserCubit, BlockUserState>(
-                        listener: (context, blockState) {
-                          if (blockState is BlockUserSuccess) {
-                            // Add the blocked user to the list
-                            context
-                                .read<BlockedUsersListCubit>()
-                                .addBlockedUser(
-                                  BlockedUserModel(
-                                      id: int.tryParse(widget.userId) ?? 0,
-                                      name: widget.userName,
-                                      profile: widget.profilePicture
-                                      // Add other necessary user data
-                                      ),
-                                );
-                            HelperUtils.showSnackBarMessage(
-                                context, blockState.message);
-                          } else if (blockState is BlockUserFail) {
-                            HelperUtils.showSnackBarMessage(
-                                context, blockState.error.toString());
-                          }
-                        },
-                        child: BlocListener<UnblockUserCubit, UnblockUserState>(
-                          listener: (context, unblockState) {
-                            if (unblockState is UnblockUserSuccess) {
-                              // Remove the unblocked user from the list
-                              context.read<BlockedUsersListCubit>().unblockUser(
-                                  int.tryParse(widget.userId) ?? 0);
-                              HelperUtils.showSnackBarMessage(
-                                  context, unblockState.message);
-                            } else if (unblockState is UnblockUserFail) {
-                              HelperUtils.showSnackBarMessage(
-                                  context, unblockState.error.toString());
-                            }
-                          },
-                          child: Padding(
-                            padding: EdgeInsetsDirectional.only(end: 30.0),
-                            child: Container(
-                              height: 24,
-                              width: 24,
-                              alignment: AlignmentDirectional.center,
-                              child: PopupMenuButton(
-                                color: context.color.secondaryColor,
-                                offset: Offset(-12, 15),
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(17),
-                                    bottomRight: Radius.circular(17),
-                                    topLeft: Radius.circular(17),
-                                    topRight: Radius.circular(0),
-                                  ),
-                                ),
-                                child: SvgPicture.asset(
-                                  AppIcons.more,
-                                  width: 20,
-                                  height: 20,
-                                  fit: BoxFit.contain,
-                                  colorFilter: ColorFilter.mode(
-                                    context.color.textDefaultColor,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                                itemBuilder: (context) => [
-                                  if (!isBlocked)
-                                    PopupMenuItem(
-                                      onTap: () async {
-                                        var block =
-                                            await UiUtils.showBlurredDialoge(
-                                          context,
-                                          dialoge: BlurredDialogBox(
-                                            acceptButtonName:
-                                                "blockLbl".translate(context),
-                                            title:
-                                                "${"blockLbl".translate(context)}\t${widget.userName}?",
-                                            content: Text(
-                                              "blockWarning".translate(context),
-                                            ),
-                                          ),
-                                        );
-                                        if (block == true) {
-                                          Future.delayed(Duration.zero, () {
-                                            context
-                                                .read<BlockUserCubit>()
-                                                .blockUser(
-                                                  blockUserId: int.tryParse(
-                                                          widget.userId) ??
-                                                      0,
-                                                );
-                                          });
-                                        }
-                                      },
-                                      child: Text("blockLbl".translate(context))
-                                          .color(context.color.textColorDark),
-                                    )
-                                  else
-                                    PopupMenuItem(
-                                      onTap: () async {
-                                        var unBlock =
-                                            await UiUtils.showBlurredDialoge(
-                                          context,
-                                          dialoge: BlurredDialogBox(
-                                            acceptButtonName:
-                                                "unBlockLbl".translate(context),
-                                            content: Text(
-                                              "${"unBlockLbl".translate(context)}\t${widget.userName}\t${"toSendMessage".translate(context)}"
-                                                  .translate(context),
-                                            ),
-                                          ),
-                                        );
-                                        if (unBlock == true) {
-                                          Future.delayed(Duration.zero, () {
-                                            context
-                                                .read<UnblockUserCubit>()
-                                                .unBlockUser(
-                                                  blockUserId: int.tryParse(
-                                                          widget.userId) ??
-                                                      0,
-                                                );
-                                          });
-                                        }
-                                      },
-                                      child: Text(
-                                              "unBlockLbl".translate(context))
-                                          .color(context.color.textColorDark),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }),
-              )
-            ],
-            title: FittedBox(
-              fit: BoxFit.none,
-              child: Row(
-                children: [
-                  widget.profilePicture == ""
-                      ? CircleAvatar(
-                          backgroundColor: context.color.territoryColor,
-                          child: SvgPicture.asset(
-                            AppIcons.profile,
-                            colorFilter: ColorFilter.mode(
-                                context.color.buttonColor, BlendMode.srcIn),
-                          ),
-                        )
-                      : GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              TransparantRoute(
-                                barrierDismiss: true,
-                                builder: (context) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Container(
-                                      color: const Color.fromARGB(69, 0, 0, 0),
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          child: CustomImageHeroAnimation(
-                            type: CImageType.Network,
-                            image: widget.profilePicture,
-                            child: CircleAvatar(
-                              backgroundImage: CachedNetworkImageProvider(
-                                widget.profilePicture,
-                              ),
-                            ),
-                          ),
-                        ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  SizedBox(
-                    width: context.screenWidth * 0.35,
-                    child: Text(widget.userName)
-                        .color(context.color.textColorDark)
-                        .size(context.font.normal),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          body: BlocProvider(
-            create: (context) => AddItemReviewCubit(),
-            child: Stack(
-              children: [
-                SvgPicture.asset(
-                  chatBackground,
-                  height: MediaQuery.of(context).size.height,
-                  fit: BoxFit.cover,
-                  width: MediaQuery.of(context).size.width,
-                  colorFilter: context.color.brightness == Brightness.dark
-                      ? ColorFilter.mode(
-                          Colors.white.withOpacity(0.08), BlendMode.srcIn)
-                      : null,
+                  ],
                 ),
-                BlocListener<DeleteMessageCubit, DeleteMessageState>(
-                  listener: (context, state) {
-                    if (state is DeleteMessageSuccess) {
-                      ChatMessageHandler.removeMessage(state.id);
-                      showDeletebutton.value = false;
-                    }
-                  },
-                  child: GestureDetector(
-                    onTap: () {
-                      showDeletebutton.value = false;
-                    },
-                    child: BlocConsumer<LoadChatMessagesCubit,
-                        LoadChatMessagesState>(
+              ),
+              actions: [
+                MultiBlocProvider(
+                  providers: [
+                    BlocProvider(create: (context) => UnblockUserCubit()),
+                    BlocProvider(create: (context) => BlockUserCubit()),
+                  ],
+                  child: Builder(builder: (context) {
+                    bool isBlocked = context
+                        .read<BlockedUsersListCubit>()
+                        .isUserBlocked(int.tryParse(widget.userId) ?? 0);
+                    return BlocConsumer<BlockedUsersListCubit,
+                        BlockedUsersListState>(
                       listener: (context, state) {
-                        if (state is LoadChatMessagesSuccess) {
-                          ChatMessageHandler.loadMessages(
-                              state.messages, context);
-                          totalMessageCount = state.messages.length;
-                          isFetchedFirstTime = true;
-                          setState(() {});
+                        if (state is BlockedUsersListSuccess) {
+                          isBlocked = context
+                              .read<BlockedUsersListCubit>()
+                              .isUserBlocked(int.tryParse(widget.userId) ?? 0);
                         }
                       },
-                      builder: (context, state) {
-                        return Stack(
-                          children: [
-                            StreamBuilder<List<Widget>>(
-                                stream: ChatMessageHandler.getChatStream(),
-                                builder: (context,
-                                    AsyncSnapshot<List<Widget>> snapshot) {
-                                  Widget? loadingMoreWidget;
-                                  if (state is LoadChatMessagesSuccess) {
-                                    if (state.isLoadingMore) {
+                      builder: (context, blockedUsersListState) {
+                        return BlocListener<BlockUserCubit, BlockUserState>(
+                          listener: (context, blockState) {
+                            if (blockState is BlockUserSuccess) {
+                              // Add the blocked user to the list
+                              context
+                                  .read<BlockedUsersListCubit>()
+                                  .addBlockedUser(
+                                    BlockedUserModel(
+                                        id: int.tryParse(widget.userId) ?? 0,
+                                        name: widget.userName,
+                                        profile: widget.profilePicture
+                                        // Add other necessary user data
+                                        ),
+                                  );
+                              HelperUtils.showSnackBarMessage(
+                                  context, blockState.message);
+                            } else if (blockState is BlockUserFail) {
+                              HelperUtils.showSnackBarMessage(
+                                  context, blockState.error.toString());
+                            }
+                          },
+                          child:
+                              BlocListener<UnblockUserCubit, UnblockUserState>(
+                            listener: (context, unblockState) {
+                              if (unblockState is UnblockUserSuccess) {
+                                // Remove the unblocked user from the list
+                                context
+                                    .read<BlockedUsersListCubit>()
+                                    .unblockUser(
+                                        int.tryParse(widget.userId) ?? 0);
+                                HelperUtils.showSnackBarMessage(
+                                    context, unblockState.message);
+                              } else if (unblockState is UnblockUserFail) {
+                                HelperUtils.showSnackBarMessage(
+                                    context, unblockState.error.toString());
+                              }
+                            },
+                            child: Padding(
+                              padding: EdgeInsetsDirectional.only(end: 30.0),
+                              child: Container(
+                                height: 24,
+                                width: 24,
+                                alignment: AlignmentDirectional.center,
+                                child: PopupMenuButton(
+                                  color: context.color.secondaryColor,
+                                  offset: Offset(-12, 15),
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(17),
+                                      bottomRight: Radius.circular(17),
+                                      topLeft: Radius.circular(17),
+                                      topRight: Radius.circular(0),
+                                    ),
+                                  ),
+                                  child: SvgPicture.asset(
+                                    AppIcons.more,
+                                    width: 20,
+                                    height: 20,
+                                    fit: BoxFit.contain,
+                                    colorFilter: ColorFilter.mode(
+                                      context.color.textDefaultColor,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  itemBuilder: (context) => [
+                                    if (!isBlocked)
+                                      PopupMenuItem(
+                                        onTap: () async {
+                                          var block =
+                                              await UiUtils.showBlurredDialoge(
+                                            context,
+                                            dialoge: BlurredDialogBox(
+                                              acceptButtonName:
+                                                  "blockLbl".translate(context),
+                                              title:
+                                                  "${"blockLbl".translate(context)}\t${widget.userName}?",
+                                              content: Text(
+                                                "blockWarning"
+                                                    .translate(context),
+                                              ),
+                                            ),
+                                          );
+                                          if (block == true) {
+                                            Future.delayed(Duration.zero, () {
+                                              context
+                                                  .read<BlockUserCubit>()
+                                                  .blockUser(
+                                                    blockUserId: int.tryParse(
+                                                            widget.userId) ??
+                                                        0,
+                                                  );
+                                            });
+                                          }
+                                        },
+                                        child: Text(
+                                                "blockLbl".translate(context))
+                                            .color(context.color.textColorDark),
+                                      )
+                                    else
+                                      PopupMenuItem(
+                                        onTap: () async {
+                                          var unBlock =
+                                              await UiUtils.showBlurredDialoge(
+                                            context,
+                                            dialoge: BlurredDialogBox(
+                                              acceptButtonName: "unBlockLbl"
+                                                  .translate(context),
+                                              content: Text(
+                                                "${"unBlockLbl".translate(context)}\t${widget.userName}\t${"toSendMessage".translate(context)}"
+                                                    .translate(context),
+                                              ),
+                                            ),
+                                          );
+                                          if (unBlock == true) {
+                                            Future.delayed(Duration.zero, () {
+                                              context
+                                                  .read<UnblockUserCubit>()
+                                                  .unBlockUser(
+                                                    blockUserId: int.tryParse(
+                                                            widget.userId) ??
+                                                        0,
+                                                  );
+                                            });
+                                          }
+                                        },
+                                        child: Text(
+                                                "unBlockLbl".translate(context))
+                                            .color(context.color.textColorDark),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }),
+                )
+              ],
+              title: FittedBox(
+                fit: BoxFit.none,
+                child: Row(
+                  children: [
+                    widget.profilePicture == ""
+                        ? CircleAvatar(
+                            backgroundColor: context.color.territoryColor,
+                            child: SvgPicture.asset(
+                              AppIcons.profile,
+                              colorFilter: ColorFilter.mode(
+                                  context.color.buttonColor, BlendMode.srcIn),
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                TransparantRoute(
+                                  barrierDismiss: true,
+                                  builder: (context) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Container(
+                                        color:
+                                            const Color.fromARGB(69, 0, 0, 0),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                            child: CustomImageHeroAnimation(
+                              type: CImageType.Network,
+                              image: widget.profilePicture,
+                              child: CircleAvatar(
+                                backgroundImage: CachedNetworkImageProvider(
+                                  widget.profilePicture,
+                                ),
+                              ),
+                            ),
+                          ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: context.screenWidth * 0.35,
+                      child: Text(widget.userName)
+                          .color(context.color.textColorDark)
+                          .size(context.font.normal),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            body: BlocProvider(
+              create: (context) => AddItemReviewCubit(),
+              child: Stack(
+                children: [
+                  SvgPicture.asset(
+                    chatBackground,
+                    height: MediaQuery.of(context).size.height,
+                    fit: BoxFit.cover,
+                    width: MediaQuery.of(context).size.width,
+                    colorFilter: context.color.brightness == Brightness.dark
+                        ? ColorFilter.mode(
+                            Colors.white.withOpacity(0.08), BlendMode.srcIn)
+                        : null,
+                  ),
+                  BlocListener<DeleteMessageCubit, DeleteMessageState>(
+                    listener: (context, state) {
+                      if (state is DeleteMessageSuccess) {
+                        ChatMessageHandler.removeMessage(state.id);
+                        showDeletebutton.value = false;
+                      }
+                    },
+                    child: GestureDetector(
+                      onTap: () {
+                        showDeletebutton.value = false;
+                      },
+                      child: BlocConsumer<LoadChatMessagesCubit,
+                          LoadChatMessagesState>(
+                        listener: (context, state) {
+                          if (state is LoadChatMessagesSuccess) {
+                            ChatMessageHandler.loadMessages(
+                                state.messages, context);
+                            totalMessageCount = state.messages.length;
+                            isFetchedFirstTime = true;
+                            setState(() {});
+                          }
+                        },
+                        builder: (context, state) {
+                          return Stack(
+                            children: [
+                              StreamBuilder<List<Widget>>(
+                                  stream: ChatMessageHandler.getChatStream(),
+                                  builder: (context,
+                                      AsyncSnapshot<List<Widget>> snapshot) {
+                                    Widget? loadingMoreWidget;
+                                    if (state is LoadChatMessagesSuccess) {
+                                      if (state.isLoadingMore) {
+                                        loadingMoreWidget =
+                                            Text("loading".translate(context));
+                                      }
+                                    }
+                                    if (state is LoadChatMessagesSuccess &&
+                                        state.isLoadingMore) {
                                       loadingMoreWidget =
                                           Text("loading".translate(context));
                                     }
-                                  }
-                                  if (state is LoadChatMessagesSuccess &&
-                                      state.isLoadingMore) {
-                                    loadingMoreWidget =
-                                        Text("loading".translate(context));
-                                  }
-                                  if (snapshot.connectionState ==
-                                          ConnectionState.active ||
-                                      snapshot.connectionState ==
-                                          ConnectionState.done) {
-                                    if ((snapshot.data as List).isEmpty) {
-                                      return offerWidget();
-                                    }
+                                    if (snapshot.connectionState ==
+                                            ConnectionState.active ||
+                                        snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                      if ((snapshot.data as List).isEmpty) {
+                                        return offerWidget();
+                                      }
 
-                                    if (snapshot.hasData) {
-                                      return Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          loadingMoreWidget ??
-                                              const SizedBox.shrink(),
-                                          Expanded(
-                                            child: ListView.builder(
-                                              key: ValueKey(
-                                                  'chat_list_${snapshot.data!.length}'),
-                                              reverse: true,
-                                              shrinkWrap: true,
-                                              physics:
-                                                  const AlwaysScrollableScrollPhysics(),
-                                              controller: _pageScrollController,
-                                              addAutomaticKeepAlives: true,
-                                              itemCount: snapshot.data!.length,
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 10),
-                                              itemBuilder: (context, index) {
-                                                // final adjustedIndex =   index - 1;
-                                                /* dynamic chat =
+                                      if (snapshot.hasData) {
+                                        return Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            loadingMoreWidget ??
+                                                const SizedBox.shrink(),
+                                            Expanded(
+                                              child: ListView.builder(
+                                                key: ValueKey(
+                                                    'chat_list_${snapshot.data!.length}'),
+                                                reverse: true,
+                                                shrinkWrap: true,
+                                                physics:
+                                                    const AlwaysScrollableScrollPhysics(),
+                                                controller:
+                                                    _pageScrollController,
+                                                addAutomaticKeepAlives: true,
+                                                itemCount:
+                                                    snapshot.data!.length,
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 10),
+                                                itemBuilder: (context, index) {
+                                                  // final adjustedIndex =   index - 1;
+                                                  /* dynamic chat =
                                               (snapshot.data as List)
                                                   .elementAt(index); */
 
-                                                dynamic chat =
-                                                    snapshot.data![index];
+                                                  dynamic chat =
+                                                      snapshot.data![index];
 
-                                                return Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    if (index ==
-                                                        snapshot.data!.length -
-                                                            1)
-                                                      offerWidget(),
-                                                    chat
-                                                  ],
-                                                );
-                                              },
+                                                  return Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      if (index ==
+                                                          snapshot.data!
+                                                                  .length -
+                                                              1)
+                                                        offerWidget(),
+                                                      chat
+                                                    ],
+                                                  );
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      );
+                                          ],
+                                        );
+                                      }
                                     }
-                                  }
 
-                                  return offerWidget();
-                                }),
-                            if ((state is LoadChatMessagesInProgress))
-                              Center(
-                                child: UiUtils.progress(),
-                              )
-                          ],
-                        );
-                      },
+                                    return offerWidget();
+                                  }),
+                              if ((state is LoadChatMessagesInProgress))
+                                Center(
+                                  child: UiUtils.progress(),
+                                )
+                            ],
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

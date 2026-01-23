@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/cupertino.dart';import 'dart:io';
 
 import 'package:Ebozor/data/cubits/subscription/fetch_ads_listing_subscription_packages_cubit.dart';
 import 'package:Ebozor/data/cubits/system/get_api_keys_cubit.dart';
@@ -21,14 +21,13 @@ import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SubscriptionPackageListScreen extends StatefulWidget {
   const SubscriptionPackageListScreen({super.key});
 
   static Route route(RouteSettings settings) {
-    return BlurredRouter(builder: (context) {
+    return CupertinoPageRoute(builder: (context) {
       return MultiBlocProvider(
         providers: [
           BlocProvider(

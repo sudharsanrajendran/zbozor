@@ -1,4 +1,4 @@
-/*
+import 'package:flutter/cupertino.dart';/*
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
@@ -16,7 +16,6 @@ import '../../../data/cubits/chatCubits/load_chat_messages.dart';
 import '../../../data/cubits/chatCubits/send_message.dart';
 import '../../../data/model/chat/chated_user_model.dart';
 import '../Chat/chat_screen.dart';
-import '../Widgets/AnimatedRoutes/blur_page_route.dart';
 
 class MakeAnOfferItemScreen extends StatefulWidget {
   final ItemModel model;
@@ -151,7 +150,7 @@ class _MakeAnOfferItemScreenState extends State<MakeAnOfferItemScreen> {
                   Future.delayed(Duration(seconds: 1), () {
                     Navigator.pop(context);
                   }).then((value) {
-                    Navigator.push(context, BlurredRouter(
+                    Navigator.push(context, CupertinoPageRoute(
                       builder: (context) {
                         return MultiBlocProvider(
                           providers: [

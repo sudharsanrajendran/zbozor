@@ -1,9 +1,7 @@
-/*import 'package:Ebozor/ui/screens/widgets/animatedRoutes/blur_page_route.dart'
-    show BlurredRouter;*/
+import 'package:flutter/cupertino.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/fetch_blogs_cubit.dart';
 import 'package:Ebozor/data/model/blog_model.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
@@ -17,12 +15,11 @@ import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class BlogsScreen extends StatefulWidget {
   const BlogsScreen({super.key});
 
   static Route route(RouteSettings settings) {
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return const BlogsScreen();
       },
@@ -149,8 +146,7 @@ class _BlogsScreenState extends State<BlogsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding:
-                    const EdgeInsetsDirectional.fromSTEB(12.0, 12, 12, 0),
+                padding: const EdgeInsetsDirectional.fromSTEB(12.0, 12, 12, 0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: UiUtils.getImage(
@@ -162,8 +158,7 @@ class _BlogsScreenState extends State<BlogsScreen> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsetsDirectional.fromSTEB(12.0, 12, 12, 6),
+                padding: const EdgeInsetsDirectional.fromSTEB(12.0, 12, 12, 6),
                 child: Text(
                   (blog.title ?? "").firstUpperCase(),
                 )
@@ -261,5 +256,4 @@ class _BlogsScreenState extends State<BlogsScreen> {
           );
         });
   }
-
 }

@@ -1,9 +1,8 @@
-import 'dart:convert';
+import 'package:flutter/cupertino.dart';import 'dart:convert';
 import 'dart:io';
 
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/screens/item/add_item_screen/select_category.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
 import 'package:Ebozor/data/cubits/custom_field/fetch_custom_fields_cubit.dart';
@@ -27,9 +26,9 @@ class AddMoreDetailsScreen extends StatefulWidget {
   const AddMoreDetailsScreen(
       {super.key, this.isEdit, this.mainImage, this.otherImage});
 
-  static BlurredRouter route(RouteSettings settings) {
+  static CupertinoPageRoute route(RouteSettings settings) {
     Map? args = settings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return BlocProvider.value(
           value:

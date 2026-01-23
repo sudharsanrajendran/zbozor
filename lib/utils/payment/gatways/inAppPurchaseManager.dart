@@ -139,9 +139,22 @@ class InAppPurchaseManager {
     ProductDetailsResponse productDetailsResponse =
         await _inAppPurchase.queryProductDetails({productId});
 
+    if (productDetailsResponse.error != null) {
+      print("DEBUG: IAP Query Error: ${productDetailsResponse.error!.message}");
+    }
+
+    if (productDetailsResponse.notFoundIDs.isNotEmpty) {
+      print(
+          "DEBUG: IAP Product IDs not found: ${productDetailsResponse.notFoundIDs}");
+    }
+
     if (productDetailsResponse.productDetails.isEmpty) {
+      print("DEBUG: IAP Product Details list is empty.");
       return null;
     }
+
+    print(
+        "DEBUG: Found product: ${productDetailsResponse.productDetails.first.id}");
     return productDetailsResponse.productDetails.first;
   }
 

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:Ebozor/ui/screens/auth/sign_up/mobile_signup_screen.dart';
 import 'package:Ebozor/ui/screens/home/widgets/categoryFilterScreen.dart';
 import 'package:Ebozor/ui/screens/home/widgets/postedSinceFilter.dart';
@@ -22,12 +23,11 @@ import 'package:Ebozor/ui/screens/location/states_screen.dart';
 import 'package:Ebozor/ui/screens/seller/seller_verification_complete.dart';
 
 import 'package:Ebozor/ui/screens/ad_details_screen.dart';
+import 'package:Ebozor/ui/screens/user_profile/edit_profile.dart';
 import 'package:Ebozor/ui/screens/faqs_screen.dart';
 import 'package:Ebozor/ui/screens/location_permission_screen.dart';
 import 'package:Ebozor/ui/screens/my_review_screen.dart';
 import 'package:Ebozor/ui/screens/sold_out_bought_screen.dart';
-import 'package:Ebozor/ui/screens/user_profile/edit_profile.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Ebozor/ui/screens/advertisement/my_advertisment_screen.dart';
 import 'package:Ebozor/ui/screens/auth/login/login_screen.dart';
@@ -60,7 +60,7 @@ import 'package:Ebozor/ui/screens/subscription/transaction_history_screen.dart';
 import 'package:Ebozor/ui/screens/filter_screen.dart';
 import 'package:Ebozor/ui/screens/main_activity.dart';
 import 'package:Ebozor/ui/screens/splash_screen.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
+
 import 'package:Ebozor/ui/screens/widgets/maintenance_mode.dart';
 import 'package:Ebozor/data/repositories/item/item_repository.dart';
 import 'package:Ebozor/data/model/data_output.dart';
@@ -192,7 +192,7 @@ class Routes {
 
     switch (routeSettings.name) {
       case splash:
-        return BlurredRouter(builder: ((context) => const SplashScreen()));
+        return CupertinoPageRoute(builder: ((context) => const SplashScreen()));
       case onboarding:
         return CupertinoPageRoute(
             builder: ((context) => const OnboardingScreen()));
@@ -325,7 +325,7 @@ class Routes {
           return NativeLinkWidget.render(routeSettings);
         }
 
-        return BlurredRouter(
+        return CupertinoPageRoute(
           builder: ((context) => Scaffold(
                 body: Text(
                   "pageNotFoundErrorMsg".translate(context),

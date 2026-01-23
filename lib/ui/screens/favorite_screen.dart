@@ -1,4 +1,4 @@
-import 'package:Ebozor/ui/screens/widgets/intertitial_ads_screen.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/ui/screens/widgets/intertitial_ads_screen.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,6 @@ import 'package:Ebozor/data/cubits/favorite/favorite_cubit.dart';
 import 'package:Ebozor/data/helper/designs.dart';
 import 'package:Ebozor/data/model/item/item_model.dart';
 import 'package:Ebozor/ui/screens/home/widgets/item_horizontal_card.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/no_internet.dart';
 import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
@@ -21,7 +20,7 @@ class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});
 
   static Route route(RouteSettings settings) {
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return const FavoriteScreen();
       },

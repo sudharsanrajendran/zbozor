@@ -1,7 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/cupertino.dart';// ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:Ebozor/app/routes.dart';
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 import 'package:Ebozor/data/model/category_model.dart';
 import 'package:Ebozor/data/model/item_filter_model.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
@@ -43,7 +42,7 @@ class FilterScreen extends StatefulWidget {
 
   static Route route(RouteSettings routeSettings) {
     Map? arguments = routeSettings.arguments as Map?;
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (_) => BlocProvider(
         create: (context) => FetchCustomFieldsCubit(),
         child: FilterScreen(

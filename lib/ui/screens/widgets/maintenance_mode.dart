@@ -1,15 +1,14 @@
-import 'package:Ebozor/ui/theme/theme.dart';
+import 'package:flutter/cupertino.dart';import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-import 'package:Ebozor/ui/screens/widgets/animated_routes/blur_page_route.dart';
 
 class MaintenanceMode extends StatelessWidget {
   const MaintenanceMode({super.key});
   static Route route(RouteSettings settings) {
-    return BlurredRouter(
+    return CupertinoPageRoute(
       builder: (context) {
         return const MaintenanceMode();
       },
