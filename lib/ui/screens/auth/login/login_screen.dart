@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'dart:io';
 import 'package:country_picker/country_picker.dart';
 import 'package:device_region/device_region.dart';

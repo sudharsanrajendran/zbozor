@@ -173,6 +173,137 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   bool get wantKeepAlive => true;
 
+  void _showGetVerificationBottomSheet(
+      BuildContext context, FetchVerificationRequestState state) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.color.secondaryColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          height: 345,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(
+                "getVerificationOnEbozor".translate(context),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: context.color.textColorDark,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Flexible(
+                child: Image.asset(
+                  "assets/verified_popup_image.png",
+                  height: 140,
+                  width: 140,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                "verificationMadeEasier".translate(context),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: context.color.textColorDark,
+                ),
+              ),
+              const SizedBox(height: 14),
+              InkWell(
+                onTap: () {
+                  // Logic to open URL if needed
+                },
+                child: Text("learnMoreVerification".translate(context),
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.blue,
+                    )),
+              ),
+              const SizedBox(height: 14),
+              Divider(
+                color: context.color.borderColor,
+                thickness: 1,
+                height: 1,
+              ),
+              const SizedBox(height: 14),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 99,
+                        height: 38,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: context.color.borderColor),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          "maybeLater".translate(context),
+                          style: TextStyle(
+                            color: context.color.textColorDark,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                        if ((state as dynamic)?.data?.status != "approved") {
+                          Navigator.pushNamed(context,
+                              Routes.sellerIntroVerificationScreen, arguments: {
+                            "isResubmitted":
+                                (state as dynamic)?.data?.status == 'rejected'
+                          });
+                        }
+                      },
+                      child: Container(
+                        width: 219,
+                        height: 38,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: context.color.territoryColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          "getVerified".translate(context),
+                          style: TextStyle(
+                            color: const Color(0xffffffff),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget profileHeader() {
     return BlocBuilder<FetchVerificationRequestsCubit,
         FetchVerificationRequestState>(builder: (context, state) {
@@ -275,16 +406,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                         if (HiveUtils.isUserAuthenticated())
                           GestureDetector(
                             onTap: () {
-                              // Logic for verification nav
                               if ((state as dynamic)?.data?.status !=
                                   "approved") {
-                                Navigator.pushNamed(context,
-                                    Routes.sellerIntroVerificationScreen,
-                                    arguments: {
-                                      "isResubmitted":
-                                          (state as dynamic)?.data?.status ==
-                                              'rejected'
-                                    });
+                                _showGetVerificationBottomSheet(context, state);
                               }
                             },
                             //// ve
