@@ -6,9 +6,7 @@ import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
-import 'package:Ebozor/utils/helper_utils.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -100,24 +98,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         height: 58,
                       ),
                       MaterialButton(
-                        onPressed: () async {
-                          if (isVerified) {
-                            Navigator.pushReplacementNamed(
-                                context, Routes.login);
-                          } else {
-                            // Manual check in case timer hasn't updated yet
-                            await FirebaseAuth.instance.currentUser?.reload();
-                            if (FirebaseAuth
-                                    .instance.currentUser?.emailVerified ==
-                                true) {
-                              Navigator.pushReplacementNamed(
-                                  context, Routes.login);
-                            } else {
-                              HelperUtils.showSnackBarMessage(context,
-                                  "pleaseVerifyEmail".translate(context),
-                                  messageDuration: 1);
-                            }
-                          }
+                        onPressed: () {
+                          // Navigate to login screen regardless of verification status
+                          Navigator.pushReplacementNamed(context, Routes.login);
                         },
                         elevation: 0,
                         minWidth: double.infinity,

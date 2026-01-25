@@ -601,7 +601,13 @@ class ItemsListState extends State<ItemsList> {
                           }
                           if (state is FetchSubCategoriesSuccess) {
                             if (state.categories.isEmpty)
-                              return const Text("No options");
+                              return Text(
+                                "noOptionsAvailable".translate(context),
+                                style: TextStyle(
+                                  color: context.color.textDefaultColor,
+                                  fontSize: 14,
+                                ),
+                              );
 
                             return SizedBox(
                               height: 50,
@@ -792,7 +798,13 @@ class ItemsListState extends State<ItemsList> {
                         }
                         if (state is FetchSubCategoriesSuccess) {
                           if (state.categories.isEmpty)
-                            return const Text("No options");
+                            return Text(
+                              "noOptionsAvailable".translate(context),
+                              style: TextStyle(
+                                color: context.color.textDefaultColor,
+                                fontSize: 14,
+                              ),
+                            );
                           return SizedBox(
                               height: 100, // Taller for parent images
                               child: ListView.separated(
@@ -840,7 +852,7 @@ class ItemsListState extends State<ItemsList> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Categories",
+                                  "categories".translate(context),
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -877,7 +889,7 @@ class ItemsListState extends State<ItemsList> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Categories",
+                                  "categories".translate(context),
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -1010,7 +1022,7 @@ class ItemsListState extends State<ItemsList> {
                   fontSize: 12,
                   color: isSelected
                       ? context.color.textDefaultColor
-                      : context.color.deactivateColor.withOpacity(0.8),
+                      : context.color.textDefaultColor.withOpacity(0.7),
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.normal,
                   height: 1.2,
                 ),

@@ -1,5 +1,6 @@
 import 'package:Ebozor/data/cubits/auth/auth_cubit.dart';
 import 'package:Ebozor/data/cubits/auth/authentication_cubit.dart';
+import 'package:Ebozor/data/cubits/category/newcategoriescubit.dart';
 import 'package:Ebozor/data/cubits/auth/login_cubit.dart';
 import 'package:Ebozor/data/cubits/category/fetch_category_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/delete_message_cubit.dart';
@@ -72,13 +73,11 @@ import 'package:Ebozor/data/cubits/subscription/fetch_featured_subscription_pack
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nested/nested.dart';
 
-
-
-
 class RegisterCubits {
   List<SingleChildWidget> providers = [
     BlocProvider(create: (context) => FavoriteCubit(FavoriteRepository())),
-    BlocProvider(create: (context) => UpdateFavoriteCubit(FavoriteRepository())),
+    BlocProvider(
+        create: (context) => UpdateFavoriteCubit(FavoriteRepository())),
     BlocProvider(create: (context) => AuthCubit()),
     BlocProvider(create: (context) => LoginCubit()),
     BlocProvider(create: (context) => SliderCubit()),
@@ -148,5 +147,6 @@ class RegisterCubits {
     BlocProvider(create: (context) => FetchMyRatingsCubit()),
     BlocProvider(create: (context) => AddMyItemReviewReportCubit()),
     BlocProvider(create: (context) => RenewItemCubit()),
+    BlocProvider(create: (context) => NewCategoriesCubit()),
   ];
 }

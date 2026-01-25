@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'dart:async'; // Search debounce
+import 'package:flutter/cupertino.dart';
+import 'dart:async'; // Search debounce
 import 'dart:developer';
 import 'dart:io';
 
@@ -368,14 +369,13 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
               UiUtils.buildButton(context, radius: 8, fontSize: 16,
                   onPressed: () async {
                 try {
-                  // Fetch actual current position
+                  // Fetch current GPS position
                   Position position = await Geolocator.getCurrentPosition(
                     desiredAccuracy: LocationAccuracy.high,
                   );
 
                   setState(() {
-                    radius = 1;
-                    searchController.clear();
+                    radius = 1.0; // Reset radius to default
                     latitude = position.latitude;
                     longitude = position.longitude;
 
