@@ -214,13 +214,6 @@ class _ChatListScreenState extends State<ChatListScreen>
                       ) {
                         ChatedUser chatedUser = state.chatedUserList[index];
 
-                        // Strict Filtering for Buying Tab
-                        // user must be the buyer
-                        if (chatedUser.buyerId.toString() !=
-                            HiveUtils.getUserId()) {
-                          return const SizedBox.shrink();
-                        }
-
                         return Padding(
                           padding: const EdgeInsets.only(top: 9.0),
                           child: ChatTile(
@@ -317,13 +310,6 @@ class _ChatListScreenState extends State<ChatListScreen>
                         index,
                       ) {
                         ChatedUser chatedUser = state.chatedUserList[index];
-
-                        // Strict Filtering for Selling Tab
-                        // user must be the seller
-                        if (chatedUser.sellerId.toString() !=
-                            HiveUtils.getUserId()) {
-                          return const SizedBox.shrink();
-                        }
 
                         return Padding(
                           padding: const EdgeInsets.only(top: 9.0),

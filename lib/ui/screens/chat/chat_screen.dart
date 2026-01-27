@@ -126,7 +126,9 @@ class _ChatScreenState extends State<ChatScreen>
     super.initState();
 
     ChatMessageHandler.flushMessages();
-    context.read<LoadChatMessagesCubit>().load(itemOfferId: widget.itemOfferId);
+    context
+        .read<LoadChatMessagesCubit>()
+        .load(itemOfferId: widget.itemOfferId, forceRefresh: true);
 
     // if (!_socketService.isConnected) _socketService.socketconnect(); // Removed redundant call
     _socketService.joinOffer(widget.itemOfferId);
