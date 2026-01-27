@@ -124,7 +124,7 @@ class HomeSearchField extends StatelessWidget {
                   children: [
                     UiUtils.getSvg(
                       AppIcons.notification,
-                      color: Colors.grey,
+                      color: context.color.textLightColor,
                       width: 32,
                       height: 32,
                     ),
@@ -134,8 +134,8 @@ class HomeSearchField extends StatelessWidget {
                         top: -2,
                         child: Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
+                          decoration: BoxDecoration(
+                            color: context.color.error,
                             shape: BoxShape.circle,
                           ),
                           constraints: const BoxConstraints(
@@ -145,8 +145,8 @@ class HomeSearchField extends StatelessWidget {
                           child: Center(
                             child: Text(
                               unreadCount > 9 ? "9+" : unreadCount.toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: context.color.buttonColor,
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                               ),

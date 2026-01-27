@@ -6501,17 +6501,6 @@ SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-</string>
-			<key>License</key>
-			<string>BSD</string>
-			<key>Title</key>
-			<string>integration_test</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>FooterText</key>
 			<string>MIT License
 
 Copyright (c) 2019-2020 Ryan Heise and the project contributors.

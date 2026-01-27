@@ -271,10 +271,10 @@ class HelperUtils {
       content: Text(
         message,
         textAlign: TextAlign.center,
-        style: const TextStyle(color: Colors.white, fontSize: 14.0),
+        style: TextStyle(color: context.color.territoryColor, fontSize: 14.0),
       ),
       behavior: SnackBarBehavior.floating,
-      backgroundColor: context.color.territoryColor,
+      backgroundColor: context.color.secondaryColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
       margin: EdgeInsets.symmetric(
           horizontal: MediaQuery.of(context).size.width * 0.2, vertical: 20),

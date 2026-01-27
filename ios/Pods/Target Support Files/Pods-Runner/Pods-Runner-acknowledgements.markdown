@@ -6136,11 +6136,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-## integration_test
-
-Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.
-
-
 ## just_audio
 
 MIT License

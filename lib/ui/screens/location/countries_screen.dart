@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'dart:async';
 
 import 'package:Ebozor/app/app_theme.dart';
 import 'package:Ebozor/app/routes.dart';
@@ -218,8 +219,8 @@ class CountriesScreenState extends State<CountriesScreen> {
 
   PreferredSizeWidget appBarWidget(List<CountriesModel> countriesModel) {
     return AppBar(
-      systemOverlayStyle:
-          SystemUiOverlayStyle(statusBarColor: context.color.backgroundColor),
+      systemOverlayStyle: UiUtils.getSystemUiOverlayStyle(
+          context: context, statusBarColor: context.color.backgroundColor),
       bottom: PreferredSize(
           preferredSize: Size.fromHeight(42.rh(context)),
           child: Row(
@@ -395,7 +396,7 @@ class CountriesScreenState extends State<CountriesScreen> {
         appBar: appBarWidget(countriesModel),
         body: bodyData(),
         bottomNavigationBar: bottomBar(),
-        // backgroundColor: context.color.backgroundColor,
+        backgroundColor: context.color.backgroundColor,
       );
     });
   }
@@ -574,7 +575,8 @@ class CountriesScreenState extends State<CountriesScreen> {
                                       },
                                       child: Chip(
                                         label: Text(name),
-                                        backgroundColor: Colors.white,
+                                        backgroundColor:
+                                            context.color.secondaryColor,
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(4)),
@@ -641,7 +643,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                                     color: isSelected
                                         ? context.color.territoryColor
                                             .withOpacity(0.1)
-                                        : Colors.white,
+                                        : context.color.secondaryColor,
                                   ),
                                   child: Text(
                                     country.name!,

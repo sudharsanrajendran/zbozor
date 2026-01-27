@@ -133,7 +133,7 @@ class _ItemCardState extends State<ItemCard> {
                 /// CONTENT
                 Padding(
                   padding: const EdgeInsetsDirectional.only(
-                      end: 8, start: 8, top: 6),
+                      end: 8, start: 8, top: 6, bottom: 4),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -146,7 +146,7 @@ class _ItemCardState extends State<ItemCard> {
                           .size(context.font.large)
                           .color(context.color.territoryColor),
 
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 5),
 
                       /// ITEM NAME
                       Text(widget.item?.name ?? "")
@@ -155,7 +155,7 @@ class _ItemCardState extends State<ItemCard> {
                           .setMaxLines(lines: 1)
                           .size(context.font.small),
 
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 5),
 
                       /// LOCATION (compact)
                       if ((widget.item?.address ?? "").isNotEmpty)
@@ -177,12 +177,17 @@ class _ItemCardState extends State<ItemCard> {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontSize: context.font.small,
-                                    color: context.color.deactivateColor,
+                                    color: context.color.textDefaultColor
+                                        .withOpacity(0.5),
                                     fontWeight: FontWeight.w400),
                               ),
                             ),
                           ],
                         ),
+
+                      /// SPACING BELOW ADDRESS
+                      if ((widget.item?.address ?? "").isNotEmpty)
+                        const SizedBox(height: 2),
                     ],
                   ),
                 ),
@@ -242,17 +247,19 @@ class _ItemCardState extends State<ItemCard> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: context.color.secondaryColor,
-                      boxShadow:
-                          context.watch<AppThemeCubit>().state.appTheme ==
-                                  AppTheme.dark
-                              ? null
-                              : [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  )
-                                ],
+                      boxShadow: context
+                                  .watch<AppThemeCubit>()
+                                  .state
+                                  .appTheme ==
+                              AppTheme.dark
+                          ? null
+                          : [
+                              BoxShadow(
+                                color: context.color.shadow.withOpacity(0.5),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              )
+                            ],
                     ),
                     child: state is UpdateFavoriteInProgress
                         ? Center(

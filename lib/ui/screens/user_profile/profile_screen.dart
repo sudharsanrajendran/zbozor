@@ -173,6 +173,137 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   bool get wantKeepAlive => true;
 
+  void _showGetVerificationBottomSheet(
+      BuildContext context, FetchVerificationRequestState state) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.color.secondaryColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          height: 345,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(
+                "getVerificationOnEbozor".translate(context),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: context.color.textColorDark,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Flexible(
+                child: Image.asset(
+                  "assets/verified_popup_image.png",
+                  height: 140,
+                  width: 140,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                "verificationMadeEasier".translate(context),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: context.color.textColorDark,
+                ),
+              ),
+              const SizedBox(height: 14),
+              InkWell(
+                onTap: () {
+                  // Logic to open URL if needed
+                },
+                child: Text("learnMoreVerification".translate(context),
+                    style: TextStyle(
+                      color: context.color.territoryColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      decoration: TextDecoration.underline,
+                      decorationColor: context.color.territoryColor,
+                    )),
+              ),
+              const SizedBox(height: 14),
+              Divider(
+                color: context.color.borderColor,
+                thickness: 1,
+                height: 1,
+              ),
+              const SizedBox(height: 14),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 99,
+                        height: 38,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: context.color.borderColor),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          "maybeLater".translate(context),
+                          style: TextStyle(
+                            color: context.color.textColorDark,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                        if ((state as dynamic)?.data?.status != "approved") {
+                          Navigator.pushNamed(context,
+                              Routes.sellerIntroVerificationScreen, arguments: {
+                            "isResubmitted":
+                                (state as dynamic)?.data?.status == 'rejected'
+                          });
+                        }
+                      },
+                      child: Container(
+                        width: 219,
+                        height: 38,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: context.color.territoryColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          "getVerified".translate(context),
+                          style: TextStyle(
+                            color: context.color.buttonColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget profileHeader() {
     return BlocBuilder<FetchVerificationRequestsCubit,
         FetchVerificationRequestState>(builder: (context, state) {
@@ -192,7 +323,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black
+                    color: context.color.shadow
                         .withOpacity(0.05), // Fixed undefined shadowColor
                     blurRadius: 10,
                     offset: const Offset(0, 5),
@@ -202,7 +333,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               child: Row(
                 children: [
                   Stack(
-                    alignment: Alignment.bottomRight,
+                    alignment: AlignmentDirectional.bottomEnd,
                     children: [
                       ///////profile circle
                       Container(
@@ -253,7 +384,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   color: context.color.secondaryColor,
                                   width: 2),
                             ),
-                            child: Image.asset("assets/profileedit.png"),
+                            child: Image.asset("assets/profileedit.png",
+                                color: context.color.secondaryColor),
                           ),
                         ),
                     ],
@@ -265,7 +397,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       children: [
                         Text(HiveUtils.isUserAuthenticated()
                                 ? name
-                                : "Guest User")
+                                : "guestUser".translate(context))
                             .bold(weight: FontWeight.w700)
                             .size(context.font.larger)
                             .color(context.color.textColorDark),
@@ -275,16 +407,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                         if (HiveUtils.isUserAuthenticated())
                           GestureDetector(
                             onTap: () {
-                              // Logic for verification nav
                               if ((state as dynamic)?.data?.status !=
                                   "approved") {
-                                Navigator.pushNamed(context,
-                                    Routes.sellerIntroVerificationScreen,
-                                    arguments: {
-                                      "isResubmitted":
-                                          (state as dynamic)?.data?.status ==
-                                              'rejected'
-                                    });
+                                _showGetVerificationBottomSheet(context, state);
                               }
                             },
                             //// ve
@@ -302,8 +427,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 children: [
                                   Text(
                                     (HiveUtils.getUserDetails().isVerified == 1)
-                                        ? "Verified"
-                                        : "Get Verified",
+                                        ? "verifiedSimple".translate(context)
+                                        : "getVerified".translate(context),
                                     style: TextStyle(
                                       fontSize: context.font.small,
                                       color: context.color.textColorDark,
@@ -327,7 +452,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           //date shows
                           const SizedBox(height: 4),
                           Text(
-                            "Joined on ${DateTime.tryParse(HiveUtils.getUserDetails().createdAt ?? "")?.year ?? '2025'}", // Simplified date
+                            "${"joinedOn".translate(context)} ${DateTime.tryParse(HiveUtils.getUserDetails().createdAt ?? "")?.year ?? '2025'}", // Simplified date
                             style: TextStyle(
                               color: context.color.textLightColor,
                               fontSize: context.font.small,
@@ -581,7 +706,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       },
                           textColor: context.color
                               .textColorDark, // Optional: highlight delete
-                          iconColor: const Color(0xFFEE2929)),
+                          iconColor: context.color.textDefaultColor),
                     ],
                     if (HiveUtils.isUserAuthenticated()) ...[
                       SizedBox(height: 10),
@@ -626,7 +751,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: context.color.shadow.withOpacity(0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   )
@@ -668,7 +793,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: context.color.shadow.withOpacity(0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   )
@@ -877,7 +1002,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             : 'logout'.translate(context),
         cancelTextColor: context.color.textColorDark,
         svgImagePath: AppIcons.deleteIcon,
-        svgImageColor: const Color(0xFFEE2929),
+        svgImageColor: context.color.territoryColor,
         useAdaptiveColor: true,
         isAcceptContainesPush: true,
         onAccept: () async {

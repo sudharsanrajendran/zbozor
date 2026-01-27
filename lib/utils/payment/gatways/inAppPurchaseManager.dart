@@ -257,6 +257,7 @@ class InAppPurchaseManager {
     );
   }
 
+  ///// here ios bus working
   Future<void> buy(String productId, String packageId) async {
     print(
         'DEBUG: Attempting to buy Product ID: "$productId", Package ID: "$packageId"');

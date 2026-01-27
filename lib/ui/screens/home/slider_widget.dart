@@ -312,7 +312,7 @@ class _SliderWidgetState extends State<SliderWidget>
                         width: MediaQuery.of(context).size.width - 16,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          color: Colors.grey.shade200,
+                          color: context.color.secondaryColor,
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
@@ -332,7 +332,7 @@ class _SliderWidgetState extends State<SliderWidget>
                                       horizontal: 20,
                                       vertical: 8), // Slightly wider
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: context.color.secondaryColor,
                                     borderRadius: BorderRadius.circular(22),
                                   ),
                                   child: Text("viewNow".translate(context))

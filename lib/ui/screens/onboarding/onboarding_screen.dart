@@ -88,7 +88,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               context.screenWidth,
                               context.screenHeight * heightFactor,
                             ),
-                            painter: BottomCurvePainter(),
+                            painter: BottomCurvePainter(
+                              backgroundColor: context.color.secondaryColor,
+                              shadowColor:
+                                  context.color.shadow.withOpacity(0.1),
+                            ),
                           );
                         }),
                   ),
@@ -159,8 +163,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         elevation: 0,
                         height: 28,
                         minWidth: 64,
-                        child: Text("skip".translate(context))
-                            .color(Colors.white),
+                        child:
+                            Text("skip".translate(context)).color(Colors.white),
                       )),
                   Positioned.directional(
                       textDirection: Directionality.of(context),
@@ -243,8 +247,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 SizedBox(
                                   width: context.screenWidth,
                                   height: 200.rh(context),
-                                  child: UiUtils.getAdaptiveSvg(
-                                      context, slidersList[currentPageIndex]['svg'],
+                                  child: UiUtils.getAdaptiveSvg(context,
+                                      slidersList[currentPageIndex]['svg'],
                                       color: context.color.territoryColor),
                                 ),
                                 SizedBox(
@@ -253,7 +257,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 SizedBox(
                                   width: context.screenWidth,
                                   child: Text(slidersList[currentPageIndex]
-                                  ['title'])
+                                          ['title'])
                                       .size(context.font.extraLarge)
                                       .bold(weight: FontWeight.w600)
                                       .color(context.color.textDefaultColor)
@@ -268,7 +272,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 13),
                                     child: Text(slidersList[currentPageIndex]
-                                    ['description'])
+                                            ['description'])
                                         .centerAlign()
                                         .size(context.font.larger),
                                   ),
@@ -364,7 +368,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Positioned.directional(
                       textDirection: Directionality.of(context),
                       top:
-                      context.screenHeight * ((0.636 * heightFactor) / 0.7),
+                          context.screenHeight * ((0.636 * heightFactor) / 0.7),
                       start: (context.screenWidth / 2) - 70 / 2,
                       child: GestureDetector(
                         onTap: () {
@@ -383,18 +387,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           decoration: BoxDecoration(
                               color: context.color.territoryColor,
                               boxShadow: context
-                                  .watch<AppThemeCubit>()
-                                  .state
-                                  .appTheme ==
-                                  AppTheme.dark
+                                          .watch<AppThemeCubit>()
+                                          .state
+                                          .appTheme ==
+                                      AppTheme.dark
                                   ? null
                                   : [
-                                BoxShadow(
-                                    color: context.color.territoryColor,
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 2),
-                                    spreadRadius: 1)
-                              ],
+                                      BoxShadow(
+                                          color: context.color.territoryColor,
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 2),
+                                          spreadRadius: 1)
+                                    ],
                               shape: BoxShape.circle),
                           child: const Icon(
                             Icons.arrow_forward,
@@ -411,16 +415,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(28),
                   boxShadow: context.watch<AppThemeCubit>().state.appTheme ==
-                      AppTheme.dark
+                          AppTheme.dark
                       ? null
                       : [
-                    BoxShadow(
-                      color:
-                      context.color.territoryColor,
-                      blurRadius: 20,
-                      offset: const Offset(0, 2),
-                      /*spreadRadius: 1*/)
-                  ],
+                          BoxShadow(
+                            color: context.color.territoryColor,
+                            blurRadius: 20,
+                            offset: const Offset(0, 2), /*spreadRadius: 1*/
+                          )
+                        ],
                 ),
                 child: MaterialButton(
                   onPressed: () {
@@ -436,8 +439,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     borderRadius: BorderRadius.circular(28),
                   ),
                   child: Text(currentPageIndex < slidersList.length - 1
-                      ? "signIn".translate(context)
-                      : "getStarted".translate(context))
+                          ? "signIn".translate(context)
+                          : "getStarted".translate(context))
                       .color(context.color.buttonColor)
                       .size(context.font.larger),
                 ),
@@ -632,6 +635,12 @@ class IndicatorBuilder extends StatelessWidget {
 // }
 
 class BottomCurvePainter extends CustomPainter {
+  final Color backgroundColor;
+  final Color shadowColor;
+
+  BottomCurvePainter(
+      {required this.backgroundColor, required this.shadowColor});
+
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint();
@@ -639,7 +648,7 @@ class BottomCurvePainter extends CustomPainter {
 
     // Path number 1
 
-    paint.color = const Color(0xffffffff);
+    paint.color = backgroundColor;
     path = Path();
 
     path.lineTo(0, 0);
@@ -661,7 +670,7 @@ class BottomCurvePainter extends CustomPainter {
     path.cubicTo(0, 0, 0, 0, 0, 0);
     canvas.drawShadow(
       path,
-      Colors.grey.withOpacity(0.1),
+      shadowColor,
       6.0, // Shadow radius
       true, // Whether to include the shape itself in the shadow calculation
     );

@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'dart:io';
 
 import 'package:country_picker/country_picker.dart';
@@ -356,7 +357,8 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                     elevation: 0,
                     height: 28,
                     minWidth: 64,
-                    child: Text("skip".translate(context)).color(Colors.white),
+                    child: Text("skip".translate(context))
+                        .color(context.color.buttonColor),
                   ),
                 ),
               ),
@@ -464,13 +466,13 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                     UiUtils.getSvg(AppIcons.googleIcon, width: 22, height: 22),
               ),
               showElevation: false,
-              buttonColor: secondaryColor_,
+              buttonColor: context.color.secondaryColor,
               border: context.watch<AppThemeCubit>().state.appTheme !=
                       AppTheme.dark
                   ? BorderSide(
                       color: context.color.textDefaultColor.withOpacity(0.5))
                   : null,
-              textColor: textDarkColor, onPressed: () {
+              textColor: context.color.textDefaultColor, onPressed: () {
             context.read<AuthenticationCubit>().setData(
                 payload: GoogleLoginPayload(), type: AuthenticationType.google);
             context.read<AuthenticationCubit>().authenticate();
@@ -489,13 +491,13 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                     UiUtils.getSvg(AppIcons.appleIcon, width: 22, height: 22),
               ),
               showElevation: false,
-              buttonColor: secondaryColor_,
+              buttonColor: context.color.secondaryColor,
               border: context.watch<AppThemeCubit>().state.appTheme !=
                       AppTheme.dark
                   ? BorderSide(
                       color: context.color.textDefaultColor.withOpacity(0.5))
                   : null,
-              textColor: textDarkColor, onPressed: () {
+              textColor: context.color.textDefaultColor, onPressed: () {
             context.read<AuthenticationCubit>().setData(
                 payload: AppleLoginPayload(), type: AuthenticationType.apple);
             context.read<AuthenticationCubit>().authenticate();
@@ -607,7 +609,8 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                 elevation: 0,
                 height: 28,
                 minWidth: 64,
-                child: Text("skip".translate(context)).color(Colors.white),
+                child: Text("skip".translate(context))
+                    .color(context.color.buttonColor),
               ),
             ),
           ),
@@ -677,7 +680,7 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                     context, "lblEnterOtp".translate(context));
               } else if (otp!.trim().length < 6) {
                 HelperUtils.showSnackBarMessage(
-                    context, "Please enter the 6 digits.");
+                    context, "enter6Digits".translate(context));
               } else {
                 phoneLoginPayload.setOTP(otp!.trim());
                 context.read<AuthenticationCubit>().authenticate();

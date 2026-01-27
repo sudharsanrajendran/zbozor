@@ -29,7 +29,7 @@ class VerificationBanner extends StatelessWidget {
               top: 10,
               child: CircleAvatar(
                 radius: 4,
-                backgroundColor: Colors.white.withOpacity(0.3),
+                backgroundColor: context.color.buttonColor.withOpacity(0.3),
               ),
             ),
             PositionedDirectional(
@@ -37,7 +37,7 @@ class VerificationBanner extends StatelessWidget {
               top: 50,
               child: CircleAvatar(
                 radius: 3,
-                backgroundColor: Colors.white.withOpacity(0.3),
+                backgroundColor: context.color.buttonColor.withOpacity(0.3),
               ),
             ),
             PositionedDirectional(
@@ -45,7 +45,7 @@ class VerificationBanner extends StatelessWidget {
               top: 20,
               child: CircleAvatar(
                 radius: 5,
-                backgroundColor: Colors.white.withOpacity(0.3),
+                backgroundColor: context.color.buttonColor.withOpacity(0.3),
               ),
             ),
             PositionedDirectional(
@@ -53,7 +53,7 @@ class VerificationBanner extends StatelessWidget {
               bottom: 40,
               child: CircleAvatar(
                 radius: 4,
-                backgroundColor: Colors.white.withOpacity(0.3),
+                backgroundColor: context.color.buttonColor.withOpacity(0.3),
               ),
             ),
             PositionedDirectional(
@@ -61,7 +61,7 @@ class VerificationBanner extends StatelessWidget {
               top: 50,
               child: CircleAvatar(
                 radius: 2,
-                backgroundColor: Colors.white.withOpacity(0.3),
+                backgroundColor: context.color.buttonColor.withOpacity(0.3),
               ),
             ),
             PositionedDirectional(
@@ -69,7 +69,7 @@ class VerificationBanner extends StatelessWidget {
               bottom: 80,
               child: CircleAvatar(
                 radius: 6,
-                backgroundColor: Colors.white.withOpacity(0.3),
+                backgroundColor: context.color.buttonColor.withOpacity(0.3),
               ),
             ),
 
@@ -107,7 +107,7 @@ class VerificationBanner extends StatelessWidget {
                                     // Using fixed style to match design
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: context.color.buttonColor,
                                     height: 1.2),
                               ),
                               const SizedBox(height: 8),
@@ -116,7 +116,8 @@ class VerificationBanner extends StatelessWidget {
                                     .translate(context),
                                 style: TextStyle(
                                     fontSize: 13,
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: context.color.buttonColor
+                                        .withOpacity(0.9),
                                     height: 1.2),
                               ),
                             ],
@@ -137,7 +138,7 @@ class VerificationBanner extends StatelessWidget {
                             arguments: {"isResubmitted": false});
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
+                        backgroundColor: context.color.buttonColor,
                         foregroundColor: context.color
                             .territoryColor, // Red color from theme usually
                         shape: RoundedRectangleBorder(

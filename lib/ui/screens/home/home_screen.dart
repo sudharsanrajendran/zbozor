@@ -44,6 +44,8 @@ import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
 import 'package:Ebozor/ui/screens/widgets/shimmerLoadingContainer.dart';
 import 'package:Ebozor/ui/screens/home/widgets/home_sections_adapter.dart';
 import 'package:Ebozor/ui/screens/home/widgets/category_widget_home.dart';
+// import 'package:Ebozor/ui/screens/home/widgets/new_home_categories_widget.dart';
+// import 'package:Ebozor/data/cubits/category/newcategoriescubit.dart';
 import 'package:Ebozor/ui/screens/home/widgets/home_search.dart';
 
 import 'package:Ebozor/ui/screens/home/widgets/home_shimmers.dart';
@@ -128,6 +130,7 @@ class HomeScreenState extends State<HomeScreen>
     // NotificationService.init(context); // Removed redundant init call
     context.read<SliderCubit>().fetchSlider(context);
     context.read<FetchCategoryCubit>().fetchCategories();
+    // context.read<NewCategoriesCubit>().fetchCategories();
     _refreshData();
 
     if (HiveUtils.isUserAuthenticated()) {
@@ -235,6 +238,7 @@ class HomeScreenState extends State<HomeScreen>
                           const HomeSearchField(),
                           const SliderWidget(),
                           const CategoryWidgetHome(),
+                          // const NewHomeCategoriesWidget(),
                           if (HiveUtils.isUserAuthenticated())
                             BlocBuilder<FetchVerificationRequestsCubit,
                                 FetchVerificationRequestState>(

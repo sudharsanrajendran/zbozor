@@ -26,6 +26,8 @@ class GetPaymentIntentCubit extends Cubit<GetPaymentIntentState> {
   GetPaymentIntentCubit() : super(GetPaymentIntentInitial());
   AdvertisementRepository repository = AdvertisementRepository();
 
+
+  /// here tha oayment chose panrathu adakuthu.
   void getPaymentIntent(
       {required int packageId, required String paymentMethod}) async {
     emit(GetPaymentIntentInProgress());

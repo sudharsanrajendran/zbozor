@@ -1,5 +1,5 @@
 import 'package:Ebozor/app/routes.dart';
-import 'package:Ebozor/data/cubits/category/fetch_category_cubit.dart';
+import 'package:Ebozor/data/cubits/category/newcategoriescubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,19 +9,20 @@ import 'package:Ebozor/ui/screens/home/widgets/category_home_card.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
+import 'package:Ebozor/ui/screens/new_property_screen.dart';
 
-class CategoryWidgetHome extends StatelessWidget {
-  const CategoryWidgetHome({super.key});
+class NewHomeCategoriesWidget extends StatelessWidget {
+  const NewHomeCategoriesWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FetchCategoryCubit, FetchCategoryState>(
+    return BlocBuilder<NewCategoriesCubit, NewCategoriesState>(
       builder: (context, state) {
-        if (state is FetchCategoryInProgress) {
+        if (state is NewCategoriesInProgress) {
           return _shimmerEffect(context);
         }
 
-        if (state is FetchCategorySuccess) {
+        if (state is NewCategoriesSuccess) {
           if (state.categories.isEmpty) {
             return const Padding(
               padding: EdgeInsets.all(50),
@@ -45,31 +46,15 @@ class CategoryWidgetHome extends StatelessWidget {
                 final category = state.categories[index];
 
                 return CategoryHomeCard(
-                  title: category.name!,
-                  url: category.url!,
+                  title: category.name,
+                  url: category.image,
                   onTap: () {
-                    if (category.children!.isNotEmpty) {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.subCategoryScreen,
-                        arguments: {
-                          "categoryList": category.children,
-                          "catName": category.name,
-                          "catId": category.id,
-                          "categoryIds": [category.id.toString()],
-                        },
-                      );
-                    } else {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.itemsList,
-                        arguments: {
-                          "catID": category.id.toString(),
-                          "catName": category.name,
-                          "categoryIds": [category.id.toString()],
-                        },
-                      );
-                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              NewPropertyScreen(category: category)),
+                    );
                   },
                 );
               },

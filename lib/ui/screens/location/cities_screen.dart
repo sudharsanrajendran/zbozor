@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'package:Ebozor/app/app_theme.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/location/fetch_areas_cubit.dart';
@@ -130,8 +131,8 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
   PreferredSizeWidget appBarWidget() {
     return AppBar(
       elevation: 0,
-      systemOverlayStyle:
-          SystemUiOverlayStyle(statusBarColor: context.color.backgroundColor),
+      systemOverlayStyle: UiUtils.getSystemUiOverlayStyle(
+          context: context, statusBarColor: context.color.backgroundColor),
       bottom: PreferredSize(
           preferredSize: Size.fromHeight(58.rh(context)),
           child: Container(
@@ -417,7 +418,7 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
                                 color: isSelected
                                     ? context.color.territoryColor
                                         .withOpacity(0.1)
-                                    : Colors.white,
+                                    : context.color.secondaryColor,
                               ),
                               child: Text(city.name!)
                                   .color(isSelected

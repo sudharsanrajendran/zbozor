@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'dart:io';
+import 'package:flutter/cupertino.dart';
+import 'dart:io';
 
 import 'package:Ebozor/app/app_theme.dart';
 import 'package:Ebozor/app/routes.dart';
@@ -137,7 +138,7 @@ class _SignupScreenState extends CloudState<SignupScreen> {
                                   height: 28,
                                   minWidth: 64,
                                   child: Text("skip".translate(context))
-                                      .color(Colors.white),
+                                      .color(context.color.buttonColor),
                                 ),
                               ),
                             ),
@@ -284,13 +285,13 @@ class _SignupScreenState extends CloudState<SignupScreen> {
                     UiUtils.getSvg(AppIcons.googleIcon, width: 22, height: 22),
               ),
               showElevation: false,
-              buttonColor: secondaryColor_,
+              buttonColor: context.color.secondaryColor,
               border: context.watch<AppThemeCubit>().state.appTheme !=
                       AppTheme.dark
                   ? BorderSide(
                       color: context.color.textDefaultColor.withOpacity(0.5))
                   : null,
-              textColor: textDarkColor, onPressed: () {
+              textColor: context.color.textDefaultColor, onPressed: () {
             context.read<AuthenticationCubit>().setData(
                 payload: GoogleLoginPayload(), type: AuthenticationType.google);
             context.read<AuthenticationCubit>().authenticate();
@@ -308,13 +309,13 @@ class _SignupScreenState extends CloudState<SignupScreen> {
                       UiUtils.getSvg(AppIcons.appleIcon, width: 22, height: 22),
                 ),
                 showElevation: false,
-                buttonColor: secondaryColor_,
+                buttonColor: context.color.secondaryColor,
                 border: context.watch<AppThemeCubit>().state.appTheme !=
                         AppTheme.dark
                     ? BorderSide(
                         color: context.color.textDefaultColor.withOpacity(0.5))
                     : null,
-                textColor: textDarkColor, onPressed: () {
+                textColor: context.color.textDefaultColor, onPressed: () {
               context.read<AuthenticationCubit>().setData(
                   payload: AppleLoginPayload(), type: AuthenticationType.apple);
               context.read<AuthenticationCubit>().authenticate();

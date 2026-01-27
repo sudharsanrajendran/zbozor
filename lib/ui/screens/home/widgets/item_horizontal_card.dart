@@ -86,17 +86,20 @@ class ItemHorizontalCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: context.color.secondaryColor,
                           shape: BoxShape.circle,
-                          boxShadow:
-                              context.watch<AppThemeCubit>().state.appTheme ==
-                                      AppTheme.dark
-                                  ? null
-                                  : [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        offset: Offset(0, 2),
-                                        blurRadius: 8,
-                                      )
-                                    ],
+                          boxShadow: context
+                                      .watch<AppThemeCubit>()
+                                      .state
+                                      .appTheme ==
+                                  AppTheme.dark
+                              ? null
+                              : [
+                                  BoxShadow(
+                                    color:
+                                        context.color.shadow.withOpacity(0.5),
+                                    offset: Offset(0, 2),
+                                    blurRadius: 8,
+                                  )
+                                ],
                         ),
                         child: FittedBox(
                           fit: BoxFit.none,
@@ -118,14 +121,14 @@ class ItemHorizontalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.5),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
               color:
                   context.watch<AppThemeCubit>().state.appTheme == AppTheme.dark
                       ? context.color.borderColor.darken(50)
-                      : const Color(0xFFEEEEEE)),
+                      : context.color.borderColor),
           color: context.color.secondaryColor,
           borderRadius: BorderRadius.circular(15),
         ),
@@ -182,7 +185,7 @@ class ItemHorizontalCard extends StatelessWidget {
                       .color(context.color.territoryColor)
                       .bold(weight: FontWeight.w700),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5),
 
                   // NAME
                   Text(item.name!.firstUpperCase())
@@ -191,7 +194,7 @@ class ItemHorizontalCard extends StatelessWidget {
                       .color(context.color.textDefaultColor)
                       .bold(weight: FontWeight.w500),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 5),
 
                   // LOCATION
                   if (item.address != "")
@@ -214,6 +217,8 @@ class ItemHorizontalCard extends StatelessWidget {
                         ),
                       ],
                     ),
+
+                  const SizedBox(height: 5),
                 ],
               ),
             ),
@@ -232,7 +237,8 @@ class ItemHorizontalCard extends StatelessWidget {
                   child: Text(statusButton!.lable)
                       .size(context.font.small)
                       .bold()
-                      .color(statusButton?.textColor ?? Colors.black),
+                      .color(statusButton?.textColor ??
+                          context.color.textDefaultColor),
                 ),
               ),
 

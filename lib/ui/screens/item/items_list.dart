@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'dart:math';
 
 import 'package:Ebozor/app/routes.dart';
@@ -600,7 +601,13 @@ class ItemsListState extends State<ItemsList> {
                           }
                           if (state is FetchSubCategoriesSuccess) {
                             if (state.categories.isEmpty)
-                              return const Text("No options");
+                              return Text(
+                                "noOptionsAvailable".translate(context),
+                                style: TextStyle(
+                                  color: context.color.textDefaultColor,
+                                  fontSize: 14,
+                                ),
+                              );
 
                             return SizedBox(
                               height: 50,
@@ -655,8 +662,8 @@ class ItemsListState extends State<ItemsList> {
                           },
                           child: Text(
                             "Show ${NumberFormat.decimalPattern().format(context.read<FetchItemFromCategoryCubit>().state is FetchItemFromCategorySuccess ? (context.read<FetchItemFromCategoryCubit>().state as FetchItemFromCategorySuccess).total : 0)} Results",
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: context.color.buttonColor,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -791,7 +798,13 @@ class ItemsListState extends State<ItemsList> {
                         }
                         if (state is FetchSubCategoriesSuccess) {
                           if (state.categories.isEmpty)
-                            return const Text("No options");
+                            return Text(
+                              "noOptionsAvailable".translate(context),
+                              style: TextStyle(
+                                color: context.color.textDefaultColor,
+                                fontSize: 14,
+                              ),
+                            );
                           return SizedBox(
                               height: 100, // Taller for parent images
                               child: ListView.separated(
@@ -839,7 +852,7 @@ class ItemsListState extends State<ItemsList> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Categories",
+                                  "categories".translate(context),
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -876,7 +889,7 @@ class ItemsListState extends State<ItemsList> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Categories",
+                                  "categories".translate(context),
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -941,8 +954,8 @@ class ItemsListState extends State<ItemsList> {
                           },
                           child: Text(
                             "Show ${NumberFormat.decimalPattern().format(context.read<FetchItemFromCategoryCubit>().state is FetchItemFromCategorySuccess ? (context.read<FetchItemFromCategoryCubit>().state as FetchItemFromCategorySuccess).total : 0)} Results",
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: context.color.buttonColor,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1009,7 +1022,7 @@ class ItemsListState extends State<ItemsList> {
                   fontSize: 12,
                   color: isSelected
                       ? context.color.textDefaultColor
-                      : context.color.deactivateColor.withOpacity(0.8),
+                      : context.color.textDefaultColor.withOpacity(0.7),
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.normal,
                   height: 1.2,
                 ),
@@ -1406,6 +1419,7 @@ class ItemsListState extends State<ItemsList> {
               topRight: Radius.circular(8),
             ),
           ),
+          color: context.color.secondaryColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -1434,7 +1448,8 @@ class ItemsListState extends State<ItemsList> {
               Divider(height: 1), // Add some space between title and options
               ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                title: Text('default'.translate(context)),
+                title: Text('default'.translate(context))
+                    .color(context.color.textDefaultColor),
                 onTap: () {
                   Navigator.pop(context);
                   context
@@ -1460,7 +1475,8 @@ class ItemsListState extends State<ItemsList> {
               Divider(height: 1), // Divider between option 1 and option 2
               ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                title: Text('newToOld'.translate(context)),
+                title: Text('newToOld'.translate(context))
+                    .color(context.color.textDefaultColor),
                 onTap: () {
                   Navigator.pop(context);
                   context
@@ -1481,7 +1497,8 @@ class ItemsListState extends State<ItemsList> {
               Divider(height: 1), // Divider between option 2 and option 3
               ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                title: Text('oldToNew'.translate(context)),
+                title: Text('oldToNew'.translate(context))
+                    .color(context.color.textDefaultColor),
                 onTap: () {
                   Navigator.pop(context);
                   context
@@ -1502,7 +1519,8 @@ class ItemsListState extends State<ItemsList> {
               Divider(height: 1), // Divider between option 3 and option 4
               ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                title: Text('priceHighToLow'.translate(context)),
+                title: Text('priceHighToLow'.translate(context))
+                    .color(context.color.textDefaultColor),
                 onTap: () {
                   Navigator.pop(context);
                   context
@@ -1523,7 +1541,8 @@ class ItemsListState extends State<ItemsList> {
               Divider(height: 1), // Divider between option 4 and option 5
               ListTile(
                 contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                title: Text('priceLowToHigh'.translate(context)),
+                title: Text('priceLowToHigh'.translate(context))
+                    .color(context.color.textDefaultColor),
                 onTap: () {
                   Navigator.pop(context);
                   context

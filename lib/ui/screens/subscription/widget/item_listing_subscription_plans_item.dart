@@ -46,13 +46,11 @@ class _ItemListingSubscriptionPlansItemState
   @override
   void initState() {
     super.initState();
-    if (Platform.isAndroid) {
-      if (AppSettings.stripeStatus == 1) {
-        StripeService.initStripe(
-          AppSettings.stripePublishableKey,
-          "test",
-        );
-      }
+    if (AppSettings.stripeStatus == 1) {
+      StripeService.initStripe(
+        AppSettings.stripePublishableKey,
+        "test",
+      );
     }
   }
 
@@ -200,13 +198,13 @@ class _ItemListingSubscriptionPlansItemState
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start, //temp
                         children: [
-                          SizedBox(height: 30.rh(context)),
+                          SizedBox(height: 5.rh(context)),
                           ClipPath(
                             clipper: HexagonClipper(),
                             child: Container(
-                              width: 100,
-                              height: 110,
-                              padding: EdgeInsets.all(30),
+                              width: 50,
+                              height: 55,
+                              padding: EdgeInsets.all(10),
 
                               color: context.color.primaryColor,
                               //TODO: replace url below with model data response
@@ -214,12 +212,12 @@ class _ItemListingSubscriptionPlansItemState
                                   fit: BoxFit.contain),
                             ),
                           ),
-                          SizedBox(height: 18.rh(context)),
+                          SizedBox(height: 5.rh(context)),
                           widget.model.isActive! && widget.model.finalPrice! > 0
                               ? activeAdsData()
                               : adsData(),
 
-                          const Spacer(),
+                          // const Spacer(),
                           Text(widget.model.finalPrice! > 0
                                   ? "${Constant.currencySymbol}${widget.model.finalPrice.toString()}"
                                   : "free".translate(context))
@@ -246,6 +244,9 @@ class _ItemListingSubscriptionPlansItemState
                             ),
                           //if ((widget.index == widget.itemIndex))
                           // padding: const EdgeInsets.fromLTRB(15.0, 0, 15.0, 15.0),
+
+                          ////////Purchase this Pacakage button
+
                           UiUtils.buildButton(context, onPressed: () {
                             UiUtils.checkUser(
                                 onNotGuest: () {
@@ -253,9 +254,27 @@ class _ItemListingSubscriptionPlansItemState
                                     if (widget.model.finalPrice! > 0) {
                                       if (Platform.isIOS) {
                                         //_purchaseSubscription();
-                                        widget.inAppPurchaseManager.buy(
+                                        /*widget.inAppPurchaseManager.buy(
                                             widget.model.iosProductId!,
-                                            widget.model.id!.toString());
+                                            widget.model.id!.toString());*/
+                                        paymentGatewayBottomSheet()
+                                            .then((value) {
+                                          context
+                                              .read<GetPaymentIntentCubit>()
+                                              .getPaymentIntent(
+                                                  paymentMethod:
+                                                      _selectedGateway ==
+                                                              "stripe"
+                                                          ? "Stripe"
+                                                          : _selectedGateway ==
+                                                                  "paystack"
+                                                              ? "Paystack"
+                                                              : _selectedGateway ==
+                                                                      "razorpay"
+                                                                  ? "Razorpay"
+                                                                  : "PhonePe",
+                                                  packageId: widget.model.id!);
+                                        });
                                       } else {
                                         paymentGatewayBottomSheet()
                                             .then((value) {
@@ -287,7 +306,7 @@ class _ItemListingSubscriptionPlansItemState
                                 context: context);
                           },
                               radius: 10,
-                              height: 46,
+                              height: 40,
                               fontSize: context.font.large,
                               buttonColor: widget.model.isActive!
                                   ? context.color.textLightColor.brighten(300)
@@ -300,7 +319,8 @@ class _ItemListingSubscriptionPlansItemState
                                   "purchaseThisPackage".translate(context),
 
                               //TODO: change title to Your Current Plan according to condition
-                              outerPadding: const EdgeInsets.all(20))
+                              outerPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 8))
                         ],
                       ),
                     ),
@@ -350,43 +370,42 @@ class _ItemListingSubscriptionPlansItemState
     return Expanded(
       flex: 10,
       child: ListView(
-        physics: BouncingScrollPhysics(),
-        shrinkWrap: true,
-        children: [
-          Text(widget.model.name!)
-              .firstUpperCaseWidget()
-              .centerAlign()
-              .copyWith(
-                  style: TextStyle(
-                color: context.color.textDefaultColor,
-                fontWeight: FontWeight.w600,
-              ))
-              .size(context.font.larger),
-          SizedBox(height: 15),
-          if (widget.model.type == "item_listing")
+          physics: BouncingScrollPhysics(),
+          shrinkWrap: true,
+          children: [
+            Text(widget.model.name!)
+                .firstUpperCaseWidget()
+                .centerAlign()
+                .copyWith(
+                    style: TextStyle(
+                  color: context.color.textDefaultColor,
+                  fontWeight: FontWeight.w600,
+                ))
+                .size(context.font.larger),
+            SizedBox(height: 15),
+            if (widget.model.type == "item_listing")
+              checkmarkPoint(context,
+                  "${widget.model.limit == "unlimited" ? "unlimitedLbl".translate(context) : widget.model.limit.toString()}\t${"adsListing".translate(context)}"),
+            if (widget.model.type == "advertisement")
+              checkmarkPoint(context,
+                  "${widget.model.limit == "unlimited" ? "unlimitedLbl".translate(context) : widget.model.limit.toString()}\t${"featuredAdsListing".translate(context)}"),
             checkmarkPoint(context,
-                "${widget.model.limit == "unlimited" ? "unlimitedLbl".translate(context) : widget.model.limit.toString()}\t${"adsListing".translate(context)}"),
-          if (widget.model.type == "advertisement")
-            checkmarkPoint(context,
-                "${widget.model.limit == "unlimited" ? "unlimitedLbl".translate(context) : widget.model.limit.toString()}\t${"featuredAdsListing".translate(context)}"),
-          checkmarkPoint(context,
-              "${widget.model.duration.toString()}\t${"days".translate(context)}"),
-          if (widget.model.description != null &&
-              widget.model.description != "") ...[
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(
-                  widget.model.description!,
-                  textAlign: TextAlign.start,
-                ).color(context.color.textDefaultColor.withOpacity(0.7)),
+                "${widget.model.duration.toString()}\t${"days".translate(context)}"),
+            if (widget.model.description != null &&
+                widget.model.description != "") ...[
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    widget.model.description!,
+                    textAlign: TextAlign.start,
+                  ).color(context.color.textDefaultColor.withOpacity(0.7)),
+                ),
               ),
-            ),
-          ]
-        ],
-      ),
+            ],
+          ]),
     );
   }
 
