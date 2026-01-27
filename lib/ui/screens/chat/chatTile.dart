@@ -1,4 +1,6 @@
-import 'package:flutter/cupertino.dart';import 'package:Ebozor/data/cubits/chat/delete_message_cubit.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:Ebozor/data/cubits/chat/send_message.dart';
+import 'package:Ebozor/data/cubits/chat/delete_message_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/load_chat_messages.dart';
 import 'package:Ebozor/ui/screens/chat/chat_screen.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
@@ -60,6 +62,9 @@ class ChatTile extends StatelessWidget {
                 ),
                 BlocProvider(
                   create: (context) => DeleteMessageCubit(),
+                ),
+                BlocProvider(
+                  create: (context) => SendMessageCubit(),
                 ),
               ],
               child: Builder(builder: (context) {

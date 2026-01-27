@@ -1553,6 +1553,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                       buyer: Buyer.fromJson(data['buyer']),
                       item: Item.fromJson(data['item']),
                       seller: Seller.fromJson(data['seller'])));
+                  context
+                      .read<GetBuyerChatListCubit>()
+                      .fetch(forceRefresh: true);
                 }
 
                 Navigator.push(context, CupertinoPageRoute(

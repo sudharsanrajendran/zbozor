@@ -82,12 +82,11 @@ class LocalAwsomeNotification {
 
       if (userProfile != null && userProfile.trim().isNotEmpty) {
         largeIconUrl = userProfile;
-      } else {
-        String name =
-            (userName != null && userName.isNotEmpty) ? userName : "User";
-        // Use UI Avatars as fallback
+      } else if (userName != null && userName.trim().isNotEmpty) {
         largeIconUrl =
-            "https://ui-avatars.com/api/?name=${Uri.encodeComponent(name)}&background=random&color=fff&size=512";
+            "https://ui-avatars.com/api/?name=${Uri.encodeComponent(userName)}&background=random&color=fff&size=512";
+      } else {
+        largeIconUrl = null;
       }
 
       if (isChat) {

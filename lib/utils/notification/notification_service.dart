@@ -109,89 +109,60 @@ class NotificationService {
       var userType = message?.data['user_type'];
 
       if (userType == "Buyer") {
-        (context as BuildContext)
-            .read<GetBuyerChatListCubit>()
-            .addNewChat(ChatedUser(
-              itemId: safeInt(itemId) ?? 0,
-              amount: getPrice(itemOfferPrice),
-              createdAt: date,
-              userBlocked: false,
-              id: safeInt(itemOfferId) ?? 0,
-              /* sellerId: senderId,*/
-              updatedAt: date,
-              item: Item(
+        // Sender is Buyer -> I am Seller -> Update Seller List
+        (context as BuildContext).read<GetSellerChatListCubit>().addNewChat(
+              ChatedUser(
+                itemId: safeInt(itemId) ?? 0,
+                amount: getPrice(itemOfferPrice),
+                createdAt: date,
+                userBlocked: false,
+                id: safeInt(itemOfferId) ?? 0,
+                sellerId: HiveUtils.getUserId() != null
+                    ? int.tryParse(HiveUtils.getUserId()!)
+                    : 0, // Me
+                buyerId: safeInt(senderId) ?? 0, // Sender
+                updatedAt: date,
+                // For Seller List, we need Buyer details
+                buyer: Buyer(
+                  name: username,
+                  profile: userProfile,
+                  id: safeInt(senderId) ?? 0,
+                ),
+                item: Item(
                   id: safeInt(itemId) ?? 0,
                   price: getPrice((itemPrice)),
                   name: itemName,
-                  image: itemImage),
-              /*seller: Seller(name: username, profile: userProfile),*/
-              buyerId: safeInt(senderId) ?? 0,
-              buyer: Buyer(
-                  name: username,
-                  profile: userProfile,
-                  id: safeInt(senderId) ?? 0),
-            ));
+                  image: itemImage,
+                ),
+              ),
+            );
       } else {
-        (context as BuildContext)
-            .read<GetSellerChatListCubit>()
-            .addNewChat(ChatedUser(
-              itemId: safeInt(itemId) ?? 0,
-              userBlocked: false,
-              amount: getPrice(itemOfferPrice),
-              createdAt: date,
-              id: safeInt(itemOfferId) ?? 0,
-              // For seller list, we talk to buyer, so 'senderId' (who sent msg) is the buyer in this context?
-              // In original code: sellerId: safeInt(senderId)
-              // Wait, if I am seller, the person I talk to is Buyer.
-              // ChatedUser for Seller List:
-              //   extends ChatedUser
-              //   Uses `buyer` object.
-              //
-              // Let's look at ChatedUser model usage in GetSellerChatListCubit (step 39 output).
-              // In seller list:
-              //   id: chatedUser.buyerId
-              //   profilePicture: chatedUser.buyer!.profile
-              //   userName: chatedUser.buyer!.name
-              //
-              // In NotificationService else block (lines 136-153):
-              //   sellerId: safeInt(senderId) ?? 0,
-              //   seller: Seller(...)
-              //
-              // If I am Updating Seller List, the NEW chat should represent the BUYER I am talking to.
-              // The incoming message is from `senderId`. If I am seller, `senderId` IS the buyer.
-              // So I should populate `buyerId` and `buyer` object.
-              //
-              // BUT the existing code in else block was populating `sellerId` and `seller`!
-              //
-              // Original code:
-              // .addNewChat(ChatedUser(
-              //    sellerId: safeInt(senderId) ?? 0,
-              //    seller: Seller(...)
-              // ))
-              //
-              // If I simply change cubit to GetSellerChatListCubit, does `addNewChat` or `ChatListScreen` handle it?
-              // In `ChatListScreen` (Seller tab) Lines 317-320:
-              //   id: chatedUser.buyerId.toString(),
-              //   profilePicture: chatedUser.buyer!.profile
-              //   userName: chatedUser.buyer!.name
-              //
-              // So `ChatedUser` MUST have `buyerId` and `buyer` set for it to show up correctly in Seller Tab.
-              // The original code in NotificationService (else block) was setting `sellerId` and `seller`.
-              // This is why it was also probably failing or looking wrong even if it was added to the right list.
-              //
-              // So I must fix BOTH the Cubit being called AND the fields being populated.
-
-              buyerId: safeInt(senderId) ?? 0,
-              buyer: Buyer(
+        // Sender is Seller -> I am Buyer -> Update Buyer List
+        (context as BuildContext).read<GetBuyerChatListCubit>().addNewChat(
+              ChatedUser(
+                itemId: safeInt(itemId) ?? 0,
+                userBlocked: false,
+                amount: getPrice(itemOfferPrice),
+                createdAt: date,
+                id: safeInt(itemOfferId) ?? 0,
+                buyerId: HiveUtils.getUserId() != null
+                    ? int.tryParse(HiveUtils.getUserId()!)
+                    : 0, // Me
+                sellerId: safeInt(senderId) ?? 0, // Sender
+                // For Buyer List, we need Seller details
+                seller: Seller(
                   name: username,
                   profile: userProfile,
-                  id: safeInt(senderId) ?? 0),
-              item: Item(
+                  id: safeInt(senderId) ?? 0,
+                ),
+                item: Item(
                   id: safeInt(itemId) ?? 0,
                   price: getPrice((itemPrice)),
                   name: itemName,
-                  image: itemImage),
-            ));
+                  image: itemImage,
+                ),
+              ),
+            );
       }
 
       ///Checking if this is user we are chatiing with

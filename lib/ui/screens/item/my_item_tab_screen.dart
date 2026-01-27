@@ -345,13 +345,19 @@ class _MyItemTabState extends CloudState<MyItemTab>
                                           MainAxisAlignment.spaceAround,
                                       children: [
                                         Row(
-                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text("${Constant.currencySymbol}\t${item.price}")
-                                                .color(context
-                                                    .color.territoryColor)
-                                                .bold(),
-                                            Spacer(),
+                                            Flexible(
+                                              child: Text(
+                                                      "${Constant.currencySymbol}\t${item.price}")
+                                                  .color(context
+                                                      .color.territoryColor)
+                                                  .bold()
+                                                  .setMaxLines(lines: 1),
+                                            ),
+                                            // Spacer(),
                                             showStatus(item)
                                           ],
                                         ),

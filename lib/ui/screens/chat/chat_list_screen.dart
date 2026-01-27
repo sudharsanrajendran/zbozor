@@ -248,9 +248,8 @@ class _ChatListScreenState extends State<ChatListScreen>
                                 ? chatedUser.item!.status!
                                 : null,
                             buyerId: chatedUser.buyerId.toString(),
-                            isPurchased: chatedUser.item!.isPurchased ?? 0,
-                            alreadyReview:
-                                chatedUser.item!.review == null ? false : true,
+                            isPurchased: chatedUser.item?.isPurchased ?? 0,
+                            alreadyReview: chatedUser.item?.review != null,
                           ),
                         );
                       }),
@@ -316,8 +315,8 @@ class _ChatListScreenState extends State<ChatListScreen>
                           child: ChatTile(
                             id: chatedUser.buyerId.toString(),
                             itemId: chatedUser.itemId.toString(),
-                            profilePicture: chatedUser.buyer!.profile ?? "",
-                            userName: chatedUser.buyer!.name ?? "",
+                            profilePicture: chatedUser.buyer?.profile ?? "",
+                            userName: chatedUser.buyer?.name ?? "",
                             itemPicture: chatedUser.item != null &&
                                     chatedUser.item!.image != null
                                 ? chatedUser.item!.image!
@@ -339,9 +338,8 @@ class _ChatListScreenState extends State<ChatListScreen>
                                 ? chatedUser.item!.status!
                                 : null,
                             buyerId: chatedUser.buyerId.toString(),
-                            isPurchased: chatedUser.item!.isPurchased!,
-                            alreadyReview:
-                                chatedUser.item!.review == null ? false : true,
+                            isPurchased: chatedUser.item?.isPurchased ?? 0,
+                            alreadyReview: chatedUser.item?.review != null,
                           ),
                         );
                       }),

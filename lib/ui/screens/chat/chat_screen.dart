@@ -7,6 +7,7 @@ import 'package:Ebozor/data/cubits/add_item_review_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/block_user_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/delete_message_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/get_buyer_chat_users_cubit.dart';
+import 'package:Ebozor/data/cubits/chat/get_seller_chat_users_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/load_chat_messages.dart';
 import 'package:Ebozor/data/cubits/chat/send_message.dart';
 import 'package:Ebozor/data/helper/widgets.dart';
@@ -202,6 +203,11 @@ class _ChatScreenState extends State<ChatScreen>
             listener: (context, state) {
               if (state is AddItemReviewInSuccess) {
                 Widgets.hideLoder(context);
+                context.read<SendMessageCubit>().send(
+                    itemOfferId: widget.itemOfferId,
+                    message: _feedbackController.text.trim(),
+                    audio: "",
+                    attachment: "");
                 Navigator.pop(context);
                 context
                     .read<GetBuyerChatListCubit>()
@@ -791,6 +797,13 @@ class _ChatScreenState extends State<ChatScreen>
                                                 ),
                                               );
                                               totalMessageCount++;
+                                              context
+                                                  .read<GetBuyerChatListCubit>()
+                                                  .fetch();
+                                              context
+                                                  .read<
+                                                      GetSellerChatListCubit>()
+                                                  .fetch();
 
                                               setState(() {});
                                             },
@@ -843,6 +856,13 @@ class _ChatScreenState extends State<ChatScreen>
                                               controller.clear();
                                               messageAttachment = null;
                                               FocusScope.of(context).unfocus();
+                                              context
+                                                  .read<GetBuyerChatListCubit>()
+                                                  .fetch();
+                                              context
+                                                  .read<
+                                                      GetSellerChatListCubit>()
+                                                  .fetch();
                                               setState(() {});
                                             },
                                             child: CircleAvatar(

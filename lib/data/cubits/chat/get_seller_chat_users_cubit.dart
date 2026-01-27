@@ -5,6 +5,7 @@ import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/data/repositories/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 
 abstract class GetSellerChatListState {}
 
@@ -98,6 +99,9 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
 
       result.modelList.sort((a, b) =>
           DateTime.parse(b.createdAt!).compareTo(DateTime.parse(a.createdAt!)));
+
+      result.modelList.removeWhere(
+          (element) => element.sellerId.toString() != HiveUtils.getUserId());
 
       emit(
         GetSellerChatListSuccess(
