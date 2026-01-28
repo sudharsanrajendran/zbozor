@@ -95,7 +95,7 @@ class NotificationService {
 
     print("@notificaiton data is ${message?.data}****${notificationType}");
 
-    if (notificationType == "chat") {
+    if (notificationType == "chat" || notificationType == "offer") {
       var username = message?.data['user_name'];
       var itemImage = message?.data['item_image'];
       var itemName = message?.data['item_name'];

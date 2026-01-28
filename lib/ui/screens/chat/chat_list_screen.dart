@@ -326,7 +326,8 @@ class _ChatListScreenState extends State<ChatListScreen>
                                 ? chatedUser.item!.name!
                                 : "",
                             pendingMessageCount: "5",
-                            date: _formatDate(chatedUser.createdAt!),
+                            date: _formatDate(chatedUser.createdAt ??
+                                DateTime.now().toString()),
                             itemOfferId: chatedUser.id!,
                             itemPrice: chatedUser.item != null &&
                                     chatedUser.item!.price != null

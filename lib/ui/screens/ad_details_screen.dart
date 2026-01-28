@@ -2382,9 +2382,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
 
         return BlocListener<MakeAnOfferItemCubit, MakeAnOfferItemState>(
           listener: (context, state) {
-            // We can rely on the bottom navigation listener for state changes
-            // or we could handle them here too if they are independent.
-            // Since they use the same Cubit, let's just use the widget for UI triggers.
+            if (state is MakeAnOfferItemSuccess) {
+              context.read<GetBuyerChatListCubit>().fetch(forceRefresh: true);
+            }
           },
           child: InkWell(
             onTap: () {

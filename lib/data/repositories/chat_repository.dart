@@ -12,23 +12,16 @@ class ChatRepostiory {
     _setContext = context;
   }
 
-  // Cache implementation for chat lists
-  static final Map<String, DataOutput<ChatedUser>> _chatCache = {};
-
   Future<DataOutput<ChatedUser>> fetchBuyerChatList(int page,
       {bool forceRefresh = false}) async {
-    String cacheKey = "buyer_$page";
-
-    if (!forceRefresh && _chatCache.containsKey(cacheKey)) {
-      return _chatCache[cacheKey]!;
-    }
-
     /* Map<String, dynamic> response = await Api.get(
         url: Api.getChatListApi, queryParameters: {*/ /*"page": page, */ /*"type": "buyer"});*/
 
     Map<String, dynamic> response = await Api.get(
         url: Api.getChatListApi,
         queryParameters: {"type": "buyer", "page": page});
+
+    print("Chat List Response: $response");
 
     List<ChatedUser> modelList = (response['data']['data'] as List).map(
       (e) {
@@ -38,46 +31,30 @@ class ChatRepostiory {
 
     var result =
         DataOutput(total: response['data']['total'], modelList: modelList);
-    _chatCache[cacheKey] = result;
+
     return result;
   }
 
   Future<DataOutput<ChatedUser>> fetchSellerChatList(int page,
       {bool forceRefresh = false}) async {
-    String cacheKey = "seller_$page";
-
-    if (!forceRefresh && _chatCache.containsKey(cacheKey)) {
-      return _chatCache[cacheKey]!;
-    }
-
     Map<String, dynamic> response = await Api.get(
         url: Api.getChatListApi,
-        queryParameters: {"page": page, "type": "seller"});
+        queryParameters: {"type": "seller", "page": page});
 
-    List<ChatedUser> modelList = (response['data']["data"] as List).map(
+    List<ChatedUser> modelList = (response['data']['data'] as List).map(
       (e) {
-        return ChatedUser.fromJson(e /*, context: _setContext*/);
+        return ChatedUser.fromJson(e);
       },
     ).toList();
 
     var result =
-        DataOutput(total: response['data']['total'] ?? 0, modelList: modelList);
-    _chatCache[cacheKey] = result;
+        DataOutput(total: response['data']['total'], modelList: modelList);
+
     return result;
   }
 
-  // Cache for chat messages
-  static final Map<String, DataOutput<ChatMessage>> _messagesCache = {};
-
   Future<DataOutput<ChatMessage>> getMessagesApi(
       {required int page, required int itemOfferId}) async {
-    String cacheKey = "offer:$itemOfferId-page:$page";
-    if (_messagesCache.containsKey(cacheKey)) {
-      // Return cached data immediately, then you could fetch in background if needed
-      // For now, we return cache for infinite speed feeling.
-      return _messagesCache[cacheKey]!;
-    }
-
     Map<String, dynamic> response = await Api.get(
       url: Api.chatMessagesApi,
       queryParameters: {
@@ -85,6 +62,7 @@ class ChatRepostiory {
         "page": page,
       },
     );
+    print("Chat Messages Response: $response");
 
     List<ChatMessage> modelList = (response['data']['data'] as List).map(
       (result) {
@@ -111,7 +89,7 @@ class ChatRepostiory {
 
     var result =
         DataOutput(total: response['total'] ?? 0, modelList: modelList);
-    _messagesCache[cacheKey] = result;
+
     return result;
   }
 

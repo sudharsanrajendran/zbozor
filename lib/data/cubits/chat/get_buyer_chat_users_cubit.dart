@@ -72,11 +72,19 @@ class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState> {
       DataOutput<ChatedUser> result =
           await _chatRepository.fetchBuyerChatList(1);
 
+      print("Buyer Chat List BEFORE filter: ${result.modelList.length} items");
+      for (var item in result.modelList) {
+        print(
+            "Chat Item: SellerId: ${item.sellerId}, ItemId: ${item.itemId}, Myself: ${HiveUtils.getUserId()}");
+      }
+
       result.modelList.sort((a, b) =>
           DateTime.parse(b.createdAt!).compareTo(DateTime.parse(a.createdAt!)));
 
       result.modelList.removeWhere(
           (element) => element.sellerId.toString() == HiveUtils.getUserId());
+
+      print("Buyer Chat List AFTER filter: ${result.modelList.length} items");
 
       emit(
         GetBuyerChatListSuccess(
@@ -96,14 +104,15 @@ class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState> {
     if (state is GetBuyerChatListSuccess) {
       final currentState = state as GetBuyerChatListSuccess;
       List<ChatedUser> chatedUserList = List.from(currentState.chatedUserList);
-      bool contains = chatedUserList.any(
+
+      // Remove if exists to move to top
+      chatedUserList.removeWhere(
         (element) => element.itemId == user.itemId,
       );
-      if (contains == false) {
-        chatedUserList.insert(0, user);
-        emit(currentState.copyWith(
-            chatedUserList: chatedUserList, total: currentState.total + 1));
-      }
+
+      chatedUserList.insert(0, user);
+      emit(currentState.copyWith(
+          chatedUserList: chatedUserList, total: chatedUserList.length));
     }
   }
 
