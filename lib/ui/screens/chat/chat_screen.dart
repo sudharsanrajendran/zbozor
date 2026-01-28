@@ -155,6 +155,8 @@ class _ChatScreenState extends State<ChatScreen>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      print(
+          "ChatScreen Debug: status=${widget.status}, isPurchased=${widget.isPurchased}, alreadyReview=${widget.alreadyReview}");
       if (widget.status == "sold out" &&
           widget.isPurchased == 1 &&
           !widget.alreadyReview) {

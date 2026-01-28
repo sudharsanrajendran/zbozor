@@ -11,6 +11,8 @@ import 'package:Ebozor/utils/notification/awsomeNotification.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:Ebozor/ui/screens/my_review_screen.dart';
 import 'package:Ebozor/ui/screens/chat/chat_screen.dart';
 
 import 'package:Ebozor/ui/screens/main_activity.dart';
@@ -408,6 +410,17 @@ class NotificationService {
                 Constant.navigatorKey.currentContext!, false);
           });
         }
+      } else if (message.data['type'] == "review") {
+        Future.delayed(Duration.zero, () {
+          HelperUtils.goToNextPage(
+              Routes.main, Constant.navigatorKey.currentContext!, false);
+          Navigator.push(Constant.navigatorKey.currentContext!,
+              CupertinoPageRoute(
+            builder: (context) {
+              return MyReviewScreen();
+            },
+          ));
+        });
       } else {
         Future.delayed(Duration.zero, () {
           HelperUtils.goToNextPage(Routes.notificationPage,
