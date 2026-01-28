@@ -93,18 +93,12 @@ class FetchSubCategoriesCubit extends Cubit<FetchSubCategoriesState> {
         super(FetchSubCategoriesInitial());
 
   final CategoryRepository _categoryRepository;
-  int? _lastCategoryId;
 
   Future<void> fetchSubCategories(
       {bool? forceRefresh,
       bool? loadWithoutDelay,
       required int categoryId}) async {
     try {
-      // 🚫 BLOCK DUPLICATE CALL
-      if (_lastCategoryId == categoryId && forceRefresh != true) return;
-
-      _lastCategoryId = categoryId;
-
       emit(FetchSubCategoriesInProgress());
 
       DataOutput<CategoryModel> categories = await _categoryRepository

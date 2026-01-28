@@ -48,12 +48,15 @@ class CategoryWidgetHome extends StatelessWidget {
                   title: category.name!,
                   url: category.url!,
                   onTap: () {
-                    if (category.children!.isNotEmpty) {
+                    // Check if children exist OR if count > 0 (even if children list is empty)
+                    if (category.children!.isNotEmpty ||
+                        (category.subcategoriesCount ?? 0) > 0) {
                       Navigator.pushNamed(
                         context,
                         Routes.subCategoryScreen,
                         arguments: {
-                          "categoryList": category.children,
+                          "categoryList": category.children ??
+                              [], // Pass empty list if null/empty
                           "catName": category.name,
                           "catId": category.id,
                           "categoryIds": [category.id.toString()],

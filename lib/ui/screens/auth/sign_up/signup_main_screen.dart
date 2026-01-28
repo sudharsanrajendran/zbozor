@@ -508,7 +508,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
                         .read<UserDetailsCubit>()
                         .fill(HiveUtils.getUserDetails());
 
-                    if (state.isProfileCompleted) {
+                    // Change: Allow Mobile Users to bypass Profile Completion
+                    if (state.isProfileCompleted || isMobileNumberField) {
                       if (HiveUtils.getCityName() != null &&
                           HiveUtils.getCityName() != "") {
                         HelperUtils.killPreviousPages(

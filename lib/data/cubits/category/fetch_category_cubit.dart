@@ -6,16 +6,15 @@ import 'package:Ebozor/data/model/category_model.dart';
 import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/data/repositories/category_repository.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
+import 'package:Ebozor/data/repositories/newCategoriesrepo.dart';
+import 'package:Ebozor/data/model/newcategorymodel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 abstract class FetchCategoryState {}
 
 class FetchCategoryInitial extends FetchCategoryState {}
 
 class FetchCategoryInProgress extends FetchCategoryState {}
-
-
 
 //categories models showing model it belongs to categories model
 class FetchCategorySuccess extends FetchCategoryState {
@@ -90,7 +89,7 @@ class FetchCategoryFailure extends FetchCategoryState {
   FetchCategoryFailure(this.errorMessage);
 }
 
-class FetchCategoryCubit extends Cubit<FetchCategoryState>{
+class FetchCategoryCubit extends Cubit<FetchCategoryState> {
   FetchCategoryCubit() : super(FetchCategoryInitial());
 
   final CategoryRepository _categoryRepository = CategoryRepository();
@@ -100,17 +99,58 @@ class FetchCategoryCubit extends Cubit<FetchCategoryState>{
     try {
       emit(FetchCategoryInProgress());
 
-      DataOutput<CategoryModel> categories =
-          await _categoryRepository.fetchCategories(page: 1);
+      // 1. Trigger BOTH fetches concurrently
+      final newCategoriesFuture =
+          NewCategoriesRepository().fetchCategories(page: 1);
+      final oldCategoriesFuture = _categoryRepository.fetchCategories(page: 1);
 
+      // 2. Wait for BOTH to complete (Safety first)
+      final results =
+          await Future.wait([newCategoriesFuture, oldCategoriesFuture]);
+
+      final newCategoriesResponse = results[0] as NewCategoryResponseModel;
+      final oldCategoriesOutput = results[1] as DataOutput<CategoryModel>;
+
+      // 3. Create Map of ID -> Image from New API
+      Map<int, String> imageMap = {};
+      if (!newCategoriesResponse.error) {
+        for (var item in newCategoriesResponse.data) {
+          imageMap[item.id] = item.image;
+        }
+      }
+
+      // 4. Update Old Data with New Images Only (Revoking Name merge)
+      List<CategoryModel> mergedList = oldCategoriesOutput.modelList.map((cat) {
+        if (imageMap.containsKey(cat.id)) {
+          return CategoryModel(
+            id: cat.id,
+            name: cat.name, // Keeping Old Name
+            url: imageMap[cat.id], // New Image
+            subcategoriesCount: cat.subcategoriesCount,
+            description: cat.description,
+            children: cat.children,
+            filters: cat.filters,
+          );
+        }
+        return cat;
+      }).toList();
+
+      DataOutput<CategoryModel> finalOutput = DataOutput(
+          total: oldCategoriesOutput.total,
+          modelList: mergedList,
+          extraData: oldCategoriesOutput.extraData);
+
+      print(
+          "DEBUG: FetchCategoryCubit - Merged ${mergedList.length} categories.");
 
       emit(FetchCategorySuccess(
-          total: categories.total,
-          categories: categories.modelList,
+          total: finalOutput.total,
+          categories: finalOutput.modelList,
           page: 1,
           hasError: false,
           isLoadingMore: false));
     } catch (e) {
+      print("FetchCategoryCubit Error: $e");
       emit(FetchCategoryFailure(e.toString()));
     }
   }

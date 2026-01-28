@@ -401,7 +401,8 @@ class LoginScreenState extends State<LoginScreen> {
                   context
                       .read<UserDetailsCubit>()
                       .fill(HiveUtils.getUserDetails());
-                  if (state.isProfileCompleted) {
+                  // Change: Allow Mobile Users to bypass Profile Completion (fixes "Email Verify" confusion)
+                  if (state.isProfileCompleted || isMobileNumberField) {
                     if (HiveUtils.getCityName() != null &&
                         HiveUtils.getCityName() != "") {
                       HelperUtils.killPreviousPages(
