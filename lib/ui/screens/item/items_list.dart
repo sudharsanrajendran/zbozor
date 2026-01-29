@@ -1419,7 +1419,6 @@ class ItemsListState extends State<ItemsList> {
               topRight: Radius.circular(8),
             ),
           ),
-          color: context.color.secondaryColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,

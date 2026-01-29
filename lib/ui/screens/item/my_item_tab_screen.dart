@@ -1,4 +1,6 @@
 import 'package:Ebozor/app/routes.dart';
+import 'package:Ebozor/utils/event_bus.dart';
+import 'dart:async';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
@@ -37,6 +39,7 @@ class MyItemTab extends StatefulWidget {
 class _MyItemTabState extends CloudState<MyItemTab>
     with AutomaticKeepAliveClientMixin {
   late final ScrollController _pageScrollController = ScrollController();
+  StreamSubscription? _itemAddedSubscription;
 
   @override
   bool get wantKeepAlive => true;
@@ -49,9 +52,25 @@ class _MyItemTabState extends CloudState<MyItemTab>
           );
       _pageScrollController.addListener(_pageScroll);
       setReferenceOfCubit();
+
+      _itemAddedSubscription = EventBus().onItemAdded.listen((_) {
+        if (mounted) {
+          context.read<FetchMyItemsCubit>().fetchMyItems(
+                getItemsWithStatus: widget.getItemsWithStatus,
+                forceRefresh: true,
+              );
+        }
+      });
     }
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _itemAddedSubscription?.cancel();
+    _pageScrollController.dispose();
+    super.dispose();
   }
 
   void _pageScroll() {

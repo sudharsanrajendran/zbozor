@@ -86,7 +86,8 @@ class FetchMyItemsCubit extends Cubit<FetchMyItemsState> {
 
   void addItem(ItemModel item) {
     if (state is FetchMyItemsSuccess) {
-      List<ItemModel> items = (state as FetchMyItemsSuccess).items;
+      List<ItemModel> items =
+          List.from((state as FetchMyItemsSuccess).items); // Make mutable
       items.insert(0, item);
 
       emit((state as FetchMyItemsSuccess).copyWith(items: items));
@@ -95,7 +96,8 @@ class FetchMyItemsCubit extends Cubit<FetchMyItemsState> {
 
   void deleteItem(ItemModel model) {
     if (state is FetchMyItemsSuccess) {
-      List<ItemModel> items = (state as FetchMyItemsSuccess).items;
+      List<ItemModel> items =
+          List.from((state as FetchMyItemsSuccess).items); // Make mutable
 
       items.removeWhere(((element) => (element.id == model.id)));
 
@@ -105,11 +107,14 @@ class FetchMyItemsCubit extends Cubit<FetchMyItemsState> {
 
   void edit(ItemModel item) {
     if (state is FetchMyItemsSuccess) {
-      List<ItemModel> items = (state as FetchMyItemsSuccess).items;
+      List<ItemModel> items =
+          List.from((state as FetchMyItemsSuccess).items); // Make mutable
       int index = items.indexWhere((element) => element.id == item.id);
-      items[index] = item;
-      if (!isClosed) {
-        emit((state as FetchMyItemsSuccess).copyWith(items: items));
+      if (index != -1) {
+        items[index] = item;
+        if (!isClosed) {
+          emit((state as FetchMyItemsSuccess).copyWith(items: items));
+        }
       }
     }
   }

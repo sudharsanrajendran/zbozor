@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'package:Ebozor/app/routes.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:Ebozor/ui/screens/main_activity.dart';
+import 'package:Ebozor/utils/event_bus.dart';
 
 class SuccessItemScreen extends StatefulWidget {
   final ItemModel model;
@@ -101,6 +103,7 @@ class _SuccessItemScreenState extends State<SuccessItemScreen>
   }
 
   void _navigateToAdDetailsScreen() {
+    EventBus().fireItemAdded();
     Navigator.popUntil(context, (route) => route.isFirst);
     Navigator.pushNamed(
       context,
@@ -116,6 +119,7 @@ class _SuccessItemScreenState extends State<SuccessItemScreen>
       Future.delayed(
         Duration(milliseconds: 500),
         () {
+          EventBus().fireItemAdded();
           if (mounted) Navigator.popUntil(context, (route) => route.isFirst);
           MainActivity.globalKey.currentState?.onItemTapped(0);
         },

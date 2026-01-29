@@ -135,7 +135,7 @@ class HomeSearchField extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: context.color.error,
+                            color: context.color.territoryColor,
                             shape: BoxShape.circle,
                           ),
                           constraints: const BoxConstraints(

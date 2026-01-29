@@ -381,7 +381,16 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
       if (state is ManageItemSuccess) {
         Widgets.hideLoder(context);
         //This will locally update item model
-        myAdsCubitReference[getCloudData("edit_from")]?.edit(state.model);
+        if (widget.isEdit == true) {
+          myAdsCubitReference[getCloudData("edit_from")]?.edit(state.model);
+        } else {
+          // [FIX] Add new item to "All" list and specific status list
+          myAdsCubitReference[""]?.addItem(state.model);
+          if (state.model.status != null) {
+            myAdsCubitReference[state.model.status]?.addItem(state.model);
+          }
+        }
+
         Future.delayed(Duration(milliseconds: 500), () {
           if (mounted) {
             Navigator.pushNamed(context, Routes.successItemScreen,
