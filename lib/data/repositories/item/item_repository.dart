@@ -430,6 +430,82 @@ class ItemRepository {
     return DataOutput(total: response['data']['total'] ?? 0, modelList: items);
   }
 
+  Future<int> getItemCount({
+    int? categoryId,
+    String? search,
+    String? sortBy,
+    String? country,
+    String? state,
+    String? city,
+    int? areaId,
+    int? minPrice,
+    int? maxPrice,
+    String? postedSince,
+    ItemFilterModel? filter,
+  }) async {
+    Map<String, dynamic> parameters = {
+      if (categoryId != null) Api.categoryId: categoryId,
+      if (search != null) Api.search: search,
+      if (sortBy != null) Api.sortBy: sortBy,
+      if (minPrice != null) "min_price": minPrice,
+      if (maxPrice != null) "max_price": maxPrice,
+      if (postedSince != null) "posted_since": postedSince,
+    };
+
+    if (filter != null) {
+      if (filter.customFields != null) {
+        filter.customFields!.forEach((key, value) {
+          String paramKey = "filters[$key]";
+          if (value is List) {
+            parameters[paramKey] = value.map((v) => v.toString()).join(',');
+          } else {
+            parameters[paramKey] = value.toString();
+          }
+        });
+      }
+
+      // Location logic copied/adapted from existing patterns if needed,
+      // or strictly cleaning up based on what was there.
+      // The previous code had removes here.
+
+      parameters.remove('city');
+      parameters.remove('country');
+      parameters.remove('state');
+
+      if (filter.radius != null) {
+        if (filter.latitude != null && filter.longitude != null) {
+          parameters['latitude'] = filter.latitude;
+          parameters['longitude'] = filter.longitude;
+        }
+        parameters.remove('city');
+        parameters.remove('area');
+        parameters.remove('area_id');
+        parameters.remove('country');
+        parameters.remove('state');
+      } else {
+        if (areaId != null) parameters['area_id'] = areaId;
+      }
+
+      if (filter.areaId == null) {
+        parameters.remove('area_id');
+      }
+      parameters.remove('area');
+    }
+
+    // Clean parameters
+    parameters.removeWhere((key, value) => value == null || value == "");
+
+    print("/////////////count search param below///////////");
+    print(parameters);
+
+    Map<String, dynamic> response = await Api.get(
+      url: Api.getItemCountApi,
+      queryParameters: parameters,
+    );
+
+    return response['data']['count'] ?? 0;
+  }
+
   Future<List<MultipartFile>> _fileToMultipartFileList(List<File> files) async {
     List<MultipartFile> multipartFileList = [];
     for (File file in files) {

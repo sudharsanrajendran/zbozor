@@ -1,8 +1,11 @@
 import 'package:Ebozor/data/cubits/category/fetch_sub_categories_cubit.dart';
+import 'package:Ebozor/data/cubits/item/fetch_item_count_cubit.dart';
 import 'package:Ebozor/ui/screens/home/widgets/location_widget.dart';
 import 'package:Ebozor/data/model/category_model.dart';
 import 'package:Ebozor/ui/screens/widgets/amenities_filter_screen.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
+import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
+import 'package:Ebozor/data/model/item_filter_model.dart';
 
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
@@ -18,6 +21,8 @@ import 'package:flutter/services.dart'; // For TextInputFormatter
 import 'package:Ebozor/data/repositories/category_repository.dart';
 import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/ui/screens/widgets/shimmerLoadingContainer.dart';
+
+import 'package:Ebozor/data/repositories/item/item_repository.dart';
 
 class PropertyFilterScreen extends StatefulWidget {
   final List<CategoryModel> categoryList;
@@ -49,6 +54,9 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   // We need another cubit to fetch Property Types (Residential/Commercial) if the Tab doesn't have them (e.g. Sale)
   late final FetchSubCategoriesCubit _propertyTypesCubit;
 
+  // Count Cubit
+  late final FetchItemCountCubit _fetchItemCountCubit;
+
   // [NEW] Repository for ad-hoc category fetching
   final CategoryRepository _categoryRepository = CategoryRepository();
   // [NEW] Track loading state for specific category IDs
@@ -73,10 +81,13 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
     _subCategoryCubit = FetchSubCategoriesCubit();
     _propertyTypesCubit = FetchSubCategoriesCubit();
+    _fetchItemCountCubit = FetchItemCountCubit(ItemRepository());
 
     // ✅ API CALL ONLY ONCE
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeDefaultSelection();
+      _authLocationFetch(); // Auto fetch location if needed
+      _fetchCount(); // Initial Count Fetch
     });
   }
 
@@ -87,7 +98,9 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   @override
   void dispose() {
     _subCategoryCubit.close();
+    _subCategoryCubit.close();
     _propertyTypesCubit.close();
+    _fetchItemCountCubit.close();
     minController.dispose();
     maxController.dispose();
     for (var controller in _controllers.values) {
@@ -121,6 +134,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       _selectedPropertyType = propertyType;
       _subCategoryPath.clear(); // Reset all subcategories
       _selectedFilters.clear(); // Reset filters when property type changes
+      _fetchCount();
     });
 
     // If this property type has children already loaded, we don't need to fetch.
@@ -148,7 +162,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   /// [NEW] Generic method to fetch children for any category level
   Future<void> _fetchChildrenFor(CategoryModel category) async {
     // [MODIFIED] Use cached children if available for instant UI
-    if (category.children != null && category.children!.isNotEmpty) return;
+    // if (category.children != null && category.children!.isNotEmpty) return;
 
     // If no potential children, do nothing
     // [MODIFIED] Force fetch even if count is 0 to ensure we attempt to get dynamic data/filters
@@ -212,6 +226,46 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         });
       }
     }
+  }
+
+  Future<void> _authLocationFetch() async {
+    if (HiveUtils.getCityName() == null || HiveUtils.getCityName()!.isEmpty) {
+      await HelperUtils.fetchAndStoreCurrentLocation(context);
+    }
+  }
+
+  void _fetchCount() {
+    // Extract Min/Max Price from filters
+    int? minPrice;
+    int? maxPrice;
+
+    // Iterate through keys to find price/budget range
+    for (var key in _selectedFilters.keys) {
+      String lowerKey = key.toLowerCase();
+      if (lowerKey.contains('price') || lowerKey.contains('budget')) {
+        if (lowerKey.endsWith('_min')) {
+          minPrice = int.tryParse(_selectedFilters[key].toString());
+        } else if (lowerKey.endsWith('_max')) {
+          maxPrice = int.tryParse(_selectedFilters[key].toString());
+        }
+      }
+    }
+
+    _fetchItemCountCubit.fetchItemCount(
+      categoryId: _subCategoryPath.isNotEmpty
+          ? _subCategoryPath.last.id!
+          : (_selectedPropertyType?.id ??
+              _currentTabCategory?.id ??
+              widget.catId),
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      postedSince: postedOn, // Use the class variable
+      // If you want to include dynamic filters:
+      filter: _selectedFilters.isNotEmpty
+          ? ItemFilterModel(customFields: _selectedFilters)
+          : null,
+      search: "",
+    );
   }
 
   /*
@@ -853,6 +907,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
                       // 3. [NEW] Fetch children for this new selection if needed
                       _fetchChildrenFor(child);
+                      _fetchCount();
                     });
                   },
                 ),
@@ -875,12 +930,23 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         minWidth: double.infinity,
         color: context.color.territoryColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        child: Text(
-          "Show 12,000 Results",
-          style: TextStyle(
-              color: context.color.buttonColor,
-              fontSize: 16,
-              fontWeight: FontWeight.bold),
+        child: BlocBuilder<FetchItemCountCubit, FetchItemCountState>(
+          bloc: _fetchItemCountCubit,
+          builder: (context, state) {
+            String label = "Show Results";
+            if (state is FetchItemCountInProgress) {
+              label = "Calculating...";
+            } else if (state is FetchItemCountSuccess) {
+              label = "Show ${state.count} Results";
+            }
+            return Text(
+              label,
+              style: TextStyle(
+                  color: context.color.buttonColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold),
+            );
+          },
         ),
       ),
     );
@@ -1039,6 +1105,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                             } else {
                               _selectedFilters[filter.name!] = currentSelection;
                             }
+                            _fetchCount();
                           });
                         },
                         child: Container(
@@ -1094,6 +1161,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         } else {
                           _selectedFilters[filter.name!] = result;
                         }
+                        _fetchCount();
                       });
                     }
                   },
@@ -1101,7 +1169,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     "View all >",
                     style: TextStyle(
                       fontSize: 14,
-                      color:Colors.blueAccent, // Requested Blue color
+                      color: Colors.blueAccent, // Requested Blue color
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1143,6 +1211,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                             } else {
                               _selectedFilters[filter.name!] = value;
                             }
+                            _fetchCount();
                           });
                         },
                         child: Container(
@@ -1209,6 +1278,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                       } else {
                         _selectedFilters[filter.name!] = value;
                       }
+                      _fetchCount();
                     });
                   },
                   decoration: InputDecoration(
@@ -1341,6 +1411,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                             // If I type 5000 and max is 1000, momentarily invalid state for Slider?
                             // Slider requires values.start <= values.end.
                             // We must ensure that before passing to slider.
+                            _fetchCount();
                           });
                         },
                         decoration: InputDecoration(
@@ -1385,6 +1456,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                           setState(() {
                             _selectedFilters["${filter.name}_max"] =
                                 val.toString();
+                            _fetchCount();
                           });
                         },
                         decoration: InputDecoration(
@@ -1425,6 +1497,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                         values.start.round().toString();
                     _selectedFilters["${filter.name}_max"] =
                         values.end.round().toString();
+                    _fetchCount();
                   });
                 },
               ),

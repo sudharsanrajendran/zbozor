@@ -13,7 +13,6 @@ import 'package:Ebozor/data/cubits/report/update_report_items_list_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/blocked_users_list_cubit.dart';
 import 'package:Ebozor/data/cubits/favorite/favorite_cubit.dart';
 
-
 import 'package:Ebozor/utils/errorFilter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -41,13 +40,10 @@ class Api {
         return {};
       }
     } else {
-
       //here token written
       String? jwtToken = HiveUtils.getJWT();
 
-
       print("jwt token****$jwtToken");
-
 
       return {
         "Authorization": "Bearer $jwtToken",
@@ -84,6 +80,7 @@ class Api {
   //static String getCategoriesApi="get-parent-category-list";
   static String getItemApi = "get-item";
   static String getMyItemApi = "my-items";
+  static String getItemCountApi = "get-item-count";
   static String getNotificationListApi = "get-notification-list";
   static String deleteUserApi = "delete-user";
   static String manageFavouriteApi = "manage-favourite";
@@ -134,8 +131,6 @@ class Api {
   static String unBlockUserApi = "unblock-user";
   static String blockedUsersListApi = "blocked-users";
   static String getPaymentDetailsApi = "payment-transactions";
-
-
 
 //not used API List
 
@@ -306,7 +301,8 @@ class Api {
         ),
       );
 
-      printDebug("POST Request URL: ${((useBaseUrl ?? true) ? Constant.baseUrl : "") + url}");
+      printDebug(
+          "POST Request URL: ${((useBaseUrl ?? true) ? Constant.baseUrl : "") + url}");
       printDebug("POST Parameters: ${formData.fields}");
       printDebug("POST Response: ${response.data}");
 
@@ -411,13 +407,13 @@ class Api {
       final Dio dio = Dio();
       dio.interceptors.add(NetworkRequestInterseptor());
 
-
       final response = await dio.get(
           ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url,
           queryParameters: queryParameters,
           options: Options(headers: headers()));
 
-      printDebug("GET Request URL: ${((useBaseUrl ?? true) ? Constant.baseUrl : "") + url}");
+      printDebug(
+          "GET Request URL: ${((useBaseUrl ?? true) ? Constant.baseUrl : "") + url}");
       printDebug("GET Parameters: $queryParameters");
       printDebug("GET Response: ${response.data}");
 
