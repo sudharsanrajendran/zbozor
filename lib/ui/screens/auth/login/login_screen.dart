@@ -409,7 +409,8 @@ class LoginScreenState extends State<LoginScreen> {
                           context, Routes.main, {"from": "login"});
                     } else {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          Routes.locationPermissionScreen, (route) => false);
+                          Routes.main, (route) => false,
+                          arguments: {"from": "login"});
                     }
                   } else {
                     Navigator.pushNamed(

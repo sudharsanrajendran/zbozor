@@ -149,12 +149,9 @@ class SplashScreenState extends State<SplashScreen>
       }
     } else {
       if (mounted) {
-        if (HiveUtils.isUserSkip() == true) {
-          Navigator.of(context)
-              .pushReplacementNamed(Routes.main, arguments: {'from': "main"});
-        } else {
-          Navigator.of(context).pushReplacementNamed(Routes.login);
-        }
+        HiveUtils.setUserSkip();
+        Navigator.of(context)
+            .pushReplacementNamed(Routes.main, arguments: {'from': "main"});
       }
     }
   }

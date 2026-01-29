@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';// ignore_for_file: invalid_use_of_protected_member
+import 'package:flutter/cupertino.dart'; // ignore_for_file: invalid_use_of_protected_member
 
 import 'dart:async';
 import 'dart:io';
@@ -7,6 +7,8 @@ import 'package:app_links/app_links.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/item/search_item_cubit.dart';
 import 'package:Ebozor/data/cubits/system/fetch_system_settings_cubit.dart';
+import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
+import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
 import 'package:Ebozor/ui/screens/widgets/maintenance_mode.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
@@ -14,6 +16,8 @@ import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/data/cubits/chat/get_buyer_chat_users_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/get_seller_chat_users_cubit.dart';
 import 'package:Ebozor/utils/svg/svg_edit.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -140,6 +144,9 @@ class MainActivityState extends State<MainActivity>
     /*   if (HiveUtils.isUserAuthenticated()) {
       locationSetCheck();
     }*/
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _autoFetchCurrentLocation();
+    });
 
 //This will init page controller
     initPageController();
@@ -199,6 +206,73 @@ class MainActivityState extends State<MainActivity>
               arguments: {"from": "login"});
         },
       );
+    }
+  }
+
+  Future<void> _autoFetchCurrentLocation() async {
+    // If location is already set, we don't necessarily need to overwrite it immediately,
+    // but the requirement says "once app enter automatic fetch".
+    // We will check permission first.
+    LocationPermission permission = await Geolocator.checkPermission();
+    print("DEBUG: Auto-Fetch Check Permission: $permission");
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      print("DEBUG: Auto-Fetch Request Permission: $permission");
+    }
+
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
+      try {
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.medium,
+          timeLimit: const Duration(seconds: 10),
+        );
+        print(
+            "DEBUG: Auto-Fetch Position: ${position.latitude}, ${position.longitude}");
+
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+
+        if (placemarks.isNotEmpty) {
+          Placemark placemark = placemarks[0];
+          print("DEBUG: Auto-Fetch Placemark: ${placemark.toString()}");
+
+          String? city = placemark.subAdministrativeArea;
+          if (city == null || city.isEmpty) {
+            city = placemark.locality;
+          }
+
+          if (city != null) {
+            HiveUtils.setLocation(
+              area: placemark.subLocality,
+              city: city,
+              state: placemark.administrativeArea ?? "",
+              country: placemark.country ?? "",
+              latitude: position.latitude,
+              longitude: position.longitude,
+            );
+
+            print("DEBUG: Auto-Fetch Stored Location: $city");
+
+            // Refresh home screen with new location if needed
+            if (mounted) {
+              context.read<FetchHomeScreenCubit>().fetch(
+                    city: city,
+                  );
+              context
+                  .read<FetchHomeAllItemsCubit>()
+                  .fetch(city: city, radius: HiveUtils.getNearbyRadius());
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('Auto-fetch location failed: $e');
+      }
+    } else {
+      debugPrint('Auto-fetch location permission denied: $permission');
     }
   }
 
@@ -417,7 +491,7 @@ class MainActivityState extends State<MainActivity>
       context.read<GetSellerChatListCubit>().fetch();
     }
     searchbody = {};
-    if (index == 1 || index == 2) {
+    if (index == 1 || index == 2 || index == 3) {
       UiUtils.checkUser(
           onNotGuest: () {
             currtab = index;
