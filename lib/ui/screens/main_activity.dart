@@ -135,7 +135,7 @@ class MainActivityState extends State<MainActivity>
     Constant.isNumberWithSuffix = numberWithSuffix == "1" ? true : false;
 
     ///this will check if your profile is complete or not if it is incomplete it will redirect you to the edit profile page
-    // completeProfileCheck();
+    completeProfileCheck();
 
     ///This will check for update
     versionCheck(settings);

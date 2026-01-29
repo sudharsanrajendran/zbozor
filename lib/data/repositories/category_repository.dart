@@ -57,4 +57,9 @@ class CategoryRepository {
       rethrow;
     }
   }
+
+  Future<DataOutput<CategoryModel>> fetchSubCategories(
+      {required int parentId}) async {
+    return await fetchCategories(page: 1, categoryId: parentId);
+  }
 }

@@ -5,16 +5,19 @@ import 'dart:math';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/screens/widgets/amenities_filter_screen.dart';
 import 'package:Ebozor/data/cubits/item/fetch_item_from_category_cubit.dart';
+import 'package:Ebozor/data/cubits/item/fetch_item_count_cubit.dart'; // [New]
+import 'package:Ebozor/data/repositories/item/item_repository.dart'; // [New]
 import 'package:Ebozor/data/cubits/category/fetch_sub_categories_cubit.dart';
 import 'package:Ebozor/data/model/category_model.dart';
+import 'package:Ebozor/data/repositories/category_repository.dart'; // [Corrected]
+import 'package:Ebozor/data/model/data_output.dart'; // [New]
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:intl/intl.dart';
 
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/utils/sliver_grid_delegate_with_fixed_cross_axis_count_and_fixed_height.dart';
@@ -81,12 +84,17 @@ class ItemsListState extends State<ItemsList> {
   List<String> _currentCategoryIds = [];
   Map<String, dynamic> _selectedCustomFields = {};
 
+  // [NEW] Item Count Cubit
+  late final FetchItemCountCubit _fetchItemCountCubit;
+
   bool _showVerifiedOnly = false;
 
   @override
   void initState() {
     super.initState();
     _chipFilterCubit = FetchSubCategoriesCubit();
+    // [NEW]
+    _fetchItemCountCubit = FetchItemCountCubit(ItemRepository());
     // Initialize chain from arguments or empty
     _currentChain = widget.selectedCategoryChain ?? [];
 
@@ -105,16 +113,24 @@ class ItemsListState extends State<ItemsList> {
       _selectedCustomFields.remove("Price_max");
     }
 
-    // Fallback: If chain is empty but we have a main category and it's not "Property" (which is root), add it.
-    // Actually, simply relying on arguments is safer.
-    // If empty & we have categoryName, maybe add it?
-    if (_currentChain.isEmpty && widget.categoryId.isNotEmpty) {
-      // Basic fallback
+    // Fallback: Ensure the current category is part of the chain (as the last item)
+    // This handles deep links or navigation where chain might only contain parents.
+    int currentId = int.tryParse(widget.categoryId) ?? 0;
+    if (_currentChain.isEmpty) {
       _currentChain.add(CategoryModel(
-          id: int.tryParse(widget.categoryId) ?? 0,
+          id: currentId,
           name: widget.categoryName,
           children: [],
           subcategoriesCount: 0));
+    } else {
+      // Check if the last item is the current category
+      if (_currentChain.last.id != currentId && currentId != 0) {
+        _currentChain.add(CategoryModel(
+            id: currentId,
+            name: widget.categoryName,
+            children: [],
+            subcategoriesCount: 0));
+      }
     }
 
     _currentCategoryIds = List.from(widget.categoryIds);
@@ -161,6 +177,7 @@ class ItemsListState extends State<ItemsList> {
     controller.dispose();
     searchController.dispose();
     _chipFilterCubit.close();
+    _fetchItemCountCubit.close(); // [New]
     super.dispose();
   }
 
@@ -210,6 +227,70 @@ class ItemsListState extends State<ItemsList> {
             ));
       }
     }
+  }
+
+  // [NEW] Helper to fetch count for dynamic filter sheet
+  void _fetchCount(
+      {int? overrideCategoryId, int? overrideMinPrice, int? overrideMaxPrice}) {
+    // Extract Min/Max Price from custom fields or filter params
+    int? minPrice = overrideMinPrice;
+    int? maxPrice = overrideMaxPrice;
+    String? postedSince;
+
+    // Check specific Price keys as per PropertyFilterScreen logic (ONLY if not overridden)
+    if (minPrice == null && maxPrice == null) {
+      for (var key in _selectedCustomFields.keys) {
+        String lowerKey = key.toLowerCase();
+        if (lowerKey.contains('price') || lowerKey.contains('budget')) {
+          if (lowerKey.endsWith('_min')) {
+            minPrice = int.tryParse(_selectedCustomFields[key].toString());
+          } else if (lowerKey.endsWith('_max')) {
+            maxPrice = int.tryParse(_selectedCustomFields[key].toString());
+          }
+        }
+      }
+
+      // Also check generic filter object if it was initialized
+      if (minPrice == null && filter?.minPrice != null) {
+        minPrice = int.tryParse(filter!.minPrice.toString());
+      }
+      if (maxPrice == null && filter?.maxPrice != null) {
+        maxPrice = int.tryParse(filter!.maxPrice.toString());
+      }
+    }
+
+    // Use override if present, else fall back to current chain or widget.categoryId
+    int targetId = overrideCategoryId ??
+        (_currentChain.isNotEmpty
+            ? _currentChain.last.id!
+            : (int.tryParse(widget.categoryId) ?? 0));
+
+    // Ensure we don't send 0 if something went wrong
+    if (targetId == 0 && widget.categoryId.isNotEmpty) {
+      targetId = int.tryParse(widget.categoryId) ?? 0;
+    }
+
+    // Logic: User requested that when switching categories (e.g. Rent to Sale),
+    // we should KEEP all existing filters (Price, Custom Fields like Bedrooms)
+    // and ONLY change the Category ID.
+    Map<String, dynamic>? filtersToSend;
+
+    // Always attach existing custom fields
+    if (_selectedCustomFields.isNotEmpty) {
+      filtersToSend =
+          ItemFilterModel(customFields: _selectedCustomFields).customFields;
+    }
+
+    _fetchItemCountCubit.fetchItemCount(
+      categoryId: targetId,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      postedSince: postedSince,
+      filter: filtersToSend != null
+          ? ItemFilterModel(customFields: filtersToSend)
+          : null,
+      search: searchController.text,
+    );
   }
 
   Widget searchBarWidget() {
@@ -519,20 +600,29 @@ class ItemsListState extends State<ItemsList> {
       ),
       builder: (context) {
         // --- CASE 1: Simple Text Only (For Index 0 and Index > 1) ---
+        // --- CASE 1: Simple Text Only (For Index 0 and Index > 1) ---
         if (chainIndex != 1) {
           // [FIX] Ensure selectedCategory is initialized correctly for Index 0
           CategoryModel? selectedCategory;
           if (_currentChain.length > chainIndex) {
             selectedCategory = _currentChain[chainIndex];
+            // Initial fetch count for the currently selected category
+            _fetchCount(overrideCategoryId: selectedCategory?.id);
+          } else {
+            // If no category selected yet (e.g. index 0 but empty chain?), fetch for root/default logic
+            _fetchCount(overrideCategoryId: int.tryParse(parentId) ?? 0);
           }
 
-          return BlocProvider.value(
-            value: _chipFilterCubit,
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: _chipFilterCubit),
+              BlocProvider.value(value: _fetchItemCountCubit), // [NEW]
+            ],
             child: StatefulBuilder(builder: (context, setModalState) {
               return Container(
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.height *
-                      0.4, // Max Height 40%
+                      0.5, // Increase height slightly
                 ),
                 decoration: BoxDecoration(
                     color: context.color.secondaryColor,
@@ -627,6 +717,8 @@ class ItemsListState extends State<ItemsList> {
                                       setModalState(() {
                                         selectedCategory = cat;
                                       });
+                                      // [NEW] Trigger fetch count logic
+                                      _fetchCount(overrideCategoryId: cat.id);
                                     }),
                                   );
                                 },
@@ -657,14 +749,23 @@ class ItemsListState extends State<ItemsList> {
                               _updateSelection(chainIndex, selectedCategory!);
                             }
                           },
-                          child: Text(
-                            "Show ${NumberFormat.decimalPattern().format(context.read<FetchItemFromCategoryCubit>().state is FetchItemFromCategorySuccess ? (context.read<FetchItemFromCategoryCubit>().state as FetchItemFromCategorySuccess).total : 0)} Results",
-                            style: TextStyle(
-                              color: context.color.buttonColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: BlocBuilder<FetchItemCountCubit,
+                              FetchItemCountState>(builder: (context, state) {
+                            String buttonText = "showResult".translate(context);
+                            if (state is FetchItemCountInProgress) {
+                              buttonText = "calculating".translate(context);
+                            } else if (state is FetchItemCountSuccess) {
+                              buttonText = "Show ${state.count} Results";
+                            }
+                            return Text(
+                              buttonText,
+                              style: TextStyle(
+                                color: context.color.buttonColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }),
                         ),
                       ),
                     )
@@ -683,15 +784,20 @@ class ItemsListState extends State<ItemsList> {
         // Initialize from current chain
         if (_currentChain.length > chainIndex) {
           selectedParent = _currentChain[chainIndex];
+          // Initial fetch count for parent if present
+          _fetchCount(overrideCategoryId: selectedParent?.id);
         }
         if (_currentChain.length > chainIndex + 1) {
           selectedChild = _currentChain[chainIndex + 1];
+          // Initial fetch count for child if present (overrides parent)
+          _fetchCount(overrideCategoryId: selectedChild?.id);
         }
 
         return MultiBlocProvider(
           providers: [
             BlocProvider.value(value: _chipFilterCubit),
             BlocProvider(create: (_) => FetchSubCategoriesCubit()),
+            BlocProvider.value(value: _fetchItemCountCubit), // [NEW]
           ],
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setModalState) {
@@ -739,6 +845,10 @@ class ItemsListState extends State<ItemsList> {
                               selectedParent = null;
                               selectedChild = null;
                             });
+                            // [NEW] Reset count to base
+                            _fetchCount(
+                                overrideCategoryId:
+                                    int.tryParse(widget.categoryId) ?? 0);
                           },
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.zero,
@@ -829,6 +939,8 @@ class ItemsListState extends State<ItemsList> {
                                                   categoryId: cat.id!);
                                         }
                                       });
+                                      // [NEW] Update count for parent
+                                      _fetchCount(overrideCategoryId: cat.id);
                                     }, showImage: true),
                                   );
                                 },
@@ -913,6 +1025,9 @@ class ItemsListState extends State<ItemsList> {
                                             setModalState(() {
                                               selectedChild = cat;
                                             });
+                                            // [NEW] Update count for child
+                                            _fetchCount(
+                                                overrideCategoryId: cat.id);
                                           }),
                                         );
                                       },
@@ -949,14 +1064,23 @@ class ItemsListState extends State<ItemsList> {
                               }
                             }
                           },
-                          child: Text(
-                            "Show ${NumberFormat.decimalPattern().format(context.read<FetchItemFromCategoryCubit>().state is FetchItemFromCategorySuccess ? (context.read<FetchItemFromCategoryCubit>().state as FetchItemFromCategorySuccess).total : 0)} Results",
-                            style: TextStyle(
-                              color: context.color.buttonColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: BlocBuilder<FetchItemCountCubit,
+                              FetchItemCountState>(builder: (context, state) {
+                            String buttonText = "showResult".translate(context);
+                            if (state is FetchItemCountInProgress) {
+                              buttonText = "calculating".translate(context);
+                            } else if (state is FetchItemCountSuccess) {
+                              buttonText = "Show ${state.count} Results";
+                            }
+                            return Text(
+                              buttonText,
+                              style: TextStyle(
+                                color: context.color.buttonColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }),
                         ),
                       ),
                     )
@@ -1031,10 +1155,16 @@ class ItemsListState extends State<ItemsList> {
     );
   }
 
-  void _updateSelection(int chainIndex, CategoryModel newSelection) {
+  void _updateSelection(int chainIndex, CategoryModel newSelection) async {
     final oldId =
         _currentChain.length > chainIndex ? _currentChain[chainIndex].id : -1;
     if (oldId == newSelection.id && !_isAllFieldsSelected) return;
+
+    // [New] Smart Migration Logic: Capture potential child to restore
+    String? pendingChildName;
+    if (chainIndex == 0 && _currentChain.length > 1) {
+      pendingChildName = _currentChain[1].name;
+    }
 
     setState(() {
       _isAllFieldsSelected = false; // Reset All Fields flag
@@ -1058,17 +1188,19 @@ class ItemsListState extends State<ItemsList> {
       // 3. Handle Child Slots
       // Only add placeholder if the new selection HAS subcategories
       if ((newSelection.subcategoriesCount ?? 0) > 0) {
+        // [Modified] Instead of dummy placeholder immediately, we might restore
         if (_currentChain.length > chainIndex + 1) {
+          // Keep placeholder structure but might replace it soon
           _currentChain[chainIndex + 1] = CategoryModel(
-              id: -1, // Dummy ID
-              name: "All", // Placeholder Name
+              id: -1,
+              name: "All",
               url: "",
               children: [],
               subcategoriesCount: 0);
         } else {
           _currentChain.add(CategoryModel(
-              id: -1, // Dummy ID
-              name: "All", // Placeholder Name
+              id: -1,
+              name: "All",
               url: "",
               children: [],
               subcategoriesCount: 0));
@@ -1087,21 +1219,59 @@ class ItemsListState extends State<ItemsList> {
         }
       }
 
+      // Clear deeper levels if we just reset
+      if (_currentChain.length > chainIndex + 2) {
+        _currentChain.removeRange(chainIndex + 2, _currentChain.length);
+      }
+
       // 4. Restore History for the NEW item (if we visited it before)
       if (_selectionHistory.containsKey(newSelection.id)) {
-        // Apply history
-        // First, define if we should overwrite the placeholder or append?
-        // If history exists, it means we went deeper.
-        // So we replace the placeholder with the history.
-
-        // Remove placeholder first
         if (_currentChain.length > chainIndex + 1 &&
             _currentChain[chainIndex + 1].id == -1) {
           _currentChain.removeAt(chainIndex + 1);
         }
         _currentChain.addAll(_selectionHistory[newSelection.id]!);
       }
+    });
 
+    // [New] Smart Migration Execution
+    // If we have a pending name validation and NO history found (so we are at placeholder state)
+    if (pendingChildName != null &&
+        !_selectionHistory.containsKey(newSelection.id)) {
+      try {
+        // Fetch subcategories for the NEW parent
+        DataOutput<CategoryModel> result = await CategoryRepository()
+            .fetchSubCategories(parentId: newSelection.id!);
+
+        // Look for match
+        CategoryModel? match;
+        for (var child in result.modelList) {
+          if (child.name == pendingChildName) {
+            match = child;
+            break;
+          }
+        }
+
+        if (match != null && mounted) {
+          setState(() {
+            // Replace placeholder with match
+            if (_currentChain.length > chainIndex + 1) {
+              _currentChain[chainIndex + 1] = match!;
+            } else {
+              _currentChain.add(match!);
+            }
+
+            // Refetch logic will happen below
+          });
+        }
+      } catch (e) {
+        print("Smart Migration Failed: $e");
+      }
+    }
+
+    if (!mounted) return;
+
+    setState(() {
       // 5. Re-calculate categoryIds chain
       List<String> newIds = [];
       if (widget.categoryIds.isNotEmpty) newIds.add(widget.categoryIds[0]);
@@ -1920,183 +2090,221 @@ class ItemsListState extends State<ItemsList> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return StatefulBuilder(builder: (context, setSheetState) {
-          return Container(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-                top: 16,
-                left: 16,
-                right: 16),
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.85,
-            ),
-            decoration: BoxDecoration(
-              color: context.color.secondaryColor,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(title,
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: context.color.textDefaultColor)),
-                    TextButton(
-                      onPressed: () {
-                        setSheetState(() {
-                          localMin = min;
-                          localMax = max;
-                          minCtrl.text = min.toStringAsFixed(0);
-                          maxCtrl.text = max.toStringAsFixed(0);
-                        });
-                      },
-                      child: Text("Reset",
+        // [NEW] Trigger initial count fetch with current values
+        // We use a post-frame callback to avoid build-phase side effects if any, though likely safe.
+        // Actually, straightforward call is better here as we want to start fetch immediately.
+        _fetchCount(
+            overrideMinPrice: currentMin?.toInt() ?? min.toInt(),
+            overrideMaxPrice: currentMax?.toInt() ?? max.toInt());
+
+        return BlocProvider.value(
+          value: _fetchItemCountCubit,
+          child: StatefulBuilder(builder: (context, setSheetState) {
+            return Container(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                  top: 16,
+                  left: 16,
+                  right: 16),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.85,
+              ),
+              decoration: BoxDecoration(
+                color: context.color.secondaryColor,
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(title,
                           style: TextStyle(
-                              color: context.color.textDefaultColor
-                                  .withOpacity(0.6))),
-                    )
-                  ],
-                ),
-                Text("Set your desired ${title.toLowerCase()}",
-                    style: TextStyle(
-                        color: context.color.textDefaultColor.withOpacity(0.6),
-                        fontSize: 13)),
-
-                const SizedBox(height: 24),
-
-                // Range Slider
-                RangeSlider(
-                  activeColor: context.color.territoryColor,
-                  inactiveColor: context.color.territoryColor.withOpacity(0.3),
-                  values: RangeValues(
-                    (localMin < localMax ? localMin : localMax).clamp(min, max),
-                    (localMin > localMax ? localMin : localMax).clamp(min, max),
-                  ),
-                  min: min,
-                  max: max,
-                  onChanged: (RangeValues values) {
-                    setSheetState(() {
-                      localMin = values.start;
-                      localMax = values.end;
-                      minCtrl.text = localMin.toStringAsFixed(0);
-                      maxCtrl.text = localMax.toStringAsFixed(0);
-                    });
-                  },
-                ),
-
-                const SizedBox(height: 16),
-
-                // Inputs
-                Row(
-                  children: [
-                    Expanded(
-                        child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: context.color.borderColor),
-                      ),
-                      child: TextField(
-                        controller: minCtrl,
-                        keyboardType: TextInputType.number,
-                        style: TextStyle(color: context.color.textDefaultColor),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Min",
-                          hintStyle: TextStyle(
-                              color: context.color.textDefaultColor
-                                  .withOpacity(0.5)),
-                          suffixText: suffix, // Use dynamic suffix
-                          suffixStyle:
-                              TextStyle(color: context.color.textDefaultColor),
-                        ),
-                        onChanged: (val) {
-                          double? v = double.tryParse(val);
-                          if (v != null) {
-                            setSheetState(() {
-                              localMin = v;
-                            });
-                          }
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: context.color.textDefaultColor)),
+                      TextButton(
+                        onPressed: () {
+                          setSheetState(() {
+                            localMin = min;
+                            localMax = max;
+                            minCtrl.text = min.toStringAsFixed(0);
+                            maxCtrl.text = max.toStringAsFixed(0);
+                          });
+                          _fetchCount(
+                              overrideMinPrice: min.toInt(),
+                              overrideMaxPrice: max.toInt());
                         },
-                      ),
-                    )),
-                    Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Text("to",
+                        child: Text("Reset",
                             style: TextStyle(
-                                color: context.color.textDefaultColor))),
-                    Expanded(
-                        child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: context.color.borderColor),
-                      ),
-                      child: TextField(
-                        controller: maxCtrl,
-                        keyboardType: TextInputType.number,
-                        style: TextStyle(color: context.color.textDefaultColor),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Max",
-                          hintStyle: TextStyle(
-                              color: context.color.textDefaultColor
-                                  .withOpacity(0.5)),
-                          suffixText: suffix, // Use dynamic suffix
-                          suffixStyle: TextStyle(
-                              color:
-                                  context.color.textDefaultColor), // Max input
+                                color: context.color.textDefaultColor
+                                    .withOpacity(0.6))),
+                      )
+                    ],
+                  ),
+                  Text("Set your desired ${title.toLowerCase()}",
+                      style: TextStyle(
+                          color:
+                              context.color.textDefaultColor.withOpacity(0.6),
+                          fontSize: 13)),
+
+                  const SizedBox(height: 24),
+
+                  // Range Slider
+                  RangeSlider(
+                    activeColor: context.color.territoryColor,
+                    inactiveColor:
+                        context.color.territoryColor.withOpacity(0.3),
+                    values: RangeValues(
+                      (localMin < localMax ? localMin : localMax)
+                          .clamp(min, max),
+                      (localMin > localMax ? localMin : localMax)
+                          .clamp(min, max),
+                    ),
+                    min: min,
+                    max: max,
+                    onChanged: (RangeValues values) {
+                      setSheetState(() {
+                        localMin = values.start;
+                        localMax = values.end;
+                        minCtrl.text = localMin.toStringAsFixed(0);
+                        maxCtrl.text = localMax.toStringAsFixed(0);
+                      });
+                      _fetchCount(
+                          overrideMinPrice: localMin.toInt(),
+                          overrideMaxPrice: localMax.toInt());
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Inputs
+                  Row(
+                    children: [
+                      Expanded(
+                          child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: context.color.borderColor),
                         ),
-                        onChanged: (val) {
-                          double? v = double.tryParse(val);
-                          if (v != null) {
-                            setSheetState(() {
-                              localMax = v;
-                            });
+                        child: TextField(
+                          controller: minCtrl,
+                          keyboardType: TextInputType.number,
+                          style:
+                              TextStyle(color: context.color.textDefaultColor),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Min",
+                            hintStyle: TextStyle(
+                                color: context.color.textDefaultColor
+                                    .withOpacity(0.5)),
+                            suffixText: suffix,
+                            suffixStyle: TextStyle(
+                                color: context.color.textDefaultColor),
+                          ),
+                          onChanged: (val) {
+                            double? v = double.tryParse(val);
+                            if (v != null) {
+                              setSheetState(() {
+                                localMin = v;
+                              });
+                              _fetchCount(
+                                  overrideMinPrice: localMin.toInt(),
+                                  overrideMaxPrice: localMax.toInt());
+                            }
+                          },
+                        ),
+                      )),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Text("to",
+                              style: TextStyle(
+                                  color: context.color.textDefaultColor))),
+                      Expanded(
+                          child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: context.color.borderColor),
+                        ),
+                        child: TextField(
+                          controller: maxCtrl,
+                          keyboardType: TextInputType.number,
+                          style:
+                              TextStyle(color: context.color.textDefaultColor),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Max",
+                            hintStyle: TextStyle(
+                                color: context.color.textDefaultColor
+                                    .withOpacity(0.5)),
+                            suffixText: suffix,
+                            suffixStyle: TextStyle(
+                                color: context.color.textDefaultColor),
+                          ),
+                          onChanged: (val) {
+                            double? v = double.tryParse(val);
+                            if (v != null) {
+                              setSheetState(() {
+                                localMax = v;
+                              });
+                              _fetchCount(
+                                  overrideMinPrice: localMin.toInt(),
+                                  overrideMaxPrice: localMax.toInt());
+                            }
+                          },
+                        ),
+                      )),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Show Results Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: context.color.territoryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onApply(localMin, localMax);
+                      },
+                      child:
+                          BlocBuilder<FetchItemCountCubit, FetchItemCountState>(
+                        builder: (context, state) {
+                          String buttonText = "Show Results";
+                          if (state is FetchItemCountInProgress) {
+                            buttonText = "calculating".translate(context);
+                          } else if (state is FetchItemCountSuccess) {
+                            buttonText = "Show ${state.count} Results";
                           }
+                          return Text(
+                            buttonText,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          );
                         },
                       ),
-                    )),
-                  ],
-                ),
-
-                const SizedBox(height: 24),
-
-                // Show Results Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.color.territoryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      onApply(localMin, localMax);
-                    },
-                    child: Text(
-                      "Show Results", // Maybe update with count implicitly?
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        });
+                ],
+              ),
+            );
+          }),
+        );
       },
     );
   }

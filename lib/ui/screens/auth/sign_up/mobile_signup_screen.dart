@@ -106,7 +106,7 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
       }
       if (state is MSuccess) {
         Widgets.hideLoder(context);
-        Navigator.pushReplacementNamed(
+        Navigator.pushNamed(
           context,
           Routes.main,
           arguments: {
@@ -242,7 +242,7 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                   listener: (context, state) {
                     if (state is AuthenticationSuccess) {
                       Widgets.hideLoder(context);
-                      Navigator.pushReplacementNamed(
+                      Navigator.pushNamed(
                         context,
                         Routes.main,
                         arguments: {
@@ -341,7 +341,7 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                     onPressed: () {
                       //HiveUtils.setUserIsNotNew();
 
-                      Navigator.pushReplacementNamed(
+                      Navigator.pushNamed(
                         context,
                         Routes.main,
                         arguments: {
@@ -593,7 +593,7 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
               fit: BoxFit.none,
               child: MaterialButton(
                 onPressed: () {
-                  Navigator.pushReplacementNamed(
+                  Navigator.pushNamed(
                     context,
                     Routes.main,
                     arguments: {
