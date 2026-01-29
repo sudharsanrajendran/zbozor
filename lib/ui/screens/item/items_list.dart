@@ -214,7 +214,7 @@ class ItemsListState extends State<ItemsList> {
 
   Widget searchBarWidget() {
     return Container(
-      color: context.color.secondaryColor,
+      color: Colors.transparent,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
@@ -224,10 +224,10 @@ class ItemsListState extends State<ItemsList> {
               height: 42,
               decoration: BoxDecoration(
                 border: Border.all(
-                  width: 0.1,
+                  width: 1,
                   color: context.color.borderColor.darken(30),
                 ),
-                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                borderRadius: const BorderRadius.all(Radius.circular(16)),
                 color: context.color.backgroundColor,
               ),
               child: TextFormField(
@@ -268,16 +268,14 @@ class ItemsListState extends State<ItemsList> {
               });
             },
             child: Container(
-              width: 45,
-              height: 45,
+              width: 42,
+              height: 42,
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 1,
                   color: context.color.borderColor.darken(30),
                 ),
-                color: !isList
-                    ? context.color.backgroundColor
-                    : context.color.secondaryColor,
+                color: !isList ? Colors.transparent : Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
@@ -301,22 +299,21 @@ class ItemsListState extends State<ItemsList> {
               });
             },
             child: Container(
-              width: 45,
-              height: 45,
+              width: 42,
+              height: 42,
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 1,
                   color: context.color.borderColor.darken(30),
                 ),
-                color: isList
-                    ? context.color.backgroundColor
-                    : context.color.secondaryColor,
+                color: isList ? Colors.transparent : Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
-                child: UiUtils.getSvg(
-                  AppIcons
-                      .listViewIcon, // Was Icon(Icons.menu), switching to SVG for consistency if available, OR keeping Icon but fixing color
+                child: Image.asset(
+                  "assets/itemlistviewimage.png",
+                  width: 20,
+                  height: 20,
                   color: isList
                       ? context.color.territoryColor
                       : context.color.textDefaultColor.withOpacity(0.2),
@@ -357,7 +354,7 @@ class ItemsListState extends State<ItemsList> {
 
   Widget _buildFilterChips() {
     return Container(
-      color: context.color.secondaryColor,
+      color: Colors.transparent,
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -1139,7 +1136,7 @@ class ItemsListState extends State<ItemsList> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
-          color: context.color.primaryColor,
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
               color: isActive
@@ -1169,12 +1166,19 @@ class ItemsListState extends State<ItemsList> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: context.color.secondaryColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: context.color.borderColor,
-        ),
-      ),
+          color: context.color.secondaryColor,
+          borderRadius: BorderRadius.circular(1),
+          border: Border.all(
+            color: context.color.borderColor,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 10,
+              spreadRadius: 3,
+              offset: Offset(5, 5), // x, y
+            ),
+          ]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -1190,6 +1194,7 @@ class ItemsListState extends State<ItemsList> {
           /// 🍎 iOS style toggle
           CupertinoSwitch(
             value: _showVerifiedOnly,
+            inactiveTrackColor: Colors.grey,
             activeTrackColor: context.color.territoryColor, // green when ON
             onChanged: (val) {
               setState(() {
@@ -1237,7 +1242,7 @@ class ItemsListState extends State<ItemsList> {
     return AnnotatedRegion(
       value: UiUtils.getSystemUiOverlayStyle(
         context: context,
-        statusBarColor: context.color.backgroundColor,
+        statusBarColor: Colors.transparent,
       ),
       child: PopScope(
         canPop: true,
@@ -1248,6 +1253,7 @@ class ItemsListState extends State<ItemsList> {
           backgroundColor: context.color.backgroundColor,
           appBar: UiUtils.buildAppBar(context,
               showBackButton: true,
+              backgroundColor: context.color.backgroundColor,
               title: selectedcategoryName == ""
                   ? widget.categoryName
                   : selectedcategoryName),
@@ -1312,7 +1318,7 @@ class ItemsListState extends State<ItemsList> {
 
   Container bottomWidget() {
     return Container(
-      color: context.color.secondaryColor,
+      color: Colors.transparent,
       padding: const EdgeInsets.only(top: 3, bottom: 15),
       height: 70,
       width: double.infinity,
@@ -1571,7 +1577,7 @@ class ItemsListState extends State<ItemsList> {
         builder: (context, state) {
       if (state is FetchItemFromCategoryInProgress) {
         return ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
           itemCount: 10,
           itemBuilder: (context, index) {
             return buildItemsShimmer(context);
@@ -2278,37 +2284,43 @@ class ItemsListState extends State<ItemsList> {
 
   Widget _buildSliverListSection(BuildContext context, int startIndex,
       int itemCount, List<ItemModel> items) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          ItemModel item = items[startIndex + index];
-          return GestureDetector(
-            onTap: () => _navigateToDetails(context, item),
-            child: ItemHorizontalCard(item: item),
-          );
-        },
-        childCount: itemCount,
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            ItemModel item = items[startIndex + index];
+            return GestureDetector(
+              onTap: () => _navigateToDetails(context, item),
+              child: ItemHorizontalCard(item: item),
+            );
+          },
+          childCount: itemCount,
+        ),
       ),
     );
   }
 
   Widget _buildSliverGridSection(BuildContext context, int startIndex,
       int itemCount, List<ItemModel> items) {
-    return SliverGrid(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
-          crossAxisCount: 2,
-          height: MediaQuery.of(context).size.height / 3.9.rh(context),
-          mainAxisSpacing: 7,
-          crossAxisSpacing: 5),
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          ItemModel item = items[startIndex + index];
-          return GestureDetector(
-            onTap: () => _navigateToDetails(context, item),
-            child: ItemCard(item: item, radius: 5),
-          );
-        },
-        childCount: itemCount,
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      sliver: SliverGrid(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+            crossAxisCount: 2,
+            height: MediaQuery.of(context).size.height / 3.9.rh(context),
+            mainAxisSpacing: 7,
+            crossAxisSpacing: 5),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            ItemModel item = items[startIndex + index];
+            return GestureDetector(
+              onTap: () => _navigateToDetails(context, item),
+              child: ItemCard(item: item, radius: 5),
+            );
+          },
+          childCount: itemCount,
+        ),
       ),
     );
   }

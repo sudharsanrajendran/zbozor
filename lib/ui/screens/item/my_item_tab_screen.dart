@@ -40,6 +40,7 @@ class _MyItemTabState extends CloudState<MyItemTab>
     with AutomaticKeepAliveClientMixin {
   late final ScrollController _pageScrollController = ScrollController();
   StreamSubscription? _itemAddedSubscription;
+  StreamSubscription? _itemUpdateSubscription;
 
   @override
   bool get wantKeepAlive => true;
@@ -61,6 +62,15 @@ class _MyItemTabState extends CloudState<MyItemTab>
               );
         }
       });
+
+      _itemUpdateSubscription = EventBus().onItemUpdate.listen((_) {
+        if (mounted) {
+          context.read<FetchMyItemsCubit>().fetchMyItems(
+                getItemsWithStatus: widget.getItemsWithStatus,
+                forceRefresh: true,
+              );
+        }
+      });
     }
 
     super.initState();
@@ -69,6 +79,7 @@ class _MyItemTabState extends CloudState<MyItemTab>
   @override
   void dispose() {
     _itemAddedSubscription?.cancel();
+    _itemUpdateSubscription?.cancel();
     _pageScrollController.dispose();
     super.dispose();
   }

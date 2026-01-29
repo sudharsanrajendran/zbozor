@@ -30,7 +30,7 @@ class CategoryWidgetHome extends StatelessWidget {
           }
 
           return Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

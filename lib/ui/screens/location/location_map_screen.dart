@@ -345,7 +345,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                           width: 300,
                           decoration: BoxDecoration(
                               color: context.color.backgroundColor,
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
                                     color: context.color.borderColor
@@ -405,7 +405,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                   },
                   buttonTitle: "Reset".translate(context),
                   textColor: context.color.territoryColor,
-                  buttonColor: context.color.secondaryColor,
+                  buttonColor: context.color.backgroundColor,
                   border: BorderSide(color: context.color.territoryColor),
                   radius: 8,
                   height: 48,

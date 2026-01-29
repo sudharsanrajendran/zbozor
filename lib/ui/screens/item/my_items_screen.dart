@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'package:Ebozor/ui/screens/item/my_item_tab_screen.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:Ebozor/ui/screens/item/my_item_tab_screen.dart';
 import 'package:Ebozor/data/cubits/item/fetch_my_item_cubit.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -88,6 +89,15 @@ class MyItemState extends State<ItemsScreen> with TickerProviderStateMixin {
                       //itemScreenCurrentPage = index;
                       setState(() {});
                       _pageController.jumpToPage(index);
+
+                      // [FIX] Force refresh the selected tab
+                      String status = sections[index]['status'];
+                      if (myAdsCubitReference.containsKey(status)) {
+                        myAdsCubitReference[status]?.fetchMyItems(
+                          getItemsWithStatus: status,
+                          forceRefresh: true,
+                        );
+                      }
                     },
                     name: section['title'],
                     onDoubleTap: () {},

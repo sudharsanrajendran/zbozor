@@ -21,6 +21,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:Ebozor/utils/event_bus.dart';
+import 'dart:async';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
@@ -42,6 +44,7 @@ class _ChatListScreenState extends State<ChatListScreen>
   ScrollController chatBuyerScreenController = ScrollController();
   ScrollController chatSellerScreenController = ScrollController();
   int _selectedTabIndex = 0;
+  StreamSubscription? _chatListUpdateSubscription;
 
   String _formatDate(String dateString) {
     try {
@@ -85,9 +88,25 @@ class _ChatListScreenState extends State<ChatListScreen>
           }
         }
       });
+
+      _chatListUpdateSubscription = EventBus().onChatListUpdate.listen((_) {
+        if (mounted) {
+          if (_selectedTabIndex == 0) {
+            context.read<GetBuyerChatListCubit>().fetch(forceRefresh: true);
+          } else {
+            context.read<GetSellerChatListCubit>().fetch(forceRefresh: true);
+          }
+        }
+      });
     }
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _chatListUpdateSubscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -145,6 +164,11 @@ class _ChatListScreenState extends State<ChatListScreen>
         setState(() {
           _selectedTabIndex = index;
         });
+        if (index == 0) {
+          context.read<GetBuyerChatListCubit>().fetch(forceRefresh: true);
+        } else {
+          context.read<GetSellerChatListCubit>().fetch(forceRefresh: true);
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

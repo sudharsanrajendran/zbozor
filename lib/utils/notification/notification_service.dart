@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
 
 import 'dart:async';
-import 'dart:developer';
+
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/model/chat/chat_message_modal.dart';
 import 'package:Ebozor/ui/screens/chat/chat_audio/widgets/chat_widget.dart';
@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:Ebozor/ui/screens/my_review_screen.dart';
 import 'package:Ebozor/ui/screens/chat/chat_screen.dart';
+import 'package:Ebozor/utils/event_bus.dart';
 
 import 'package:Ebozor/ui/screens/main_activity.dart';
 import 'package:Ebozor/data/repositories/item/item_repository.dart';
@@ -98,6 +99,9 @@ class NotificationService {
     print("@notificaiton data is ${message?.data}****${notificationType}");
 
     if (notificationType == "chat" || notificationType == "offer") {
+      if (notificationType == "offer") {
+        EventBus().fireChatListUpdate();
+      }
       var username = message?.data['user_name'];
       var itemImage = message?.data['item_image'];
       var itemName = message?.data['item_name'];
@@ -110,61 +114,67 @@ class NotificationService {
       var itemOfferPrice = message?.data['item_offer_amount'];
       var userType = message?.data['user_type'];
 
-      if (userType == "Buyer") {
-        // Sender is Buyer -> I am Seller -> Update Seller List
-        (context as BuildContext).read<GetSellerChatListCubit>().addNewChat(
-              ChatedUser(
-                itemId: safeInt(itemId) ?? 0,
-                amount: getPrice(itemOfferPrice),
-                createdAt: date,
-                userBlocked: false,
-                id: safeInt(itemOfferId) ?? 0,
-                sellerId: HiveUtils.getUserId() != null
-                    ? int.tryParse(HiveUtils.getUserId()!)
-                    : 0, // Me
-                buyerId: safeInt(senderId) ?? 0, // Sender
-                updatedAt: date,
-                // For Seller List, we need Buyer details
-                buyer: Buyer(
-                  name: username,
-                  profile: userProfile,
-                  id: safeInt(senderId) ?? 0,
-                ),
-                item: Item(
-                  id: safeInt(itemId) ?? 0,
-                  price: getPrice((itemPrice)),
-                  name: itemName,
-                  image: itemImage,
-                ),
-              ),
-            );
-      } else {
-        // Sender is Seller -> I am Buyer -> Update Buyer List
-        (context as BuildContext).read<GetBuyerChatListCubit>().addNewChat(
-              ChatedUser(
-                itemId: safeInt(itemId) ?? 0,
-                userBlocked: false,
-                amount: getPrice(itemOfferPrice),
-                createdAt: date,
-                id: safeInt(itemOfferId) ?? 0,
-                buyerId: HiveUtils.getUserId() != null
-                    ? int.tryParse(HiveUtils.getUserId()!)
-                    : 0, // Me
-                sellerId: safeInt(senderId) ?? 0, // Sender
-                // For Buyer List, we need Seller details
-                seller: Seller(
-                  name: username,
-                  profile: userProfile,
-                  id: safeInt(senderId) ?? 0,
-                ),
-                item: Item(
-                  id: safeInt(itemId) ?? 0,
-                  price: getPrice((itemPrice)),
-                  name: itemName,
-                  image: itemImage,
-                ),
-              ),
-            );
+      try {
+        if (context != null) {
+          if (userType?.toLowerCase() == "buyer") {
+            // Sender is Buyer -> I am Seller -> Update Seller List
+            context.read<GetSellerChatListCubit>().addNewChat(
+                  ChatedUser(
+                    itemId: safeInt(itemId) ?? 0,
+                    amount: getPrice(itemOfferPrice),
+                    createdAt: date,
+                    userBlocked: false,
+                    id: safeInt(itemOfferId) ?? 0,
+                    sellerId: HiveUtils.getUserId() != null
+                        ? int.tryParse(HiveUtils.getUserId()!)
+                        : 0, // Me
+                    buyerId: safeInt(senderId) ?? 0, // Sender
+                    updatedAt: date,
+                    // For Seller List, we need Buyer details
+                    buyer: Buyer(
+                      name: username,
+                      profile: userProfile,
+                      id: safeInt(senderId) ?? 0,
+                    ),
+                    item: Item(
+                      id: safeInt(itemId) ?? 0,
+                      price: getPrice((itemPrice)),
+                      name: itemName,
+                      image: itemImage,
+                    ),
+                  ),
+                );
+          } else {
+            // Sender is Seller -> I am Buyer -> Update Buyer List
+            context.read<GetBuyerChatListCubit>().addNewChat(
+                  ChatedUser(
+                    itemId: safeInt(itemId) ?? 0,
+                    userBlocked: false,
+                    amount: getPrice(itemOfferPrice),
+                    createdAt: date,
+                    id: safeInt(itemOfferId) ?? 0,
+                    buyerId: HiveUtils.getUserId() != null
+                        ? int.tryParse(HiveUtils.getUserId()!)
+                        : 0, // Me
+                    sellerId: safeInt(senderId) ?? 0, // Sender
+                    // For Buyer List, we need Seller details
+                    seller: Seller(
+                      name: username,
+                      profile: userProfile,
+                      id: safeInt(senderId) ?? 0,
+                    ),
+                    item: Item(
+                      id: safeInt(itemId) ?? 0,
+                      price: getPrice((itemPrice)),
+                      name: itemName,
+                      image: itemImage,
+                    ),
+                  ),
+                );
+          }
+        }
+      } catch (e) {
+        print("Error updating chat list from notification: $e");
       }
 
       ///Checking if this is user we are chatiing with
@@ -204,6 +214,9 @@ class NotificationService {
         );
       }
     } else {
+      if (notificationType == "item-update") {
+        EventBus().fireItemUpdate();
+      }
       localNotification.createNotification(
         isLocked: false,
         notificationData: message!,

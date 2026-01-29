@@ -297,7 +297,7 @@ class StatesScreenState extends State<StatesScreen> {
           }
 
           return Padding(
-            padding: const EdgeInsets.only(top: 17),
+            padding: const EdgeInsets.only(top: 0),
             child: Container(
               color: Colors.transparent,
               child: SingleChildScrollView(
@@ -308,22 +308,18 @@ class StatesScreenState extends State<StatesScreen> {
                   children: [
                     /// ---------- HEADER (UNCHANGED) ----------
                     widget.from == "addItem"
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 18, vertical: 18),
-                            child: Text(
-                              "${"chooseLbl".translate(context)} ${"state".translate(context)}",
-                            )
-                                .color(context.color.textDefaultColor)
-                                .size(context.font.normal)
-                                .bold(weight: FontWeight.w600),
+                        ? Text(
+                            "${"chooseLbl".translate(context)} ${"state".translate(context)}",
                           )
+                            .color(context.color.textDefaultColor)
+                            .size(context.font.normal)
+                            .bold(weight: FontWeight.w600)
                         : SizedBox.shrink(),
 
                     /// ---------- POPULAR SEARCHES TITLE ----------
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, bottom: 12),
                       child: Row(
                         children: [
                           Icon(Icons.trending_up,

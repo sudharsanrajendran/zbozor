@@ -108,6 +108,11 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
         );
 
         chatedUserList.insert(0, user);
+
+        chatedUserList.sort((a, b) =>
+            DateTime.parse(b.updatedAt ?? b.createdAt!)
+                .compareTo(DateTime.parse(a.updatedAt ?? a.createdAt!)));
+
         emit(currentState.copyWith(
             chatedUserList: chatedUserList, total: chatedUserList.length));
       }

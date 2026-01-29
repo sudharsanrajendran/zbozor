@@ -687,12 +687,15 @@ class MainActivityState extends State<MainActivity>
                 imagePath,
                 height: 20,
                 width: 20,
+                color: currtab == index
+                    ? context.color.territoryColor
+                    : context.color.textLightColor.darken(30),
               ),
               Text(
                 title,
                 textAlign: TextAlign.center,
               ).color(currtab == index
-                  ? context.color.textDefaultColor
+                  ? context.color.territoryColor
                   : context.color.textLightColor.darken(30)),
             ],
           ),

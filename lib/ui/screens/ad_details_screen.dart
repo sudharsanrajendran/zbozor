@@ -63,6 +63,7 @@ import 'package:Ebozor/ui/screens/widgets/errors/something_went_wrong.dart';
 import 'package:Ebozor/ui/screens/widgets/shimmerLoadingContainer.dart';
 import 'package:Ebozor/ui/screens/widgets/video_view_screen.dart';
 import 'package:Ebozor/ui/screens/google_map_screen.dart';
+import 'package:Ebozor/utils/event_bus.dart';
 
 class AdDetailsScreen extends StatefulWidget {
   final ItemModel model;
@@ -2384,6 +2385,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
           listener: (context, state) {
             if (state is MakeAnOfferItemSuccess) {
               context.read<GetBuyerChatListCubit>().fetch(forceRefresh: true);
+              EventBus().fireChatListUpdate();
             }
           },
           child: InkWell(

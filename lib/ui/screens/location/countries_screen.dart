@@ -286,8 +286,8 @@ class CountriesScreenState extends State<CountriesScreen> {
                       arguments: {"from": widget.from});
                 },
                 child: Container(
-                  width: 42.rw(context),
-                  height: 42.rh(context),
+                  width: 42,
+                  height: 42,
                   margin: EdgeInsetsDirectional.only(end: sidePadding),
                   decoration: BoxDecoration(
                     border: Border.all(

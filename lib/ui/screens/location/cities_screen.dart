@@ -351,7 +351,7 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
           }
 
           return Padding(
-            padding: const EdgeInsets.only(top: 17),
+            padding: const EdgeInsets.only(top: 0),
             child: Container(
               color: Colors.transparent,
               child: SingleChildScrollView(
@@ -376,8 +376,8 @@ class CitiesScreenState extends CloudState<CitiesScreen> {
 
                     /// ---------- POPULAR SEARCHES ----------
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, bottom: 12),
                       child: Row(
                         children: [
                           Icon(Icons.trending_up,

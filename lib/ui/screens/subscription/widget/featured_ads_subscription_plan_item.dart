@@ -195,14 +195,24 @@ class _FeaturedAdsSubscriptionPlansItemState
                                         .modelList[selectedIndex!].finalPrice! >
                                     0) {
                                   if (Platform.isIOS) {
-                                    //_purchaseSubscription(widget.modelList[selectedIndex!]);
-                                    print(
-                                        "Attempting purchase with iOS Product ID: ${widget.modelList[selectedIndex!].iosProductId}");
-                                    widget.inAppPurchaseManager.buy(
-                                        widget.modelList[selectedIndex!]
-                                            .iosProductId!,
-                                        widget.modelList[selectedIndex!].id!
-                                            .toString());
+                                    paymentGatewayBottomSheet().then((value) {
+                                      context
+                                          .read<GetPaymentIntentCubit>()
+                                          .getPaymentIntent(
+                                              paymentMethod:
+                                                  _selectedGateway == "stripe"
+                                                      ? "Stripe"
+                                                      : _selectedGateway ==
+                                                              "paystack"
+                                                          ? "Paystack"
+                                                          : _selectedGateway ==
+                                                                  "razorpay"
+                                                              ? "Razorpay"
+                                                              : "PhonePe",
+                                              packageId: widget
+                                                  .modelList[selectedIndex!]
+                                                  .id!);
+                                    });
                                   } else {
                                     paymentGatewayBottomSheet().then((value) {
                                       context

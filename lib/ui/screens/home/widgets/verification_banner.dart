@@ -14,7 +14,7 @@ class VerificationBanner extends StatelessWidget {
             arguments: {"isResubmitted": false});
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         width: double.infinity,
         height: 190,
         decoration: BoxDecoration(

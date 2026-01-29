@@ -62,11 +62,11 @@ class CategoryHomeCard extends StatelessWidget {
               const SizedBox(height: 4),
               Container(
                 alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                 child: Text(
                   title,
                   textAlign: TextAlign.center,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 11, // Reduced font size for better fit

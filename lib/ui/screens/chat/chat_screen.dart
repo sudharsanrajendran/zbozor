@@ -106,6 +106,9 @@ class _ChatScreenState extends State<ChatScreen>
   late StreamSubscription notificationStreamSubsctription;
   bool isNotificationPermissionGranted = true;
   bool showRecordButton = true;
+  Timer? _itemStatusTimer;
+  bool _localAlreadyReviewed = false;
+  String _localStatus = "";
   int _rating = 0;
   final TextEditingController _feedbackController = TextEditingController();
   late final ScrollController _pageScrollController = ScrollController()
@@ -157,10 +160,55 @@ class _ChatScreenState extends State<ChatScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       print(
           "ChatScreen Debug: status=${widget.status}, isPurchased=${widget.isPurchased}, alreadyReview=${widget.alreadyReview}");
-      if (widget.status == "sold out" &&
+
+      _localAlreadyReviewed = widget.alreadyReview;
+      _localStatus = widget.status ?? "";
+
+      if (_localStatus == "sold out" &&
           widget.isPurchased == 1 &&
-          !widget.alreadyReview) {
+          !_localAlreadyReviewed) {
         ratingsAlertDialog();
+      }
+
+      _startItemStatusPolling();
+    });
+  }
+
+  void _startItemStatusPolling() {
+    if (widget.isPurchased != 1 ||
+        _localAlreadyReviewed ||
+        _localStatus == "sold out") {
+      return;
+    }
+
+    _itemStatusTimer?.cancel();
+    _itemStatusTimer =
+        Timer.periodic(const Duration(seconds: 4), (timer) async {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      if (_localAlreadyReviewed || _localStatus == "sold out") {
+        timer.cancel();
+        return;
+      }
+
+      try {
+        final output = await ItemRepository()
+            .fetchItemFromItemId(int.parse(widget.itemId));
+        if (output.modelList.isNotEmpty) {
+          final item = output.modelList.first;
+          if (item.status == "sold out" && _localStatus != "sold out") {
+            _localStatus = "sold out";
+            if (mounted) setState(() {});
+
+            ratingsAlertDialog();
+            timer.cancel();
+          }
+        }
+      } catch (e) {
+        debugPrint("Polling info: $e");
       }
     });
   }
@@ -176,6 +224,7 @@ class _ChatScreenState extends State<ChatScreen>
   void dispose() {
     notificationStreamSubsctription.cancel();
     _typingTimer?.cancel();
+    _itemStatusTimer?.cancel();
     super.dispose();
   }
 
@@ -214,6 +263,7 @@ class _ChatScreenState extends State<ChatScreen>
                 context
                     .read<GetBuyerChatListCubit>()
                     .updateAlreadyReview(int.tryParse(widget.itemId) ?? 0);
+                _localAlreadyReviewed = true;
                 HelperUtils.showSnackBarMessage(context, state.responseMessage);
               }
               if (state is AddItemReviewFailure) {

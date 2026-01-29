@@ -20,7 +20,7 @@ class HomeSearchField extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget buildSearchIcon() {
       return Padding(
-        padding: const EdgeInsetsDirectional.only(start: 16, end: 16),
+        padding: const EdgeInsetsDirectional.only(start: 6, end: 7),
         child: UiUtils.getSvg(
           AppIcons.search,
           color: context.color.territoryColor,
@@ -90,10 +90,13 @@ class HomeSearchField extends StatelessWidget {
                   arguments: {"from": "home"});
             },
             child: Container(
+              constraints: const BoxConstraints(
+                maxHeight: 24,
+                maxWidth: 24,
+              ),
+              padding: const EdgeInsets.all(2),
               child: Image.asset(
                 "assets/location_home.png",
-                width: 24,
-                height: 24,
                 fit: BoxFit.contain,
               ),
             ),
@@ -119,42 +122,46 @@ class HomeSearchField extends StatelessWidget {
                 onTap: () {
                   Navigator.pushNamed(context, Routes.notificationPage);
                 },
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    UiUtils.getSvg(
-                      AppIcons.notification,
-                      color: context.color.textLightColor,
-                      width: 32,
-                      height: 32,
-                    ),
-                    if (unreadCount > 0 && HiveUtils.isUserAuthenticated())
-                      PositionedDirectional(
-                        end: -2,
-                        top: -2,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: context.color.territoryColor,
-                            shape: BoxShape.circle,
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 16,
-                            minHeight: 16,
-                          ),
-                          child: Center(
-                            child: Text(
-                              unreadCount > 9 ? "9+" : unreadCount.toString(),
-                              style: TextStyle(
-                                color: context.color.buttonColor,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      UiUtils.getSvg(
+                        AppIcons.notification,
+                        color: context.color.textLightColor,
+                        width: 24,
+                        height: 24,
+                      ),
+                      if (unreadCount > 0 && HiveUtils.isUserAuthenticated())
+                        PositionedDirectional(
+                          end: -2,
+                          top: -2,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: context.color.territoryColor,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Center(
+                              child: Text(
+                                unreadCount > 9 ? "9+" : unreadCount.toString(),
+                                style: TextStyle(
+                                  color: context.color.buttonColor,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },

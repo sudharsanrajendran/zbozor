@@ -53,7 +53,7 @@ import 'package:Ebozor/ui/screens/home/widgets/home_shimmers.dart';
 import 'package:Ebozor/ui/screens/home/slider_widget.dart';
 import 'package:Ebozor/ui/screens/home/widgets/verification_banner.dart';
 
-const double sidePadding = 18;
+const double sidePadding = 16;
 
 class HomeScreen extends StatefulWidget {
   final String? from;

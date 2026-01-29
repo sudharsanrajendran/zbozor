@@ -485,243 +485,239 @@ class _ProfileScreenState extends State<ProfileScreen>
             body: SingleChildScrollView(
               controller: profileScreenController,
               physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18.0, vertical: 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const SizedBox(height: 16),
-                    profileHeader(),
-                    const SizedBox(height: 16),
-                    _buildActionRow(),
-                    const SizedBox(height: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const SizedBox(height: 16),
+                  profileHeader(),
+                  const SizedBox(height: 16),
+                  _buildActionRow(),
+                  const SizedBox(height: 10),
 
-                    // Group 1
-                    customTile(
-                      context,
-                      title: "transactionHistory".translate(context),
-                      svgImagePath: AppIcons.transaction,
-                      onTap: () {
-                        UiUtils.checkUser(
-                            onNotGuest: () {
-                              Navigator.pushNamed(
-                                  context, Routes.transactionHistory);
-                            },
-                            context: context);
-                      },
-                    ),
-                    customTile(
-                      context,
-                      title: "myReview".translate(context),
-                      svgImagePath: AppIcons.myReviewIcon,
-                      onTap: () {
-                        UiUtils.checkUser(
-                            onNotGuest: () {
-                              Navigator.pushNamed(
-                                  context, Routes.myReviewsScreen);
-                            },
-                            context: context);
-                      },
-                    ),
-                    const Divider(thickness: 0.5),
-
-                    // Group 2
-                    ValueListenableBuilder(
-                        valueListenable: isDarkTheme,
-                        builder: (context, v, c) {
-                          return customTile(
-                            context,
-                            title: "darkTheme".translate(context),
-                            svgImagePath: AppIcons.darkTheme,
-                            isSwitchBox: true,
-                            // For minimalist design, maybe we want an arrow for everything else, and switch for this
-                            onTapSwitch: (value) {
-                              context.read<AppThemeCubit>().changeTheme(
-                                  value == true
-                                      ? AppTheme.dark
-                                      : AppTheme.light);
-                              setState(() {
-                                isDarkTheme.value = value;
-                              });
-                            },
-                            switchValue: v,
-                            onTap: () {},
-                          );
-                        }),
-                    customTile(
-                      context,
-                      title: "language".translate(context),
-                      svgImagePath: AppIcons.language,
-                      onTap: () {
-                        Navigator.pushNamed(
-                            context, Routes.languageListScreenRoute);
-                      },
-                    ),
-                    const Divider(thickness: 0.5),
-
-                    // Group 3
-                    customTile(
-                      context,
-                      title: "blogs".translate(context),
-                      svgImagePath: AppIcons.articles,
-                      onTap: () {
-                        UiUtils.checkUser(
-                            onNotGuest: () {
-                              Navigator.pushNamed(
-                                context,
-                                Routes.blogsScreenRoute,
-                              );
-                            },
-                            context: context);
-                      },
-                    ),
-                    customTile(
-                      context,
-                      title: "favorites".translate(context),
-                      svgImagePath: AppIcons.favorites,
-                      onTap: () {
-                        UiUtils.checkUser(
-                            onNotGuest: () {
-                              Navigator.pushNamed(
-                                  context, Routes.favoritesScreen);
-                            },
-                            context: context);
-                      },
-                    ),
-                    customTile(
-                      context,
-                      title: "faqsLbl".translate(context),
-                      svgImagePath: AppIcons.faqsIcon,
-                      onTap: () {
-                        UiUtils.checkUser(
-                            onNotGuest: () {
-                              Navigator.pushNamed(
-                                context,
-                                Routes.faqsScreen,
-                              );
-                            },
-                            context: context);
-                      },
-                    ),
-                    customTile(
-                      context,
-                      title: "shareApp".translate(context),
-                      svgImagePath: AppIcons.shareApp,
-                      onTap: shareApp,
-                    ),
-                    customTile(
-                      context,
-                      title: "rateUs".translate(context),
-                      svgImagePath: AppIcons.rateUs,
-                      onTap: rateUs,
-                    ),
-                    customTile(
-                      context,
-                      title: "contactUs".translate(context),
-                      svgImagePath: AppIcons.contactUs,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.contactUs,
-                        );
-                      },
-                    ),
-                    customTile(
-                      context,
-                      title: "aboutUs".translate(context),
-                      svgImagePath: AppIcons.aboutUs,
-                      onTap: () {
-                        Navigator.pushNamed(context, Routes.profileSettings,
-                            arguments: {
-                              'title': "aboutUs".translate(context),
-                              'param': Api.aboutUs
-                            });
-                      },
-                    ),
-                    customTile(
-                      context,
-                      title: "termsConditions".translate(context),
-                      svgImagePath: AppIcons.terms,
-                      onTap: () {
-                        Navigator.pushNamed(context, Routes.profileSettings,
-                            arguments: {
-                              'title': "termsConditions".translate(context),
-                              'param': Api.termsAndConditions
-                            });
-                      },
-                    ),
-                    customTile(
-                      context,
-                      title: "privacyPolicy".translate(context),
-                      svgImagePath: AppIcons.privacy,
-                      onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          Routes.profileSettings,
-                          arguments: {
-                            'title': "privacyPolicy".translate(context),
-                            'param': Api.privacyPolicy
+                  // Group 1
+                  customTile(
+                    context,
+                    title: "transactionHistory".translate(context),
+                    svgImagePath: AppIcons.transaction,
+                    onTap: () {
+                      UiUtils.checkUser(
+                          onNotGuest: () {
+                            Navigator.pushNamed(
+                                context, Routes.transactionHistory);
                           },
+                          context: context);
+                    },
+                  ),
+                  customTile(
+                    context,
+                    title: "myReview".translate(context),
+                    svgImagePath: AppIcons.myReviewIcon,
+                    onTap: () {
+                      UiUtils.checkUser(
+                          onNotGuest: () {
+                            Navigator.pushNamed(
+                                context, Routes.myReviewsScreen);
+                          },
+                          context: context);
+                    },
+                  ),
+                  const Divider(thickness: 0.5),
+
+                  // Group 2
+                  ValueListenableBuilder(
+                      valueListenable: isDarkTheme,
+                      builder: (context, v, c) {
+                        return customTile(
+                          context,
+                          title: "darkTheme".translate(context),
+                          svgImagePath: AppIcons.darkTheme,
+                          isSwitchBox: true,
+                          // For minimalist design, maybe we want an arrow for everything else, and switch for this
+                          onTapSwitch: (value) {
+                            context.read<AppThemeCubit>().changeTheme(
+                                value == true
+                                    ? AppTheme.dark
+                                    : AppTheme.light);
+                            setState(() {
+                              isDarkTheme.value = value;
+                            });
+                          },
+                          switchValue: v,
+                          onTap: () {},
                         );
+                      }),
+                  customTile(
+                    context,
+                    title: "language".translate(context),
+                    svgImagePath: AppIcons.language,
+                    onTap: () {
+                      Navigator.pushNamed(
+                          context, Routes.languageListScreenRoute);
+                    },
+                  ),
+                  const Divider(thickness: 0.5),
+
+                  // Group 3
+                  customTile(
+                    context,
+                    title: "blogs".translate(context),
+                    svgImagePath: AppIcons.articles,
+                    onTap: () {
+                      UiUtils.checkUser(
+                          onNotGuest: () {
+                            Navigator.pushNamed(
+                              context,
+                              Routes.blogsScreenRoute,
+                            );
+                          },
+                          context: context);
+                    },
+                  ),
+                  customTile(
+                    context,
+                    title: "favorites".translate(context),
+                    svgImagePath: AppIcons.favorites,
+                    onTap: () {
+                      UiUtils.checkUser(
+                          onNotGuest: () {
+                            Navigator.pushNamed(
+                                context, Routes.favoritesScreen);
+                          },
+                          context: context);
+                    },
+                  ),
+                  customTile(
+                    context,
+                    title: "faqsLbl".translate(context),
+                    svgImagePath: AppIcons.faqsIcon,
+                    onTap: () {
+                      UiUtils.checkUser(
+                          onNotGuest: () {
+                            Navigator.pushNamed(
+                              context,
+                              Routes.faqsScreen,
+                            );
+                          },
+                          context: context);
+                    },
+                  ),
+                  customTile(
+                    context,
+                    title: "shareApp".translate(context),
+                    svgImagePath: AppIcons.shareApp,
+                    onTap: shareApp,
+                  ),
+                  customTile(
+                    context,
+                    title: "rateUs".translate(context),
+                    svgImagePath: AppIcons.rateUs,
+                    onTap: rateUs,
+                  ),
+                  customTile(
+                    context,
+                    title: "contactUs".translate(context),
+                    svgImagePath: AppIcons.contactUs,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.contactUs,
+                      );
+                    },
+                  ),
+                  customTile(
+                    context,
+                    title: "aboutUs".translate(context),
+                    svgImagePath: AppIcons.aboutUs,
+                    onTap: () {
+                      Navigator.pushNamed(context, Routes.profileSettings,
+                          arguments: {
+                            'title': "aboutUs".translate(context),
+                            'param': Api.aboutUs
+                          });
+                    },
+                  ),
+                  customTile(
+                    context,
+                    title: "termsConditions".translate(context),
+                    svgImagePath: AppIcons.terms,
+                    onTap: () {
+                      Navigator.pushNamed(context, Routes.profileSettings,
+                          arguments: {
+                            'title': "termsConditions".translate(context),
+                            'param': Api.termsAndConditions
+                          });
+                    },
+                  ),
+                  customTile(
+                    context,
+                    title: "privacyPolicy".translate(context),
+                    svgImagePath: AppIcons.privacy,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.profileSettings,
+                        arguments: {
+                          'title': "privacyPolicy".translate(context),
+                          'param': Api.privacyPolicy
+                        },
+                      );
+                    },
+                  ),
+
+                  if (Constant.isUpdateAvailable == true) ...[
+                    updateTile(
+                      context,
+                      isUpdateAvailable: Constant.isUpdateAvailable,
+                      title: "update".translate(context),
+                      newVersion: Constant.newVersionNumber,
+                      svgImagePath: AppIcons.update,
+                      onTap: () async {
+                        if (Platform.isIOS) {
+                          await launchUrl(Uri.parse(Constant.appstoreURLios));
+                        } else if (Platform.isAndroid) {
+                          await launchUrl(
+                              Uri.parse(Constant.playstoreURLAndroid));
+                        }
                       },
                     ),
-
-                    if (Constant.isUpdateAvailable == true) ...[
-                      updateTile(
-                        context,
-                        isUpdateAvailable: Constant.isUpdateAvailable,
-                        title: "update".translate(context),
-                        newVersion: Constant.newVersionNumber,
-                        svgImagePath: AppIcons.update,
-                        onTap: () async {
-                          if (Platform.isIOS) {
-                            await launchUrl(Uri.parse(Constant.appstoreURLios));
-                          } else if (Platform.isAndroid) {
-                            await launchUrl(
-                                Uri.parse(Constant.playstoreURLAndroid));
-                          }
-                        },
-                      ),
-                    ],
-
-                    // Delete Account
-
-                    if (HiveUtils.isUserAuthenticated()) ...[
-                      customTile(context,
-                          title: "deleteAccount".translate(context),
-                          svgImagePath: AppIcons.delete, onTap: () {
-                        if (Constant.isDemoModeOn) {
-                          if (HiveUtils.getUserDetails().mobile !=
-                              null) if (Constant
-                                  .demoMobileNumber ==
-                              (HiveUtils.getUserDetails().mobile!.replaceFirst(
-                                  "+${HiveUtils.getCountryCode()}", ""))) {
-                            HelperUtils.showSnackBarMessage(context,
-                                "thisActionNotValidDemo".translate(context));
-                            return;
-                          }
-                        }
-                        deleteConfirmWidget();
-                      },
-                          textColor: context.color
-                              .textColorDark, // Optional: highlight delete
-                          iconColor: context.color.textDefaultColor),
-                    ],
-                    if (HiveUtils.isUserAuthenticated()) ...[
-                      SizedBox(height: 10),
-                      Center(
-                          child: TextButton(
-                              onPressed: () {
-                                logOutConfirmWidget();
-                              },
-                              child: Text("logout".translate(context))
-                                  .color(context.color.territoryColor)
-                                  .bold()))
-                    ],
-                    const SizedBox(height: 16),
                   ],
-                ),
+
+                  // Delete Account
+
+                  if (HiveUtils.isUserAuthenticated()) ...[
+                    customTile(context,
+                        title: "deleteAccount".translate(context),
+                        svgImagePath: AppIcons.delete, onTap: () {
+                      if (Constant.isDemoModeOn) {
+                        if (HiveUtils.getUserDetails().mobile !=
+                            null) if (Constant
+                                .demoMobileNumber ==
+                            (HiveUtils.getUserDetails().mobile!.replaceFirst(
+                                "+${HiveUtils.getCountryCode()}", ""))) {
+                          HelperUtils.showSnackBarMessage(context,
+                              "thisActionNotValidDemo".translate(context));
+                          return;
+                        }
+                      }
+                      deleteConfirmWidget();
+                    },
+                        textColor: context.color
+                            .textColorDark, // Optional: highlight delete
+                        iconColor: context.color.textDefaultColor),
+                  ],
+                  if (HiveUtils.isUserAuthenticated()) ...[
+                    SizedBox(height: 10),
+                    Center(
+                        child: TextButton(
+                            onPressed: () {
+                              logOutConfirmWidget();
+                            },
+                            child: Text("logout".translate(context))
+                                .color(context.color.territoryColor)
+                                .bold()))
+                  ],
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
           ),
@@ -832,7 +828,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       dynamic switchValue,
       required VoidCallback onTap}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: 16,horizontal: 16),
       child: Container(
         constraints: const BoxConstraints(minHeight: 38),
         margin: const EdgeInsets.only(top: 0.5, bottom: 3),
