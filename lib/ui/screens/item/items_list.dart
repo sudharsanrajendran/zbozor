@@ -1079,12 +1079,23 @@ class ItemsListState extends State<ItemsList> {
                             print(
                                 "**** selectedChild: ${selectedChild?.id} - ${selectedChild?.name}");
 
-                            Navigator.pop(context);
                             if (selectedParent != null) {
+                              // [MODIFIED] Update state BEFORE closing bottom sheet
                               _updateSelection(chainIndex, selectedParent!);
                               if (selectedChild != null) {
                                 _updateSelection(
                                     chainIndex + 1, selectedChild!);
+                              } else {
+                                // [NEW] Remove child from chain if not selected
+                                // This ensures dynamic chip shows "All" instead of old subcategory
+                                setState(() {
+                                  if (_currentChain.length > chainIndex + 1) {
+                                    _currentChain.removeRange(
+                                        chainIndex + 1, _currentChain.length);
+                                    print(
+                                        "**** REMOVED CHILD FROM CHAIN - Chain length now: ${_currentChain.length}");
+                                  }
+                                });
                               }
 
                               // [NEW] Force API call with bottom sheet selected category ID
@@ -1100,8 +1111,12 @@ class ItemsListState extends State<ItemsList> {
                                       search: searchController.text,
                                       forceRefresh: true);
                               print("**** API CALL EXECUTED");
+
+                              // Close bottom sheet AFTER state updates
+                              Navigator.pop(context);
                             } else {
                               print("**** ERROR: selectedParent is null!");
+                              Navigator.pop(context);
                             }
                           },
                           child: BlocBuilder<FetchItemCountCubit,
