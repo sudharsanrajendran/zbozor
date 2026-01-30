@@ -115,10 +115,10 @@ class CustomFieldDropdown extends CustomField {
                 width: double.infinity,
                 child: DropdownButtonFormField(
                   validator: (value) {
-                    if (parameters['required'] == 1 &&
+                    /* if (parameters['required'] == 1 &&
                         (selected == "" || selected == null)) {
                       return "This field is required"; // Return validation message if not selected
-                    }
+                    }*/
                     return null;
                   },
 

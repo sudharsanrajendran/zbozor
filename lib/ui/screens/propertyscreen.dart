@@ -953,12 +953,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   }
 
   void _onShowResults() {
-    // 1. Validate Property Type
-    if (_selectedPropertyType == null) {
-      HelperUtils.showSnackBarMessage(
-          context, "Please select a Property Type".translate(context));
-      return;
-    }
+
 
     // 2. Validate chain completion (Ensure user didn't stop at a parent category)
     CategoryModel lastSelected;
@@ -992,16 +987,12 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                 _selectedFilters[minKey] != null &&
                 _selectedFilters[minKey].toString().isNotEmpty;
 
-            if (!isMinSet) {
-              HelperUtils.showSnackBarMessage(
-                  context, "Please select range for ${filter.name}");
-              return;
-            }
           }
           // Other Filters Check
           else {
+            /*
             if (!_selectedFilters.containsKey(filter.name) ||
-                _selectedFilters[filter.name] == null ||
+                _selectedFilters[filter.name]  ||
                 (_selectedFilters[filter.name] is String &&
                     (_selectedFilters[filter.name] as String).isEmpty) ||
                 (_selectedFilters[filter.name] is List &&
@@ -1010,6 +1001,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                   context, "Please select ${filter.name}");
               return;
             }
+            */
           }
         }
       }

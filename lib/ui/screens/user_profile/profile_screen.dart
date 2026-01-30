@@ -268,12 +268,18 @@ class _ProfileScreenState extends State<ProfileScreen>
                     InkWell(
                       onTap: () {
                         Navigator.pop(context);
-                        if ((state as dynamic)?.data?.status != "approved") {
-                          Navigator.pushNamed(context,
-                              Routes.sellerIntroVerificationScreen, arguments: {
-                            "isResubmitted":
-                                (state as dynamic)?.data?.status == 'rejected'
-                          });
+                        bool isApproved = false;
+                        bool isRejected = false;
+
+                        if (state is FetchVerificationRequestSuccess) {
+                          isApproved = state.data.status == "approved";
+                          isRejected = state.data.status == "rejected";
+                        }
+
+                        if (!isApproved) {
+                          Navigator.pushNamed(
+                              context, Routes.sellerIntroVerificationScreen,
+                              arguments: {"isResubmitted": isRejected});
                         }
                       },
                       child: Container(
@@ -413,9 +419,16 @@ class _ProfileScreenState extends State<ProfileScreen>
                             if (HiveUtils.isUserAuthenticated())
                               GestureDetector(
                                 onTap: () {
-                                  if ((state as dynamic)?.data?.status !=
-                                      "approved") {
-                                    _showGetVerificationBottomSheet(context, state);
+                                  bool isApproved = false;
+                                  if (state
+                                      is FetchVerificationRequestSuccess) {
+                                    isApproved =
+                                        state.data.status == "approved";
+                                  }
+
+                                  if (!isApproved) {
+                                    _showGetVerificationBottomSheet(
+                                        context, state);
                                   }
                                 },
                                 //// ve
@@ -432,8 +445,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        (HiveUtils.getUserDetails().isVerified == 1)
-                                            ? "verifiedSimple".translate(context)
+                                        (HiveUtils.getUserDetails()
+                                                    .isVerified ==
+                                                1)
+                                            ? "verifiedSimple"
+                                                .translate(context)
                                             : "getVerified".translate(context),
                                         style: TextStyle(
                                           fontSize: context.font.small,
@@ -543,9 +559,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           // For minimalist design, maybe we want an arrow for everything else, and switch for this
                           onTapSwitch: (value) {
                             context.read<AppThemeCubit>().changeTheme(
-                                value == true
-                                    ? AppTheme.dark
-                                    : AppTheme.light);
+                                value == true ? AppTheme.dark : AppTheme.light);
                             setState(() {
                               isDarkTheme.value = value;
                             });
@@ -709,8 +723,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                       }
                       deleteConfirmWidget();
                     },
-                        textColor: context.color
-                            .textColorDark, // Optional: highlight delete
+                        textColor: context
+                            .color.textColorDark, // Optional: highlight delete
                         iconColor: context.color.textDefaultColor),
                   ],
                   if (HiveUtils.isUserAuthenticated()) ...[
@@ -836,7 +850,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       dynamic switchValue,
       required VoidCallback onTap}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 0),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0),
       child: Container(
         constraints: const BoxConstraints(minHeight: 38),
         margin: const EdgeInsets.only(top: 0.5, bottom: 3),

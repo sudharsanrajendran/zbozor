@@ -87,7 +87,7 @@ class CustomNumberField extends CustomField {
               ],
               action: TextInputAction.next,
               keyboardType: TextInputType.number,
-              required: parameters['required'] == 1 ? true : false,
+              required: false, // parameters['required'] == 1 ? true : false,
               id: parameters['id'],
             ),
           ],

@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'dart:io';
+import 'package:flutter/cupertino.dart';
+import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:Ebozor/app/routes.dart';
@@ -26,7 +27,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 
 import 'package:Ebozor/data/model/category_model.dart';
-
 
 class AddItemDetails extends StatefulWidget {
   final List<CategoryModel>? breadCrumbItems;
@@ -219,7 +219,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                         .map((element) => element as File)
                         .toList();
 
-                    if (_pickTitleImage.pickedFile == null &&
+/*                    if (_pickTitleImage.pickedFile == null &&
                         titleImageURL == "") {
                       UiUtils.showBlurredDialoge(
                         context,
@@ -244,7 +244,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                         ),
                       );
                       return;
-                    }
+                    }*/
 
                     if (mixedItemImageList.length > 5) {
                       UiUtils.showBlurredDialoge(
@@ -407,7 +407,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                       CustomTextFormField(
                         controller: adTitleController,
                         // controller: _itemNameController,
-                        validator: CustomTextFieldValidator.nullCheck,
+                        // validator: CustomTextFieldValidator.nullCheck,
                         action: TextInputAction.next,
                         capitalization: TextCapitalization.sentences,
                         hintText: isJob
@@ -438,7 +438,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                           );
                         },
                         // controller: _itemNameController,
-                        validator: CustomTextFieldValidator.slug,
+                        // validator: CustomTextFieldValidator.slug,
                         action: TextInputAction.next,
                         hintText: "adSlugHere".translate(context),
                         hintTextStyle: TextStyle(
@@ -458,7 +458,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
 
                         action: TextInputAction.newline,
                         // controller: _descriptionController,
-                        validator: CustomTextFieldValidator.nullCheck,
+                        // validator: CustomTextFieldValidator.nullCheck,
                         capitalization: TextCapitalization.sentences,
                         hintText: "writeSomething".translate(context),
                         maxLine: 100,
@@ -542,7 +542,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                           ],
                           isReadOnly: false,
                           keyboard: TextInputType.number,
-                          validator: CustomTextFieldValidator.nullCheck,
+                          // validator: CustomTextFieldValidator.nullCheck,
                           hintText: "00",
                           hintTextStyle: TextStyle(
                               color: context.color.textDefaultColor
@@ -566,7 +566,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                         ],
                         isReadOnly: false,
                         keyboard: TextInputType.phone,
-                        validator: CustomTextFieldValidator.phoneNumber,
+                        // validator: CustomTextFieldValidator.phoneNumber,
                         hintText: "9876543210",
                         hintTextStyle: TextStyle(
                             color:
@@ -583,7 +583,7 @@ class _AddItemDetailsState extends CloudState<AddItemDetails> {
                         ),
                         CustomTextFormField(
                           controller: adAdditionalDetailsController,
-                          validator: CustomTextFieldValidator.url,
+                          // validator: CustomTextFieldValidator.url,
                           // prefix: Text("${Constant.currencySymbol} "),
                           // controller: _videoLinkController,
                           // isReadOnly: widget.properyDetails != null,

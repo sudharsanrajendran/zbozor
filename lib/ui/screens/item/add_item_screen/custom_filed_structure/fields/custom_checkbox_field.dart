@@ -35,7 +35,7 @@ class CustomCheckboxField extends CustomField {
   Widget render() {
     return CustomValidator<List>(
       validator: (List? value) {
-        if (parameters['required'] != 1) {
+        /*if (parameters['required'] != 1) {
           return null;
         }
 
@@ -47,7 +47,8 @@ class CustomCheckboxField extends CustomField {
           return null;
         }
 
-        return "pleaseSelectValue".translate(context);
+        return "pleaseSelectValue".translate(context);*/
+        return null;
       },
       builder: (state) {
         return Column(
@@ -155,7 +156,8 @@ class CustomCheckboxField extends CustomField {
                                   ),
                                   Text(value).color(isChecked
                                       ? context.color.territoryColor
-                                      : context.color.textDefaultColor.withOpacity(0.5)),
+                                      : context.color.textDefaultColor
+                                          .withOpacity(0.5)),
                                 ],
                               ),
                             ),

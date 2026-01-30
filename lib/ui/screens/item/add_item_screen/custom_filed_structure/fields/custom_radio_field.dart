@@ -178,10 +178,10 @@ class CustomRadioField extends CustomField {
         // Check if the field is required
 
         // Check if the value is null or empty (no selection made)
-        if (parameters['required'] == 1 &&
+        /*if (parameters['required'] == 1 &&
             (selectedRadioValue == null || selectedRadioValue!.isEmpty)) {
           return "Selecting this is required"; // Return the error message if no selection
-        }
+        }*/
 
         // If a valid selection is made, return null to indicate no error
         return null;

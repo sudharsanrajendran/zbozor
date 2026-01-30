@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:Ebozor/app/routes.dart';
@@ -291,80 +292,45 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
           bottomNavigationBar: Padding(
             padding: const EdgeInsets.only(bottom: 30, left: 18.0, right: 18),
             child: UiUtils.buildButton(context, onPressed: () async {
-              if (formatedAddress == null ||
-                  ((formatedAddress!.city == "" ||
-                          formatedAddress!.city == null) &&
-                      (formatedAddress!.area == "" ||
-                          formatedAddress!.area == null))) {
-                HelperUtils.showSnackBarMessage(
-                    context, "cityRequired".translate(context));
-                Future.delayed(Duration(seconds: 2), () {
-                  dialogueBottomSheet(
-                      controller: cityTextController,
-                      title: "enterCity".translate(context),
-                      hintText: "city".translate(context),
-                      from: 1);
-                });
-              } else if (formatedAddress == null ||
-                  (formatedAddress!.country == "" ||
-                      formatedAddress!.country == null)) {
-                HelperUtils.showSnackBarMessage(
-                    context, "countryRequired".translate(context));
-                Future.delayed(Duration(seconds: 2), () {
-                  dialogueBottomSheet(
-                      controller: countryTextController,
-                      title: "enterCountry".translate(context),
-                      hintText: "country".translate(context),
-                      from: 3);
-                });
-              } else {
-                try {
-                  Map<String, dynamic> cloudData =
-                      getCloudData("with_more_details") ?? {};
+              // [MODIFIED] Validation Removed - Proceed directly
+              try {
+                Map<String, dynamic> cloudData =
+                    getCloudData("with_more_details") ?? {};
 
-                  cloudData['address'] = formatedAddress?.mixed;
-                  if (latitude != null) cloudData['latitude'] = latitude;
-                  if (longitude != null) cloudData['longitude'] = longitude;
-                  cloudData['country'] = formatedAddress!.country;
-                  cloudData['city'] = (formatedAddress!.city == "" ||
-                          formatedAddress!.city == null)
-                      ? (formatedAddress!.area == "" ||
-                              formatedAddress!.area == null
-                          ? null
-                          : formatedAddress!.area)
-                      : formatedAddress!.city;
-                  cloudData['state'] = formatedAddress!.state;
-                  if (formatedAddress!.areaId != null)
-                    cloudData['area_id'] = formatedAddress!.areaId;
+                cloudData['address'] = formatedAddress?.mixed;
+                if (latitude != null) cloudData['latitude'] = latitude;
+                if (longitude != null) cloudData['longitude'] = longitude;
+                cloudData['country'] = formatedAddress!.country;
+                cloudData['city'] = (formatedAddress!.city == "" ||
+                        formatedAddress!.city == null)
+                    ? (formatedAddress!.area == "" ||
+                            formatedAddress!.area == null
+                        ? null
+                        : formatedAddress!.area)
+                    : formatedAddress!.city;
+                cloudData['state'] = formatedAddress!.state;
+                if (formatedAddress!.areaId != null)
+                  cloudData['area_id'] = formatedAddress!.areaId;
 
-                  if (widget.isEdit == true) {
-                    context.read<ManageItemCubit>().manage(ManageItemType.edit,
-                        cloudData, widget.mainImage, widget.otherImage!);
-                    return;
-                  } else {
-                    context.read<ManageItemCubit>().manage(ManageItemType.add,
-                        cloudData, widget.mainImage!, widget.otherImage!);
-                    return;
-                  }
-                } catch (e, st) {
-                  throw st;
+                if (widget.isEdit == true) {
+                  context.read<ManageItemCubit>().manage(ManageItemType.edit,
+                      cloudData, widget.mainImage, widget.otherImage!);
+                  return;
+                } else {
+                  context.read<ManageItemCubit>().manage(ManageItemType.add,
+                      cloudData, widget.mainImage!, widget.otherImage!);
+                  return;
                 }
+              } catch (e, st) {
+                throw st;
               }
-
-              return;
             },
                 height: 48.rh(context),
                 fontSize: context.font.large,
                 autoWidth: false,
                 radius: 8,
                 disabledColor: const Color.fromARGB(255, 104, 102, 106),
-                disabled: (formatedAddress == null ||
-                    ((formatedAddress!.city == "" ||
-                            formatedAddress!.city == null) &&
-                        (formatedAddress!.area == "" ||
-                            formatedAddress!.area == null)) ||
-                    (formatedAddress!.country == "" ||
-                        formatedAddress!.country == null)),
+                disabled: false, // [MODIFIED] Always enabled
                 width: double.maxFinite,
                 buttonTitle: "postNow".translate(context)),
           ),

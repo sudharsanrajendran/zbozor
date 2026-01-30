@@ -84,9 +84,9 @@ class CustomFileField extends CustomField {
   Widget render() {
     return CustomValidator(
       validator: (value) {
-        if (parameters['required'] == 1 && (value == null && picked == null)) {
+        /*if (parameters['required'] == 1 && (value == null && picked == null)) {
           return "pleaseSelectFile".translate(context);
-        }
+        }*/
         return null;
       },
       builder: (state) {

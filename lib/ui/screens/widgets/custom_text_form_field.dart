@@ -90,6 +90,12 @@ class CustomTextFormField extends StatelessWidget {
       maxLines: maxLine ?? 1,
       onChanged: onChange,
       validator: (String? value) {
+        // [NEW] Strictly enforce optionality
+        // If the field is explicitly marked as NOT required, skip all validation
+        if (isRequired == false) {
+          return null;
+        }
+
         if (validator == CustomTextFieldValidator.nullCheck) {
           return Validator.nullCheckValidator(value, context: context);
         }

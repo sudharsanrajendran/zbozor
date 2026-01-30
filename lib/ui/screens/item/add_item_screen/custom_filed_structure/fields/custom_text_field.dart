@@ -76,7 +76,7 @@ class CustomFieldText extends CustomField {
           value: initialValue,
           hintText: "",
           //"writeSomething".translate(context),
-          required: parameters['required'] == 1 ? true : false,
+          required: false, // parameters['required'] == 1 ? true : false,
           id: parameters['id'],
           maxLen: parameters['max_length'],
           maxLine: 3,

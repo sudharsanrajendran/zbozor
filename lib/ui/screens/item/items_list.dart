@@ -9,8 +9,7 @@ import 'package:Ebozor/data/cubits/item/fetch_item_count_cubit.dart'; // [New]
 import 'package:Ebozor/data/repositories/item/item_repository.dart'; // [New]
 import 'package:Ebozor/data/cubits/category/fetch_sub_categories_cubit.dart';
 import 'package:Ebozor/data/model/category_model.dart';
-import 'package:Ebozor/data/repositories/category_repository.dart'; // [Corrected]
-import 'package:Ebozor/data/model/data_output.dart'; // [New]
+
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
@@ -273,22 +272,12 @@ class ItemsListState extends State<ItemsList> {
     // Logic: User requested that when switching categories (e.g. Rent to Sale),
     // we should KEEP all existing filters (Price, Custom Fields like Bedrooms)
     // and ONLY change the Category ID.
-    Map<String, dynamic>? filtersToSend;
-
-    // Always attach existing custom fields
-    if (_selectedCustomFields.isNotEmpty) {
-      filtersToSend =
-          ItemFilterModel(customFields: _selectedCustomFields).customFields;
-    }
-
     _fetchItemCountCubit.fetchItemCount(
       categoryId: targetId,
       minPrice: minPrice,
       maxPrice: maxPrice,
       postedSince: postedSince,
-      filter: filtersToSend != null
-          ? ItemFilterModel(customFields: filtersToSend)
-          : null,
+      filter: ItemFilterModel(customFields: _selectedCustomFields),
       search: searchController.text,
     );
   }
@@ -1155,21 +1144,39 @@ class ItemsListState extends State<ItemsList> {
     );
   }
 
+  // [New] Helper to get the correct ID for fetching items
+  int _getCurrentFetchId() {
+    if (_currentChain.isEmpty) {
+      return int.tryParse(widget.categoryId) ?? 0;
+    }
+    // If last item is placeholder (-1), use the parent
+    if (_currentChain.last.id == -1) {
+      return _currentChain.length > 1
+          ? _currentChain[_currentChain.length - 2].id!
+          : int.tryParse(widget.categoryId) ?? 0;
+    }
+    return _currentChain.last.id!;
+  }
+
   void _updateSelection(int chainIndex, CategoryModel newSelection) async {
     final oldId =
         _currentChain.length > chainIndex ? _currentChain[chainIndex].id : -1;
     if (oldId == newSelection.id && !_isAllFieldsSelected) return;
 
     // [New] Smart Migration Logic: Capture potential child to restore
-    String? pendingChildName;
-    if (chainIndex == 0 && _currentChain.length > 1) {
-      pendingChildName = _currentChain[1].name;
-    }
 
     setState(() {
       _isAllFieldsSelected = false; // Reset All Fields flag
 
+      // [Modified] Always clear filters if ANY category in the chain changes
+      // This ensures we don't carry over invalid custom fields or filters to a new category.
+      _selectedCustomFields.clear();
+      filter = null;
+
       // 1. Save History for the OLD item being replaced
+      // [Modified] We no longer want to restore history, so we can skip saving it,
+      // or just save it but NEVER restore it. For now, let's just leave saving (useless)
+      // but DISABLE restoration below.
       if (_currentChain.length > chainIndex) {
         int currentOldId = _currentChain[chainIndex].id!;
         if (_currentChain.length > chainIndex + 1) {
@@ -1225,18 +1232,19 @@ class ItemsListState extends State<ItemsList> {
       }
 
       // 4. Restore History for the NEW item (if we visited it before)
-      if (_selectionHistory.containsKey(newSelection.id)) {
+      // [Modified] DISABLE History Restoration as per user request
+      /* if (_selectionHistory.containsKey(newSelection.id)) {
         if (_currentChain.length > chainIndex + 1 &&
             _currentChain[chainIndex + 1].id == -1) {
           _currentChain.removeAt(chainIndex + 1);
         }
         _currentChain.addAll(_selectionHistory[newSelection.id]!);
-      }
+      } */
     });
 
     // [New] Smart Migration Execution
     // If we have a pending name validation and NO history found (so we are at placeholder state)
-    if (pendingChildName != null &&
+    /* if (pendingChildName != null &&
         !_selectionHistory.containsKey(newSelection.id)) {
       try {
         // Fetch subcategories for the NEW parent
@@ -1267,7 +1275,7 @@ class ItemsListState extends State<ItemsList> {
       } catch (e) {
         print("Smart Migration Failed: $e");
       }
-    }
+    } */
 
     if (!mounted) return;
 
@@ -1295,6 +1303,7 @@ class ItemsListState extends State<ItemsList> {
 
       context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
           categoryId: fetchId, search: searchController.text);
+      _fetchCount(overrideCategoryId: fetchId);
     });
   }
 
@@ -1437,7 +1446,8 @@ class ItemsListState extends State<ItemsList> {
               Constant.itemFilter = null;
 
               context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
-                    categoryId: int.parse(widget.categoryId),
+                    categoryId:
+                        _getCurrentFetchId(), // [FIX] Use current selection
                     search: "",
                     forceRefresh: true, // [FIX] Force refresh
                   );
@@ -1630,9 +1640,8 @@ class ItemsListState extends State<ItemsList> {
                   context
                       .read<FetchItemFromCategoryCubit>()
                       .fetchItemFromCategory(
-                          categoryId: int.parse(
-                            widget.categoryId,
-                          ),
+                          categoryId:
+                              _getCurrentFetchId(), // [FIX] Use current selection
                           search: searchController.text.toString(),
                           filter: filter,
                           sortBy: null);
@@ -1657,9 +1666,8 @@ class ItemsListState extends State<ItemsList> {
                   context
                       .read<FetchItemFromCategoryCubit>()
                       .fetchItemFromCategory(
-                          categoryId: int.parse(
-                            widget.categoryId,
-                          ),
+                          categoryId:
+                              _getCurrentFetchId(), // [FIX] Use current selection
                           search: searchController.text.toString(),
                           filter: filter,
                           sortBy: "new-to-old");
@@ -1701,9 +1709,8 @@ class ItemsListState extends State<ItemsList> {
                   context
                       .read<FetchItemFromCategoryCubit>()
                       .fetchItemFromCategory(
-                          categoryId: int.parse(
-                            widget.categoryId,
-                          ),
+                          categoryId:
+                              _getCurrentFetchId(), // [FIX] Use current selection
                           search: searchController.text.toString(),
                           filter: filter,
                           sortBy: "price-high-to-low");
@@ -1723,9 +1730,8 @@ class ItemsListState extends State<ItemsList> {
                   context
                       .read<FetchItemFromCategoryCubit>()
                       .fetchItemFromCategory(
-                          categoryId: int.parse(
-                            widget.categoryId,
-                          ),
+                          categoryId:
+                              _getCurrentFetchId(), // [FIX] Use current selection
                           search: searchController.text.toString(),
                           filter: filter,
                           sortBy: "price-low-to-high");
@@ -1769,9 +1775,8 @@ class ItemsListState extends State<ItemsList> {
                 context
                     .read<FetchItemFromCategoryCubit>()
                     .fetchItemFromCategory(
-                        categoryId: int.parse(
-                          widget.categoryId,
-                        ),
+                        categoryId:
+                            _getCurrentFetchId(), // [FIX] Use current selection
                         search: searchController.text.toString());
               },
             ),
@@ -1801,9 +1806,8 @@ class ItemsListState extends State<ItemsList> {
                 context
                     .read<FetchItemFromCategoryCubit>()
                     .fetchItemFromCategory(
-                        categoryId: int.parse(
-                          widget.categoryId,
-                        ),
+                        categoryId:
+                            _getCurrentFetchId(), // [FIX] Use current selection
                         search: searchController.text.toString());
               },
             ),
