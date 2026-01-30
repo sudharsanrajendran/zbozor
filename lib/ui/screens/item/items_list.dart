@@ -794,11 +794,12 @@ class ItemsListState extends State<ItemsList> {
           // Initial fetch count for parent if present
           _fetchCount(overrideCategoryId: selectedParent?.id);
         }
-        if (_currentChain.length > chainIndex + 1) {
-          selectedChild = _currentChain[chainIndex + 1];
-          // Initial fetch count for child if present (overrides parent)
-          _fetchCount(overrideCategoryId: selectedChild?.id);
-        }
+        // [DISABLED] Auto-selection of child - user must manually select
+        // if (_currentChain.length > chainIndex + 1) {
+        //   selectedChild = _currentChain[chainIndex + 1];
+        //   // Initial fetch count for child if present (overrides parent)
+        //   _fetchCount(overrideCategoryId: selectedChild?.id);
+        // }
 
         return MultiBlocProvider(
           providers: [
@@ -936,15 +937,21 @@ class ItemsListState extends State<ItemsList> {
                                     child: _buildCategoryCard(
                                         context, cat, isSelected, () {
                                       setModalState(() {
-                                        if (selectedParent?.id != cat.id) {
-                                          selectedParent = cat;
-                                          selectedChild = null;
-                                          // Fetch children immediately
-                                          context
-                                              .read<FetchSubCategoriesCubit>()
-                                              .fetchSubCategories(
-                                                  categoryId: cat.id!);
-                                        }
+                                        // [MODIFIED] Always reset child when parent is selected
+                                        // This ensures subcategories are deselected when same parent is clicked
+                                        print(
+                                            "**** PARENT CLICKED: ${cat.id} - ${cat.name}");
+                                        print(
+                                            "**** BEFORE - selectedParent: ${selectedParent?.id}, selectedChild: ${selectedChild?.id}");
+                                        selectedParent = cat;
+                                        selectedChild = null;
+                                        print(
+                                            "**** AFTER - selectedParent: ${selectedParent?.id}, selectedChild: ${selectedChild?.id}");
+                                        // Fetch children immediately
+                                        context
+                                            .read<FetchSubCategoriesCubit>()
+                                            .fetchSubCategories(
+                                                categoryId: cat.id!);
                                       });
                                       // [NEW] Update count for parent
                                       _fetchCount(overrideCategoryId: cat.id);
@@ -1030,7 +1037,11 @@ class ItemsListState extends State<ItemsList> {
                                           child: _buildCategoryCard(
                                               context, cat, isSelected, () {
                                             setModalState(() {
+                                              print(
+                                                  "**** CHILD CLICKED: ${cat.id} - ${cat.name}");
                                               selectedChild = cat;
+                                              print(
+                                                  "**** selectedChild is now: ${selectedChild?.id}");
                                             });
                                             // [NEW] Update count for child
                                             _fetchCount(
