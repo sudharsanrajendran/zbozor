@@ -953,8 +953,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   }
 
   void _onShowResults() {
-
-
     // 2. Validate chain completion (Ensure user didn't stop at a parent category)
     CategoryModel lastSelected;
     if (_subCategoryPath.isNotEmpty) {
@@ -986,7 +984,6 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
             bool isMinSet = _selectedFilters.containsKey(minKey) &&
                 _selectedFilters[minKey] != null &&
                 _selectedFilters[minKey].toString().isNotEmpty;
-
           }
           // Other Filters Check
           else {
@@ -1061,6 +1058,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
             // If stored as comma string previously (defensive)
             currentSelection = rawSelection.split(',');
           }
+          print(
+              "**** AMENITIES CHIPS - Filter: ${filter.name}, currentSelection: $currentSelection, rawSelection: $rawSelection");
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1136,12 +1135,22 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                 alignment: AlignmentDirectional.centerStart,
                 child: InkWell(
                   onTap: () async {
+                    // [NEW] Get current item count from cubit
+                    int? currentItemCount;
+                    final countState = _fetchItemCountCubit.state;
+                    if (countState is FetchItemCountSuccess) {
+                      currentItemCount = countState.count;
+                    }
+                    print(
+                        "**** PROPERTY SCREEN - Passing itemCount to Amenities: $currentItemCount");
+
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => AmenitiesFilterScreen(
                           allAmenities: filter.values ?? [],
                           selectedAmenities: currentSelection,
+                          itemCount: currentItemCount, // [NEW] Pass the count
                         ),
                       ),
                     );
@@ -1150,11 +1159,18 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                       setState(() {
                         if (result.isEmpty) {
                           _selectedFilters.remove(filter.name);
+                          print(
+                              "**** AMENITIES RESULT - Removed all selections for ${filter.name}");
                         } else {
                           _selectedFilters[filter.name!] = result;
+                          print(
+                              "**** AMENITIES RESULT - Updated ${filter.name} with: $result");
                         }
                         _fetchCount();
                       });
+                    } else {
+                      print(
+                          "**** AMENITIES RESULT - No result or invalid result: $result");
                     }
                   },
                   child: Text(

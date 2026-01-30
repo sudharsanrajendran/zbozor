@@ -53,13 +53,13 @@ class HomeSectionsAdapter extends StatelessWidget {
           type: ListUiType.List,
           listAxis: Axis.horizontal,
           height: 210,
-          listSaperator: (_, __) => const SizedBox(width: 14),
+          listSaperator: (_, __) => const SizedBox(width: 10),
           builder: (context, index, _) {
             final item = section.sectionData![index];
             return ItemCard(
               item: item,
               width: 150,
-              radius: 6,
+              radius: 8,
             );
           },
           total: section.sectionData!.length,

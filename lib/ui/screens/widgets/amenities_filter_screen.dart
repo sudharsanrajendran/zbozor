@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 class AmenitiesFilterScreen extends StatefulWidget {
   final List<dynamic> allAmenities;
   final List<dynamic> selectedAmenities;
+  final int? itemCount; // [NEW] Optional item count from API
 
   const AmenitiesFilterScreen({
     Key? key,
     required this.allAmenities,
     required this.selectedAmenities,
+    this.itemCount, // [NEW] Optional parameter
   }) : super(key: key);
 
   @override
@@ -93,7 +95,14 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "${_filteredAmenities.length} Results",
+                () {
+                  final displayCount = widget.itemCount != null
+                      ? "${widget.itemCount} Results"
+                      : "${_filteredAmenities.length} Results";
+                  print(
+                      "**** AMENITIES SCREEN DISPLAY - itemCount: ${widget.itemCount}, filteredLength: ${_filteredAmenities.length}, showing: $displayCount");
+                  return displayCount;
+                }(),
                 style: TextStyle(
                   color: context.color.deactivateColor,
                   fontSize: 16,

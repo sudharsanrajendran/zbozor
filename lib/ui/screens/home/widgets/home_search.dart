@@ -136,8 +136,8 @@ class HomeSearchField extends StatelessWidget {
                       ),
                       if (unreadCount > 0 && HiveUtils.isUserAuthenticated())
                         PositionedDirectional(
-                          end: -2,
-                          top: -2,
+                          end: -4,
+                          top: -6,
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(

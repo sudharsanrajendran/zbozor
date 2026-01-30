@@ -592,15 +592,15 @@ class AllItemsSliverWidget extends StatelessWidget {
                         children: [
                           Expanded(
                             child: ItemCard(
-                              radius: 5,
+                              radius: 6,
                               item: obj[0],
                             ),
                           ),
-                          const SizedBox(width: 15),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: obj.length > 1
                                 ? ItemCard(
-                                    radius: 5,
+                                    radius: 6,
                                     item: obj[1],
                                   )
                                 : const SizedBox.shrink(),

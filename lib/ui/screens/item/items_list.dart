@@ -2087,12 +2087,22 @@ class ItemsListState extends State<ItemsList> {
         currentSelection = List.from(raw);
       else if (raw != null) currentSelection = [raw];
 
+      // [NEW] Get current item count from cubit
+      int? currentItemCount;
+      final countState = _fetchItemCountCubit.state;
+      if (countState is FetchItemCountSuccess) {
+        currentItemCount = countState.count;
+      }
+      print("**** AMENITIES SCREEN - Passing itemCount: $currentItemCount");
+      print("**** AMENITIES SCREEN - Count state: $countState");
+
       final result = await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => AmenitiesFilterScreen(
             allAmenities: filterDef!.values ?? [],
             selectedAmenities: currentSelection,
+            itemCount: currentItemCount, // [NEW] Pass the count
           ),
         ),
       );
