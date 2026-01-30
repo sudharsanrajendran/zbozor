@@ -733,9 +733,27 @@ class ItemsListState extends State<ItemsList> {
                             elevation: 0,
                           ),
                           onPressed: () {
+                            print("**** SHOW RESULT BUTTON PRESSED (CASE 1)");
+                            print(
+                                "**** selectedCategory: ${selectedCategory?.id} - ${selectedCategory?.name}");
+
                             Navigator.pop(context);
                             if (selectedCategory != null) {
                               _updateSelection(chainIndex, selectedCategory!);
+
+                              // [NEW] Force API call with selected category ID
+                              int fetchId = selectedCategory!.id!;
+                              print(
+                                  "**** SHOW RESULT - FORCING API CALL WITH SELECTED ID: $fetchId");
+                              context
+                                  .read<FetchItemFromCategoryCubit>()
+                                  .fetchItemFromCategory(
+                                      categoryId: fetchId,
+                                      search: searchController.text,
+                                      forceRefresh: true);
+                              print("**** API CALL EXECUTED (CASE 1)");
+                            } else {
+                              print("**** ERROR: selectedCategory is null!");
                             }
                           },
                           child: BlocBuilder<FetchItemCountCubit,
@@ -1044,6 +1062,12 @@ class ItemsListState extends State<ItemsList> {
                             elevation: 0,
                           ),
                           onPressed: () {
+                            print("**** SHOW RESULT BUTTON PRESSED");
+                            print(
+                                "**** selectedParent: ${selectedParent?.id} - ${selectedParent?.name}");
+                            print(
+                                "**** selectedChild: ${selectedChild?.id} - ${selectedChild?.name}");
+
                             Navigator.pop(context);
                             if (selectedParent != null) {
                               _updateSelection(chainIndex, selectedParent!);
@@ -1051,6 +1075,22 @@ class ItemsListState extends State<ItemsList> {
                                 _updateSelection(
                                     chainIndex + 1, selectedChild!);
                               }
+
+                              // [NEW] Force API call with bottom sheet selected category ID
+                              // Use selectedChild if available, otherwise selectedParent
+                              int fetchId =
+                                  selectedChild?.id ?? selectedParent!.id!;
+                              print(
+                                  "**** SHOW RESULT - FORCING API CALL WITH BOTTOM SHEET SELECTED ID: $fetchId");
+                              context
+                                  .read<FetchItemFromCategoryCubit>()
+                                  .fetchItemFromCategory(
+                                      categoryId: fetchId,
+                                      search: searchController.text,
+                                      forceRefresh: true);
+                              print("**** API CALL EXECUTED");
+                            } else {
+                              print("**** ERROR: selectedParent is null!");
                             }
                           },
                           child: BlocBuilder<FetchItemCountCubit,
@@ -1301,6 +1341,7 @@ class ItemsListState extends State<ItemsList> {
         fetchId = _currentChain.last.id!;
       }
 
+      print("**** SELECTED CATEGORY ID FOR GET-ITEM: $fetchId");
       context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
           categoryId: fetchId, search: searchController.text);
       _fetchCount(overrideCategoryId: fetchId);
