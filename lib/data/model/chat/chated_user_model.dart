@@ -35,7 +35,15 @@ class ChatedUser {
     itemId = json['item_id'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    amount = (json['amount'] as num?)?.toDouble();
+    if (json['amount'] != null) {
+      if (json['amount'] is int) {
+        amount = (json['amount'] as int).toDouble();
+      } else if (json['amount'] is double) {
+        amount = json['amount'];
+      } else if (json['amount'] is String) {
+        amount = double.tryParse(json['amount']);
+      }
+    }
     userBlocked = json['user_blocked'];
     seller = json['seller'] != null ? Seller.fromJson(json['seller']) : null;
     buyer = json['buyer'] != null ? Buyer.fromJson(json['buyer']) : null;

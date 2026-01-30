@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'package:Ebozor/ui/theme/theme.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -143,6 +144,13 @@ class NotificationsState extends State<Notifications> {
               }
 
               if (state is FetchNotificationsSuccess) {
+                // [NEW] Mark all current notifications as read when screen opens
+                for (var notification in state.notificationdata) {
+                  if (notification.id != null) {
+                    HiveUtils.addReadNotificationId(notification.id!);
+                  }
+                }
+
                 // Update the "seen" total so badge clears
                 // Logic: Total from Server - (Read Locally + Removed Locally)
                 int totalServer = state.total;
@@ -239,13 +247,8 @@ class NotificationsState extends State<Notifications> {
                   onTap: () {
                     selectedNotification = notificationData;
 
-                    // Mark as read locally
-                    HiveUtils.addReadNotificationId(notificationData.id!);
-                    // Decrease unread count
-                    int currentTotal = HiveUtils.getNotificationTotal();
-                    if (currentTotal > 0) {
-                      HiveUtils.setNotificationTotal(currentTotal - 1);
-                    }
+                    // Note: Notification is already marked as read when screen opened
+                    // No need to mark again or decrease count here
 
                     HelperUtils.goToNextPage(
                         Routes.notificationDetailPage, context, false);
@@ -272,39 +275,6 @@ class NotificationsState extends State<Notifications> {
                                         fontWeight: FontWeight.bold)),
                               ),
                             ),
-                            PopupMenuButton<String>(
-                              elevation: 2,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
-                              onSelected: (value) async {
-                                if (value == "delete") {
-                                  // delete logic here
-                                  await HiveUtils.addRemovedNotificationId(
-                                      notificationData.id!);
-                                  context
-                                      .read<FetchNotificationsCubit>()
-                                      .fetchNotifications();
-                                }
-                              },
-                              itemBuilder: (BuildContext context) {
-                                return {
-                                  "Remove Notification",
-                                }.map((String choice) {
-                                  return PopupMenuItem<String>(
-                                    value: "delete",
-                                    child: Text(
-                                      choice,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  );
-                                }).toList();
-                              },
-                              child: const Icon(
-                                Icons.more_horiz,
-                                color: Colors.black,
-                              ),
-                            ),
                           ],
                         ),
                         const SizedBox(height: 4),
@@ -322,7 +292,8 @@ class NotificationsState extends State<Notifications> {
                                 .formatDate()
                                 .toString())
                             .size(context.font.small)
-                            .color(context.color.textLightColor).bold(),
+                            .color(context.color.textLightColor)
+                            .bold(),
                       ],
                     ),
                   ),

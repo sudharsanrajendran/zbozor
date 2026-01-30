@@ -27,7 +27,7 @@ class CategoryHomeCard extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+          padding: const EdgeInsets.all(8), // Equal padding on all sides
           decoration: BoxDecoration(
             color: context.color.secondaryColor,
             borderRadius: BorderRadius.circular(5),
@@ -42,27 +42,33 @@ class CategoryHomeCard extends StatelessWidget {
           ),
           child: Column(
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment
+                .spaceBetween, // Changed from center to spaceBetween
             children: [
-              Container(
-                height: 36,
-                width: 36,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: UiUtils.imageType(
-                    url,
-                    fit: isFullImage ? BoxFit.contain : BoxFit.cover,
-                    color: context.color.territoryColor,
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 4), // Add 4px padding above image
+                child: Container(
+                  height: 36,
+                  width: 36,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: UiUtils.imageType(
+                      url,
+                      fit: isFullImage ? BoxFit.contain : BoxFit.cover,
+                      color: context.color.territoryColor,
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 4),
-              Container(
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 4,
+                    right: 4,
+                    bottom: 4), // Add side and bottom padding to text
                 child: Text(
                   title,
                   textAlign: TextAlign.center,

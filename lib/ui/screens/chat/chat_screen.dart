@@ -851,11 +851,11 @@ class _ChatScreenState extends State<ChatScreen>
                                               totalMessageCount++;
                                               context
                                                   .read<GetBuyerChatListCubit>()
-                                                  .fetch();
+                                                  .fetch(forceRefresh: true);
                                               context
                                                   .read<
                                                       GetSellerChatListCubit>()
-                                                  .fetch();
+                                                  .fetch(forceRefresh: true);
 
                                               setState(() {});
                                             },
@@ -910,11 +910,11 @@ class _ChatScreenState extends State<ChatScreen>
                                               FocusScope.of(context).unfocus();
                                               context
                                                   .read<GetBuyerChatListCubit>()
-                                                  .fetch();
+                                                  .fetch(forceRefresh: true);
                                               context
                                                   .read<
                                                       GetSellerChatListCubit>()
-                                                  .fetch();
+                                                  .fetch(forceRefresh: true);
                                               setState(() {});
                                             },
                                             child: CircleAvatar(

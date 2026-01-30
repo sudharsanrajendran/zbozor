@@ -72,7 +72,8 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
           await _chatRepository.fetchSellerChatList(1);
 
       result.modelList.sort((a, b) =>
-          DateTime.parse(b.createdAt!).compareTo(DateTime.parse(a.createdAt!)));
+          DateTime.parse(b.updatedAt ?? b.createdAt!)
+              .compareTo(DateTime.parse(a.updatedAt ?? a.createdAt!)));
 
       // Filter: Only show chats where the current user is the seller
       // The API should ideally handle this via 'type', but we filter locally as a safety measure
@@ -159,8 +160,8 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
         messagesSuccessState.chatedUserList.addAll(result.modelList);
 
         messagesSuccessState.chatedUserList.sort((a, b) =>
-            DateTime.parse(b.createdAt!)
-                .compareTo(DateTime.parse(a.createdAt!)));
+            DateTime.parse(b.updatedAt ?? b.createdAt!)
+                .compareTo(DateTime.parse(a.updatedAt ?? a.createdAt!)));
 
         // Filter out non-seller items again if needed?
         // Assuming API does it or we do it here.

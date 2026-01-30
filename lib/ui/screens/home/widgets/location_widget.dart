@@ -148,7 +148,10 @@ class LocationWidget extends StatelessWidget {
       fit: BoxFit.none,
       alignment: AlignmentDirectional.centerStart,
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          // Navigate to location selection screen
+          Navigator.pushNamed(context, Routes.countriesScreen);
+        },
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

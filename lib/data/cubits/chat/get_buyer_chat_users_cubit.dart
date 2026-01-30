@@ -79,7 +79,8 @@ class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState> {
       }
 
       result.modelList.sort((a, b) =>
-          DateTime.parse(b.createdAt!).compareTo(DateTime.parse(a.createdAt!)));
+          DateTime.parse(b.updatedAt ?? b.createdAt!)
+              .compareTo(DateTime.parse(a.updatedAt ?? a.createdAt!)));
 
       result.modelList.removeWhere(
           (element) => element.sellerId.toString() == HiveUtils.getUserId());
@@ -160,8 +161,8 @@ class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState> {
         messagesSuccessState.chatedUserList.addAll(result.modelList);
 
         messagesSuccessState.chatedUserList.sort((a, b) =>
-            DateTime.parse(b.createdAt!)
-                .compareTo(DateTime.parse(a.createdAt!)));
+            DateTime.parse(b.updatedAt ?? b.createdAt!)
+                .compareTo(DateTime.parse(a.updatedAt ?? a.createdAt!)));
         emit(GetBuyerChatListSuccess(
           chatedUserList: messagesSuccessState.chatedUserList,
           page: (state as GetBuyerChatListSuccess).page + 1,
