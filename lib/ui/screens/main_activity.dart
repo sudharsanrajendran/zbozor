@@ -15,6 +15,7 @@ import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/data/cubits/chat/get_buyer_chat_users_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/get_seller_chat_users_cubit.dart';
+import 'package:Ebozor/data/cubits/auth/authentication_cubit.dart';
 import 'package:Ebozor/utils/svg/svg_edit.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -197,12 +198,13 @@ class MainActivityState extends State<MainActivity>
   }
 
   void completeProfileCheck() {
-    if (HiveUtils.getUserDetails().name == "" ||
-        HiveUtils.getUserDetails().email == "") {
+    if (HiveUtils.getUserDetails().type != AuthenticationType.phone.name &&
+        (HiveUtils.getUserDetails().name == "" ||
+            HiveUtils.getUserDetails().email == "")) {
       Future.delayed(
         const Duration(milliseconds: 100),
         () {
-          Navigator.pushReplacementNamed(context, Routes.completeProfile,
+          Navigator.pushNamed(context, Routes.completeProfile,
               arguments: {"from": "login"});
         },
       );

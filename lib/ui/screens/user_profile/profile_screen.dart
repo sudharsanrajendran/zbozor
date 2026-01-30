@@ -227,7 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
-                      decorationColor: context.color.territoryColor,
+                      decorationColor: Colors.blueAccent,
                     )),
               ),
               const SizedBox(height: 14),
@@ -330,137 +330,145 @@ class _ProfileScreenState extends State<ProfileScreen>
                   )
                 ],
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Stack(
-                    alignment: AlignmentDirectional.bottomEnd,
+                  Row(
                     children: [
-                      ///////profile circle
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: context.color.borderColor,
-                            width: 1,
+                      Stack(
+                        alignment: AlignmentDirectional.bottomEnd,
+                        children: [
+                          ///////profile circle
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 5),
+                            child: Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: context.color.borderColor,
+                                  width: 1,
+                                ),
+                              ),
+                              child: ClipOval(
+                                child: HiveUtils.isUserAuthenticated() &&
+                                        profile.isNotEmpty
+                                    ? UiUtils.getImage(
+                                        profile,
+                                        width: 70,
+                                        height: 70,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: UiUtils.getSvg(
+                                          AppIcons.defaultPersonLogo,
+                                          color: context.color.textLightColor,
+                                          width: 70,
+                                          height: 70,
+                                        ),
+                                      ),
+                              ),
+                            ),
                           ),
-                        ),
-                        child: ClipOval(
-                          child: HiveUtils.isUserAuthenticated() &&
-                                  profile.isNotEmpty
-                              ? UiUtils.getImage(
-                                  profile,
-                                  width: 70,
-                                  height: 70,
-                                  fit: BoxFit.cover,
-                                )
-                              : Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: UiUtils.getSvg(
-                                    AppIcons.defaultPersonLogo,
-                                    color: context.color.textLightColor,
-                                    width: 70,
-                                    height: 70,
+                          if (HiveUtils.isUserAuthenticated())
+                            InkWell(
+                              onTap: () {
+                                HelperUtils.goToNextPage(
+                                    Routes.completeProfile, context, false,
+                                    args: {"from": "profile"});
+                              },
+                              child: Container(
+                                height: 22,
+                                width: 22,
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: context.color.textColorDark,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: context.color.secondaryColor,
+                                      width: 2),
+                                ),
+                                child: Image.asset("assets/profileedit.png",
+                                    color: context.color.secondaryColor),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(HiveUtils.isUserAuthenticated()
+                                    ? name
+                                    : "guestUser".translate(context))
+                                .bold(weight: FontWeight.w700)
+                                .size(context.font.larger)
+                                .color(context.color.textColorDark),
+                            const SizedBox(height: 2),
+
+                            // Verification Badge Button
+                            if (HiveUtils.isUserAuthenticated())
+                              GestureDetector(
+                                onTap: () {
+                                  if ((state as dynamic)?.data?.status !=
+                                      "approved") {
+                                    _showGetVerificationBottomSheet(context, state);
+                                  }
+                                },
+                                //// ve
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: context.color.textLightColor
+                                            .withOpacity(0.3)),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        (HiveUtils.getUserDetails().isVerified == 1)
+                                            ? "verifiedSimple".translate(context)
+                                            : "getVerified".translate(context),
+                                        style: TextStyle(
+                                          fontSize: context.font.small,
+                                          color: context.color.textColorDark,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Icon(Icons.verified,
+                                          size: 16,
+                                          color: (HiveUtils.getUserDetails()
+                                                      .isVerified ==
+                                                  1)
+                                              ? Colors.blue
+                                              : context.color.textLightColor)
+                                    ],
                                   ),
                                 ),
+                              ),
+
+                            if (HiveUtils.isUserAuthenticated()) ...[
+                              //date shows
+                              const SizedBox(height: 4),
+                              Text(
+                                "${"joinedOn".translate(context)} ${DateTime.tryParse(HiveUtils.getUserDetails().createdAt ?? "")?.year ?? '2025'}", // Simplified date
+                                style: TextStyle(
+                                  color: context.color.textLightColor,
+                                  fontSize: context.font.small,
+                                ),
+                              )
+                            ]
+                          ],
                         ),
                       ),
-                      if (HiveUtils.isUserAuthenticated())
-                        InkWell(
-                          onTap: () {
-                            HelperUtils.goToNextPage(
-                                Routes.completeProfile, context, false,
-                                args: {"from": "profile"});
-                          },
-                          child: Container(
-                            height: 22,
-                            width: 22,
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: context.color.textColorDark,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  color: context.color.secondaryColor,
-                                  width: 2),
-                            ),
-                            child: Image.asset("assets/profileedit.png",
-                                color: context.color.secondaryColor),
-                          ),
-                        ),
                     ],
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(HiveUtils.isUserAuthenticated()
-                                ? name
-                                : "guestUser".translate(context))
-                            .bold(weight: FontWeight.w700)
-                            .size(context.font.larger)
-                            .color(context.color.textColorDark),
-                        const SizedBox(height: 4),
-
-                        // Verification Badge Button
-                        if (HiveUtils.isUserAuthenticated())
-                          GestureDetector(
-                            onTap: () {
-                              if ((state as dynamic)?.data?.status !=
-                                  "approved") {
-                                _showGetVerificationBottomSheet(context, state);
-                              }
-                            },
-                            //// ve
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: context.color.textLightColor
-                                        .withOpacity(0.3)),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    (HiveUtils.getUserDetails().isVerified == 1)
-                                        ? "verifiedSimple".translate(context)
-                                        : "getVerified".translate(context),
-                                    style: TextStyle(
-                                      fontSize: context.font.small,
-                                      color: context.color.textColorDark,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Icon(Icons.verified,
-                                      size: 16,
-                                      color: (HiveUtils.getUserDetails()
-                                                  .isVerified ==
-                                              1)
-                                          ? Colors.blue
-                                          : context.color.textLightColor)
-                                ],
-                              ),
-                            ),
-                          ),
-
-                        if (HiveUtils.isUserAuthenticated()) ...[
-                          //date shows
-                          const SizedBox(height: 4),
-                          Text(
-                            "${"joinedOn".translate(context)} ${DateTime.tryParse(HiveUtils.getUserDetails().createdAt ?? "")?.year ?? '2025'}", // Simplified date
-                            style: TextStyle(
-                              color: context.color.textLightColor,
-                              fontSize: context.font.small,
-                            ),
-                          )
-                        ]
-                      ],
-                    ),
                   ),
                 ],
               ),
@@ -490,9 +498,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                 children: <Widget>[
                   const SizedBox(height: 16),
                   profileHeader(),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 8),
                   _buildActionRow(),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 8),
 
                   // Group 1
                   customTile(
@@ -771,7 +779,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 8),
         Expanded(
           child: GestureDetector(
             onTap: () async {
@@ -828,7 +836,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       dynamic switchValue,
       required VoidCallback onTap}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16,horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 12,horizontal: 0),
       child: Container(
         constraints: const BoxConstraints(minHeight: 38),
         margin: const EdgeInsets.only(top: 0.5, bottom: 3),
@@ -877,15 +885,18 @@ class _ProfileScreenState extends State<ProfileScreen>
 
                   if (isSwitchBox ?? false)
                     // CupertinoSwitch(value: value, onChanged: onChanged)
-                    SizedBox(
-                      height: 40,
-                      width: 30,
-                      child: CupertinoSwitch(
-                        activeTrackColor: context.color.territoryColor,
-                        value: switchValue ?? false,
-                        onChanged: (value) {
-                          onTapSwitch?.call(value);
-                        },
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: SizedBox(
+                        height: 40,
+                        width: 30,
+                        child: CupertinoSwitch(
+                          activeTrackColor: context.color.territoryColor,
+                          value: switchValue ?? false,
+                          onChanged: (value) {
+                            onTapSwitch?.call(value);
+                          },
+                        ),
                       ),
                     )
                 ],
