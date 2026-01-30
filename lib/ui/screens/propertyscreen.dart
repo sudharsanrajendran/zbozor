@@ -1079,6 +1079,13 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                 child: Row(
                   children: (filter.values ?? []).map((value) {
                     bool isSelected = currentSelection.contains(value);
+                    if ((filter.values ?? []).indexOf(value) == 0) {
+                      // Log only for first item to avoid spam
+                      print(
+                          "**** AMENITY CHIP - value: '$value' (${value.runtimeType}), isSelected: $isSelected");
+                      print(
+                          "**** AMENITY CHIP - currentSelection contains: $currentSelection");
+                    }
                     return Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: InkWell(
@@ -1147,10 +1154,24 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AmenitiesFilterScreen(
-                          allAmenities: filter.values ?? [],
-                          selectedAmenities: currentSelection,
-                          itemCount: currentItemCount, // [NEW] Pass the count
+                        builder: (context) => BlocProvider.value(
+                          value: _fetchItemCountCubit,
+                          child: AmenitiesFilterScreen(
+                            allAmenities: filter.values ?? [],
+                            selectedAmenities: currentSelection,
+                            itemCount: currentItemCount, // [NEW] Pass the count
+                            onSelectionChanged: (newSelection) {
+                              // [NEW] Update count dynamically when selection changes
+                              setState(() {
+                                if (newSelection.isEmpty) {
+                                  _selectedFilters.remove(filter.name);
+                                } else {
+                                  _selectedFilters[filter.name!] = newSelection;
+                                }
+                                _fetchCount(); // Fetch new count with updated filters
+                              });
+                            },
+                          ),
                         ),
                       ),
                     );

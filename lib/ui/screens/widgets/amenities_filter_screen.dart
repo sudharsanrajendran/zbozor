@@ -1,5 +1,7 @@
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
+import 'package:Ebozor/data/cubits/item/fetch_item_count_cubit.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter/material.dart';
 
@@ -7,12 +9,15 @@ class AmenitiesFilterScreen extends StatefulWidget {
   final List<dynamic> allAmenities;
   final List<dynamic> selectedAmenities;
   final int? itemCount; // [NEW] Optional item count from API
+  final Function(List<dynamic>)?
+      onSelectionChanged; // [NEW] Callback for selection changes
 
   const AmenitiesFilterScreen({
     Key? key,
     required this.allAmenities,
     required this.selectedAmenities,
     this.itemCount, // [NEW] Optional parameter
+    this.onSelectionChanged, // [NEW] Optional callback
   }) : super(key: key);
 
   @override
@@ -72,6 +77,8 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
                   ? () {
                       setState(() {
                         _currentSelection.clear();
+                        // [NEW] Notify parent about selection change
+                        widget.onSelectionChanged?.call(_currentSelection);
                       });
                     }
                   : null,
@@ -94,20 +101,29 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                () {
-                  final displayCount = widget.itemCount != null
-                      ? "${widget.itemCount} Results"
-                      : "${_filteredAmenities.length} Results";
+              BlocBuilder<FetchItemCountCubit, FetchItemCountState>(
+                builder: (context, state) {
+                  String resultText;
+                  if (state is FetchItemCountSuccess) {
+                    resultText = "${state.count} Results";
+                  } else if (state is FetchItemCountInProgress) {
+                    resultText = "Calculating...";
+                  } else if (widget.itemCount != null) {
+                    resultText = "${widget.itemCount} Results";
+                  } else {
+                    resultText = "${_filteredAmenities.length} Results";
+                  }
                   print(
-                      "**** AMENITIES SCREEN DISPLAY - itemCount: ${widget.itemCount}, filteredLength: ${_filteredAmenities.length}, showing: $displayCount");
-                  return displayCount;
-                }(),
-                style: TextStyle(
-                  color: context.color.deactivateColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
+                      "**** AMENITIES SCREEN DISPLAY - State: $state, showing: $resultText");
+                  return Text(
+                    resultText,
+                    style: TextStyle(
+                      color: context.color.deactivateColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  );
+                },
               ),
               SizedBox(
                 width: 140,
@@ -200,6 +216,8 @@ class _AmenitiesFilterScreenState extends State<AmenitiesFilterScreen> {
                       } else {
                         _currentSelection.add(amenity);
                       }
+                      // [NEW] Notify parent about selection change
+                      widget.onSelectionChanged?.call(_currentSelection);
                     });
                   },
                   child: Row(
