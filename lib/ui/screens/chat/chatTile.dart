@@ -92,7 +92,7 @@ class ChatTile extends StatelessWidget {
       child: AbsorbPointer(
         absorbing: true,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           width: MediaQuery.of(context).size.width,
           color: Colors.transparent, // Transparent background
           child: Row(

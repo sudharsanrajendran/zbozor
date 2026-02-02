@@ -27,7 +27,6 @@ class CategoryHomeCard extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(8), // Equal padding on all sides
           decoration: BoxDecoration(
             color: context.color.secondaryColor,
             borderRadius: BorderRadius.circular(5),
@@ -40,18 +39,17 @@ class CategoryHomeCard extends StatelessWidget {
               )
             ],
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment
-                .spaceBetween, // Changed from center to spaceBetween
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 4), // Add 4px padding above image
-                child: Container(
-                  height: 36,
-                  width: 36,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: 32,
+                  width: 32,
                   decoration: BoxDecoration(
+                    //  color: Colors.blueAccent,
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: ClipRRect(
@@ -63,25 +61,23 @@ class CategoryHomeCard extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 4,
-                    right: 4,
-                    bottom: 4), // Add side and bottom padding to text
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11, // Reduced font size for better fit
-                    color: context.color.textDefaultColor,
-                    fontWeight: FontWeight.bold,
+                //const SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.only(left: 4, right: 4),
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11, // Reduced font size for better fit
+                      color: context.color.textDefaultColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

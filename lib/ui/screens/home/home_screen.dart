@@ -600,7 +600,7 @@ class AllItemsSliverWidget extends StatelessWidget {
                           Expanded(
                             child: obj.length > 1
                                 ? ItemCard(
-                                    radius: 6,
+                                    radius: 10,
                                     item: obj[1],
                                   )
                                 : const SizedBox.shrink(),

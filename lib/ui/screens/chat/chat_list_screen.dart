@@ -123,15 +123,6 @@ class _ChatListScreenState extends State<ChatListScreen>
           context,
           title: "chats".translate(context),
           bottomHeight: 0,
-          actions: [
-            InkWell(
-              child: UiUtils.getSvg(AppIcons.blockedUserIcon,
-                  color: context.color.textDefaultColor),
-              onTap: () {
-                Navigator.pushNamed(context, Routes.blockedUserListScreen);
-              },
-            )
-          ],
         ),
         body: Column(
           children: [
@@ -143,6 +134,14 @@ class _ChatListScreenState extends State<ChatListScreen>
                   _buildTabChip(0, "buying".translate(context)),
                   const SizedBox(width: 12),
                   _buildTabChip(1, "selling".translate(context)),
+                  Spacer(),
+                  InkWell(
+                    child: UiUtils.getSvg(AppIcons.blockedUserIcon,
+                        color: context.color.textDefaultColor),
+                    onTap: () {
+                      Navigator.pushNamed(context, Routes.blockedUserListScreen);
+                    },
+                  )
                 ],
               ),
             ),

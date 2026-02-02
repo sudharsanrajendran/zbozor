@@ -153,7 +153,7 @@ class LocationWidget extends StatelessWidget {
           Navigator.pushNamed(context, Routes.countriesScreen);
         },
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+         // mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 40.rw(context),
@@ -163,9 +163,6 @@ class LocationWidget extends StatelessWidget {
                 fit: BoxFit.none,
                 color: context.color.textDefaultColor,
               ),
-            ),
-            SizedBox(
-              width: 10.rw(context),
             ),
             ValueListenableBuilder(
                 valueListenable: Hive.box(HiveKeys.userDetailsBox).listenable(),

@@ -315,7 +315,7 @@ class _SliderWidgetState extends State<SliderWidget>
                           color: context.color.secondaryColor,
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(14),
                           child: Stack(
                             fit: StackFit.expand,
                             children: [

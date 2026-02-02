@@ -58,8 +58,8 @@ class HomeSectionsAdapter extends StatelessWidget {
             final item = section.sectionData![index];
             return ItemCard(
               item: item,
-              width: 150,
-              radius: 8,
+              width: 160,
+              radius: 12,
             );
           },
           total: section.sectionData!.length,
@@ -119,7 +119,7 @@ class _ItemCardState extends State<ItemCard> {
                   height: imageHeight,
                   child: ClipRRect(
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(widget.radius ?? 18),
+                      top: Radius.circular(widget.radius ?? 20),
                     ),
                     child: UiUtils.getImage(
                       widget.item?.image ?? "",

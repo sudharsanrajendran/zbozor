@@ -319,10 +319,13 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
               _initializeDefaultSelection();
             });
           },
-          child: Text(
-            "Reset".translate(context),
-            style: TextStyle(
-                color: context.color.textDefaultColor.withOpacity(0.5)),
+          child: Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Text(
+              "Reset".translate(context),
+              style: TextStyle(
+                  color: context.color.textDefaultColor.withOpacity(0.5)),
+            ),
           ),
         )
       ],
@@ -477,7 +480,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
   ///
   Widget _buildTabs() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       color: context.color.secondaryColor,
       child: Row(
         children: [
@@ -523,14 +526,14 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                       fontWeight: _selectedTabIndex == index
                           ? FontWeight.bold
                           : FontWeight.normal,
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
                   ),
                 ),
               ),
             ),
             if (index != widget.categoryList.length - 1)
-              const SizedBox(width: 20),
+              const SizedBox(width: 14),
           ],
         ],
       ),

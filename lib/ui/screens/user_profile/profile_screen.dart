@@ -709,7 +709,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   if (HiveUtils.isUserAuthenticated()) ...[
                     customTile(context,
                         title: "deleteAccount".translate(context),
-                        svgImagePath: AppIcons.delete, onTap: () {
+                        pngImagePath: "assets/deleteicon.png", onTap: () {
                       if (Constant.isDemoModeOn) {
                         if (HiveUtils.getUserDetails().mobile !=
                             null) if (Constant
@@ -725,7 +725,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                     },
                         textColor: context
                             .color.textColorDark, // Optional: highlight delete
-                        iconColor: context.color.textDefaultColor),
+                        iconColor:
+                            Theme.of(context).brightness == Brightness.dark
+                                ? context.color.textDefaultColor
+                                : context.color.territoryColor),
                   ],
                   if (HiveUtils.isUserAuthenticated()) ...[
                     SizedBox(height: 10),
@@ -842,7 +845,8 @@ class _ProfileScreenState extends State<ProfileScreen>
   //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3Rlc3Ricm9rZXJodWIud3J0ZWFtLmluL2FwaS91c2VyX3NpZ251cCIsImlhdCI6MTY5Njg1MDQyNCwibmJmIjoxNjk2ODUwNDI0LCJqdGkiOiJxVTNpY1FsRFN3MVJ1T3M5Iiwic3ViIjoiMzg4IiwicHJ2IjoiMWQwYTAyMGFjZjVjNGI2YzQ5Nzk4OWRmMWFiZjBmYmQ0ZThjOGQ2MyIsImN1c3RvbWVyX2lkIjozODh9.Y8sQhZtz6xGROEMvrTwA6gSSfPK-YwuhwDDc7Yahfg4
   Widget customTile(BuildContext context,
       {required String title,
-      required String svgImagePath,
+      String? svgImagePath,
+      String? pngImagePath,
       bool? isSwitchBox,
       Function(dynamic value)? onTapSwitch,
       Color? textColor,
@@ -870,10 +874,18 @@ class _ProfileScreenState extends State<ProfileScreen>
                   // Icon without box
                   FittedBox(
                       fit: BoxFit.none,
-                      child: UiUtils.getSvg(svgImagePath,
-                          height: 24,
-                          width: 24,
-                          color: iconColor ?? context.color.territoryColor)),
+                      child: pngImagePath != null
+                          ? Image.asset(
+                              pngImagePath,
+                              height: 24,
+                              width: 24,
+                              color: iconColor ?? context.color.territoryColor,
+                            )
+                          : UiUtils.getSvg(svgImagePath!,
+                              height: 24,
+                              width: 24,
+                              color:
+                                  iconColor ?? context.color.territoryColor)),
                   const SizedBox(
                     width: 16,
                   ),

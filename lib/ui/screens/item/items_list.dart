@@ -403,6 +403,7 @@ class ItemsListState extends State<ItemsList> {
       filter = null;
       _selectedCustomFields.clear(); // Clear selected custom chips
       _currentCategoryIds = [widget.categoryId];
+
       _isAllFieldsSelected = true;
 
       context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
@@ -2099,10 +2100,24 @@ class ItemsListState extends State<ItemsList> {
       final result = await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => AmenitiesFilterScreen(
-            allAmenities: filterDef!.values ?? [],
-            selectedAmenities: currentSelection,
-            itemCount: currentItemCount, // [NEW] Pass the count
+          builder: (context) => BlocProvider.value(
+            value: _fetchItemCountCubit,
+            child: AmenitiesFilterScreen(
+              allAmenities: filterDef!.values ?? [],
+              selectedAmenities: currentSelection,
+              itemCount: currentItemCount, // [NEW] Pass the count
+              onSelectionChanged: (newSelection) {
+                // [NEW] Update count dynamically when selection changes
+                setState(() {
+                  if (newSelection.isEmpty) {
+                    _selectedCustomFields.remove(filterName);
+                  } else {
+                    _selectedCustomFields[filterName] = newSelection;
+                  }
+                  _fetchCount(); // Fetch new count with updated filters
+                });
+              },
+            ),
           ),
         ),
       );
@@ -2605,7 +2620,7 @@ class ItemsListState extends State<ItemsList> {
             ItemModel item = items[startIndex + index];
             return GestureDetector(
               onTap: () => _navigateToDetails(context, item),
-              child: ItemCard(item: item, radius: 5),
+              child: ItemCard(item: item, radius: 10),
             );
           },
           childCount: itemCount,

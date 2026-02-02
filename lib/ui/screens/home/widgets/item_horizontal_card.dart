@@ -150,6 +150,8 @@ class ItemHorizontalCard extends StatelessWidget {
                     memCacheHeight: 400,
                   ),
                 ),
+
+                //////////// fav ico postipj  change kila
                 if (item.isFeature ?? false)
                   const PositionedDirectional(
                     top: 8,
@@ -158,8 +160,8 @@ class ItemHorizontalCard extends StatelessWidget {
                   ),
                 if (showLikeButton ?? true)
                   PositionedDirectional(
-                    top: 8,
-                    end: 8,
+                    top: 20,
+                    end: 20,
                     child: favButton(
                       context,
                     ),

@@ -425,101 +425,140 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
           ),
           backgroundColor: context.color.secondaryDetailsColor,
           bottomNavigationBar: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               child: bottomButtonWidget()),
           body: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.all(13.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  setImageViewer(),
-                  const SizedBox(height: 1),
-                  if (isAddedByMe) setLikesAndViewsCount(),
-                  if (isAddedByMe) const SizedBox(height: 10),
-                  setPriceAndStatus(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                  child: setImageViewer(),
+                ),
+                const SizedBox(height: 1),
+                if (isAddedByMe)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                    child: setLikesAndViewsCount(),
+                  ),
+                if (isAddedByMe) const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                  child: setPriceAndStatus(),
+                ),
 
-                  Text(model.name!)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                  child: Text(model.name!,style:TextStyle(fontWeight: FontWeight.bold),)
                       .size(context.font.large)
                       .setMaxLines(lines: 2)
                       .color(context.color.textDefaultColor),
+                ),
 
-                  if (isAddedByMe) setRejectedReason(),
-                  if (isAddedByMe) const SizedBox(height: 10),
-                  if (model.address != null) setAddress(isDate: false),
+                if (isAddedByMe)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                    child: setRejectedReason(),
+                  ),
+                if (isAddedByMe) const SizedBox(height: 10),
+                if (model.address != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                    child: setAddress(isDate: false),
+                  ),
+                const SizedBox(height: 10),
+
+                if (Constant.isGoogleBannerAdsEnabled == "1") ...[
+                  Divider(
+                      thickness: 1,
+                      color: context.color.textDefaultColor.withOpacity(0.1)),
                   const SizedBox(height: 10),
+                  Container(
+                    alignment: AlignmentDirectional.center,
+                    child: AdBannerWidget(), // Custom widget for banner ad
+                  ),
+                  const SizedBox(height: 10),
+                ],
 
-                  if (Constant.isGoogleBannerAdsEnabled == "1") ...[
-                    Divider(
-                        thickness: 1,
-                        color: context.color.textDefaultColor.withOpacity(0.1)),
-                    const SizedBox(height: 10),
-                    Container(
-                      alignment: AlignmentDirectional.center,
-                      child: AdBannerWidget(), // Custom widget for banner ad
+                if (isAddedByMe)
+                  if (!model.isFeature!)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                      child: createFeaturesAds(),
                     ),
-                    const SizedBox(height: 10),
-                  ],
+                if (isAddedByMe && !model.isFeature!)
+                  const SizedBox(height: 10),
+                if (model.customFields!.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: customFields(),
+                  ),
+                if (model.customFields!.isNotEmpty)
+                Divider(
+                    thickness: 1,
+                    color: context.color.textDefaultColor.withOpacity(0.1)),
+                const SizedBox(height: 8),
 
-                  if (isAddedByMe)
-                    if (!model.isFeature!) createFeaturesAds(),
-                  if (isAddedByMe && !model.isFeature!)
-                    const SizedBox(height: 10),
-                  if (model.customFields!.isNotEmpty) customFields(),
-                  if (model.customFields!.isNotEmpty)
-                    const SizedBox(height: 10),
-                  //detailsContainer Widget
-                  //Dynamic Ads here
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                  child: setDescription(),
+                ),
+                const SizedBox(height: 8),
+
+                Divider(
+                    thickness: 1,
+                    color: context.color.textDefaultColor.withOpacity(0.1)),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                  child: makeOfferButtonWidget(),
+                ),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                  child: setLocation(),
+                ),
+                const SizedBox(height: 15),
+
+                // this is seller details widget
+                if (!isAddedByMe && model.user != null)
                   Divider(
                       thickness: 1,
                       color: context.color.textDefaultColor.withOpacity(0.1)),
-                  const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                  child: setSellerDetails(),
+                ),
+                Divider(
+                    thickness: 1,
+                    color: context.color.textDefaultColor.withOpacity(0.1)),
 
-                  setDescription(),
-                  const SizedBox(height: 8),
+                if (!isAddedByMe && model.user != null)
+                  const SizedBox(height: 15),
 
+                if (Constant.isGoogleBannerAdsEnabled == "1") ...[
                   Divider(
                       thickness: 1,
                       color: context.color.textDefaultColor.withOpacity(0.1)),
                   const SizedBox(height: 15),
-                  makeOfferButtonWidget(),
-                  const SizedBox(height: 15),
-                  setLocation(),
-                  const SizedBox(height: 15),
-
-                  // this is seller details widget
-                  if (!isAddedByMe && model.user != null)
-                    Divider(
-                        thickness: 1,
-                        color: context.color.textDefaultColor.withOpacity(0.1)),
-                  setSellerDetails(),
-                  Divider(
-                      thickness: 1,
-                      color: context.color.textDefaultColor.withOpacity(0.1)),
-
-                  if (!isAddedByMe && model.user != null)
-                    const SizedBox(height: 15),
-
-                  if (Constant.isGoogleBannerAdsEnabled == "1") ...[
-                    Divider(
-                        thickness: 1,
-                        color: context.color.textDefaultColor.withOpacity(0.1)),
-                    const SizedBox(height: 15),
-                    Container(
-                      alignment: AlignmentDirectional.center,
-                      child: AdBannerWidget(), // Custom widget for banner ad
-                    ),
-                    const SizedBox(height: 15),
-                  ],
-
-                  // this is report ad widget
-                  if (!isAddedByMe) reportedAdsWidget(),
-                  if (!isAddedByMe) const SizedBox(height: 15),
-                  relatedAds(),
+                  Container(
+                    alignment: AlignmentDirectional.center,
+                    child: AdBannerWidget(), // Custom widget for banner ad
+                  ),
                   const SizedBox(height: 15),
                 ],
-              ),
+
+                // this is report ad widget
+                if (!isAddedByMe)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 13.0),
+                    child: reportedAdsWidget(),
+                  ),
+                if (!isAddedByMe) const SizedBox(height: 15),
+                relatedAds(),
+                const SizedBox(height: 15),
+              ],
             ),
           ),
         ));
@@ -583,7 +622,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
 
   Widget buildRelatedListWidget(FetchRelatedItemsSuccess state) {
     return Padding(
-      padding: const EdgeInsets.only(top: 0.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -619,10 +658,11 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             height: 210,
             controller: _pageScrollController,
             listAxis: Axis.horizontal,
-            listSaperator: (BuildContext p0, int p1) => const SizedBox(
-              width: 14,
-            ),
-            isNotSidePadding: true,
+            isNotSidePadding: true, // IMPORTANT
+            listSaperator: (context, index) {
+              if (index == 0) return SizedBox.shrink();
+              return const SizedBox(width: 10);
+            },
             builder: (context, int index, bool) {
               ItemModel? item = state.itemModel[index];
 
@@ -637,7 +677,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
               }
             },
             total: state.itemModel.length,
-          ),
+          )
         ],
       ),
     );
@@ -656,7 +696,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
               return Padding(
-                padding: EdgeInsets.symmetric(horizontal: index == 0 ? 0 : 8),
+                padding: EdgeInsets.symmetric(horizontal: index == 0 ? 0 : 10),
                 child: const CustomShimmer(
                   height: 200,
                   width: 300,
@@ -1383,7 +1423,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 addCloudData("edit_from", model.status);
                 Navigator.pushNamed(context, Routes.addItemDetails,
                     arguments: {"isEdit": true});
-              }, contextColor.secondaryColor, contextColor.territoryColor),
+              }, Colors.transparent, contextColor.territoryColor),
             ),
             SizedBox(width: 10.rw(context)),
             BlocProvider(
@@ -1433,7 +1473,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 addCloudData("edit_from", model.status);
                 Navigator.pushNamed(context, Routes.addItemDetails,
                     arguments: {"isEdit": true});
-              }, contextColor.secondaryColor, contextColor.territoryColor),
+              }, Colors.transparent, contextColor.territoryColor),
             ),
             SizedBox(width: 10.rw(context)),
             Expanded(
@@ -1487,7 +1527,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
               child: _buildButton("renew".translate(context), () {
                 // selectPackageDialog();
                 showPackageSelectBottomSheet();
-              }, contextColor.secondaryColor, contextColor.territoryColor),
+              }, Colors.transparent, contextColor.territoryColor),
             ),
             SizedBox(width: 10.rw(context)),
             BlocProvider(
@@ -1679,7 +1719,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                           }
                         },
                         context: context);
-                  }, null, null),
+                  }, context.color.secondaryColor,
+                      context.color.territoryColor,
+                      fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -1800,7 +1842,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
   }
 
   Widget _buildButton(String title, VoidCallback onPressed, Color? buttonColor,
-      Color? textColor) {
+      Color? textColor,
+      {FontWeight? fontWeight}) {
     return UiUtils.buildButton(
       context,
       onPressed: onPressed,
@@ -1812,6 +1855,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       buttonColor: buttonColor,
       textColor: textColor,
       buttonTitle: title,
+      fontWeight: fontWeight,
       width: 10.rw(context),
     );
   }
@@ -2005,8 +2049,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                   },
                   builder: (context, state) {
                     return Container(
-                      width: 28,
-                      height: 28,
+                      width: 30,
+                      height: 30,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: context.color.secondaryColor,
@@ -2047,10 +2091,10 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 );
               },
             ),
-          if (!isAddedByMe) SizedBox(width: 10),
+          if (!isAddedByMe) SizedBox(width: 12),
           Container(
-            width: 28,
-            height: 28,
+            width: 30,
+            height: 30,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: context.color.secondaryColor,
@@ -2077,6 +2121,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
               ),
             ),
           ),
+          SizedBox(width: 12),
         ],
       ),
     );
@@ -2608,19 +2653,27 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                     /// Cancel
                     Expanded(
                       child: OutlinedButton(
-                          onPressed: () {
-                            _makeAnOffermessageController.clear();
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            "Cancel".translate(context),
-                            style: TextStyle(
-                              color: context.color.territoryColor,
-                            ),
-                          )),
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                        onPressed: () {
+                          _makeAnOffermessageController.clear();
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Cancel".translate(context),
+                          style: TextStyle(
+                            color: context.color.secondary.withOpacity(0.5),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ).bold(),
+                      ),
                     ),
 
-                    const SizedBox(width: 10),
+
+                    const SizedBox(width: 14),
 
                     /// Confirm
                     Expanded(
@@ -2644,10 +2697,10 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                               context.color.territoryColor, // 👈 button color
                           foregroundColor: Colors.white, // 👈 text color
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                         ),
-                        child: Text("Confirm".translate(context)),
+                        child: Text("Confirm".translate(context)).bold(),
                       ),
                     ),
                   ],
@@ -2659,13 +2712,14 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       },
     );
   }
-
+//make an offer dio here da nanba
   Widget makeAnOffer() {
-    double bottomPadding = (MediaQuery.of(context).viewInsets.bottom - 50);
-    bool isBottomPaddingNagative = bottomPadding.isNegative;
-
-    return SizedBox(
-      child: SingleChildScrollView(
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: SizedBox(
+        width: double.infinity,
         child: Form(
           key: _offerFormKey,
           child: Column(
@@ -2675,20 +2729,19 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                   .size(context.font.larger)
                   .centerAlign()
                   .bold(),
-              Divider(
-                thickness: 1,
-                color: context.color.borderColor.darken(30),
-              ),
+              SizedBox(height: 12),
+
               RichText(
                 text: TextSpan(
-                  text: "Seller asking price:".translate(context),
+                  text: "Seller asking price".translate(context),
                   style: TextStyle(
                     color: context.color.textDefaultColor.withOpacity(0.5),
                     fontSize: 16,
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: "\t${Constant.currencySymbol}${widget.model.price}",
+                      text:
+                      "\t${Constant.currencySymbol}${widget.model.price}",
                       style: TextStyle(
                         color: context.color.textDefaultColor,
                         fontSize: 16,
@@ -2698,17 +2751,18 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 6,
-              ),
+              SizedBox(height: 12),
+
               Container(
+                height: 48,
                 decoration: BoxDecoration(
                   color: Colors.grey.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: TextFormField(
-                  maxLines: null,
-                  textAlign: TextAlign.center,
+                  maxLines: 1, // IMPORTANT
+                //  textAlign: TextAlign.center,
+                  textAlignVertical: TextAlignVertical.center,
                   keyboardType: TextInputType.number,
                   controller: _makeAnOffermessageController,
                   cursorColor: context.color.territoryColor,
@@ -2717,31 +2771,16 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                     fontSize: 22,
                     color: context.color.textDefaultColor,
                   ),
-                  validator: (val) {
-                    if (val == null || val.isEmpty) {
-                      return Validator.nullCheckValidator(
-                        val,
-                        context: context,
-                      );
-                    } else {
-                      double parsedVal = double.parse(val);
-                      if (parsedVal <= 0.0) {
-                        return "valueMustBeGreaterThanZeroLbl"
-                            .translate(context);
-                      } else if (parsedVal > widget.model.price!) {
-                        return "offerPriceWarning".translate(context);
-                      }
-                      return null;
-                    }
-                  },
                   decoration: InputDecoration(
-                    border: InputBorder.none, // 🔥 rectangle removed
-                    hintText: "Type here".translate(context),
+                    border: InputBorder.none,
+                    hintText: "Type here....".translate(context),
                     hintStyle: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      color: context.color.textDefaultColor.withOpacity(0.3),
+                      fontSize: 12,
+                      color: context.color.deactivateColor,
                     ),
+                    contentPadding:
+                    EdgeInsets.only(bottom: 12,left: 8,right: 8),
                   ),
                 ),
               ),
@@ -2751,6 +2790,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       ),
     );
   }
+
 
   Future<void> _bottomSheet(int itemId) async {
     await UiUtils.showBlurredDialoge(
@@ -2816,7 +2856,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
         decoration: BoxDecoration(
           color: context.color.secondaryColor,
         ),

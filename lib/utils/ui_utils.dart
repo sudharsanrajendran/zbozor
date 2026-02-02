@@ -477,6 +477,7 @@ class UiUtils {
       EdgeInsets? outerPadding,
       Color? disabledColor,
       VoidCallback? onTapDisabledButton,
+      FontWeight? fontWeight,
       bool? disabled}) {
     String title = "";
 
@@ -530,6 +531,7 @@ class UiUtils {
                   )
                       .color(textColor ?? context.color.buttonColor)
                       .size(fontSize ?? context.font.larger)
+                      .bold(weight: fontWeight)
                       .centerAlign(),
                 ),
               ] else ...[
