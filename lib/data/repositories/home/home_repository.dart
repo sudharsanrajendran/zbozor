@@ -39,16 +39,15 @@ class HomeRepository {
     try {
       Map<String, dynamic> parameters = {
         "page": page,
+        if (city != null && city.isNotEmpty) 'city': city,
+        if (state != null && state.isNotEmpty) 'state': state,
+        if (country != null && country.isNotEmpty) 'country': country,
+        if (areaId != null) 'area_id': areaId,
+        "sort_by": "new-to-old",
         if (radius != null) ...{
           'radius': radius,
           'latitude': latitude,
           'longitude': longitude,
-        } else ...{
-          if (city != null && city.isNotEmpty) 'city': city,
-          if (areaId != null) 'area_id': areaId,
-          if (country != null && country.isNotEmpty) 'country': country,
-          if (state != null && state.isNotEmpty) 'state': state,
-          "sort_by": "new-to-old"
         }
       };
 

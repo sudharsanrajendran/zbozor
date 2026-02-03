@@ -2,6 +2,7 @@ import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/data/model/item/item_model.dart';
 import 'package:Ebozor/data/model/item_filter_model.dart';
 import 'package:Ebozor/data/repositories/item/item_repository.dart';
+import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class FetchItemFromCategoryState {}
@@ -61,16 +62,27 @@ class FetchItemFromCategoryCubit extends Cubit<FetchItemFromCategoryState> {
       required String search,
       String? sortBy,
       ItemFilterModel? filter,
+      String? city,
+      String? state,
+      String? country,
       bool forceRefresh = false}) async {
     try {
       emit(FetchItemFromCategoryInProgress());
+
+      // Use provided values or fallback to HiveUtils
+      String? effectiveCity = city ?? HiveUtils.getCityName();
+      String? effectiveState = state ?? HiveUtils.getStateName();
+      String? effectiveCountry = country ?? HiveUtils.getCountryName();
 
       DataOutput<ItemModel> result = await _itemRepository.fetchItemFromCatId(
           categoryId: categoryId,
           page: 1,
           search: search,
           sortBy: sortBy,
-          filter: filter);
+          filter: filter,
+          city: effectiveCity,
+          state: effectiveState,
+          country: effectiveCountry);
       emit(
         FetchItemFromCategorySuccess(
           isLoadingMore: false,
@@ -94,6 +106,9 @@ class FetchItemFromCategoryCubit extends Cubit<FetchItemFromCategoryState> {
       {required int catId,
       required String? search,
       String? sortBy,
+      String? city,
+      String? state,
+      String? country,
       ItemFilterModel? filter}) async {
     try {
       if (state is FetchItemFromCategorySuccess) {
@@ -103,12 +118,19 @@ class FetchItemFromCategoryCubit extends Cubit<FetchItemFromCategoryState> {
         emit((state as FetchItemFromCategorySuccess)
             .copyWith(isLoadingMore: true));
 
+        String? effectiveCity = city ?? HiveUtils.getCityName();
+        String? effectiveState = state ?? HiveUtils.getStateName();
+        String? effectiveCountry = country ?? HiveUtils.getCountryName();
+
         DataOutput<ItemModel> result = await _itemRepository.fetchItemFromCatId(
             categoryId: catId,
             page: (state as FetchItemFromCategorySuccess).page + 1,
             search: search,
             sortBy: sortBy,
-            filter: filter);
+            filter: filter,
+            city: effectiveCity,
+            state: effectiveState,
+            country: effectiveCountry);
 
         FetchItemFromCategorySuccess item =
             (state as FetchItemFromCategorySuccess);

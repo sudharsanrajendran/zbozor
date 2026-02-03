@@ -209,6 +209,11 @@ class ItemRepository {
       }
     }
 
+    // Explicitly add location parameters if provided
+    if (city != null && city.isNotEmpty) parameters['city'] = city;
+    if (state != null && state.isNotEmpty) parameters['state'] = state;
+    if (country != null && country.isNotEmpty) parameters['country'] = country;
+
     if (search != null) {
       parameters[Api.search] = search;
     }
@@ -290,13 +295,19 @@ class ItemRepository {
       required int page,
       double? latitude,
       double? longitude,
-      int? radius}) async {
+      int? radius,
+      String? city,
+      String? state,
+      String? country}) async {
     Map<String, dynamic> parameters = {
       Api.sortBy: sortBy,
       Api.page: page,
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
       if (radius != null) 'radius': radius,
+      if (city != null && city.isNotEmpty) 'city': city,
+      if (state != null && state.isNotEmpty) 'state': state,
+      if (country != null && country.isNotEmpty) 'country': country,
     };
 
     Map<String, dynamic> response =
@@ -370,12 +381,15 @@ class ItemRepository {
   /// search api called here
   Future<DataOutput<ItemModel>> searchItem(
       String query, ItemFilterModel? filter,
-      {required int page}) async {
+      {required int page, String? city, String? state, String? country}) async {
     Map<String, dynamic> parameters = {
       ///api.search rathu just String tha
 
       Api.search: query,
       Api.page: page,
+      if (city != null && city.isNotEmpty) 'city': city,
+      if (state != null && state.isNotEmpty) 'state': state,
+      if (country != null && country.isNotEmpty) 'country': country,
       if (filter != null) ...filter.toMap(),
     };
 
@@ -389,9 +403,7 @@ class ItemRepository {
         // Remove location parameters when radius is present
         parameters.remove('area');
         parameters.remove('area_id');
-        parameters.remove('city');
-        parameters.remove('state');
-        parameters.remove('country');
+        // Do NOT remove city/state/country as per global requirement
       }
 
       if (filter.customFields != null) {

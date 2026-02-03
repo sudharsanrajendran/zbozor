@@ -68,6 +68,9 @@ class FetchPopularItemsCubit extends Cubit<FetchPopularItemsState> {
         page: 1,
         latitude: HiveUtils.getLatitude(),
         longitude: HiveUtils.getLongitude(),
+        city: HiveUtils.getCityName(),
+        state: HiveUtils.getStateName(),
+        country: HiveUtils.getCountryName(),
       );
       emit(FetchPopularItemsSuccess(
           hasError: false,
@@ -94,6 +97,9 @@ class FetchPopularItemsCubit extends Cubit<FetchPopularItemsState> {
           page: (state as FetchPopularItemsSuccess).page + 1,
           latitude: HiveUtils.getLatitude(),
           longitude: HiveUtils.getLongitude(),
+          city: HiveUtils.getCityName(),
+          state: HiveUtils.getStateName(),
+          country: HiveUtils.getCountryName(),
         );
 
         FetchPopularItemsSuccess myItemsState =

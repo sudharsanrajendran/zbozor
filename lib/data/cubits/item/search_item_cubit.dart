@@ -66,17 +66,19 @@ class SearchItemCubit extends Cubit<SearchItemState> {
 
   final ItemRepository _itemRepository = ItemRepository();
 
-
-
   Future<void> searchItem(
     String query, {
     required int page,
     ItemFilterModel? filter,
+    String? city,
+    String? state,
+    String? country,
   }) async {
     try {
       emit(SearchItemFetchProgress());
-      DataOutput<ItemModel> result =
-          await _itemRepository.searchItem(query, filter, page: page);
+      DataOutput<ItemModel> result = await _itemRepository.searchItem(
+          query, filter,
+          page: page, city: city, state: state, country: country);
 
       emit(SearchItemSuccess(
           searchQuery: query,
@@ -110,10 +112,8 @@ class SearchItemCubit extends Cubit<SearchItemState> {
     }
   }
 
-  Future<void> fetchMoreSearchData(
-    String query,
-      ItemFilterModel? filter,
-  ) async {
+  Future<void> fetchMoreSearchData(String query, ItemFilterModel? filter,
+      {String? city, String? state, String? country}) async {
     try {
       if (state is SearchItemSuccess) {
         if ((state as SearchItemSuccess).isLoadingMore) {
@@ -125,6 +125,9 @@ class SearchItemCubit extends Cubit<SearchItemState> {
           query,
           filter,
           page: (state as SearchItemSuccess).page + 1,
+          city: city,
+          state: state,
+          country: country,
         );
         List<ItemModel> updatedResults =
             (state as SearchItemSuccess).searchedItems;

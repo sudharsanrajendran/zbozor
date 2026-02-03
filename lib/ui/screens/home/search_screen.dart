@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:Ebozor/app/app_theme.dart';
@@ -108,9 +109,11 @@ class SearchScreenState extends State<SearchScreen>
   void pageScrollListen() {
     if (controller.isEndReached()) {
       if (context.read<SearchItemCubit>().hasMoreData()) {
-        context
-            .read<SearchItemCubit>()
-            .fetchMoreSearchData(searchController.text, Constant.itemFilter);
+        context.read<SearchItemCubit>().fetchMoreSearchData(
+            searchController.text, Constant.itemFilter,
+            city: HiveUtils.getCityName(),
+            state: HiveUtils.getStateName(),
+            country: HiveUtils.getCountryName());
       }
     }
   }
@@ -150,6 +153,9 @@ class SearchScreenState extends State<SearchScreen>
             searchController.text,
             page: 1,
             filter: filter ?? _getLocationFilter(),
+            city: HiveUtils.getCityName(),
+            state: HiveUtils.getStateName(),
+            country: HiveUtils.getCountryName(),
           );
       previousSearchQuery = searchController.text;
       setState(() {});
@@ -333,9 +339,12 @@ class SearchScreenState extends State<SearchScreen>
     setState(() {});
 
     // Trigger search immediately when filter is applied
-    context
-        .read<SearchItemCubit>()
-        .searchItem(searchController.text, page: 1, filter: filter);
+    context.read<SearchItemCubit>().searchItem(searchController.text,
+        page: 1,
+        filter: filter,
+        city: HiveUtils.getCityName(),
+        state: HiveUtils.getStateName(),
+        country: HiveUtils.getCountryName());
   }
 
   //simmer loader effect
@@ -689,7 +698,10 @@ class SearchScreenState extends State<SearchScreen>
                     context.read<SearchItemCubit>().searchItem(
                         searchController.text.toString(),
                         page: 1,
-                        filter: filter);
+                        filter: filter,
+                        city: HiveUtils.getCityName(),
+                        state: HiveUtils.getStateName(),
+                        country: HiveUtils.getCountryName());
                   },
                 ),
               );
@@ -707,7 +719,10 @@ class SearchScreenState extends State<SearchScreen>
                   context.read<SearchItemCubit>().searchItem(
                       searchController.text.toString(),
                       page: 1,
-                      filter: filter);
+                      filter: filter,
+                      city: HiveUtils.getCityName(),
+                      state: HiveUtils.getStateName(),
+                      country: HiveUtils.getCountryName());
                 },
               ),
             );

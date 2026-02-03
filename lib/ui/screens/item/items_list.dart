@@ -165,6 +165,7 @@ class ItemsListState extends State<ItemsList> {
           widget.categoryId,
         ),
         search: "",
+
         filter: filter);
 
     Future.delayed(Duration.zero, () {
@@ -244,10 +245,12 @@ class ItemsListState extends State<ItemsList> {
       }
     }
   }
-  }
 
   // Helper function to create location filter
-  ItemFilterModel _createLocationFilter({String? minPrice, String? maxPrice, Map<String, dynamic>? customFields}) {
+  ItemFilterModel _createLocationFilter(
+      {String? minPrice,
+      String? maxPrice,
+      Map<String, dynamic>? customFields}) {
     return ItemFilterModel(
       country: HiveUtils.getCountryName() ?? "",
       areaId: HiveUtils.getAreaId() != null
@@ -588,6 +591,7 @@ class ItemsListState extends State<ItemsList> {
       context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
           categoryId: int.tryParse(widget.categoryId) ?? 0,
           search: searchController.text,
+
           filter: _createLocationFilter());
     });
   }
@@ -615,6 +619,7 @@ class ItemsListState extends State<ItemsList> {
       context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
           categoryId: targetId,
           search: searchController.text,
+
           filter: _createLocationFilter());
     });
   }
