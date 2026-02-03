@@ -198,19 +198,55 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
 
   Future<void> getLocationFromLatitudeLongitude({LatLng? latLng}) async {
     try {
-      Placemark? placeMark = (await placemarkFromCoordinates(
-              latLng?.latitude ?? _cameraPosition!.target.latitude,
-              latLng?.longitude ?? _cameraPosition!.target.longitude))
-          .first;
+      List<Placemark> placeMarks = await placemarkFromCoordinates(
+          latLng?.latitude ?? _cameraPosition!.target.latitude,
+          latLng?.longitude ?? _cameraPosition!.target.longitude);
+      Placemark placeMark = placeMarks.first;
 
-      // USER REQUEST: Use subAdministrativeArea as City if available
+      if (Platform.isAndroid &&
+          (placeMark.subAdministrativeArea == null ||
+              placeMark.subAdministrativeArea!.isEmpty)) {
+        for (var p in placeMarks) {
+          if (p.subAdministrativeArea != null &&
+              p.subAdministrativeArea!.isNotEmpty) {
+            placeMark = Placemark(
+                name: placeMark.name,
+                street: placeMark.street,
+                isoCountryCode: placeMark.isoCountryCode,
+                country: placeMark.country,
+                postalCode: placeMark.postalCode,
+                administrativeArea: placeMark.administrativeArea,
+                subAdministrativeArea: p.subAdministrativeArea,
+                locality: placeMark.locality,
+                subLocality: placeMark.subLocality,
+                thoroughfare: placeMark.thoroughfare,
+                subThoroughfare: placeMark.subThoroughfare);
+            break;
+          }
+        }
+      }
+
+      // USER REQUEST: simple nanba, currrent location fetch panni store panu pthe ,city ku subadmistive value tha pass aganum
+      // Implementation: Always try to use subAdministrativeArea for City.
       String? city = placeMark.subAdministrativeArea;
+      String? area = ""; // USER REQUEST: Don't use area anywhere.
+
+      // Fallback: If subAdministrativeArea is completely missing (even after backfill), use locality
       if (city == null || city.isEmpty) {
         city = placeMark.locality;
       }
 
+      // Ensure area is not null (though we just set it to empty string)
+      if (area == null) {
+        area = "";
+      }
+
+      print("adminstaarea/////////////////////");
+      print(placeMark);
+      print("adminstaarea/////////////////////");
+
       formatedAddress = AddressComponent(
-          area: placeMark.subLocality,
+          area: area,
           areaId: null,
           city: city,
           country: placeMark.country,

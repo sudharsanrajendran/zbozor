@@ -240,8 +240,35 @@ class MainActivityState extends State<MainActivity>
 
         if (placemarks.isNotEmpty) {
           Placemark placemark = placemarks[0];
-          print("DEBUG: Auto-Fetch Placemark: ${placemark.toString()}");
 
+          // FIX: Backfill subAdministrativeArea on Android if missing in the first result
+          if (Platform.isAndroid &&
+              (placemark.subAdministrativeArea == null ||
+                  placemark.subAdministrativeArea!.isEmpty)) {
+            for (var p in placemarks) {
+              if (p.subAdministrativeArea != null &&
+                  p.subAdministrativeArea!.isNotEmpty) {
+                // Found a result with subAdministrativeArea, substitute it
+                placemark = Placemark(
+                    name: placemark.name,
+                    street: placemark.street,
+                    isoCountryCode: placemark.isoCountryCode,
+                    country: placemark.country,
+                    postalCode: placemark.postalCode,
+                    administrativeArea: placemark.administrativeArea,
+                    subAdministrativeArea: p.subAdministrativeArea,
+                    locality: placemark.locality,
+                    subLocality: placemark.subLocality,
+                    thoroughfare: placemark.thoroughfare,
+                    subThoroughfare: placemark.subThoroughfare);
+                break;
+              }
+            }
+          }
+
+          print("DEBUG: Auto-Fetch Placemark (Fixed): ${placemark.toString()}");
+
+          // Implementation: Always try to use subAdministrativeArea for City.
           String? city = placemark.subAdministrativeArea;
           if (city == null || city.isEmpty) {
             city = placemark.locality;
@@ -249,7 +276,7 @@ class MainActivityState extends State<MainActivity>
 
           if (city != null) {
             HiveUtils.setLocation(
-              area: placemark.subLocality,
+              area: "", // USER REQUEST: Don't use area anywhere.
               city: city,
               state: placemark.administrativeArea ?? "",
               country: placemark.country ?? "",

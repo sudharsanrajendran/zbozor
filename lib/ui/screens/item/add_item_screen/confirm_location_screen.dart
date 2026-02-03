@@ -190,28 +190,40 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
   Future<void> getLocationFromLatitudeLongitude({LatLng? latLng}) async {
     try {
       await setLocaleIdentifier("en_US");
-      Placemark? placeMark = (await placemarkFromCoordinates(
-              latLng?.latitude ?? _cameraPosition!.target.latitude,
-              latLng?.longitude ?? _cameraPosition!.target.longitude))
-          .first;
+      List<Placemark> placeMarks = await placemarkFromCoordinates(
+          latLng?.latitude ?? _cameraPosition!.target.latitude,
+          latLng?.longitude ?? _cameraPosition!.target.longitude);
+      Placemark placeMark = placeMarks.first;
+
+      if (Platform.isAndroid &&
+          (placeMark.subAdministrativeArea == null ||
+              placeMark.subAdministrativeArea!.isEmpty)) {
+        for (var p in placeMarks) {
+          if (p.subAdministrativeArea != null &&
+              p.subAdministrativeArea!.isNotEmpty) {
+            placeMark = Placemark(
+                name: placeMark.name,
+                street: placeMark.street,
+                isoCountryCode: placeMark.isoCountryCode,
+                country: placeMark.country,
+                postalCode: placeMark.postalCode,
+                administrativeArea: placeMark.administrativeArea,
+                subAdministrativeArea: p.subAdministrativeArea,
+                locality: placeMark.locality,
+                subLocality: placeMark.subLocality,
+                thoroughfare: placeMark.thoroughfare,
+                subThoroughfare: placeMark.subThoroughfare);
+            break;
+          }
+        }
+      }
 
       String? newCity = (placeMark.subAdministrativeArea != null &&
               placeMark.subAdministrativeArea!.isNotEmpty)
           ? placeMark.subAdministrativeArea
           : placeMark.locality;
 
-      String? newArea =
-          (placeMark.subLocality != null && placeMark.subLocality!.isNotEmpty)
-              ? placeMark.subLocality
-              : ((placeMark.locality != null &&
-                      placeMark.locality!.isNotEmpty &&
-                      placeMark.locality != newCity)
-                  ? placeMark.locality
-                  : null);
-
       formatedAddress = AddressComponent(
-          area: newArea,
-          areaId: null,
           city: newCity,
           country: placeMark.country,
           state: placeMark.administrativeArea);
