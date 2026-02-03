@@ -224,6 +224,18 @@ class MainActivityState extends State<MainActivity>
   }
 
   Future<void> _autoFetchCurrentLocation() async {
+    // CRITICAL FIX: Only auto-fetch if location is NOT already set
+    // This prevents overwriting manually selected locations
+    if (HiveUtils.isLocationFilled()) {
+      print("DEBUG: Auto-Fetch SKIPPED - Location already set");
+      print("  City: ${HiveUtils.getCityName()}");
+      print("  State: ${HiveUtils.getStateName()}");
+      print("  Country: ${HiveUtils.getCountryName()}");
+      return;
+    }
+
+    print("DEBUG: Auto-Fetch STARTING - No location set");
+
     // If location is already set, we don't necessarily need to overwrite it immediately,
     // but the requirement says "once app enter automatic fetch".
     // We will check permission first.

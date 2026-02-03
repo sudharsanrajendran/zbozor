@@ -38,6 +38,7 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
   Timer? _searchDebounce;
 
   bool _initialLocationSet = false;
+  bool _ignoreFirstCameraIdle = false;
 
   @override
   void initState() {
@@ -90,6 +91,15 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
             addressString += "${formatedAddress!.country}";
           }
           searchController.text = addressString;
+
+          print("DEBUG: LocationMapScreen - Arguments Received");
+          print("  City: ${formatedAddress!.city}");
+          print("  State: ${formatedAddress!.state}");
+          print("  Country: ${formatedAddress!.country}");
+          print("  Lat/Lng: $latitude, $longitude");
+
+          // Prevent first camera idle from overwriting this data
+          _ignoreFirstCameraIdle = true;
 
           _cameraPosition = CameraPosition(
             target: LatLng(latitude!, longitude!),
@@ -163,7 +173,16 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
   }
 
   Future<void> getLocationFromLatitudeLongitude({LatLng? latLng}) async {
+    print("DEBUG: getLocationFromLatitudeLongitude called");
+    print("  Input latLng: $latLng");
+    print("  Current latitude/longitude: $latitude, $longitude");
+
     try {
+      latitude = latLng?.latitude ?? _cameraPosition!.target.latitude;
+      longitude = latLng?.longitude ?? _cameraPosition!.target.longitude;
+
+      print("  Updated latitude/longitude: $latitude, $longitude");
+
       if (Platform.isIOS) {
         var googleAddress = await GoogleGeocodingHelper.getAddress(
             latLng?.latitude ?? latitude!, latLng?.longitude ?? longitude!);
@@ -221,6 +240,11 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
       }
 
       if (formatedAddress != null) {
+        print("DEBUG: Reverse geocode completed");
+        print("  New City: ${formatedAddress!.city}");
+        print("  New State: ${formatedAddress!.state}");
+        print("  New Country: ${formatedAddress!.country}");
+
         String addressString = "";
         if (formatedAddress!.area != null &&
             formatedAddress!.area!.isNotEmpty) {
@@ -345,6 +369,18 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                               _cameraPosition = position;
                             },
                             onCameraIdle: () {
+                              print("DEBUG: Camera Idle Event");
+                              print(
+                                  "  _ignoreFirstCameraIdle: $_ignoreFirstCameraIdle");
+
+                              if (_ignoreFirstCameraIdle) {
+                                print("  Skipping first camera idle");
+                                _ignoreFirstCameraIdle = false;
+                                return;
+                              }
+
+                              print(
+                                  "  Processing camera idle - will reverse geocode");
                               getLocationFromLatitudeLongitude(
                                   latLng: _cameraPosition!.target);
                               latitude = _cameraPosition!.target.latitude;

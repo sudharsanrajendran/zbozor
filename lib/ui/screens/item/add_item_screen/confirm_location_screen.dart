@@ -140,11 +140,12 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
         position: LatLng(itemModel.latitude!, itemModel.longitude!),
       ));
     } else {
+      // Use globally selected location (not current GPS location)
       currentLocation = [
-        HiveUtils.getCurrentAreaName(),
-        HiveUtils.getCurrentCityName(),
-        HiveUtils.getCurrentStateName(),
-        HiveUtils.getCurrentCountryName()
+        HiveUtils.getAreaName(),
+        HiveUtils.getCityName(),
+        HiveUtils.getStateName(),
+        HiveUtils.getCountryName()
       ].where((part) => part != null && part.isNotEmpty).join(', ');
       if (currentLocation == "") {
         Position position = await Geolocator.getCurrentPosition(
@@ -163,14 +164,15 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
         latitude = position.latitude;
         longitude = position.longitude;
       } else {
+        // Use globally selected location
         formatedAddress = AddressComponent(
-            area: HiveUtils.getCurrentAreaName(),
-            areaId: null,
-            city: HiveUtils.getCurrentCityName(),
-            country: HiveUtils.getCurrentCountryName(),
-            state: HiveUtils.getCurrentStateName());
-        latitude = HiveUtils.getCurrentLatitude();
-        longitude = HiveUtils.getCurrentLongitude();
+            area: HiveUtils.getAreaName(),
+            areaId: HiveUtils.getAreaId(),
+            city: HiveUtils.getCityName(),
+            country: HiveUtils.getCountryName(),
+            state: HiveUtils.getStateName());
+        latitude = HiveUtils.getLatitude();
+        longitude = HiveUtils.getLongitude();
         _cameraPosition = CameraPosition(
           target: LatLng(latitude!, longitude!),
           zoom: 14.4746,
@@ -190,6 +192,9 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
   Future<void> getLocationFromLatitudeLongitude({LatLng? latLng}) async {
     try {
       await setLocaleIdentifier("en_US");
+      latitude = latLng?.latitude ?? _cameraPosition!.target.latitude;
+      longitude = latLng?.longitude ?? _cameraPosition!.target.longitude;
+
       List<Placemark> placeMarks = await placemarkFromCoordinates(
           latLng?.latitude ?? _cameraPosition!.target.latitude,
           latLng?.longitude ?? _cameraPosition!.target.longitude);
@@ -418,8 +423,6 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen>
                                 .join(', ');
 
                             formatedAddress = AddressComponent(
-                                area: location["area"] ?? null,
-                                areaId: location["area_id"] ?? null,
                                 city: location["city"] ?? null,
                                 country: location["country"] ?? null,
                                 state: location["state"] ?? null);

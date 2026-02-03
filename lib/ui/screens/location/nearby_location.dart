@@ -198,6 +198,9 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
 
   Future<void> getLocationFromLatitudeLongitude({LatLng? latLng}) async {
     try {
+      latitude = latLng?.latitude ?? _cameraPosition!.target.latitude;
+      longitude = latLng?.longitude ?? _cameraPosition!.target.longitude;
+
       List<Placemark> placeMarks = await placemarkFromCoordinates(
           latLng?.latitude ?? _cameraPosition!.target.latitude,
           latLng?.longitude ?? _cameraPosition!.target.longitude);

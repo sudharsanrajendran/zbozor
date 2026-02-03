@@ -204,7 +204,19 @@ class ItemsListState extends State<ItemsList> {
           categoryId: int.parse(
             widget.categoryId,
           ),
-          search: searchController.text);
+          search: searchController.text,
+          filter: ItemFilterModel(
+            country: HiveUtils.getCountryName() ?? "",
+            areaId: HiveUtils.getAreaId() != null
+                ? int.parse(HiveUtils.getAreaId().toString())
+                : null,
+            city: HiveUtils.getCityName() ?? "",
+            state: HiveUtils.getStateName() ?? "",
+            categoryId: widget.categoryId,
+            radius: HiveUtils.getNearbyRadius() ?? null,
+            latitude: HiveUtils.getLatitude() ?? null,
+            longitude: HiveUtils.getLongitude() ?? null,
+          ));
       previousSearchQuery = searchController.text;
       sortBy = null;
       setState(() {});
@@ -232,7 +244,28 @@ class ItemsListState extends State<ItemsList> {
       }
     }
   }
+  }
 
+  // Helper function to create location filter
+  ItemFilterModel _createLocationFilter({String? minPrice, String? maxPrice, Map<String, dynamic>? customFields}) {
+    return ItemFilterModel(
+      country: HiveUtils.getCountryName() ?? "",
+      areaId: HiveUtils.getAreaId() != null
+          ? int.parse(HiveUtils.getAreaId().toString())
+          : null,
+      city: HiveUtils.getCityName() ?? "",
+      state: HiveUtils.getStateName() ?? "",
+      categoryId: widget.categoryId,
+      radius: HiveUtils.getNearbyRadius() ?? null,
+      latitude: HiveUtils.getLatitude() ?? null,
+      longitude: HiveUtils.getLongitude() ?? null,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      customFields: customFields,
+    );
+  }
+
+  // [NEW] Helper to fetch count for dynamic filter sheet
   // [NEW] Helper to fetch count for dynamic filter sheet
   void _fetchCount(
       {int? overrideCategoryId, int? overrideMinPrice, int? overrideMaxPrice}) {
@@ -554,7 +587,8 @@ class ItemsListState extends State<ItemsList> {
 
       context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
           categoryId: int.tryParse(widget.categoryId) ?? 0,
-          search: searchController.text);
+          search: searchController.text,
+          filter: _createLocationFilter());
     });
   }
 
@@ -579,7 +613,9 @@ class ItemsListState extends State<ItemsList> {
       int targetId = targetCat?.id ?? int.tryParse(widget.categoryId) ?? 0;
 
       context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
-          categoryId: targetId, search: searchController.text);
+          categoryId: targetId,
+          search: searchController.text,
+          filter: _createLocationFilter());
     });
   }
 
