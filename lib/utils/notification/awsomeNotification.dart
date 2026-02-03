@@ -329,7 +329,7 @@ class NotificationController {
         /* Future.delayed(Duration.zero, () {
           Navigator.popUntil(
               Constant.navigatorKey.currentContext!, (route) => route.isFirst);
-          MainActivity.globalKey.currentState?.onItemTapped(1);
+          MainActivity.selectTabNotifier.value = 1;
         });*/
       } else {
         Future.delayed(Duration.zero, () {
@@ -341,7 +341,7 @@ class NotificationController {
       Future.delayed(Duration.zero, () {
         Navigator.popUntil(
             Constant.navigatorKey.currentContext!, (route) => route.isFirst);
-        MainActivity.globalKey.currentState?.onItemTapped(2);
+        MainActivity.selectTabNotifier.value = 2;
       });
     } else if (receivedAction.payload?["item_id"] != null &&
         receivedAction.payload?["item_id"] != '') {

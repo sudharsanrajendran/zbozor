@@ -121,7 +121,7 @@ class _SuccessItemScreenState extends State<SuccessItemScreen>
         () {
           EventBus().fireItemAdded();
           if (mounted) Navigator.popUntil(context, (route) => route.isFirst);
-          MainActivity.globalKey.currentState?.onItemTapped(0);
+          MainActivity.selectTabNotifier.value = 0;
         },
       );
   }

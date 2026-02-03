@@ -225,70 +225,80 @@ class HomeScreenState extends State<HomeScreen>
             physics: const AlwaysScrollableScrollPhysics(),
             controller: _scrollController,
             slivers: [
-              SliverToBoxAdapter(
-                child: BlocBuilder<FetchHomeScreenCubit, FetchHomeScreenState>(
-                  builder: (context, state) {
-                    if (state is FetchHomeScreenInProgress) {
-                      return shimmerEffect();
-                    }
-                    if (state is FetchHomeScreenSuccess) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const HomeSearchField(),
-                          const SliderWidget(),
-                          const CategoryWidgetHome(),
-                          // const NewHomeCategoriesWidget(),
-                          if (HiveUtils.isUserAuthenticated())
-                            BlocBuilder<FetchVerificationRequestsCubit,
-                                FetchVerificationRequestState>(
-                              builder: (context, state) {
-                                bool isLocallyVerified =
-                                    HiveUtils.getUserDetails().isVerified == 1;
-                                bool isRemotelyVerified = false;
+              BlocBuilder<FetchHomeScreenCubit, FetchHomeScreenState>(
+                builder: (context, state) {
+                  if (state is FetchHomeScreenInProgress) {
+                    return SliverToBoxAdapter(child: shimmerEffect());
+                  }
+                  if (state is FetchHomeScreenSuccess) {
+                    return SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          // 1. Header Section (Search, Slider, Categories, Verification)
+                          if (index == 0) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const HomeSearchField(),
+                                const SliderWidget(),
+                                const CategoryWidgetHome(),
+                                if (HiveUtils.isUserAuthenticated())
+                                  BlocBuilder<FetchVerificationRequestsCubit,
+                                      FetchVerificationRequestState>(
+                                    builder: (context, state) {
+                                      bool isLocallyVerified =
+                                          HiveUtils.getUserDetails()
+                                                  .isVerified ==
+                                              1;
+                                      bool isRemotelyVerified = false;
 
-                                if (state is FetchVerificationRequestSuccess) {
-                                  isRemotelyVerified =
-                                      state.data.status == "approved";
-                                }
+                                      if (state
+                                          is FetchVerificationRequestSuccess) {
+                                        isRemotelyVerified =
+                                            state.data.status == "approved";
+                                      }
 
-                                if (!isLocallyVerified && !isRemotelyVerified) {
-                                  return const VerificationBanner();
-                                }
-                                return const SizedBox.shrink();
-                              },
-                            ),
-                          ...List.generate(state.sections.length, (index) {
-                            HomeScreenSection section = state.sections[index];
-                            if (state.sections.isNotEmpty) {
-                              return HomeSectionsAdapter(
-                                section: section,
-                              );
-                            } else {
-                              return SizedBox.shrink();
-                            }
-                          }),
-                          if (state.sections.isNotEmpty &&
-                              Constant.isGoogleBannerAdsEnabled == "1") ...[
-                            Container(
+                                      if (!isLocallyVerified &&
+                                          !isRemotelyVerified) {
+                                        return const VerificationBanner();
+                                      }
+                                      return const SizedBox.shrink();
+                                    },
+                                  ),
+                              ],
+                            );
+                          }
+
+                          // 2. Dynamic Sections
+                          if (index <= state.sections.length) {
+                            HomeScreenSection section =
+                                state.sections[index - 1];
+                            return HomeSectionsAdapter(
+                              section: section,
+                            );
+                          }
+
+                          // 3. Ad Banner (Use index check to ensure it's the last item)
+                          if (Constant.isGoogleBannerAdsEnabled == "1") {
+                            return Container(
                               padding: EdgeInsets.only(top: 5),
                               margin: EdgeInsets.symmetric(vertical: 10),
                               child: AdBannerWidget(),
-                            )
-                          ] else ...[
-                            SizedBox(
-                              height: 10,
-                            )
-                          ],
-                        ],
-                      );
-                    }
-                    if (state is FetchHomeScreenFail) {
-                      print('hey bro ${state.error}');
-                    }
-                    return SizedBox.shrink();
-                  },
-                ),
+                            );
+                          } else {
+                            return SizedBox(height: 10);
+                          }
+                        },
+                        // Count: 1 (Header) + Sections + 1 (Ad/Bottom Space)
+                        childCount: state.sections.length + 2,
+                      ),
+                    );
+                  }
+                  if (state is FetchHomeScreenFail) {
+                    print('hey bro ${state.error}');
+                  }
+                  return SliverToBoxAdapter(child: SizedBox.shrink());
+                },
               ),
               SliverToBoxAdapter(child: SizedBox(height: 10)),
               const AllItemsSliverWidget(),
@@ -587,7 +597,8 @@ class AllItemsSliverWidget extends StatelessWidget {
                     // Render Row of Items
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: sidePadding, vertical: 8),
+                        horizontal: sidePadding,vertical: 6
+                      ),
                       child: Row(
                         children: [
                           Expanded(

@@ -450,7 +450,10 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 13.0),
-                  child: Text(model.name!,style:TextStyle(fontWeight: FontWeight.bold),)
+                  child: Text(
+                    model.name!,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )
                       .size(context.font.large)
                       .setMaxLines(lines: 2)
                       .color(context.color.textDefaultColor),
@@ -495,9 +498,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                     child: customFields(),
                   ),
                 if (model.customFields!.isNotEmpty)
-                Divider(
-                    thickness: 1,
-                    color: context.color.textDefaultColor.withOpacity(0.1)),
+                  Divider(
+                      thickness: 1,
+                      color: context.color.textDefaultColor.withOpacity(0.1)),
                 const SizedBox(height: 8),
 
                 Padding(
@@ -621,6 +624,11 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
   }
 
   Widget buildRelatedListWidget(FetchRelatedItemsSuccess state) {
+    List<ItemModel> filteredList =
+        state.itemModel.where((item) => item.id != model.id).toList();
+
+    if (filteredList.isEmpty) return SizedBox.shrink();
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -660,23 +668,18 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             listAxis: Axis.horizontal,
             isNotSidePadding: true, // IMPORTANT
             listSaperator: (context, index) {
-              if (index == 0) return SizedBox.shrink();
               return const SizedBox(width: 10);
             },
             builder: (context, int index, bool) {
-              ItemModel? item = state.itemModel[index];
+              ItemModel item = filteredList[index];
 
-              if (item.id != model.id) {
-                return ItemCard(
-                  item: item,
-                  width: 162,
-                  radius: 6,
-                );
-              } else {
-                return SizedBox.shrink();
-              }
+              return ItemCard(
+                item: item,
+                width: 162,
+                radius: 6,
+              );
             },
-            total: state.itemModel.length,
+            total: filteredList.length,
           )
         ],
       ),
@@ -1423,7 +1426,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 addCloudData("edit_from", model.status);
                 Navigator.pushNamed(context, Routes.addItemDetails,
                     arguments: {"isEdit": true});
-              }, Colors.transparent, contextColor.territoryColor),
+              }, Colors.transparent, contextColor.territoryColor,
+                  showElevation: false),
             ),
             SizedBox(width: 10.rw(context)),
             BlocProvider(
@@ -1473,7 +1477,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 addCloudData("edit_from", model.status);
                 Navigator.pushNamed(context, Routes.addItemDetails,
                     arguments: {"isEdit": true});
-              }, Colors.transparent, contextColor.territoryColor),
+              }, contextColor.backgroundColor, contextColor.territoryColor,
+                  showElevation: false),
             ),
             SizedBox(width: 10.rw(context)),
             Expanded(
@@ -1527,7 +1532,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
               child: _buildButton("renew".translate(context), () {
                 // selectPackageDialog();
                 showPackageSelectBottomSheet();
-              }, Colors.transparent, contextColor.territoryColor),
+              }, Colors.transparent, contextColor.territoryColor,
+                  showElevation: false),
             ),
             SizedBox(width: 10.rw(context)),
             BlocProvider(
@@ -1719,8 +1725,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                           }
                         },
                         context: context);
-                  }, context.color.secondaryColor,
-                      context.color.territoryColor,
+                  }, context.color.secondaryColor, context.color.territoryColor,
                       fontWeight: FontWeight.w500),
                 ),
               ],
@@ -1843,7 +1848,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
 
   Widget _buildButton(String title, VoidCallback onPressed, Color? buttonColor,
       Color? textColor,
-      {FontWeight? fontWeight}) {
+      {FontWeight? fontWeight, bool? showElevation}) {
     return UiUtils.buildButton(
       context,
       onPressed: onPressed,
@@ -1856,6 +1861,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       textColor: textColor,
       buttonTitle: title,
       fontWeight: fontWeight,
+      showElevation: showElevation,
       width: 10.rw(context),
     );
   }
@@ -2672,7 +2678,6 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                       ),
                     ),
 
-
                     const SizedBox(width: 14),
 
                     /// Confirm
@@ -2712,6 +2717,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       },
     );
   }
+
 //make an offer dio here da nanba
   Widget makeAnOffer() {
     return Padding(
@@ -2730,7 +2736,6 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                   .centerAlign()
                   .bold(),
               SizedBox(height: 12),
-
               RichText(
                 text: TextSpan(
                   text: "Seller asking price".translate(context),
@@ -2740,8 +2745,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text:
-                      "\t${Constant.currencySymbol}${widget.model.price}",
+                      text: "\t${Constant.currencySymbol}${widget.model.price}",
                       style: TextStyle(
                         color: context.color.textDefaultColor,
                         fontSize: 16,
@@ -2752,7 +2756,6 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 ),
               ),
               SizedBox(height: 12),
-
               Container(
                 height: 48,
                 decoration: BoxDecoration(
@@ -2761,7 +2764,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 ),
                 child: TextFormField(
                   maxLines: 1, // IMPORTANT
-                //  textAlign: TextAlign.center,
+                  //  textAlign: TextAlign.center,
                   textAlignVertical: TextAlignVertical.center,
                   keyboardType: TextInputType.number,
                   controller: _makeAnOffermessageController,
@@ -2780,7 +2783,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                       color: context.color.deactivateColor,
                     ),
                     contentPadding:
-                    EdgeInsets.only(bottom: 12,left: 8,right: 8),
+                        EdgeInsets.only(bottom: 12, left: 8, right: 8),
                   ),
                 ),
               ),
@@ -2790,7 +2793,6 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       ),
     );
   }
-
 
   Future<void> _bottomSheet(int itemId) async {
     await UiUtils.showBlurredDialoge(

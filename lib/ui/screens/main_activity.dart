@@ -73,10 +73,11 @@ List<ScrollController> controllerList = [
 //
 class MainActivity extends StatefulWidget {
   final String from;
-  static final GlobalKey<MainActivityState> globalKey =
-      GlobalKey<MainActivityState>();
+  // REMOVED static GlobalKey to prevent duplicate key errors.
+  // Using ValueNotifier for tab switching requests.
+  static final ValueNotifier<int> selectTabNotifier = ValueNotifier(0);
 
-  MainActivity({Key? key, required this.from}) : super(key: globalKey);
+  const MainActivity({Key? key, required this.from}) : super(key: key);
 
   @override
   State<MainActivity> createState() => MainActivityState();
@@ -138,6 +139,9 @@ class MainActivityState extends State<MainActivity>
     ///this will check if your profile is complete or not if it is incomplete it will redirect you to the edit profile page
     completeProfileCheck();
 
+    // Listen to external tab switch requests
+    MainActivity.selectTabNotifier.addListener(_onTabNotifierChange);
+
     ///This will check for update
     versionCheck(settings);
 
@@ -175,6 +179,14 @@ class MainActivityState extends State<MainActivity>
       print('Received deep link: $uri');
       // Handle other deep link paths here if necessary
     }
+  }
+
+  void _onTabNotifierChange() {
+    // Only act if the notifier value changes to something valid.
+    // NOTE: ValueNotifier doesn't notify if value is same.
+    // Callers should set it.
+    // Ideally we navigate:
+    onItemTapped(MainActivity.selectTabNotifier.value);
   }
 
   void addHistory(int index) {
@@ -400,6 +412,7 @@ class MainActivityState extends State<MainActivity>
   void dispose() {
     pageCntrlr.dispose();
     _linkSubscription?.cancel();
+    MainActivity.selectTabNotifier.removeListener(_onTabNotifierChange);
     super.dispose();
   }
 

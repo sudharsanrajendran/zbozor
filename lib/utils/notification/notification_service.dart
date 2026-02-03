@@ -377,7 +377,7 @@ class NotificationService {
               Constant.navigatorKey.currentContext!,
               false,
             );
-            MainActivity.globalKey.currentState?.onItemTapped(1);
+            MainActivity.selectTabNotifier.value = 1;
           });*/
         } else {
           Future.delayed(Duration.zero, () {
@@ -392,7 +392,7 @@ class NotificationService {
             Constant.navigatorKey.currentContext!,
             false,
           );
-          MainActivity.globalKey.currentState?.onItemTapped(2);
+          MainActivity.selectTabNotifier.value = 2;
         });
       } else if (message.data["item_id"] != null &&
           message.data["item_id"] != '') {
