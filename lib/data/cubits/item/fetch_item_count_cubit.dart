@@ -37,6 +37,8 @@ class FetchItemCountCubit extends Cubit<FetchItemCountState> {
     int? minPrice,
     int? maxPrice,
     String? postedSince,
+    double? latitude,
+    double? longitude,
     ItemFilterModel? filter,
   }) async {
     emit(FetchItemCountInProgress());
@@ -52,6 +54,8 @@ class FetchItemCountCubit extends Cubit<FetchItemCountState> {
           minPrice: minPrice,
           maxPrice: maxPrice,
           postedSince: postedSince,
+          latitude: latitude,
+          longitude: longitude,
           filter: filter);
       emit(FetchItemCountSuccess(count));
     } catch (e) {

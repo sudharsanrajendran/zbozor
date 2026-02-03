@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'dart:async';
+import 'dart:io';
 
 import 'package:Ebozor/app/app_theme.dart';
 import 'package:Ebozor/app/routes.dart';
@@ -182,6 +183,36 @@ class CountriesScreenState extends State<CountriesScreen> {
 
         if (placemarks.isNotEmpty) {
           Placemark place = placemarks[0];
+
+          // FIX: Backfill subAdministrativeArea on Android if missing
+          if (Platform.isAndroid &&
+              (place.subAdministrativeArea == null ||
+                  place.subAdministrativeArea!.isEmpty)) {
+            for (var p in placemarks) {
+              if (p.subAdministrativeArea != null &&
+                  p.subAdministrativeArea!.isNotEmpty) {
+                place = Placemark(
+                    name: place.name,
+                    street: place.street,
+                    isoCountryCode: place.isoCountryCode,
+                    country: place.country,
+                    postalCode: place.postalCode,
+                    administrativeArea: place.administrativeArea,
+                    subAdministrativeArea: p.subAdministrativeArea,
+                    locality: place.locality,
+                    subLocality: place.subLocality,
+                    thoroughfare: place.thoroughfare,
+                    subThoroughfare: place.subThoroughfare);
+                break;
+              }
+            }
+          }
+
+          String? city = place.subAdministrativeArea;
+          if (city == null || city.isEmpty) {
+            city = place.locality;
+          }
+
           if (mounted) {
             Navigator.push(
                 context,
@@ -190,10 +221,10 @@ class CountriesScreenState extends State<CountriesScreen> {
                     settings: RouteSettings(arguments: {
                       'latitude': position.latitude,
                       'longitude': position.longitude,
-                      'city': place.locality,
+                      'city': city,
                       'state': place.administrativeArea,
                       'country': place.country,
-                      'area': place.subLocality,
+                      'area': "", // USER REQUEST: Don't use area anywhere.
                       'area_id': null,
                       'from': widget.from // Passing 'from' parameter
                     }))).then((value) {

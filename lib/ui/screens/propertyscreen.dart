@@ -265,11 +265,15 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       minPrice: minPrice,
       maxPrice: maxPrice,
       postedSince: postedOn, // Use the class variable
-      // If you want to include dynamic filters:
       filter: _selectedFilters.isNotEmpty
           ? ItemFilterModel(customFields: _selectedFilters)
           : null,
       search: "",
+      city: HiveUtils.getCityName(),
+      state: HiveUtils.getStateName(),
+      country: HiveUtils.getCountryName(),
+      latitude: HiveUtils.getLatitude(),
+      longitude: HiveUtils.getLongitude(),
     );
   }
 

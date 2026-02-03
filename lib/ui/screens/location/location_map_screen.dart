@@ -181,13 +181,40 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
 
         if (placemarks.isNotEmpty) {
           Placemark placeMark = placemarks.first;
+
+          // FIX: Backfill subAdministrativeArea on Android if missing
+          if (Platform.isAndroid &&
+              (placeMark.subAdministrativeArea == null ||
+                  placeMark.subAdministrativeArea!.isEmpty)) {
+            for (var p in placemarks) {
+              if (p.subAdministrativeArea != null &&
+                  p.subAdministrativeArea!.isNotEmpty) {
+                placeMark = Placemark(
+                    name: placeMark.name,
+                    street: placeMark.street,
+                    isoCountryCode: placeMark.isoCountryCode,
+                    country: placeMark.country,
+                    postalCode: placeMark.postalCode,
+                    administrativeArea: placeMark.administrativeArea,
+                    subAdministrativeArea: p.subAdministrativeArea,
+                    locality: placeMark.locality,
+                    subLocality: placeMark.subLocality,
+                    thoroughfare: placeMark.thoroughfare,
+                    subThoroughfare: placeMark.subThoroughfare);
+                break;
+              }
+            }
+          }
+
+          String? city = placeMark.subAdministrativeArea;
+          if (city == null || city.isEmpty) {
+            city = placeMark.locality;
+          }
+
           formatedAddress = AddressComponent(
-              area: placeMark.subLocality,
+              area: "", // USER REQUEST: Don't use area.
               areaId: null,
-              city:
-                  (placeMark.locality != null && placeMark.locality!.isNotEmpty)
-                      ? placeMark.locality
-                      : placeMark.subLocality,
+              city: city,
               country: placeMark.country,
               state: placeMark.administrativeArea);
         }

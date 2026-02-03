@@ -284,6 +284,11 @@ class ItemsListState extends State<ItemsList> {
       postedSince: postedSince,
       filter: ItemFilterModel(customFields: _selectedCustomFields),
       search: searchController.text,
+      city: HiveUtils.getCityName(),
+      state: HiveUtils.getStateName(),
+      country: HiveUtils.getCountryName(),
+      latitude: HiveUtils.getLatitude(),
+      longitude: HiveUtils.getLongitude(),
     );
   }
 

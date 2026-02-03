@@ -430,8 +430,6 @@ class ItemRepository {
     return DataOutput(total: response['data']['total'] ?? 0, modelList: items);
   }
 
-
-
   /// et item count api
   Future<int> getItemCount({
     int? categoryId,
@@ -444,6 +442,8 @@ class ItemRepository {
     int? minPrice,
     int? maxPrice,
     String? postedSince,
+    double? latitude,
+    double? longitude,
     ItemFilterModel? filter,
   }) async {
     Map<String, dynamic> parameters = {
@@ -453,6 +453,12 @@ class ItemRepository {
       if (minPrice != null) "min_price": minPrice,
       if (maxPrice != null) "max_price": maxPrice,
       if (postedSince != null) "posted_since": postedSince,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+      // Pass location parameters directly
+      if (city != null && city.isNotEmpty) 'city': city,
+      if (state != null && state.isNotEmpty) 'state': state,
+      if (country != null && country.isNotEmpty) 'country': country,
     };
 
     if (filter != null) {
@@ -467,24 +473,17 @@ class ItemRepository {
         });
       }
 
-      // Location logic copied/adapted from existing patterns if needed,
-      // or strictly cleaning up based on what was there.
-      // The previous code had removes here.
-
-      parameters.remove('city');
-      parameters.remove('country');
-      parameters.remove('state');
+      // We no longer remove location parameters. Use what is passed.
 
       if (filter.radius != null) {
         if (filter.latitude != null && filter.longitude != null) {
+          // If radius filter has its own lat/long, prioritze/use it?
+          // The existing logic passed it here.
           parameters['latitude'] = filter.latitude;
           parameters['longitude'] = filter.longitude;
         }
-        parameters.remove('city');
-        parameters.remove('area');
-        parameters.remove('area_id');
-        parameters.remove('country');
-        parameters.remove('state');
+        // Previous logic removed city/area/country here.
+        // User wants to send city/state/country explicitly.
       } else {
         if (areaId != null) parameters['area_id'] = areaId;
       }
