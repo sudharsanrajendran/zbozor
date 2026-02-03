@@ -26,7 +26,7 @@ class Constant {
   static String isGoogleNativeAdsEnabled = "";
 
   ///
-  static String bannerAdIdAndroid = '';
+  static String bannerAdIdAndroid = 'ca-app-pub-8956768861022760/1852790959';
   static String bannerAdIdIOS = "";
 
   static String interstitialAdIdAndroid = '';

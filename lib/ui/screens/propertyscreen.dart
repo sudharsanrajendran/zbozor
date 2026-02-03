@@ -134,18 +134,21 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
       _selectedPropertyType = propertyType;
       _subCategoryPath.clear(); // Reset all subcategories
       _selectedFilters.clear(); // Reset filters when property type changes
-      _fetchCount();
     });
 
     // If this property type has children already loaded, we don't need to fetch.
     if (propertyType.children != null && propertyType.children!.isNotEmpty) {
       // Children already available
-      // PROACTIVE FIX: Auto-select the first child (e.g. Apartment) so its filters show up
+      // Children already available
+      // Autoselect ENABLED
       setState(() {
         _subCategoryPath.add(propertyType.children!.first);
       });
       // [NEW] Also ensure the auto-selected child has its own children loaded if needed
       _fetchChildrenFor(propertyType.children!.first);
+
+      // Update count for the new selection
+      _fetchCount();
     } else {
       // Check if it's supposed to have children?
       // Many times subcategoriesCount is reliable.
@@ -156,6 +159,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         // OR rely on our new generic fetch. The existing Cubit updates `_selectedPropertyType` via BlocListener.
         _subCategoryCubit.fetchSubCategories(categoryId: propertyType.id!);
       }
+      // If we didn't auto-select a child (because none loaded yet), fetch count for the Parent
+      _fetchCount();
     }
   }
 
@@ -377,6 +382,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                               _subCategoryPath.add(freshData.children!.first);
                               // [NEW] Trigger API fetch for this auto-selected child
                               _fetchChildrenFor(freshData.children!.first);
+                              _fetchCount();
                             }
                           });
                         } else if (!filtersInitialized) {
@@ -389,6 +395,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                                 freshData.children!.isNotEmpty) {
                               _subCategoryPath.add(freshData.children!.first);
                               _fetchChildrenFor(freshData.children!.first);
+                              _fetchCount();
                             }
                           });
                         }
@@ -408,6 +415,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                           _subCategoryPath.add(firstProp.children!.first);
                           // [NEW] Trigger API fetch for this auto-selected child
                           _fetchChildrenFor(firstProp.children!.first);
+                          _fetchCount();
                         }
                       });
                       // Also fetch subcategories for this auto-selected item if needed

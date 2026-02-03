@@ -2756,7 +2756,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
               Container(
                 height: 48,
                 decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.1),
+                  color: Colors.grey.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: TextFormField(

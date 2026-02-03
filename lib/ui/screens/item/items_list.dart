@@ -79,6 +79,8 @@ class ItemsListState extends State<ItemsList> {
 
   // For dynamic filtering
   late List<CategoryModel> _currentChain;
+  late List<CategoryModel>
+      _initialChain; // [NEW] To support Reset to initial state
   late final FetchSubCategoriesCubit _chipFilterCubit;
   List<String> _currentCategoryIds = [];
   Map<String, dynamic> _selectedCustomFields = {};
@@ -131,6 +133,9 @@ class ItemsListState extends State<ItemsList> {
             subcategoriesCount: 0));
       }
     }
+
+    // [NEW] Capture the initial state for Reset functionality
+    _initialChain = List.from(_currentChain);
 
     _currentCategoryIds = List.from(widget.categoryIds);
     searchbody = {};
@@ -402,7 +407,15 @@ class ItemsListState extends State<ItemsList> {
       previousSearchQuery = "";
       filter = null;
       _selectedCustomFields.clear(); // Clear selected custom chips
-      _currentCategoryIds = [widget.categoryId];
+
+      // [Reset Logic] Revert to the initial category chain
+      _currentChain = List.from(_initialChain);
+      // Ensure category IDs list matches the initial leaf node
+      if (_currentChain.isNotEmpty) {
+        _currentCategoryIds = [_currentChain.last.id.toString()];
+      } else {
+        _currentCategoryIds = [widget.categoryId];
+      }
 
       _isAllFieldsSelected = true;
 
