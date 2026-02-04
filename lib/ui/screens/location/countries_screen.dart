@@ -49,7 +49,7 @@ class CountriesScreen extends StatefulWidget {
       builder: (context) => BlocProvider(
           create: (context) => FetchCountriesCubit(),
           child: CountriesScreen(
-            from: arguments!['from'] ?? "",
+            from: arguments?['from'] ?? "",
           )),
     );
   }

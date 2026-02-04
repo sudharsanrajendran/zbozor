@@ -572,7 +572,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: context.color.borderColor),
           ),
-          child: const LocationWidget(),
+          child: const IgnorePointer(child: LocationWidget()),
         ),
         const SizedBox(height: 12),
         Text(
