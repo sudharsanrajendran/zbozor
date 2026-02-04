@@ -375,8 +375,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           if (currentPageIndex < slidersList.length - 1) {
                             currentPageIndex++;
                           } else {
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                Routes.login, (route) => false);
+                            Navigator.pushReplacementNamed(
+                              context,
+                              Routes.main,
+                              arguments: {
+                                "from": "login",
+                                "isSkipped": true,
+                              },
+                            );
                           }
                           HiveUtils.setUserIsNotNew();
                           setState(() {});
@@ -428,8 +434,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 child: MaterialButton(
                   onPressed: () {
                     HiveUtils.setUserIsNotNew();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        Routes.login, (route) => false);
+                    Navigator.pushReplacementNamed(
+                      context,
+                      Routes.main,
+                      arguments: {
+                        "from": "login",
+                        "isSkipped": true,
+                      },
+                    );
                   },
                   height: 56,
                   minWidth: 201,
