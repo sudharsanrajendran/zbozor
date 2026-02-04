@@ -69,8 +69,8 @@ it will call API in background without showing the process and when data availab
       MapType.normal; //none , normal , satellite , terrain , hybrid
 
   ///Firebase authentication OTP timer.
-  static const int otpResendSecond = 60 * 2;
-  static const int otpTimeOutSecond = 60 * 2;
+  static const int otpResendSecond = 20;
+  static const int otpTimeOutSecond = 20;
 
   ///This code will show on login screen [Note: don't add  + symbol]
   static const String defaultCountryCode = "91";
