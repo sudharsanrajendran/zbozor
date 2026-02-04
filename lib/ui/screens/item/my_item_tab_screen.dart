@@ -59,6 +59,7 @@ class _MyItemTabState extends CloudState<MyItemTab>
           context.read<FetchMyItemsCubit>().fetchMyItems(
                 getItemsWithStatus: widget.getItemsWithStatus,
                 forceRefresh: true,
+                isBackground: true,
               );
         }
       });
@@ -68,6 +69,7 @@ class _MyItemTabState extends CloudState<MyItemTab>
           context.read<FetchMyItemsCubit>().fetchMyItems(
                 getItemsWithStatus: widget.getItemsWithStatus,
                 forceRefresh: true,
+                isBackground: true,
               );
         }
       });
@@ -329,6 +331,7 @@ class _MyItemTabState extends CloudState<MyItemTab>
                                         widget.getItemsWithStatus,
                                     forceRefresh:
                                         true, // [FIX] Force refresh if details screen asks for it
+                                    isBackground: true,
                                   );
 
                               setReferenceOfCubit();

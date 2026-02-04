@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Ebozor/data/cubits/chat/send_message.dart';
 import 'package:Ebozor/data/cubits/chat/delete_message_cubit.dart';
 import 'package:Ebozor/data/cubits/chat/load_chat_messages.dart';
@@ -105,23 +106,43 @@ class ChatTile extends StatelessWidget {
                   Container(
                     width: 50,
                     height: 50,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: NetworkImage(
-                              itemPicture), // Big Image = Item Image
-                          fit: BoxFit.cover,
-                          onError: (exception, stackTrace) {},
-                        ),
-                        border: Border.all(color: Colors.transparent)),
-                    child: itemPicture.isEmpty
-                        ? CircleAvatar(
-                            radius: 25,
-                            backgroundColor: context.color.territoryColor,
-                            child: SvgPicture.asset(AppIcons.profile,
-                                colorFilter: ColorFilter.mode(
-                                    Colors.white, BlendMode.srcIn)))
-                        : null,
+                    decoration: BoxDecoration(shape: BoxShape.circle),
+                    child: ClipOval(
+                      child: itemPicture.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: itemPicture,
+                              fit: BoxFit.cover,
+                              width: 50,
+                              height: 50,
+                              memCacheWidth: 150,
+                              memCacheHeight: 150,
+                              fadeInDuration: Duration.zero, // Instant show
+                              errorWidget: (context, url, error) {
+                                return CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor:
+                                        context.color.territoryColor,
+                                    child: SvgPicture.asset(AppIcons.profile,
+                                        colorFilter: ColorFilter.mode(
+                                            Colors.white, BlendMode.srcIn)));
+                              },
+                              placeholder: (context, url) {
+                                return CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor:
+                                        context.color.territoryColor,
+                                    child: SvgPicture.asset(AppIcons.profile,
+                                        colorFilter: ColorFilter.mode(
+                                            Colors.white, BlendMode.srcIn)));
+                              },
+                            )
+                          : CircleAvatar(
+                              radius: 25,
+                              backgroundColor: context.color.territoryColor,
+                              child: SvgPicture.asset(AppIcons.profile,
+                                  colorFilter: ColorFilter.mode(
+                                      Colors.white, BlendMode.srcIn))),
+                    ),
                   ),
 
                   // Small Circle: User/Profile Image (Badge)
@@ -132,22 +153,34 @@ class ChatTile extends StatelessWidget {
                       width: 20, // Smaller size for badge
                       height: 20,
                       decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              color: context.color.secondaryColor,
-                              width: 1.5), // Border to separate from bg
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                profilePicture), // Small Image = User Profile
-                            fit: BoxFit.cover,
-                            onError: (exception, stackTrace) {},
-                          ),
-                          color: Colors.grey[300] // Fallback color
-                          ),
-                      child: profilePicture.isEmpty
-                          ? Icon(Icons.person,
-                              size: 12, color: Colors.grey[600])
-                          : null,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                            color: context.color.secondaryColor,
+                            width: 1.5), // Border to separate from bg
+                        color: Colors.grey[300], // Fallback color
+                      ),
+                      child: ClipOval(
+                        child: profilePicture.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: profilePicture,
+                                fit: BoxFit.cover,
+                                width: 20,
+                                height: 20,
+                                memCacheWidth: 60,
+                                memCacheHeight: 60,
+                                fadeInDuration: Duration.zero, // Instant show
+                                errorWidget: (context, url, error) {
+                                  return Icon(Icons.person,
+                                      size: 12, color: Colors.grey[600]);
+                                },
+                                placeholder: (context, url) {
+                                  return Icon(Icons.person,
+                                      size: 12, color: Colors.grey[600]);
+                                },
+                              )
+                            : Icon(Icons.person,
+                                size: 12, color: Colors.grey[600]),
+                      ),
                     ),
                   )
                 ],

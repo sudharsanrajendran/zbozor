@@ -62,26 +62,58 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
   }
 
   void fetch({bool forceRefresh = false}) async {
+    // 1. Load from Cache immediately (safeguarded)
+    if (!forceRefresh && state is! GetSellerChatListSuccess) {
+      try {
+        List<dynamic> cachedData = HiveUtils.getSellerChatList();
+        if (cachedData.isNotEmpty) {
+          List<ChatedUser> cachedList = cachedData
+              .map((e) => ChatedUser.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
+
+          emit(GetSellerChatListSuccess(
+              isLoadingMore: false,
+              hasError: false,
+              chatedUserList: cachedList,
+              total: cachedList.length,
+              page: 1));
+        } else {
+          emit(GetSellerChatListInProgress());
+        }
+      } catch (e) {
+        emit(GetSellerChatListInProgress());
+      }
+    }
+
     try {
       if (!forceRefresh && state is GetSellerChatListSuccess) {
-        return;
+        // Continue to update from API
       }
-      emit(GetSellerChatListInProgress());
 
+      // 2. Fetch from API
       DataOutput<ChatedUser> result =
           await _chatRepository.fetchSellerChatList(1);
 
-      result.modelList.sort((a, b) =>
-          DateTime.parse(b.updatedAt ?? b.createdAt!)
-              .compareTo(DateTime.parse(a.updatedAt ?? a.createdAt!)));
+      result.modelList.sort((a, b) {
+        DateTime updatedA =
+            DateTime.tryParse(a.updatedAt ?? "") ?? DateTime(1970);
+        DateTime createdA =
+            DateTime.tryParse(a.createdAt ?? "") ?? DateTime(1970);
+        DateTime dateA = updatedA.isAfter(createdA) ? updatedA : createdA;
 
-      // Filter: Only show chats where the current user is the seller
-      // The API should ideally handle this via 'type', but we filter locally as a safety measure
-      // or if we reuse the same list endpoint without filtering.
-      // Based on previous plan, we rely on API or 'type'. Here we filter where I AM the seller.
+        DateTime updatedB =
+            DateTime.tryParse(b.updatedAt ?? "") ?? DateTime(1970);
+        DateTime createdB =
+            DateTime.tryParse(b.createdAt ?? "") ?? DateTime(1970);
+        DateTime dateB = updatedB.isAfter(createdB) ? updatedB : createdB;
+
+        return dateB.compareTo(dateA);
+      });
+
       result.modelList.removeWhere(
           (element) => element.sellerId.toString() != HiveUtils.getUserId());
 
+      // 3. Emit Success FIRST (Update UI)
       emit(
         GetSellerChatListSuccess(
             isLoadingMore: false,
@@ -90,8 +122,20 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
             total: result.total,
             page: 1),
       );
+
+      // 4. Update Cache (Safely)
+      try {
+        List<Map<String, dynamic>> listMap =
+            result.modelList.map((e) => e.toJson()).toList();
+        await HiveUtils.setSellerChatList(listMap);
+      } catch (e) {
+        print("Error updating seller chat cache: $e");
+      }
     } catch (e) {
-      emit(GetSellerChatListFailed(e));
+      // Only emit failure if we don't have any data shown
+      if (state is! GetSellerChatListSuccess) {
+        emit(GetSellerChatListFailed(e));
+      }
     }
   }
 
@@ -110,9 +154,26 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
 
         chatedUserList.insert(0, user);
 
-        chatedUserList.sort((a, b) =>
-            DateTime.parse(b.updatedAt ?? b.createdAt!)
-                .compareTo(DateTime.parse(a.updatedAt ?? a.createdAt!)));
+        chatedUserList.sort((a, b) {
+          DateTime updatedA =
+              DateTime.tryParse(a.updatedAt ?? "") ?? DateTime(1970);
+          DateTime createdA =
+              DateTime.tryParse(a.createdAt ?? "") ?? DateTime(1970);
+          DateTime dateA = updatedA.isAfter(createdA) ? updatedA : createdA;
+
+          DateTime updatedB =
+              DateTime.tryParse(b.updatedAt ?? "") ?? DateTime(1970);
+          DateTime createdB =
+              DateTime.tryParse(b.createdAt ?? "") ?? DateTime(1970);
+          DateTime dateB = updatedB.isAfter(createdB) ? updatedB : createdB;
+
+          return dateB.compareTo(dateA);
+        });
+
+        // Update Cache
+        List<Map<String, dynamic>> listMap =
+            chatedUserList.map((e) => e.toJson()).toList();
+        HiveUtils.setSellerChatList(listMap);
 
         emit(currentState.copyWith(
             chatedUserList: chatedUserList, total: chatedUserList.length));
@@ -159,9 +220,21 @@ class GetSellerChatListCubit extends Cubit<GetSellerChatListState> {
 
         messagesSuccessState.chatedUserList.addAll(result.modelList);
 
-        messagesSuccessState.chatedUserList.sort((a, b) =>
-            DateTime.parse(b.updatedAt ?? b.createdAt!)
-                .compareTo(DateTime.parse(a.updatedAt ?? a.createdAt!)));
+        messagesSuccessState.chatedUserList.sort((a, b) {
+          DateTime updatedA =
+              DateTime.tryParse(a.updatedAt ?? "") ?? DateTime(1970);
+          DateTime createdA =
+              DateTime.tryParse(a.createdAt ?? "") ?? DateTime(1970);
+          DateTime dateA = updatedA.isAfter(createdA) ? updatedA : createdA;
+
+          DateTime updatedB =
+              DateTime.tryParse(b.updatedAt ?? "") ?? DateTime(1970);
+          DateTime createdB =
+              DateTime.tryParse(b.createdAt ?? "") ?? DateTime(1970);
+          DateTime dateB = updatedB.isAfter(createdB) ? updatedB : createdB;
+
+          return dateB.compareTo(dateA);
+        });
 
         // Filter out non-seller items again if needed?
         // Assuming API does it or we do it here.

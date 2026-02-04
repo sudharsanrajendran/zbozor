@@ -410,4 +410,23 @@ class HiveUtils {
   static bool isNotificationRead(String id) {
     return getReadNotificationIds().contains(id);
   }
+
+  /// Chat Caching
+  static Future<void> setBuyerChatList(List<Map<String, dynamic>> list) async {
+    await Hive.box(HiveKeys.userDetailsBox).put("buyer_chat_list", list);
+  }
+
+  static List<dynamic> getBuyerChatList() {
+    return Hive.box(HiveKeys.userDetailsBox)
+        .get("buyer_chat_list", defaultValue: []);
+  }
+
+  static Future<void> setSellerChatList(List<Map<String, dynamic>> list) async {
+    await Hive.box(HiveKeys.userDetailsBox).put("seller_chat_list", list);
+  }
+
+  static List<dynamic> getSellerChatList() {
+    return Hive.box(HiveKeys.userDetailsBox)
+        .get("seller_chat_list", defaultValue: []);
+  }
 }

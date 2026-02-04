@@ -63,30 +63,74 @@ class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState> {
   }
 
   void fetch({bool forceRefresh = false}) async {
+    // 1. Load from Cache immediately (safeguarded)
+    if (!forceRefresh && state is! GetBuyerChatListSuccess) {
+      try {
+        List<dynamic> cachedData = HiveUtils.getBuyerChatList();
+        if (cachedData.isNotEmpty) {
+          List<ChatedUser> cachedList = cachedData
+              .map((e) => ChatedUser.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
+
+          emit(GetBuyerChatListSuccess(
+              isLoadingMore: false,
+              hasError: false,
+              chatedUserList: cachedList,
+              total: cachedList.length,
+              page: 1));
+        } else {
+          emit(GetBuyerChatListInProgress());
+        }
+      } catch (e) {
+        // If cache fails, just show loading and proceed to API
+        emit(GetBuyerChatListInProgress());
+      }
+    }
+
     try {
       if (!forceRefresh && state is GetBuyerChatListSuccess) {
-        return;
+        // If we already have success state (from cache or previous),
+        // and not forced, we might stop here?
+        // NO, the original logic was to return if success.
+        // But now we want to BACKGROUND refresh.
+        // So we continue to fetch API.
+        // However, we shouldn't return if we just loaded from cache!
+        // We must distinguish "Loaded from Cache" vs "Loaded from API".
+        // For now, let's assume if we are here, we want to fetch API.
       }
-      emit(GetBuyerChatListInProgress());
 
+      // 2. Fetch from API
       DataOutput<ChatedUser> result =
           await _chatRepository.fetchBuyerChatList(1);
 
-      print("Buyer Chat List BEFORE filter: ${result.modelList.length} items");
-      for (var item in result.modelList) {
-        print(
-            "Chat Item: SellerId: ${item.sellerId}, ItemId: ${item.itemId}, Myself: ${HiveUtils.getUserId()}");
-      }
+      // print("Buyer Chat List BEFORE filter: ${result.modelList.length} items");
+      // for (var item in result.modelList) {
+      //   print(
+      //       "Chat Item: SellerId: ${item.sellerId}, ItemId: ${item.itemId}, Myself: ${HiveUtils.getUserId()}");
+      // }
 
-      result.modelList.sort((a, b) =>
-          DateTime.parse(b.updatedAt ?? b.createdAt!)
-              .compareTo(DateTime.parse(a.updatedAt ?? a.createdAt!)));
+      result.modelList.sort((a, b) {
+        DateTime updatedA =
+            DateTime.tryParse(a.updatedAt ?? "") ?? DateTime(1970);
+        DateTime createdA =
+            DateTime.tryParse(a.createdAt ?? "") ?? DateTime(1970);
+        DateTime dateA = updatedA.isAfter(createdA) ? updatedA : createdA;
+
+        DateTime updatedB =
+            DateTime.tryParse(b.updatedAt ?? "") ?? DateTime(1970);
+        DateTime createdB =
+            DateTime.tryParse(b.createdAt ?? "") ?? DateTime(1970);
+        DateTime dateB = updatedB.isAfter(createdB) ? updatedB : createdB;
+
+        return dateB.compareTo(dateA);
+      });
 
       result.modelList.removeWhere(
           (element) => element.sellerId.toString() == HiveUtils.getUserId());
 
-      print("Buyer Chat List AFTER filter: ${result.modelList.length} items");
+      // print("Buyer Chat List AFTER filter: ${result.modelList.length} items");
 
+      // 3. Emit Success FIRST (Update UI)
       emit(
         GetBuyerChatListSuccess(
             isLoadingMore: false,
@@ -95,8 +139,20 @@ class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState> {
             total: result.total,
             page: 1),
       );
+
+      // 4. Update Cache (Safely)
+      try {
+        List<Map<String, dynamic>> listMap =
+            result.modelList.map((e) => e.toJson()).toList();
+        await HiveUtils.setBuyerChatList(listMap);
+      } catch (e) {
+        print("Error updating buyer chat cache: $e");
+      }
     } catch (e) {
-      emit(GetBuyerChatListFailed(e));
+      // Only emit failure if we don't have any data shown (i.e. if we didn't load from cache successfully)
+      if (state is! GetBuyerChatListSuccess) {
+        emit(GetBuyerChatListFailed(e));
+      }
     }
   }
 
@@ -113,8 +169,26 @@ class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState> {
 
       chatedUserList.insert(0, user);
 
-      chatedUserList.sort((a, b) => DateTime.parse(b.updatedAt ?? b.createdAt!)
-          .compareTo(DateTime.parse(a.updatedAt ?? a.createdAt!)));
+      chatedUserList.sort((a, b) {
+        DateTime updatedA =
+            DateTime.tryParse(a.updatedAt ?? "") ?? DateTime(1970);
+        DateTime createdA =
+            DateTime.tryParse(a.createdAt ?? "") ?? DateTime(1970);
+        DateTime dateA = updatedA.isAfter(createdA) ? updatedA : createdA;
+
+        DateTime updatedB =
+            DateTime.tryParse(b.updatedAt ?? "") ?? DateTime(1970);
+        DateTime createdB =
+            DateTime.tryParse(b.createdAt ?? "") ?? DateTime(1970);
+        DateTime dateB = updatedB.isAfter(createdB) ? updatedB : createdB;
+
+        return dateB.compareTo(dateA);
+      });
+
+      // Update Cache
+      List<Map<String, dynamic>> listMap =
+          chatedUserList.map((e) => e.toJson()).toList();
+      HiveUtils.setBuyerChatList(listMap);
 
       emit(currentState.copyWith(
           chatedUserList: chatedUserList, total: chatedUserList.length));
@@ -160,9 +234,21 @@ class GetBuyerChatListCubit extends Cubit<GetBuyerChatListState> {
         // messagesSuccessState.await.insertAll(0, result.modelList);
         messagesSuccessState.chatedUserList.addAll(result.modelList);
 
-        messagesSuccessState.chatedUserList.sort((a, b) =>
-            DateTime.parse(b.updatedAt ?? b.createdAt!)
-                .compareTo(DateTime.parse(a.updatedAt ?? a.createdAt!)));
+        messagesSuccessState.chatedUserList.sort((a, b) {
+          DateTime updatedA =
+              DateTime.tryParse(a.updatedAt ?? "") ?? DateTime(1970);
+          DateTime createdA =
+              DateTime.tryParse(a.createdAt ?? "") ?? DateTime(1970);
+          DateTime dateA = updatedA.isAfter(createdA) ? updatedA : createdA;
+
+          DateTime updatedB =
+              DateTime.tryParse(b.updatedAt ?? "") ?? DateTime(1970);
+          DateTime createdB =
+              DateTime.tryParse(b.createdAt ?? "") ?? DateTime(1970);
+          DateTime dateB = updatedB.isAfter(createdB) ? updatedB : createdB;
+
+          return dateB.compareTo(dateA);
+        });
         emit(GetBuyerChatListSuccess(
           chatedUserList: messagesSuccessState.chatedUserList,
           page: (state as GetBuyerChatListSuccess).page + 1,

@@ -56,7 +56,9 @@ class FetchMyItemsCubit extends Cubit<FetchMyItemsState> {
   final ItemRepository _itemRepository = ItemRepository();
 
   void fetchMyItems(
-      {String? getItemsWithStatus, bool forceRefresh = false}) async {
+      {String? getItemsWithStatus,
+      bool forceRefresh = false,
+      bool isBackground = false}) async {
     try {
       // If we already have success state and not forcing refresh,
       // we could return immediately to be "fast" (if we had local storage).
@@ -67,7 +69,10 @@ class FetchMyItemsCubit extends Cubit<FetchMyItemsState> {
         return;
       }
 
-      emit(FetchMyItemsInProgress());
+      if (!isBackground) {
+        emit(FetchMyItemsInProgress());
+      }
+
       DataOutput<ItemModel> result = await _itemRepository.fetchMyItems(
         page: 1,
         getItemsWithStatus: getItemsWithStatus,

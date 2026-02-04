@@ -95,7 +95,7 @@ class MyItemState extends State<ItemsScreen> with TickerProviderStateMixin {
                       if (myAdsCubitReference.containsKey(status)) {
                         myAdsCubitReference[status]?.fetchMyItems(
                           getItemsWithStatus: status,
-                          forceRefresh: true,
+                          forceRefresh: false,
                         );
                       }
                     },
