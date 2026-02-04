@@ -603,7 +603,7 @@ class AllItemsSliverWidget extends StatelessWidget {
                         children: [
                           Expanded(
                             child: ItemCard(
-                              radius: 6,
+                              radius: 10,
                               item: obj[0],
                             ),
                           ),
