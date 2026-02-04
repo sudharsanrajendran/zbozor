@@ -534,6 +534,8 @@ class MainActivityState extends State<MainActivity>
     }
     FocusManager.instance.primaryFocus?.unfocus();
 
+    // Snackbar logic removed to allow login sheet.
+
     if (index != 1) {
       context.read<SearchItemCubit>().clearSearch();
 
@@ -541,8 +543,10 @@ class MainActivityState extends State<MainActivity>
         SearchScreenState.searchController.text = "";
       }
     } else {
-      context.read<GetBuyerChatListCubit>().fetch();
-      context.read<GetSellerChatListCubit>().fetch();
+      if (HiveUtils.isUserAuthenticated()) {
+        context.read<GetBuyerChatListCubit>().fetch();
+        context.read<GetSellerChatListCubit>().fetch();
+      }
     }
     searchbody = {};
     if (index == 1 || index == 2 || index == 3) {
