@@ -34,9 +34,13 @@ class NativeDeepLinkManager extends NativeDeepLinkUtility {
   @override
   Future<ProcessResult?> process(Uri uri) async {
     if (uri.pathSegments.contains("product-details")) {
-      int itemId = int.parse(uri.pathSegments[1]);
+      /*int itemId = int.parse(uri.pathSegments[1]);
       DataOutput<ItemModel> dataOutput =
-          await ItemRepository().fetchItemFromItemId(itemId);
+          await ItemRepository().fetchItemFromItemId(itemId);*/
+
+      String slug = uri.pathSegments[1];
+      DataOutput<ItemModel> dataOutput =
+          await ItemRepository().fetchItemFromItemSlug(slug);
 
       return ProcessResult<ItemModel>(dataOutput.modelList.first);
     }

@@ -89,11 +89,20 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
+                <!-- <data
                     android:host="admin.Ebozor.co"
                     android:pathPattern="/.."
                     android:scheme="Ebozor" />
-                <data android:pathPattern="/product-details/.*" />
+                <data android:pathPattern="/product-details/.*" /> -->
+
+                <data
+                    android:host="api.Ebozor.co"
+                    android:pathPattern="/product-details/.*"
+                    android:scheme="https" />
+                <data
+                    android:host="api.Ebozor.co"
+                    android:pathPattern="/product-details/.*"
+                    android:scheme="http" />
 
                 <!--<data
                     android:host="eclassify.thewrteam.in"

@@ -162,7 +162,7 @@ class Routes {
     currentRoute = routeSettings.name ?? "";
 
     if (routeSettings.name!.contains('/product-details/')) {
-      String itemSlug = routeSettings.name!.split('/').last;
+      String itemSlug = routeSettings.name!.split('/').last.split('?').first;
       // Fetch item details based on the itemId
       return MaterialPageRoute(builder: (context) {
         return FutureBuilder<DataOutput<ItemModel>>(
@@ -183,7 +183,15 @@ class Routes {
                 ),
               );
             } else {
-              return AdDetailsScreen(model: snapshot.data!.modelList.first);
+              if (snapshot.data!.modelList.isNotEmpty) {
+                return AdDetailsScreen(model: snapshot.data!.modelList.first);
+              } else {
+                return Scaffold(
+                  body: Center(
+                    child: Text('Product not found'),
+                  ),
+                );
+              }
             }
           },
         );
