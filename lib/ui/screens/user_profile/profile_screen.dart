@@ -552,26 +552,21 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ValueListenableBuilder(
                       valueListenable: isDarkTheme,
                       builder: (context, v, c) {
-                        return Directionality(
-                          textDirection: TextDirection.ltr,
-                          child: customTile(
-                            context,
-                            title: "darkTheme".translate(context),
-                            pngImagePath: "assets/modeicon.png",
-                            isSwitchBox: true,
-                            // For minimalist design, maybe we want an arrow for everything else, and switch for this
-                            onTapSwitch: (value) {
-                              context.read<AppThemeCubit>().changeTheme(
-                                  value == true
-                                      ? AppTheme.dark
-                                      : AppTheme.light);
-                              setState(() {
-                                isDarkTheme.value = value;
-                              });
-                            },
-                            switchValue: v,
-                            onTap: () {},
-                          ),
+                        return customTile(
+                          context,
+                          title: "darkTheme".translate(context),
+                          pngImagePath: "assets/modeicon.png",
+                          isSwitchBox: true,
+                          // For minimalist design, maybe we want an arrow for everything else, and switch for this
+                          onTapSwitch: (value) {
+                            context.read<AppThemeCubit>().changeTheme(
+                                value == true ? AppTheme.dark : AppTheme.light);
+                            setState(() {
+                              isDarkTheme.value = value;
+                            });
+                          },
+                          switchValue: v,
+                          onTap: () {},
                         );
                       }),
                   customTile(
