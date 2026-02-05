@@ -24,6 +24,7 @@ class CategoryModel {
 
   //final String translatedName;
   final int? subcategoriesCount;
+  final String? originalName; // [NEW] Stores the English/Original name
 
   CategoryModel({
     this.id,
@@ -33,6 +34,7 @@ class CategoryModel {
     this.children,
     this.subcategoriesCount,
     this.filters, // Added to constructor
+    this.originalName, // [NEW] Added to constructor
     //required this.translatedName,
   });
 

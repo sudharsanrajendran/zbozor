@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
 import 'package:Ebozor/data/cubits/system/fetch_language_cubit.dart';
 import 'package:Ebozor/data/cubits/system/fetch_system_settings_cubit.dart';
 import 'package:Ebozor/data/cubits/system/language_cubit.dart';
@@ -39,6 +40,9 @@ class LanguagesListScreen extends StatelessWidget {
     List setting = context
         .watch<FetchSystemSettingsCubit>()
         .getSetting(SystemSetting.language) as List;
+
+    // FILTER: Hide Turkish language
+    setting.removeWhere((element) => element['code'] == 'tr');
 
     var language = context.watch<LanguageCubit>().state;
     return Scaffold(

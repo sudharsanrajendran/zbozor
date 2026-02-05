@@ -114,9 +114,10 @@ class _ProfileScreenState extends State<ProfileScreen>
       width: 36,
       alignment: AlignmentDirectional.center,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-              color: context.color.textDefaultColor.withOpacity(0.1))),
+        borderRadius: BorderRadius.circular(10),
+        /*border: Border.all(
+              color: context.color.textDefaultColor.withOpacity(0.1))*/
+      ),
       child: InkWell(
           onTap: onTap,
           child: SvgPicture.asset(
@@ -346,7 +347,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         children: [
                           ///////profile circle
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 5),
+                            padding: const EdgeInsets.only(bottom: 6),
                             child: Container(
                               width: 60,
                               height: 60,
@@ -402,7 +403,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             ),
                         ],
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,7 +414,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 .bold(weight: FontWeight.w700)
                                 .size(context.font.larger)
                                 .color(context.color.textColorDark),
-                            const SizedBox(height: 2),
+                            const SizedBox(height: 4),
 
                             // Verification Badge Button
                             if (HiveUtils.isUserAuthenticated())
@@ -551,21 +552,26 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ValueListenableBuilder(
                       valueListenable: isDarkTheme,
                       builder: (context, v, c) {
-                        return customTile(
-                          context,
-                          title: "darkTheme".translate(context),
-                          svgImagePath: AppIcons.darkTheme,
-                          isSwitchBox: true,
-                          // For minimalist design, maybe we want an arrow for everything else, and switch for this
-                          onTapSwitch: (value) {
-                            context.read<AppThemeCubit>().changeTheme(
-                                value == true ? AppTheme.dark : AppTheme.light);
-                            setState(() {
-                              isDarkTheme.value = value;
-                            });
-                          },
-                          switchValue: v,
-                          onTap: () {},
+                        return Directionality(
+                          textDirection: TextDirection.ltr,
+                          child: customTile(
+                            context,
+                            title: "darkTheme".translate(context),
+                            pngImagePath: "assets/modeicon.png",
+                            isSwitchBox: true,
+                            // For minimalist design, maybe we want an arrow for everything else, and switch for this
+                            onTapSwitch: (value) {
+                              context.read<AppThemeCubit>().changeTheme(
+                                  value == true
+                                      ? AppTheme.dark
+                                      : AppTheme.light);
+                              setState(() {
+                                isDarkTheme.value = value;
+                              });
+                            },
+                            switchValue: v,
+                            onTap: () {},
+                          ),
                         );
                       }),
                   customTile(
@@ -902,17 +908,18 @@ class _ProfileScreenState extends State<ProfileScreen>
                     SizedBox(
                       width: 12,
                       height: 12,
-                      child: UiUtils.getSvg(
-                        AppIcons
-                            .arrowRight, // Should verify if this is a chevron
-                        color: context.color.textLightColor,
+                      child: SvgPicture.asset(
+                        AppIcons.arrowRight,
+                        matchTextDirection: true,
+                        colorFilter: ColorFilter.mode(
+                            context.color.textLightColor, BlendMode.srcIn),
                       ),
                     ),
 
                   if (isSwitchBox ?? false)
                     // CupertinoSwitch(value: value, onChanged: onChanged)
                     Padding(
-                      padding: const EdgeInsets.only(right: 10),
+                      padding: const EdgeInsetsDirectional.only(end: 10),
                       child: SizedBox(
                         height: 40,
                         width: 30,

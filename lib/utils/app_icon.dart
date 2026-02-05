@@ -38,14 +38,14 @@ class AppIcons {
   static String language = _svgPath("language");
   static String darkTheme = _svgPath("dark_theme");
   static String subscription = _svgPath("subscription");
-  static String articles = _svgPath("article");
-  static String favorites = _svgPath("like_fill");
+  static String articles = _svgPath("blocks");
+  static String favorites = _svgPath("favorate");
   static String shareApp = _svgPath("share");
   static String areaConvertor = _svgPath("area_convertor");
-  static String rateUs = _svgPath("rate_us");
-  static String contactUs = _svgPath("contact_us");
+  static String rateUs = _svgPath("rateus");
+  static String contactUs = _svgPath("contact");
   static String aboutUs = _svgPath("about_us");
-  static String terms = _svgPath("t_c");
+  static String terms = _svgPath("termscondition");
   static String privacy = _svgPath("privacypolicy");
   static String delete = _svgPath("delete_account");
   static String logout = _svgPath("logout");
@@ -67,7 +67,7 @@ class AppIcons {
   static String paystack = _svgPath("paystack");
   static String razorpay = _svgPath("razorpay");
   static String paypal = _svgPath("paypal");
-  static String transaction = _svgPath("transaction");
+  static String transaction = _svgPath("trasnaction");
   static String itemSubmittedc = _svgPath("itemsubmited");
   static String plusIcon = _svgPath("plus_button");
   static String no_chat_found = _svgPath("Illustrators/no_chat_found");
@@ -112,7 +112,7 @@ class AppIcons {
   static String documentAttachIcon = _svgPath("document_attach");
   static String attachmentIcon = _svgPath("attachment");
   static String msgSendIcon = _svgPath("msg_send_icon");
-  static String myReviewIcon = _svgPath("my_review");
+  static String myReviewIcon = _svgPath("myreviews");
   static String reportReviewIcon = _svgPath("report_review");
   static String userVerificationIcon =
       _svgPath("Illustrators/user_verification");

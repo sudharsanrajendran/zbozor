@@ -7,6 +7,7 @@ import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/data/model/category_model.dart';
+import 'package:Ebozor/data/cubits/system/language_cubit.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -173,7 +174,6 @@ class _SelectCategoryScreenState extends CloudState<SelectCategoryScreen> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8),
                               child: Container(
-
                                 decoration: BoxDecoration(
                                     color: context.color
                                         .secondaryColor, // Assuming secondaryColor is white/card bg
@@ -206,16 +206,21 @@ class _SelectCategoryScreenState extends CloudState<SelectCategoryScreen> {
                                     SizedBox(
                                       height: 4,
                                     ),
-                                    Text(
-                                      category.name ?? "",
-                                      textAlign: TextAlign.center,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: context.color.textColorDark,
-                                          height: 1.2),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 7,
+                                      ),
+                                      child: Text(
+                                        category.getName(context),
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: context.color.textColorDark,
+                                            height: 1.5),
+                                      ),
                                     )
                                   ],
                                 ),
@@ -390,7 +395,8 @@ class _SelectNestedCategoryState extends CloudState<SelectNestedCategory> {
                                         _onBreadCrumbItemTap(
                                             breadCrumbData, index);
                                       },
-                                      child: Text(breadCrumbData[index].name!)
+                                      child: Text(breadCrumbData[index]
+                                              .getName(context))
                                           .firstUpperCaseWidget()
                                           .color(
                                             isNotLast
@@ -511,7 +517,7 @@ class _SelectNestedCategoryState extends CloudState<SelectNestedCategory> {
                                     child: Row(
                                       children: [
                                         Expanded(
-                                          child: Text(category.name!)
+                                          child: Text(category.getName(context))
                                               .color(
                                                   context.color.textColorDark)
                                               .firstUpperCaseWidget()
@@ -662,7 +668,7 @@ class _SelectNestedCategoryState extends CloudState<SelectNestedCategory> {
                         child: Row(
                           children: [
                             Expanded(
-                              child: Text(category.name!)
+                              child: Text(category.getName(context))
                                   .color(context.color.textColorDark)
                                   .firstUpperCaseWidget()
                                   .bold(weight: FontWeight.w600),
@@ -727,5 +733,21 @@ class _SelectNestedCategoryState extends CloudState<SelectNestedCategory> {
         },
       ),
     );
+  }
+}
+
+extension CategoryHelper on CategoryModel {
+  String getName(BuildContext context) {
+    try {
+      var languageState = context.read<LanguageCubit>().state;
+      if (languageState is LanguageLoader) {
+        if (languageState.language['code'] == 'ar') {
+          return name ?? "";
+        }
+      }
+      return originalName ?? name ?? "";
+    } catch (e) {
+      return name ?? "";
+    }
   }
 }
