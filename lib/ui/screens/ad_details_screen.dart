@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart'; // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Ebozor/app/routes.dart';
@@ -53,6 +54,7 @@ import 'package:Ebozor/data/cubits/item/delete_item_cubit.dart';
 import 'package:Ebozor/data/cubits/subscription/fetch_user_package_limit_cubit.dart';
 import 'package:Ebozor/data/model/report_item/reason_model.dart';
 import 'package:Ebozor/ui/screens/ad_banner_screen.dart';
+import 'package:Ebozor/ui/screens/native_ads_screen.dart';
 import 'package:Ebozor/ui/screens/chat/chat_screen.dart';
 import 'package:Ebozor/ui/screens/home/widgets/grid_list_adapter.dart';
 import 'package:Ebozor/ui/screens/home/widgets/home_sections_adapter.dart';
@@ -547,9 +549,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                   const SizedBox(height: 15),
                   Container(
                     alignment: AlignmentDirectional.center,
-                    child: AdBannerWidget(), // Custom widget for banner ad
+                    child: NativeAdWidget(type: TemplateType.small),
                   ),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 4),
                 ],
 
                 // this is report ad widget

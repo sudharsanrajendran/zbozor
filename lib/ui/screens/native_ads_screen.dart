@@ -25,6 +25,7 @@ class _NativeAdWidgetState extends State<NativeAdWidget> {
   @override
   void initState() {
     super.initState();
+    print("ANTIGRAVITY_DEBUG: NativeAdWidget initState called");
     _loadNativeAd();
   }
 
@@ -36,19 +37,20 @@ class _NativeAdWidgetState extends State<NativeAdWidget> {
       adUnitId: Platform.isAndroid
           ? Constant.nativeAdIdAndroid //Android interstitial ad id
           : Constant.nativeAdIdIOS,
-      factoryId: 'listTile',
-      request: const AdManagerAdRequest(),
+      request: const AdRequest(),
       nativeTemplateStyle: NativeTemplateStyle(
           // Required: Choose a template.
           templateType: widget.type,
           cornerRadius: 10.0),
       listener: NativeAdListener(
         onAdLoaded: (ad) {
+          print("ANTIGRAVITY_DEBUG: Native Ad LOADED successfully!");
           setState(() {
             _isAdLoaded = true;
           });
         },
         onAdFailedToLoad: (ad, error) {
+          print("ANTIGRAVITY_DEBUG: Native Ad FAILED to load: $error");
           setState(() {
             _isAdLoaded = false;
             ad.dispose();

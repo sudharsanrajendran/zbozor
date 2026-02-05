@@ -62,6 +62,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
         Constant.maintenanceMode =
             _getSetting(settings, SystemSetting.maintenanceMode);
 
+        /* ANTIGRAVITY FIX: Keep local ad settings
         if (_getSetting(settings, SystemSetting.bannerAdStatus) != null &&
             _getSetting(settings, SystemSetting.bannerAdStatus) != "") {
           Constant.isGoogleBannerAdsEnabled =
@@ -117,6 +118,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
           Constant.nativeAdIdIOS =
               _getSetting(settings, SystemSetting.nativeAdiOSAd);
         }
+        */
         Constant.defaultLatitude =
             _getSetting(settings, SystemSetting.defaultLatitude) ?? "";
         Constant.defaultLongitude =
@@ -151,6 +153,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
           Constant.maintenanceMode =
               _getSetting(settings, SystemSetting.maintenanceMode);
 
+          /* ANTIGRAVITY FIX: Keep local ad settings
           if (_getSetting(settings, SystemSetting.bannerAdStatus) != null &&
               _getSetting(settings, SystemSetting.bannerAdStatus) != "") {
             Constant.isGoogleBannerAdsEnabled =
@@ -208,6 +211,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
             Constant.nativeAdIdIOS =
                 _getSetting(settings, SystemSetting.nativeAdiOSAd);
           }
+          */
           Constant.defaultLatitude =
               _getSetting(settings, SystemSetting.defaultLatitude) ?? "";
           Constant.defaultLongitude =
@@ -247,6 +251,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
               Constant.maintenanceMode =
                   _getSetting(settings, SystemSetting.maintenanceMode);
 
+              /* ANTIGRAVITY FIX: Keep local ad settings
               if (_getSetting(settings, SystemSetting.bannerAdStatus) != null &&
                   _getSetting(settings, SystemSetting.bannerAdStatus) != "") {
                 Constant.isGoogleBannerAdsEnabled =
@@ -311,6 +316,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
                 Constant.nativeAdIdIOS =
                     _getSetting(settings, SystemSetting.nativeAdiOSAd);
               }
+              */
 
               Constant.playstoreURLAndroid =
                   _getSetting(settings, SystemSetting.playStoreLink) ?? "";

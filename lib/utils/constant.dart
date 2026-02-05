@@ -22,17 +22,18 @@ class Constant {
   static String baseUrl = AppSettings.baseUrl;
 
   static String isGoogleBannerAdsEnabled = "1";
-  static String isGoogleInterstitialAdsEnabled = "";
-  static String isGoogleNativeAdsEnabled = "";
+  static String isGoogleInterstitialAdsEnabled = "1";
+  static String isGoogleNativeAdsEnabled = "1";
 
   ///
   static String bannerAdIdAndroid = 'ca-app-pub-3940256099942544/6300978111';
   static String bannerAdIdIOS = "ca-app-pub-3940256099942544/2934735716";
 
-  static String interstitialAdIdAndroid = '';
+  static String interstitialAdIdAndroid =
+      'ca-app-pub-3940256099942544/1033173712';
   static String interstitialAdIdIOS = '';
 
-  static String nativeAdIdAndroid = '';
+  static String nativeAdIdAndroid = 'ca-app-pub-3940256099942544/2247696110';
   static String nativeAdIdIOS = '';
 
   static String currencySymbol = "";
