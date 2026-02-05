@@ -61,24 +61,62 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
             _getSetting(settings, SystemSetting.currencySymbol);
         Constant.maintenanceMode =
             _getSetting(settings, SystemSetting.maintenanceMode);
-        Constant.isGoogleBannerAdsEnabled =
-            _getSetting(settings, SystemSetting.bannerAdStatus) ?? "";
-        Constant.isGoogleInterstitialAdsEnabled =
-            _getSetting(settings, SystemSetting.interstitialAdStatus) ?? "";
-        Constant.isGoogleNativeAdsEnabled =
-            _getSetting(settings, SystemSetting.nativeAdStatus) ?? "";
-        Constant.bannerAdIdAndroid =
-            _getSetting(settings, SystemSetting.bannerAdAndroidAd) ?? "";
-        Constant.bannerAdIdIOS =
-            _getSetting(settings, SystemSetting.bannerAdiOSAd) ?? "";
-        Constant.interstitialAdIdAndroid =
-            _getSetting(settings, SystemSetting.interstitialAdAndroidAd) ?? "";
-        Constant.interstitialAdIdIOS =
-            _getSetting(settings, SystemSetting.interstitialAdiOSAd) ?? "";
-        Constant.nativeAdIdAndroid =
-            _getSetting(settings, SystemSetting.nativeAndroidAd) ?? "";
-        Constant.nativeAdIdIOS =
-            _getSetting(settings, SystemSetting.nativeAdiOSAd) ?? "";
+
+        if (_getSetting(settings, SystemSetting.bannerAdStatus) != null &&
+            _getSetting(settings, SystemSetting.bannerAdStatus) != "") {
+          Constant.isGoogleBannerAdsEnabled =
+              _getSetting(settings, SystemSetting.bannerAdStatus);
+        }
+
+        if (_getSetting(settings, SystemSetting.interstitialAdStatus) != null &&
+            _getSetting(settings, SystemSetting.interstitialAdStatus) != "") {
+          Constant.isGoogleInterstitialAdsEnabled =
+              _getSetting(settings, SystemSetting.interstitialAdStatus);
+        }
+
+        if (_getSetting(settings, SystemSetting.nativeAdStatus) != null &&
+            _getSetting(settings, SystemSetting.nativeAdStatus) != "") {
+          Constant.isGoogleNativeAdsEnabled =
+              _getSetting(settings, SystemSetting.nativeAdStatus);
+        }
+
+        if (_getSetting(settings, SystemSetting.bannerAdAndroidAd) != null &&
+            _getSetting(settings, SystemSetting.bannerAdAndroidAd) != "") {
+          Constant.bannerAdIdAndroid =
+              _getSetting(settings, SystemSetting.bannerAdAndroidAd);
+        }
+
+        if (_getSetting(settings, SystemSetting.bannerAdiOSAd) != null &&
+            _getSetting(settings, SystemSetting.bannerAdiOSAd) != "") {
+          Constant.bannerAdIdIOS =
+              _getSetting(settings, SystemSetting.bannerAdiOSAd);
+        }
+
+        if (_getSetting(settings, SystemSetting.interstitialAdAndroidAd) !=
+                null &&
+            _getSetting(settings, SystemSetting.interstitialAdAndroidAd) !=
+                "") {
+          Constant.interstitialAdIdAndroid =
+              _getSetting(settings, SystemSetting.interstitialAdAndroidAd);
+        }
+
+        if (_getSetting(settings, SystemSetting.interstitialAdiOSAd) != null &&
+            _getSetting(settings, SystemSetting.interstitialAdiOSAd) != "") {
+          Constant.interstitialAdIdIOS =
+              _getSetting(settings, SystemSetting.interstitialAdiOSAd);
+        }
+
+        if (_getSetting(settings, SystemSetting.nativeAndroidAd) != null &&
+            _getSetting(settings, SystemSetting.nativeAndroidAd) != "") {
+          Constant.nativeAdIdAndroid =
+              _getSetting(settings, SystemSetting.nativeAndroidAd);
+        }
+
+        if (_getSetting(settings, SystemSetting.nativeAdiOSAd) != null &&
+            _getSetting(settings, SystemSetting.nativeAdiOSAd) != "") {
+          Constant.nativeAdIdIOS =
+              _getSetting(settings, SystemSetting.nativeAdiOSAd);
+        }
         Constant.defaultLatitude =
             _getSetting(settings, SystemSetting.defaultLatitude) ?? "";
         Constant.defaultLongitude =
@@ -112,25 +150,64 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
               _getSetting(settings, SystemSetting.currencySymbol);
           Constant.maintenanceMode =
               _getSetting(settings, SystemSetting.maintenanceMode);
-          Constant.isGoogleBannerAdsEnabled =
-              _getSetting(settings, SystemSetting.bannerAdStatus) ?? "";
-          Constant.isGoogleInterstitialAdsEnabled =
-              _getSetting(settings, SystemSetting.interstitialAdStatus) ?? "";
-          Constant.isGoogleNativeAdsEnabled =
-              _getSetting(settings, SystemSetting.nativeAdStatus) ?? "";
-          Constant.bannerAdIdAndroid =
-              _getSetting(settings, SystemSetting.bannerAdAndroidAd) ?? "";
-          Constant.bannerAdIdIOS =
-              _getSetting(settings, SystemSetting.bannerAdiOSAd) ?? "";
-          Constant.interstitialAdIdAndroid =
-              _getSetting(settings, SystemSetting.interstitialAdAndroidAd) ??
-                  "";
-          Constant.interstitialAdIdIOS =
-              _getSetting(settings, SystemSetting.interstitialAdiOSAd) ?? "";
-          Constant.nativeAdIdAndroid =
-              _getSetting(settings, SystemSetting.nativeAndroidAd) ?? "";
-          Constant.nativeAdIdIOS =
-              _getSetting(settings, SystemSetting.nativeAdiOSAd) ?? "";
+
+          if (_getSetting(settings, SystemSetting.bannerAdStatus) != null &&
+              _getSetting(settings, SystemSetting.bannerAdStatus) != "") {
+            Constant.isGoogleBannerAdsEnabled =
+                _getSetting(settings, SystemSetting.bannerAdStatus);
+          }
+
+          if (_getSetting(settings, SystemSetting.interstitialAdStatus) !=
+                  null &&
+              _getSetting(settings, SystemSetting.interstitialAdStatus) != "") {
+            Constant.isGoogleInterstitialAdsEnabled =
+                _getSetting(settings, SystemSetting.interstitialAdStatus);
+          }
+
+          if (_getSetting(settings, SystemSetting.nativeAdStatus) != null &&
+              _getSetting(settings, SystemSetting.nativeAdStatus) != "") {
+            Constant.isGoogleNativeAdsEnabled =
+                _getSetting(settings, SystemSetting.nativeAdStatus);
+          }
+
+          if (_getSetting(settings, SystemSetting.bannerAdAndroidAd) != null &&
+              _getSetting(settings, SystemSetting.bannerAdAndroidAd) != "") {
+            Constant.bannerAdIdAndroid =
+                _getSetting(settings, SystemSetting.bannerAdAndroidAd);
+          }
+
+          if (_getSetting(settings, SystemSetting.bannerAdiOSAd) != null &&
+              _getSetting(settings, SystemSetting.bannerAdiOSAd) != "") {
+            Constant.bannerAdIdIOS =
+                _getSetting(settings, SystemSetting.bannerAdiOSAd);
+          }
+
+          if (_getSetting(settings, SystemSetting.interstitialAdAndroidAd) !=
+                  null &&
+              _getSetting(settings, SystemSetting.interstitialAdAndroidAd) !=
+                  "") {
+            Constant.interstitialAdIdAndroid =
+                _getSetting(settings, SystemSetting.interstitialAdAndroidAd);
+          }
+
+          if (_getSetting(settings, SystemSetting.interstitialAdiOSAd) !=
+                  null &&
+              _getSetting(settings, SystemSetting.interstitialAdiOSAd) != "") {
+            Constant.interstitialAdIdIOS =
+                _getSetting(settings, SystemSetting.interstitialAdiOSAd);
+          }
+
+          if (_getSetting(settings, SystemSetting.nativeAndroidAd) != null &&
+              _getSetting(settings, SystemSetting.nativeAndroidAd) != "") {
+            Constant.nativeAdIdAndroid =
+                _getSetting(settings, SystemSetting.nativeAndroidAd);
+          }
+
+          if (_getSetting(settings, SystemSetting.nativeAdiOSAd) != null &&
+              _getSetting(settings, SystemSetting.nativeAdiOSAd) != "") {
+            Constant.nativeAdIdIOS =
+                _getSetting(settings, SystemSetting.nativeAdiOSAd);
+          }
           Constant.defaultLatitude =
               _getSetting(settings, SystemSetting.defaultLatitude) ?? "";
           Constant.defaultLongitude =
@@ -170,27 +247,70 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
               Constant.maintenanceMode =
                   _getSetting(settings, SystemSetting.maintenanceMode);
 
-              Constant.isGoogleBannerAdsEnabled =
-                  _getSetting(settings, SystemSetting.bannerAdStatus) ?? "";
-              Constant.isGoogleInterstitialAdsEnabled =
-                  _getSetting(settings, SystemSetting.interstitialAdStatus) ??
-                      "";
-              Constant.isGoogleNativeAdsEnabled =
-                  _getSetting(settings, SystemSetting.nativeAdStatus) ?? "";
-              Constant.bannerAdIdAndroid =
-                  _getSetting(settings, SystemSetting.bannerAdAndroidAd) ?? "";
-              Constant.bannerAdIdIOS =
-                  _getSetting(settings, SystemSetting.bannerAdiOSAd) ?? "";
-              Constant.interstitialAdIdAndroid = _getSetting(
-                      settings, SystemSetting.interstitialAdAndroidAd) ??
-                  "";
-              Constant.interstitialAdIdIOS =
-                  _getSetting(settings, SystemSetting.interstitialAdiOSAd) ??
-                      "";
-              Constant.nativeAdIdAndroid =
-                  _getSetting(settings, SystemSetting.nativeAndroidAd) ?? "";
-              Constant.nativeAdIdIOS =
-                  _getSetting(settings, SystemSetting.nativeAdiOSAd) ?? "";
+              if (_getSetting(settings, SystemSetting.bannerAdStatus) != null &&
+                  _getSetting(settings, SystemSetting.bannerAdStatus) != "") {
+                Constant.isGoogleBannerAdsEnabled =
+                    _getSetting(settings, SystemSetting.bannerAdStatus);
+              }
+
+              if (_getSetting(settings, SystemSetting.interstitialAdStatus) !=
+                      null &&
+                  _getSetting(settings, SystemSetting.interstitialAdStatus) !=
+                      "") {
+                Constant.isGoogleInterstitialAdsEnabled =
+                    _getSetting(settings, SystemSetting.interstitialAdStatus);
+              }
+
+              if (_getSetting(settings, SystemSetting.nativeAdStatus) != null &&
+                  _getSetting(settings, SystemSetting.nativeAdStatus) != "") {
+                Constant.isGoogleNativeAdsEnabled =
+                    _getSetting(settings, SystemSetting.nativeAdStatus);
+              }
+
+              if (_getSetting(settings, SystemSetting.bannerAdAndroidAd) !=
+                      null &&
+                  _getSetting(settings, SystemSetting.bannerAdAndroidAd) !=
+                      "") {
+                Constant.bannerAdIdAndroid =
+                    _getSetting(settings, SystemSetting.bannerAdAndroidAd);
+              }
+
+              if (_getSetting(settings, SystemSetting.bannerAdiOSAd) != null &&
+                  _getSetting(settings, SystemSetting.bannerAdiOSAd) != "") {
+                Constant.bannerAdIdIOS =
+                    _getSetting(settings, SystemSetting.bannerAdiOSAd);
+              }
+
+              if (_getSetting(
+                          settings, SystemSetting.interstitialAdAndroidAd) !=
+                      null &&
+                  _getSetting(
+                          settings, SystemSetting.interstitialAdAndroidAd) !=
+                      "") {
+                Constant.interstitialAdIdAndroid = _getSetting(
+                    settings, SystemSetting.interstitialAdAndroidAd);
+              }
+
+              if (_getSetting(settings, SystemSetting.interstitialAdiOSAd) !=
+                      null &&
+                  _getSetting(settings, SystemSetting.interstitialAdiOSAd) !=
+                      "") {
+                Constant.interstitialAdIdIOS =
+                    _getSetting(settings, SystemSetting.interstitialAdiOSAd);
+              }
+
+              if (_getSetting(settings, SystemSetting.nativeAndroidAd) !=
+                      null &&
+                  _getSetting(settings, SystemSetting.nativeAndroidAd) != "") {
+                Constant.nativeAdIdAndroid =
+                    _getSetting(settings, SystemSetting.nativeAndroidAd);
+              }
+
+              if (_getSetting(settings, SystemSetting.nativeAdiOSAd) != null &&
+                  _getSetting(settings, SystemSetting.nativeAdiOSAd) != "") {
+                Constant.nativeAdIdIOS =
+                    _getSetting(settings, SystemSetting.nativeAdiOSAd);
+              }
 
               Constant.playstoreURLAndroid =
                   _getSetting(settings, SystemSetting.playStoreLink) ?? "";

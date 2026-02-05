@@ -21,13 +21,13 @@ class Constant {
   //backend url
   static String baseUrl = AppSettings.baseUrl;
 
-  static String isGoogleBannerAdsEnabled = "";
+  static String isGoogleBannerAdsEnabled = "1";
   static String isGoogleInterstitialAdsEnabled = "";
   static String isGoogleNativeAdsEnabled = "";
 
   ///
-  static String bannerAdIdAndroid = 'ca-app-pub-8956768861022760/1852790959';
-  static String bannerAdIdIOS = "";
+  static String bannerAdIdAndroid = 'ca-app-pub-3940256099942544/6300978111';
+  static String bannerAdIdIOS = "ca-app-pub-3940256099942544/2934735716";
 
   static String interstitialAdIdAndroid = '';
   static String interstitialAdIdIOS = '';
