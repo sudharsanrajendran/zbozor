@@ -26,55 +26,63 @@ class CategoryHomeCard extends StatelessWidget {
       height: 77,
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: context.color.secondaryColor,
-            borderRadius: BorderRadius.circular(5),
-            boxShadow: [
-              BoxShadow(
-                color: context.color.borderColor.darken(30).withOpacity(0.6),
-                offset: const Offset(0, 2),
-                blurRadius: 7,
-                spreadRadius: 0,
-              )
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: 32,
-                width: 32,
-                decoration: BoxDecoration(
-                  //  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: UiUtils.imageType(
-                    url,
-                    fit: isFullImage ? BoxFit.contain : BoxFit.cover,
-                    color: context.color.territoryColor,
+        child: RepaintBoundary(
+          child: Container(
+            decoration: BoxDecoration(
+              color: context.color.secondaryColor,
+              borderRadius: BorderRadius.circular(5),
+              boxShadow: [
+                BoxShadow(
+                  color: context.color.borderColor.darken(30).withOpacity(0.6),
+                  offset: const Offset(0, 2),
+                  blurRadius: 5, // Reduced blur for performance
+                  spreadRadius: 0,
+                )
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: 32,
+                  width: 32,
+                  decoration: BoxDecoration(
+                    //  color: Colors.blueAccent,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: extension == "svg"
+                        ? UiUtils.getSvgImage(
+                            url,
+                            fit: isFullImage ? BoxFit.contain : BoxFit.cover,
+                            color: context.color.territoryColor,
+                          )
+                        : UiUtils.getImage(
+                            url,
+                            fit: isFullImage ? BoxFit.contain : BoxFit.cover,
+                            memCacheWidth: 150, // Optimize for small icon size
+                          ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11, // Reduced font size for better fit
-                    color: context.color.textDefaultColor,
-                    fontWeight: FontWeight.bold,
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11, // Reduced font size for better fit
+                      color: context.color.textDefaultColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

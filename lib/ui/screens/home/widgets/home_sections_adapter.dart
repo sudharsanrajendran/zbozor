@@ -99,104 +99,105 @@ class _ItemCardState extends State<ItemCard> {
           arguments: {"model": widget.item},
         );
       },
-      child: Container(
-        width: widget.width ?? 160,
-        decoration: BoxDecoration(
-          color: context.color.secondaryColor,
-          borderRadius: BorderRadius.circular(widget.radius ?? 18),
-          border: Border.all(
-            color: context.color.borderColor.darken(30),
-          ),
-        ),
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// IMAGE
-
-                SizedBox(
-                  height: imageHeight,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(widget.radius ?? 20),
-                    ),
-                    child: UiUtils.getImage(
-                      widget.item?.image ?? "",
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      memCacheWidth: 400,
-                    ),
-                  ),
-                ),
-
-                /// CONTENT
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(
-                      end: 8, start: 8, top: 6, bottom: 4),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      /// PRICE
-                      Text(
-                        "${Constant.currencySymbol} ${widget.item?.price ?? ""}",
-                      )
-                          .bold()
-                          .size(context.font.large)
-                          .color(context.color.territoryColor),
-
-                      const SizedBox(height: 5),
-
-                      /// ITEM NAME
-                      Text(widget.item?.name ?? "")
-                          .bold()
-                          .firstUpperCaseWidget()
-                          .setMaxLines(lines: 1)
-                          .size(context.font.small),
-
-                      const SizedBox(height: 5),
-
-                      /// LOCATION (compact)
-                      if ((widget.item?.address ?? "").isNotEmpty)
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            UiUtils.getSvg(
-                              AppIcons.location,
-                              height: 13,
-                              width: 13,
-                              color: context.color.textDefaultColor
-                                  .withOpacity(0.5),
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                widget.item?.address ?? "",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontSize: context.font.small,
-                                    color: context.color.textDefaultColor
-                                        .withOpacity(0.5),
-                                    fontWeight: FontWeight.w400),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                      /// SPACING BELOW ADDRESS
-                      if ((widget.item?.address ?? "").isNotEmpty)
-                        const SizedBox(height: 2),
-                    ],
-                  ),
-                ),
-              ],
+      child: RepaintBoundary(
+        child: Container(
+          width: widget.width ?? 160,
+          decoration: BoxDecoration(
+            color: context.color.secondaryColor,
+            borderRadius: BorderRadius.circular(widget.radius ?? 18),
+            border: Border.all(
+              color: context.color.borderColor.darken(30),
             ),
+          ),
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// IMAGE
+                  SizedBox(
+                    height: imageHeight,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(widget.radius ?? 20),
+                      ),
+                      child: UiUtils.getImage(
+                        widget.item?.image ?? "",
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        memCacheWidth: 400,
+                      ),
+                    ),
+                  ),
 
-            /// FAVORITE BUTTON
-            _favButton(),
-          ],
+                  /// CONTENT
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(
+                        end: 8, start: 8, top: 6, bottom: 4),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        /// PRICE
+                        Text(
+                          "${Constant.currencySymbol} ${widget.item?.price ?? ""}",
+                        )
+                            .bold()
+                            .size(context.font.large)
+                            .color(context.color.territoryColor),
+
+                        const SizedBox(height: 5),
+
+                        /// ITEM NAME
+                        Text(widget.item?.name ?? "")
+                            .bold()
+                            .firstUpperCaseWidget()
+                            .setMaxLines(lines: 1)
+                            .size(context.font.small),
+
+                        const SizedBox(height: 5),
+
+                        /// LOCATION (compact)
+                        if ((widget.item?.address ?? "").isNotEmpty)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              UiUtils.getSvg(
+                                AppIcons.location,
+                                height: 13,
+                                width: 13,
+                                color: context.color.textDefaultColor
+                                    .withOpacity(0.5),
+                              ),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  widget.item?.address ?? "",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: context.font.small,
+                                      color: context.color.textDefaultColor
+                                          .withOpacity(0.5),
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                        /// SPACING BELOW ADDRESS
+                        if ((widget.item?.address ?? "").isNotEmpty)
+                          const SizedBox(height: 2),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              /// FAVORITE BUTTON
+              _favButton(),
+            ],
+          ),
         ),
       ),
     );

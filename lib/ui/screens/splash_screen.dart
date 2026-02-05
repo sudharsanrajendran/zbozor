@@ -194,7 +194,11 @@ class SplashScreenState extends State<SplashScreen>
                   isSettingsLoaded = true;
                   setState(() {});
                 }
-                if (state is FetchSystemSettingsFailure) {}
+                if (state is FetchSystemSettingsFailure) {
+                  // ANTIGRAVITY FIX: Proceed even if settings fail to load to prevent hanging
+                  isSettingsLoaded = true;
+                  setState(() {});
+                }
               },
               child: AnnotatedRegion(
                 value: SystemUiOverlayStyle(

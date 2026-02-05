@@ -1554,50 +1554,60 @@ class ItemsListState extends State<ItemsList> {
         },
         child: Scaffold(
           backgroundColor: context.color.backgroundColor,
-          appBar: UiUtils.buildAppBar(context,
-              showBackButton: true,
+          body: SafeArea(
+            child: RefreshIndicator(
               backgroundColor: context.color.backgroundColor,
-              title: selectedcategoryName == ""
-                  ? widget.categoryName
-                  : selectedcategoryName),
-          bottomNavigationBar: bottomWidget(),
-          body: RefreshIndicator(
-            backgroundColor: context.color.backgroundColor,
-            onRefresh: () async {
-              // Debug log to check if onRefresh is triggered
-
-              searchbody = {};
-              Constant.itemFilter = null;
-
-              context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
-                    categoryId:
-                        _getCurrentFetchId(), // [FIX] Use current selection
-                    search: "",
-                    forceRefresh: true, // [FIX] Force refresh
-                  );
-            },
-            color: context.color.territoryColor,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 16,
-                ),
-                searchBarWidget(),
-                SizedBox(
-                  height: 8,
-                ),
-                _buildFilterChips(),
-                SizedBox(
-                  height: 12,
-                ),
-                _buildVerifiedToggle(),
-                SizedBox(
-                  height: 16,
-                ),
-                Expanded(child: fetchItems()),
-              ],
+              onRefresh: () async {
+                searchbody = {};
+                Constant.itemFilter = null;
+                context
+                    .read<FetchItemFromCategoryCubit>()
+                    .fetchItemFromCategory(
+                      categoryId: _getCurrentFetchId(),
+                      search: "",
+                      forceRefresh: true,
+                    );
+              },
+              color: context.color.territoryColor,
+              child: CustomScrollView(
+                controller: controller,
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  _buildCollapsibleAppBar(),
+                  buildItemsSliverBloc(),
+                ],
+              ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCollapsibleAppBar() {
+    return SliverAppBar(
+      backgroundColor: context.color.backgroundColor,
+      elevation: 0,
+      centerTitle: true,
+      title: Text(
+        selectedcategoryName == "" ? widget.categoryName : selectedcategoryName,
+        style: TextStyle(color: context.color.textDefaultColor),
+      ),
+      iconTheme: IconThemeData(color: context.color.textDefaultColor),
+      floating: true,
+      snap: true,
+      pinned: false, // Scrolls away completely
+      expandedHeight:
+          0, // No extra expansion needed as we use 'bottom' for content
+      bottom: _HeaderBottomWidget(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            searchBarWidget(),
+            _buildFilterChips(),
+            _buildVerifiedToggle(),
+            const SizedBox(height: 8),
+          ],
         ),
       ),
     );
@@ -1872,148 +1882,103 @@ class ItemsListState extends State<ItemsList> {
     );
   }
 
-  Widget fetchItems() {
+  Widget buildItemsSliverBloc() {
     return BlocBuilder<FetchItemFromCategoryCubit, FetchItemFromCategoryState>(
-        builder: (context, state) {
-      if (state is FetchItemFromCategoryInProgress) {
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-          itemCount: 10,
-          itemBuilder: (context, index) {
-            return buildItemsShimmer(context);
-          },
-        );
-      }
-
-      if (state is FetchItemFromCategoryFailure) {
-        print("ITEM LIST ERROR: ${state.errorMessage}");
-        return const Center(
-          child: SomethingWentWrong(),
-        );
-      }
-      if (state is FetchItemFromCategorySuccess) {
-        if (state.itemModel.isEmpty) {
-          return Center(
-            child: NoDataFound(
-              onTap: () {
-                context
-                    .read<FetchItemFromCategoryCubit>()
-                    .fetchItemFromCategory(
-                        categoryId:
-                            _getCurrentFetchId(), // [FIX] Use current selection
-                        search: searchController.text.toString());
-              },
-            ),
-          );
-        }
-        List<ItemModel> displayItems = state.itemModel;
-        if (_showVerifiedOnly) {
-          displayItems =
-              displayItems.where((item) => item.user?.isVerified == 1).toList();
-        }
-
-        if (displayItems.isEmpty &&
-            _showVerifiedOnly &&
-            state.itemModel.isNotEmpty) {
-          // Show message if filter hides everything? Or just "No Data Found" (reusing existing widget might be confusing if it triggers refetch)
-          // For now, let's just let it show empty or maybe a specific message.
-          // Re-using NoDataFound is okay, but user might think there are NO items at all.
-          // Let's stick to showing empty list or the standard NoDataFound logic if the result is truly empty.
-        }
-
-        if (displayItems.isEmpty) {
-          return Center(
-            child: NoDataFound(
-              onTap: () {
-                // If empty due to filter, maybe just reset filter?
-                // But for now, standard retry.
-                context
-                    .read<FetchItemFromCategoryCubit>()
-                    .fetchItemFromCategory(
-                        categoryId:
-                            _getCurrentFetchId(), // [FIX] Use current selection
-                        search: searchController.text.toString());
-              },
+      builder: (context, state) {
+        if (state is FetchItemFromCategoryInProgress) {
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => buildItemsShimmer(context),
+              childCount: 10,
             ),
           );
         }
 
-        return Column(
-          children: [
-            Expanded(child: mainChildren(displayItems)
-                /* isList
-                  ? ListView.builder(
-                      shrinkWrap: true,
-                      controller: controller,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 3),
-                      itemCount: calculateItemCount(state.itemModel.length),
-                      physics: const BouncingScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        if ((index + 1) % 4 == 0) {
-                          return NativeAdWidget(type: TemplateType.medium);
-                        }
+        if (state is FetchItemFromCategoryFailure) {
+          return const SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(child: SomethingWentWrong()),
+          );
+        }
 
-                        int itemIndex = index - (index ~/ 4);
-                        ItemModel item = state.itemModel[itemIndex];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              Routes.adDetailsScreen,
-                              arguments: {
-                                'model': item,
-                              },
-                            );
-                          },
-                          child: ItemHorizontalCard(
-                            item: item,
-                          ),
-                        );
-                      },
-                    )
-                  : GridView.builder(
-                      shrinkWrap: true,
-                      controller: controller,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 5),
-                      gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
-                              crossAxisCount: 2,
-                              height: MediaQuery.of(context).size.height /
-                                  3.5.rh(context),
-                              mainAxisSpacing: 7,
-                              crossAxisSpacing: 10),
-                      itemCount: calculateItemCount(state.itemModel.length),
-                      itemBuilder: (context, index) {
-                        if ((index + 1) % 4 == 0) {
-                          return NativeAdWidget(type: TemplateType.medium);
-                        }
-
-                        int itemIndex = index - (index ~/ 4);
-                        ItemModel item = state.itemModel[itemIndex];
-
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                Routes.adDetailsScreen,
-                                arguments: {
-                                  'model': item,
-                                },
-                              );
-                            },
-                            child: ItemCard(
-                              item: item,
-                            ));
-                      },
-                    ),*/
+        if (state is FetchItemFromCategorySuccess) {
+          if (state.itemModel.isEmpty) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: NoDataFound(
+                  onTap: () {
+                    context
+                        .read<FetchItemFromCategoryCubit>()
+                        .fetchItemFromCategory(
+                            categoryId: _getCurrentFetchId(),
+                            search: searchController.text.toString());
+                  },
                 ),
-          ],
-        );
+              ),
+            );
+          }
+
+          List<ItemModel> displayItems = state.itemModel;
+          if (_showVerifiedOnly) {
+            displayItems = displayItems
+                .where((item) => item.user?.isVerified == 1)
+                .toList();
+          }
+
+          if (displayItems.isEmpty) {
+            return SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: NoDataFound(
+                  onTap: () {
+                    context
+                        .read<FetchItemFromCategoryCubit>()
+                        .fetchItemFromCategory(
+                            categoryId: _getCurrentFetchId(),
+                            search: searchController.text.toString());
+                  },
+                ),
+              ),
+            );
+          }
+
+          return SliverMainAxisGroup(
+            slivers: _buildItemSlivers(displayItems),
+          );
+        }
+        return const SliverToBoxAdapter(child: SizedBox.shrink());
+      },
+    );
+  }
+
+  List<Widget> _buildItemSlivers(List<ItemModel> items) {
+    List<Widget> slivers = [];
+    int gridCount = Constant.nativeAdsAfterItemNumber;
+    int total = items.length;
+
+    for (int i = 0; i < total; i += gridCount) {
+      if (isList) {
+        slivers.add(_buildSliverListSection(
+            context, i, min(gridCount, total - i), items));
+      } else {
+        slivers.add(_buildSliverGridSection(
+            context, i, min(gridCount, total - i), items));
       }
-      return Container();
-    });
+
+      int remainingItems = total - i - gridCount;
+      if (remainingItems > 0) {
+        slivers.add(SliverToBoxAdapter(
+            child: NativeAdWidget(type: TemplateType.medium)));
+      }
+    }
+
+    var state = context.read<FetchItemFromCategoryCubit>().state;
+    if (state is FetchItemFromCategorySuccess && state.isLoadingMore) {
+      slivers.add(SliverToBoxAdapter(child: UiUtils.progress()));
+    }
+
+    return slivers;
   }
 
   ///
@@ -2734,4 +2699,20 @@ class ItemsListState extends State<ItemsList> {
       ),
     );
   }
+}
+
+class _HeaderBottomWidget extends StatelessWidget
+    implements PreferredSizeWidget {
+  final Widget child;
+
+  const _HeaderBottomWidget({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return child;
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(
+      190); // Estimated height for Search + Chips + Toggle
 }

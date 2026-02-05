@@ -1,4 +1,3 @@
-
 import 'package:Ebozor/data/model/personalized/personalized_settings.dart';
 import 'package:Ebozor/firebase_options.dart';
 import 'package:Ebozor/main.dart';
@@ -15,7 +14,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 PersonalizedInterestSettings personalizedInterestSettings =
     PersonalizedInterestSettings.empty();
-
 
 void initApp() async {
   ///Note: this file's code is very necessary and sensitive if you change it, this might affect whole app , So change it carefully.
@@ -48,17 +46,16 @@ void initApp() async {
   GoogleMobileAds.instance.nativeAdFactoryRegistry
       .registerFactory('listTile', factoryExample);*/
 
-
-
   await Hive.initFlutter();
-  await Hive.openBox(HiveKeys.userDetailsBox);
-  await Hive.openBox(HiveKeys.authBox);
-  await Hive.openBox(HiveKeys.languageBox);
-  await Hive.openBox(HiveKeys.themeBox);
-  await Hive.openBox(HiveKeys.svgBox);
-  await Hive.openBox(HiveKeys.jwtToken);
-  //Hive.registerAdapter(ItemModelAdapter()); // Register your adapter
-  await Hive.openBox(HiveKeys.historyBox);
+  await Future.wait([
+    Hive.openBox(HiveKeys.userDetailsBox),
+    Hive.openBox(HiveKeys.authBox),
+    Hive.openBox(HiveKeys.languageBox),
+    Hive.openBox(HiveKeys.themeBox),
+    Hive.openBox(HiveKeys.svgBox),
+    Hive.openBox(HiveKeys.jwtToken),
+    Hive.openBox(HiveKeys.historyBox),
+  ]);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
     (_) async {
@@ -69,7 +66,3 @@ void initApp() async {
     },
   );
 }
-
-
-
-
