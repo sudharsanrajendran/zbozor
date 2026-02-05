@@ -617,5 +617,7 @@
   "invalidOtp": "Entered otp is invalid",
   "simCountryError": "Please select the country matching your SIM card (+{})",
   "priceRange": "Price Range",
-  "enter6Digits": "Please enter the 6 digits."
+  "enter6Digits": "Please enter the 6 digits.",
+  "ShowverifiedPropertiesFirst": "Show verified properties first",
+  "similaads": "Similar Ads"
 }

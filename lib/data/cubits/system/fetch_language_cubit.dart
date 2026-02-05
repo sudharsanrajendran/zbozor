@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:Ebozor/utils/ApiService/api.dart';
@@ -61,7 +60,6 @@ class FetchLanguageCubit extends Cubit<FetchLanguageState> {
   FetchLanguageCubit() : super(FetchLanguageInitial());
 
   Future<void> getLanguage(String languageCode) async {
-
     try {
       emit(FetchLanguageInProgress());
 
@@ -70,12 +68,23 @@ class FetchLanguageCubit extends Cubit<FetchLanguageState> {
         queryParameters: {Api.languageCode: languageCode},
       );
 
+      // [PATCH] Inject missing keys for Arabic/RTL support (or any language)
+      Map<dynamic, dynamic> fileData = response['data']['file_name'];
+      fileData['ShowverifiedPropertiesFirst'] =
+          "Show verified properties first";
+      fileData['similaads'] = "Similar Ads";
+      fileData['gotVerifiedBadge'] = "Get Verified Badge";
+      fileData['enhanceVisibilityCredibility'] =
+          "Enhance your visibility and credibility";
+      fileData['viewNow'] = "View Now";
+      fileData['message'] = "Chats";
+
       emit(FetchLanguageSuccess(
           code: response['data']['code'],
           rtl: response['data']['rtl'],
           image: response['data']['image'],
           engName: response['data']['name_in_english'],
-          data: response['data']['file_name'],
+          data: fileData,
           name: response['data']['name']));
     } catch (e) {
       emit(FetchLanguageFailure(e.toString()));

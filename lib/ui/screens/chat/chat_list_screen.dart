@@ -121,7 +121,7 @@ class _ChatListScreenState extends State<ChatListScreen>
         backgroundColor: context.color.backgroundColor,
         appBar: UiUtils.buildAppBar(
           context,
-          title: "chats".translate(context),
+          title: "message".translate(context),
           bottomHeight: 0,
         ),
         body: Column(

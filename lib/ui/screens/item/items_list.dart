@@ -165,7 +165,6 @@ class ItemsListState extends State<ItemsList> {
           widget.categoryId,
         ),
         search: "",
-
         filter: filter);
 
     Future.delayed(Duration.zero, () {
@@ -591,7 +590,6 @@ class ItemsListState extends State<ItemsList> {
       context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
           categoryId: int.tryParse(widget.categoryId) ?? 0,
           search: searchController.text,
-
           filter: _createLocationFilter());
     });
   }
@@ -619,7 +617,6 @@ class ItemsListState extends State<ItemsList> {
       context.read<FetchItemFromCategoryCubit>().fetchItemFromCategory(
           categoryId: targetId,
           search: searchController.text,
-
           filter: _createLocationFilter());
     });
   }
@@ -1489,7 +1486,7 @@ class ItemsListState extends State<ItemsList> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Show verified properties first",
+            "ShowverifiedPropertiesFirst".translate(context),
             style: TextStyle(
               color: context.color.textDefaultColor,
               fontSize: 14,
@@ -1582,7 +1579,6 @@ class ItemsListState extends State<ItemsList> {
             color: context.color.territoryColor,
             child: Column(
               children: [
-
                 SizedBox(
                   height: 16,
                 ),

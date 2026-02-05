@@ -634,7 +634,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("similarAds".translate(context))
+          Text("similaads".translate(context))
               .size(context.font.large)
               .bold(weight: FontWeight.w600)
               .setMaxLines(lines: 1),
@@ -2588,7 +2588,6 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       },
       child: Column(
         children: [
-
           SizedBox(
             height: 10,
           ),
