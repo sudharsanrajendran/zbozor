@@ -647,7 +647,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
           if (state is FetchSubCategoriesInProgress) {
             return Center(
                 child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(4.0),
               child: CustomShimmer(height: 50, width: 100, borderRadius: 10),
             ));
           }
@@ -730,12 +730,12 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: isSelected ?14:11,
                               color: isSelected
                                   ? context.color.textDefaultColor
                                   : context.color.textLightColor,
                               fontWeight: isSelected
-                                  ? FontWeight.w600
+                                  ? FontWeight.bold
                                   : FontWeight.normal,
                               height: 1.2, // 🔥 line height control
                             ),
