@@ -161,7 +161,7 @@ class LocationWidget extends StatelessWidget {
               child: UiUtils.getSvg(
                 AppIcons.location,
                 fit: BoxFit.none,
-                color: context.color.textDefaultColor,
+                color: context.color.deactivateColor.withOpacity(0.3),
               ),
             ),
             ValueListenableBuilder(
@@ -216,7 +216,7 @@ class LocationWidget extends StatelessWidget {
                         softWrap: true,
                         overflow: TextOverflow.ellipsis,
                       )
-                          .color(context.color.textDefaultColor)
+                          .color(context.color.deactivateColor)
                           .size(context.font.small)
                           .bold(weight: FontWeight.w600),
                     ],

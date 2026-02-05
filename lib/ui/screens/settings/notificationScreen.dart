@@ -285,7 +285,8 @@ class NotificationsState extends State<Notifications> {
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium!
-                              .copyWith(color: const Color(0xff5D6269)),
+                              .copyWith(color: context.color.textLightColor).merge(const TextStyle(
+                              fontWeight: FontWeight.w600)),
                         ),
                         const SizedBox(height: 8),
                         Text(notificationData.createdAt!

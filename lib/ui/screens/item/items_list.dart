@@ -1582,20 +1582,21 @@ class ItemsListState extends State<ItemsList> {
             color: context.color.territoryColor,
             child: Column(
               children: [
+
                 SizedBox(
-                  height: 8,
-                ),
-                SizedBox(
-                  height: 8,
+                  height: 16,
                 ),
                 searchBarWidget(),
                 SizedBox(
                   height: 8,
                 ),
                 _buildFilterChips(),
+                SizedBox(
+                  height: 12,
+                ),
                 _buildVerifiedToggle(),
                 SizedBox(
-                  height: 8,
+                  height: 16,
                 ),
                 Expanded(child: fetchItems()),
               ],

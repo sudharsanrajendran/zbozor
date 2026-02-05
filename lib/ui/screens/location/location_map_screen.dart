@@ -401,14 +401,14 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                       ),
                     ),
                     Positioned(
-                        top: 20,
-                        left: 20,
-                        right: 20,
+                        top: 54,
+                        left: 14,
+                        right: 14,
                         child: Container(
                           width: 300,
                           decoration: BoxDecoration(
                               color: context.color.backgroundColor,
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(18),
                               boxShadow: [
                                 BoxShadow(
                                     color: context.color.borderColor

@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'package:Ebozor/app/routes.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/category/fetch_category_cubit.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/app_icon.dart';
@@ -118,7 +119,7 @@ class _SelectCategoryScreenState extends CloudState<SelectCategoryScreen> {
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           mainAxisSpacing: 15,
-                          crossAxisSpacing: 15,
+                          crossAxisSpacing: 16,
                           childAspectRatio: 1.0,
                         ),
                         itemBuilder: (context, index) {
@@ -169,41 +170,43 @@ class _SelectCategoryScreenState extends CloudState<SelectCategoryScreen> {
                                 }
                               }
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: context.color
-                                      .secondaryColor, // Assuming secondaryColor is white/card bg
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: context.color.borderColor
-                                        .withOpacity(0.5),
-                                    width: 1,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.black.withOpacity(0.03),
-                                        blurRadius: 5,
-                                        spreadRadius: 1,
-                                        offset: const Offset(0, 2))
-                                  ]),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 35,
-                                    width: 35,
-                                    child: UiUtils.imageType(
-                                      category.url ?? "",
-                                      color: context.color
-                                          .territoryColor, // Red/Primary Color
-                                      fit: BoxFit.contain,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Container(
+
+                                decoration: BoxDecoration(
+                                    color: context.color
+                                        .secondaryColor, // Assuming secondaryColor is white/card bg
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: context.color.borderColor
+                                          .withOpacity(0.5),
+                                      width: 1,
                                     ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 4),
-                                    child: Text(
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: Colors.black.withOpacity(0.03),
+                                          blurRadius: 5,
+                                          spreadRadius: 1,
+                                          offset: const Offset(0, 2))
+                                    ]),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 32,
+                                      width: 32,
+                                      child: UiUtils.imageType(
+                                        category.url ?? "",
+                                        color: context.color
+                                            .territoryColor, // Red/Primary Color
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 4,
+                                    ),
+                                    Text(
                                       category.name ?? "",
                                       textAlign: TextAlign.center,
                                       maxLines: 2,
@@ -213,9 +216,9 @@ class _SelectCategoryScreenState extends CloudState<SelectCategoryScreen> {
                                           fontWeight: FontWeight.w500,
                                           color: context.color.textColorDark,
                                           height: 1.2),
-                                    ),
-                                  )
-                                ],
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           );
@@ -498,7 +501,7 @@ class _SelectNestedCategoryState extends CloudState<SelectNestedCategory> {
                                     ),
                                     color: context.color.secondaryColor,
                                   ),
-                                  height: 56,
+                                  height: 77,
                                   alignment: AlignmentDirectional.centerStart,
                                   width: double.infinity,
                                   child: Padding(
@@ -714,7 +717,7 @@ class _SelectNestedCategoryState extends CloudState<SelectNestedCategory> {
             child: Container(
               padding: EdgeInsets.all(5),
               width: double.maxFinite,
-              height: 56,
+              height: 77,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   border:

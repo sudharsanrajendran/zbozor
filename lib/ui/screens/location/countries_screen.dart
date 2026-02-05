@@ -327,7 +327,10 @@ class CountriesScreenState extends State<CountriesScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child:
-                      Center(child: Image.asset("assets/seachfiltericon.png")),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(child: Image.asset("assets/seachfiltericon.png")),
+                      ),
                 ),
               ),
             ],
@@ -456,6 +459,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                     buttonTitle: "useCurrentLocation".translate(context),
                     buttonColor: context.color.backgroundColor,
                     textColor: context.color.territoryColor,
+              fontWeight:FontWeight.w100,
                     border: BorderSide(color: context.color.territoryColor),
                     showElevation: false,
                     radius: 8,

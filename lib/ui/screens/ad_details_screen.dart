@@ -2588,10 +2588,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       },
       child: Column(
         children: [
-          Divider(
-            thickness: 1,
-            color: context.color.textDefaultColor.withOpacity(0.1),
-          ),
+
           SizedBox(
             height: 10,
           ),
@@ -2623,7 +2620,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             ),
           ),
           SizedBox(
-            height: 10,
+            height: 12,
           ),
           Divider(
             thickness: 1,

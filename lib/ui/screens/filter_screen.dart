@@ -272,12 +272,12 @@ class FilterScreenState extends State<FilterScreen> {
                   setState(() {});
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: Center(
                     child: Text(
                       "reset".translate(context),
                       style: TextStyle(
-                        color: context.color.textDefaultColor,
+                        color: context.color.deactivateColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
@@ -597,8 +597,7 @@ class FilterScreenState extends State<FilterScreen> {
         ),
         child: Row(
           children: [
-            Icon(Icons.calendar_today_outlined,
-                color: context.color.textColorDark.withOpacity(0.54), size: 20),
+            Image.asset("assets/filterpostseenicon.png",height: 24,width: 24,color:context.color.deactivateColor.withOpacity(0.2),),
             const SizedBox(width: 10),
             Expanded(
               child: Text(Constant.postedSince[index].status)
@@ -683,8 +682,11 @@ class FilterScreenState extends State<FilterScreen> {
           ),
           child: Row(
             children: [
-              Icon(Icons.location_on_outlined,
-                  color: context.color.textLightColor),
+              Image.asset(
+                "assets/filterlocationicon.png",
+                height: 24,
+                width: 24,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: [area, city, _state, country]
@@ -701,7 +703,7 @@ class FilterScreenState extends State<FilterScreen> {
                         style: TextStyle(color: context.color.textColorDark),
                       )
                     : Text("allCities".translate(context))
-                        .color(context.color.textLightColor),
+                        .color(context.color.deactivateColor.withOpacity(0.3)),
               ),
             ],
           ),
@@ -866,8 +868,7 @@ class FilterScreenState extends State<FilterScreen> {
           ),
           child: Row(
             children: [
-              Icon(Icons.calendar_today_outlined,
-                  color: Colors.black54, size: 20),
+         Image.asset("assets/filterpostseenicon.png",height: 24,width: 24,color:context.color.deactivateColor,),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(Constant.postedSince[index].status)

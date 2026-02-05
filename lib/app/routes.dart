@@ -51,7 +51,7 @@ import 'package:Ebozor/ui/screens/seller/seller_profile.dart';
 import 'package:Ebozor/ui/screens/seller/seller_verification.dart';
 import 'package:Ebozor/ui/screens/settings/contact_us.dart';
 import 'package:Ebozor/ui/screens/settings/notification_detail.dart';
-import 'package:Ebozor/ui/screens/settings/notifications.dart';
+import 'package:Ebozor/ui/screens/settings/notificationScreen.dart';
 import 'package:Ebozor/ui/screens/settings/profile_setting.dart';
 import 'package:Ebozor/ui/screens/subscription/packages_list.dart';
 

@@ -155,7 +155,7 @@ class Constant {
   static bool showExperimentals = true;
 
   //Don't touch this settings
-  static bool isUpdateAvailable = false;t=
+  static bool isUpdateAvailable = false;
   static String newVersionNumber = "";
   static bool isNumberWithSuffix = false;
 

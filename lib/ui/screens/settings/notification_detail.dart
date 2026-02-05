@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';import 'package:Ebozor/data/helper/designs.dart';
-import 'package:Ebozor/ui/screens/settings/notifications.dart';
+import 'package:Ebozor/ui/screens/settings/notificationScreen.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
