@@ -65,7 +65,9 @@ class LanguagesListScreen extends StatelessWidget {
 
             HiveUtils.storeLanguage(map);
             context.read<LanguageCubit>().emit(LanguageLoader(map));
-            context.read<FetchCategoryCubit>().fetchCategories();
+            context
+                .read<FetchCategoryCubit>()
+                .fetchCategories(forceRefresh: true);
             context.read<FetchHomeScreenCubit>().fetch(
                 city: HiveUtils.getCityName(),
                 areaId: HiveUtils.getAreaId(),

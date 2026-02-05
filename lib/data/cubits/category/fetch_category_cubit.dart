@@ -100,9 +100,10 @@ class FetchCategoryCubit extends Cubit<FetchCategoryState> {
       emit(FetchCategoryInProgress());
 
       // 1. Trigger BOTH fetches concurrently
-      final newCategoriesFuture =
-          NewCategoriesRepository().fetchCategories(page: 1);
-      final oldCategoriesFuture = _categoryRepository.fetchCategories(page: 1);
+      final newCategoriesFuture = NewCategoriesRepository()
+          .fetchCategories(page: 1, forceRefresh: forceRefresh ?? false);
+      final oldCategoriesFuture = _categoryRepository.fetchCategories(
+          page: 1, forceRefresh: forceRefresh ?? false);
 
       // 2. Wait for BOTH to complete (Safety first)
       final results =
