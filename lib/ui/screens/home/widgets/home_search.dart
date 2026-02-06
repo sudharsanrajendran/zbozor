@@ -81,7 +81,7 @@ class HomeSearchField extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(width: 10),
+          const SizedBox(width: 4),
 
           /// 📍 LOCATION ICON (outside search)
           GestureDetector(
@@ -101,7 +101,7 @@ class HomeSearchField extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(width: 10),
+          const SizedBox(width: 4),
 
           /// 🔔 NOTIFICATION ICON (outside search)
           BlocBuilder<FetchNotificationsCubit, FetchNotificationsState>(

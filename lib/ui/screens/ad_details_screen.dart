@@ -1805,6 +1805,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                   );
                 },
               ),
+
+              // make an ffer over all button pasted here
+
               _buildButton(
                 "continueToOffer".translate(context),
                 () {
@@ -2639,77 +2642,79 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       context: context,
       barrierDismissible: true,
       builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                /// CONTENT
-                makeAnOffer(),
-
-                const SizedBox(height: 12),
-
-                Row(
-                  children: [
-                    /// Cancel
-                    Expanded(
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
+        return Container(
+          width: double.infinity,
+          child: Dialog(
+            insetPadding: EdgeInsets.symmetric(horizontal: 16), // 👈 Reduce gap
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  /// CONTENT
+                  makeAnOffer(),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      /// Cancel
+                      Expanded(
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
-                        ),
-                        onPressed: () {
-                          _makeAnOffermessageController.clear();
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          "Cancel".translate(context),
-                          style: TextStyle(
-                            color: context.color.secondary.withOpacity(0.5),
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ).bold(),
-                      ),
-                    ),
-
-                    const SizedBox(width: 14),
-
-                    /// Confirm
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (_offerFormKey.currentState!.validate()) {
-                            context
-                                .read<MakeAnOfferItemCubit>()
-                                .makeAnOfferItem(
-                                  id: widget.model.id!,
-                                  from: "offer",
-                                  amount: double.parse(
-                                    _makeAnOffermessageController.text.trim(),
-                                  ),
-                                );
+                          onPressed: () {
+                            _makeAnOffermessageController.clear();
                             Navigator.pop(context);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              context.color.territoryColor, // 👈 button color
-                          foregroundColor: Colors.white, // 👈 text color
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
+                          },
+                          child: Text(
+                            "Cancel".translate(context),
+                            style: TextStyle(
+                              color: context.color.secondary.withOpacity(0.5),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ).bold(),
                         ),
-                        child: Text("Confirm".translate(context)).bold(),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+
+                      const SizedBox(width: 14),
+
+                      /// Confirm
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (_offerFormKey.currentState!.validate()) {
+                              context
+                                  .read<MakeAnOfferItemCubit>()
+                                  .makeAnOfferItem(
+                                    id: widget.model.id!,
+                                    from: "offer",
+                                    amount: double.parse(
+                                      _makeAnOffermessageController.text.trim(),
+                                    ),
+                                  );
+                              Navigator.pop(context);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                context.color.territoryColor, // 👈 button color
+                            foregroundColor: Colors.white, // 👈 text color
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          child: Text("Confirm".translate(context)).bold(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -2723,7 +2728,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: SizedBox(
+      child: Container(
+        ///////////////////////////////
         width: double.infinity,
         child: Form(
           key: _offerFormKey,
@@ -2748,7 +2754,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                       style: TextStyle(
                         color: context.color.textDefaultColor,
                         fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
@@ -2775,14 +2781,14 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                   ),
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: "Type here....".translate(context),
+                    hintText: " Type here....".translate(context),
                     hintStyle: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                       color: context.color.deactivateColor,
                     ),
                     contentPadding:
-                        EdgeInsets.only(bottom: 12, left: 8, right: 8),
+                        EdgeInsets.only(bottom: 12, left: 10, right: 8),
                   ),
                 ),
               ),

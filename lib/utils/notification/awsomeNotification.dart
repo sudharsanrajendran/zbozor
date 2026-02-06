@@ -100,7 +100,7 @@ class LocalAwsomeNotification {
           await notification.createNotification(
             content: NotificationContent(
               id: isChat ? chatId : Random().nextInt(5000),
-              title: notificationData.data["title"],
+              title: userName ?? notificationData.data["title"],
               icon: AppIcons.notificatinicon,
               largeIcon: largeIconUrl, // Set the Large Icon
               hideLargeIconOnExpand: true,
@@ -112,6 +112,31 @@ class LocalAwsomeNotification {
               wakeUpScreen: true,
               notificationLayout: NotificationLayout.MessagingGroup,
               groupKey: notificationData.data["id"],
+              channelKey: "Chat Notification",
+            ),
+          );
+        } else if (Platform.isIOS) {
+          // iOS Chat Notification - Use unique message ID to prevent duplicates
+          int notificationId =
+              NotificationService.safeInt(notificationData.data['id']) ??
+                  chatId;
+
+          print(
+              "🔔 Creating iOS notification - ID: $notificationId, Sender: ${notificationData.data['user_name']}, Message: ${notificationData.data['body']}");
+
+          await notification.createNotification(
+            content: NotificationContent(
+              id: notificationId, // Use unique message ID instead of chatId
+              title: notificationData.data["title"],
+              largeIcon: largeIconUrl, // Sender profile picture
+              body: notificationData.data["body"],
+              summary: "${notificationData.data['user_name']}",
+              locked: isLocked,
+              payload: Map.from(notificationData.data),
+              autoDismissible: true,
+              wakeUpScreen: true,
+              notificationLayout: NotificationLayout.Default,
+              category: NotificationCategory.Message,
               channelKey: "Chat Notification",
             ),
           );
@@ -139,6 +164,23 @@ class LocalAwsomeNotification {
                 channelKey: Constant.notificationChannel,
               ),
             );
+          } else if (Platform.isIOS) {
+            // iOS Notification with Image
+            await notification.createNotification(
+              content: NotificationContent(
+                id: Random().nextInt(5000),
+                title: notificationData.data["title"],
+                bigPicture: imageUrl,
+                largeIcon: largeIconUrl,
+                body: notificationData.data["body"],
+                locked: isLocked,
+                payload: Map.from(notificationData.data),
+                autoDismissible: true,
+                wakeUpScreen: true,
+                notificationLayout: NotificationLayout.BigPicture,
+                channelKey: Constant.notificationChannel,
+              ),
+            );
           }
         } else {
           if (Platform.isAndroid) {
@@ -156,6 +198,22 @@ class LocalAwsomeNotification {
                 wakeUpScreen: true,
                 notificationLayout: NotificationLayout.Default,
                 groupKey: notificationData.data["item_id"],
+                channelKey: Constant.notificationChannel,
+              ),
+            );
+          } else if (Platform.isIOS) {
+            // iOS Default Notification
+            await notification.createNotification(
+              content: NotificationContent(
+                id: Random().nextInt(5000),
+                title: notificationData.data["title"],
+                largeIcon: largeIconUrl,
+                body: notificationData.data["body"],
+                locked: isLocked,
+                payload: Map.from(notificationData.data),
+                autoDismissible: true,
+                wakeUpScreen: true,
+                notificationLayout: NotificationLayout.Default,
                 channelKey: Constant.notificationChannel,
               ),
             );

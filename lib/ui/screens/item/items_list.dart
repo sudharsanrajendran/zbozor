@@ -1588,7 +1588,6 @@ class ItemsListState extends State<ItemsList> {
     return SliverAppBar(
       backgroundColor: context.color.backgroundColor,
       elevation: 0,
-      centerTitle: true,
       title: Text(
         selectedcategoryName == "" ? widget.categoryName : selectedcategoryName,
         style: TextStyle(color: context.color.textDefaultColor),

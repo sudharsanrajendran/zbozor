@@ -449,8 +449,12 @@ class NotificationService {
   }
 
   static Future<void> registerListeners(context) async {
+    // Disable Firebase auto-display to prevent duplicate notifications
+    // AwesomeNotifications will handle all notification display
     FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-        alert: true, badge: true, sound: true);
+        alert: false, // Disable automatic notification display
+        badge: true, // Keep badge count updates
+        sound: false); // AwesomeNotification will handle sound
     await forgroundNotificationHandler(context);
     await terminatedStateNotificationHandler(context);
     onTapNotificationHandler(context);
