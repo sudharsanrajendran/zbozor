@@ -258,6 +258,9 @@ class Api {
   }) async {
     try {
       final Dio dio = Dio();
+      dio.options.connectTimeout = const Duration(seconds: Constant.apiTimeOut);
+      dio.options.receiveTimeout = const Duration(seconds: Constant.apiTimeOut);
+      dio.options.sendTimeout = const Duration(seconds: Constant.apiTimeOut);
       dio.interceptors.add(NetworkRequestInterseptor());
 
       late FormData formData;
@@ -322,6 +325,12 @@ class Api {
         throw "server-not-available";
       }
 
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        throw ApiException("Connection time out, check network speed");
+      }
+
       throw ApiException(
         e.error is SocketException
             ? "no-internet"
@@ -366,6 +375,9 @@ class Api {
     try {
 //
       final Dio dio = Dio();
+      dio.options.connectTimeout = const Duration(seconds: Constant.apiTimeOut);
+      dio.options.receiveTimeout = const Duration(seconds: Constant.apiTimeOut);
+      dio.options.sendTimeout = const Duration(seconds: Constant.apiTimeOut);
       dio.interceptors.add(NetworkRequestInterseptor());
 
       final response =
@@ -386,6 +398,11 @@ class Api {
       if (e.response?.statusCode == 503) {
         throw "server-not-available";
       }
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        throw ApiException("Connection time out, check network speed");
+      }
 
       throw ApiException(e.error is SocketException
           ? "no-internet"
@@ -405,6 +422,9 @@ class Api {
     try {
 //
       final Dio dio = Dio();
+      dio.options.connectTimeout = const Duration(seconds: Constant.apiTimeOut);
+      dio.options.receiveTimeout = const Duration(seconds: Constant.apiTimeOut);
+      dio.options.sendTimeout = const Duration(seconds: Constant.apiTimeOut);
       dio.interceptors.add(NetworkRequestInterseptor());
 
       final response = await dio.get(
@@ -434,6 +454,11 @@ class Api {
       }
       if (e.response?.statusCode == 503) {
         throw "server-not-available";
+      }
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        throw ApiException("Connection time out, check network speed");
       }
 
       throw ApiException(e.error is SocketException

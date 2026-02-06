@@ -36,13 +36,15 @@ class Constant {
   static String nativeAdIdAndroid = 'ca-app-pub-3940256099942544/2247696110';
   static String nativeAdIdIOS = '';
 
+  static const int apiTimeOut = 30; //in seconds
+  static String? fcmToken;
   static String currencySymbol = "";
   static String defaultLatitude = "";
   static String defaultLongitude = "";
   static String mobileAuthentication = "";
   static String googleAuthentication = "";
-  static String emailAuthentication = "";
   static String appleAuthentication = "";
+  static String emailAuthentication = "";
 
   //
   static int otpTimeOutSecond = AppSettings.otpTimeOutSecond; //otp time out
