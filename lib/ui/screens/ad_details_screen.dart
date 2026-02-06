@@ -1425,7 +1425,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                 addCloudData("edit_from", model.status);
                 Navigator.pushNamed(context, Routes.addItemDetails,
                     arguments: {"isEdit": true});
-              }, Colors.transparent, contextColor.territoryColor,
+              }, contextColor.backgroundColor, contextColor.territoryColor,
                   showElevation: false),
             ),
             SizedBox(width: 10.rw(context)),

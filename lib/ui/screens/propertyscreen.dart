@@ -566,10 +566,10 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         const SizedBox(height: 12),
         Container(
           width: double.infinity,
-          height: 50,
+          height: 42,
           decoration: BoxDecoration(
             color: context.color.secondaryColor,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: context.color.borderColor),
           ),
           child: const IgnorePointer(child: LocationWidget()),

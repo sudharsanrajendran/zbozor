@@ -119,8 +119,8 @@ class _SelectCategoryScreenState extends CloudState<SelectCategoryScreen> {
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
-                          mainAxisSpacing: 15,
-                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 8,
+                          crossAxisSpacing: 15,
                           childAspectRatio: 1.0,
                         ),
                         itemBuilder: (context, index) {
@@ -172,7 +172,7 @@ class _SelectCategoryScreenState extends CloudState<SelectCategoryScreen> {
                               }
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Container(
                                 decoration: BoxDecoration(
                                     color: context.color
@@ -204,16 +204,16 @@ class _SelectCategoryScreenState extends CloudState<SelectCategoryScreen> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 4,
+                                      height: 5,
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 7,
+                                        horizontal: 20,
                                       ),
                                       child: Text(
                                         category.getName(context),
                                         textAlign: TextAlign.center,
-                                        maxLines: 2,
+                                        maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             fontSize: 12,

@@ -172,12 +172,12 @@ class ItemHorizontalCard extends StatelessWidget {
             // CONTENT
             Padding(
               padding: const EdgeInsetsDirectional.only(
-                  start: 12, end: 12, top: 5, bottom: 12),
+                  start: 10, end: 12, top: 5, bottom: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // PRICE
-
+                  const SizedBox(height: 4),
                   Text(
                     Constant.currencySymbol +
                         item.price!.toString().priceFormate(
@@ -220,7 +220,6 @@ class ItemHorizontalCard extends StatelessWidget {
                       ],
                     ),
 
-                  const SizedBox(height: 5),
                 ],
               ),
             ),

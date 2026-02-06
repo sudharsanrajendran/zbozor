@@ -673,7 +673,7 @@ class ItemsListState extends State<ItemsList> {
                 decoration: BoxDecoration(
                     color: context.color.secondaryColor,
                     borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(20))),
+                        const BorderRadius.vertical(top: Radius.circular(8))),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Column(
@@ -743,7 +743,7 @@ class ItemsListState extends State<ItemsList> {
                               );
 
                             return SizedBox(
-                              height: 50,
+                              height: 28,
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
                                 physics: const BouncingScrollPhysics(),
@@ -1023,7 +1023,7 @@ class ItemsListState extends State<ItemsList> {
 
                     /// Child Grid
                     if (selectedParent != null) ...[
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 12),
                       BlocBuilder<FetchSubCategoriesCubit,
                           FetchSubCategoriesState>(
                         builder: (context, state) {
@@ -1069,7 +1069,7 @@ class ItemsListState extends State<ItemsList> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "categories".translate(context),
+                                  "${selectedParent?.name}  categories".translate(context),
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -1077,20 +1077,19 @@ class ItemsListState extends State<ItemsList> {
                                 ),
                                 const SizedBox(height: 12),
                                 SizedBox(
-                                    height: 50,
+                                    height: 28,
                                     child: ListView.separated(
                                       scrollDirection: Axis.horizontal,
                                       physics: const BouncingScrollPhysics(),
                                       itemCount: state.categories.length,
                                       separatorBuilder: (context, index) =>
-                                          const SizedBox(width: 12),
+                                          const SizedBox(width: 6),
                                       itemBuilder: (context, index) {
                                         CategoryModel cat =
                                             state.categories[index];
                                         bool isSelected =
                                             selectedChild?.id == cat.id;
                                         return SizedBox(
-                                          width: 110,
                                           child: _buildCategoryCard(
                                               context, cat, isSelected, () {
                                             setModalState(() {
@@ -1107,6 +1106,7 @@ class ItemsListState extends State<ItemsList> {
                                         );
                                       },
                                     )),
+                                const SizedBox(height: 8),
                               ],
                             );
                           }
@@ -1215,8 +1215,7 @@ class ItemsListState extends State<ItemsList> {
       child: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: context.color.backgroundColor,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(5),
           border: Border.all(
             color: isSelected
                 ? context.color.textDefaultColor
@@ -1244,12 +1243,12 @@ class ItemsListState extends State<ItemsList> {
             ],
             Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: 4,
+                horizontal: 6,
               ),
               child: Text(
                 cat.name ?? "",
                 textAlign: TextAlign.center,
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 12,
