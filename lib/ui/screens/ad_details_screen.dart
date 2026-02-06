@@ -543,11 +543,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                   const SizedBox(height: 15),
 
                 if (Constant.isGoogleBannerAdsEnabled == "1") ...[
-                  Divider(
-                      thickness: 1,
-                      color: context.color.textDefaultColor.withOpacity(0.1)),
-                  const SizedBox(height: 15),
                   Container(
+                    height: 90,
                     alignment: AlignmentDirectional.center,
                     child: NativeAdWidget(type: TemplateType.small),
                   ),
@@ -2590,6 +2587,10 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
       },
       child: Column(
         children: [
+          Divider(
+            thickness: 1,
+            color: context.color.textDefaultColor.withOpacity(0.1),
+          ),
           SizedBox(
             height: 10,
           ),

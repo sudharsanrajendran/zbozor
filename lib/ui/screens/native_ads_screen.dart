@@ -71,10 +71,10 @@ class _NativeAdWidgetState extends State<NativeAdWidget> {
     if (_isAdLoaded) {
       return Container(
         constraints: const BoxConstraints(
-          minWidth: 320, // minimum recommended width
-          minHeight: 320, // minimum recommended height
-          maxWidth: 350,
-          maxHeight: 350,
+          minWidth: 200, // minimum recommended width
+          minHeight: 200, // minimum recommended height
+          maxWidth: 250,
+          maxHeight: 200,
         ),
         margin: EdgeInsets.symmetric(horizontal: sidePadding, vertical: 10),
         //padding: EdgeInsets.all(15),
