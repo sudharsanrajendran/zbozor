@@ -90,11 +90,10 @@ class HomeSearchField extends StatelessWidget {
                   arguments: {"from": "home"});
             },
             child: Container(
-              constraints: const BoxConstraints(
-                maxHeight: 24,
-                maxWidth: 24,
-              ),
-              padding: const EdgeInsets.all(2),
+              width: 40,
+              height: 40,
+              color: Colors.transparent,
+              padding: const EdgeInsets.all(10),
               child: Image.asset(
                 "assets/location_home.png",
                 fit: BoxFit.contain,
