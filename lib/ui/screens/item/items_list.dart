@@ -686,7 +686,7 @@ class ItemsListState extends State<ItemsList> {
                       children: [
                         Text(
                             chainIndex == 0
-                                ? "type".translate(context)
+                                ? "Purpose".translate(context)
                                 : "selectLbl".translate(context),
                             style: TextStyle(
                                 fontSize: 18,
@@ -697,7 +697,7 @@ class ItemsListState extends State<ItemsList> {
                     if (chainIndex == 0) ...[
                       const SizedBox(height: 16),
                       Text(
-                        "chooseItemType".translate(context),
+                        "Choose Your Purpose".translate(context),
                         style: TextStyle(
                           fontSize: 14,
                           color:
@@ -743,7 +743,7 @@ class ItemsListState extends State<ItemsList> {
                               );
 
                             return SizedBox(
-                              height: 28,
+                              height: 30,
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
                                 physics: const BouncingScrollPhysics(),
@@ -899,7 +899,7 @@ class ItemsListState extends State<ItemsList> {
                       mainAxisAlignment: MainAxisAlignment
                           .spaceBetween, // ... (rest of header)
                       children: [
-                        Text("type".translate(context),
+                        Text("Purpose".translate(context),
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -935,7 +935,7 @@ class ItemsListState extends State<ItemsList> {
 
                     const SizedBox(height: 4),
                     Text(
-                      "chooseItemType".translate(context),
+                      "Choose Your Purpose".translate(context),
                       style: TextStyle(
                         fontSize: 14,
                         color: context.color.textDefaultColor.withOpacity(0.6),
