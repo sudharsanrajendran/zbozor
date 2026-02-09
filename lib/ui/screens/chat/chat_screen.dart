@@ -452,6 +452,70 @@ class _ChatScreenState extends State<ChatScreen>
     }
   }
 
+  void _updateChatList() {
+    try {
+      String currentTime = DateTime.now().toString();
+      bool isBuyer = (int.tryParse(HiveUtils.getUserId() ?? "0") ?? 0) ==
+          (int.tryParse(widget.buyerId ?? "0") ?? 0);
+
+      var myId = int.tryParse(HiveUtils.getUserId() ?? "0");
+      var me = HiveUtils.getUserDetails();
+
+      var otherId = int.tryParse(widget.userId);
+      var otherName = widget.userName;
+      var otherProfile = widget.profilePicture;
+
+      // Create Item object for ChatedUser
+      var itemObj = Item(
+          id: int.tryParse(widget.itemId),
+          name: widget.itemTitle,
+          description: "",
+          price: widget.itemPrice,
+          image: widget.itemImage,
+          status: widget.status,
+          isPurchased: widget.isPurchased);
+
+      ChatedUser chatUser;
+
+      if (isBuyer) {
+        // Buyer Chat List: Showing Sellers
+        chatUser = ChatedUser(
+            id: 0, // Temporary ID
+            itemId: int.tryParse(widget.itemId),
+            buyerId: myId,
+            sellerId: otherId,
+            createdAt: currentTime,
+            updatedAt: currentTime,
+            amount: widget.itemPrice,
+            userBlocked: false,
+            item: itemObj,
+            buyer: Buyer(id: myId, name: me.name, profile: me.profile),
+            seller:
+                Seller(id: otherId, name: otherName, profile: otherProfile));
+
+        context.read<GetBuyerChatListCubit>().addNewChat(chatUser);
+      } else {
+        // Seller Chat List: Showing Buyers
+        chatUser = ChatedUser(
+            id: 0,
+            itemId: int.tryParse(widget.itemId),
+            buyerId: otherId,
+            sellerId: myId,
+            createdAt: currentTime,
+            updatedAt: currentTime,
+            amount: widget.itemPrice,
+            userBlocked: false,
+            item: itemObj,
+            buyer: Buyer(id: otherId, name: otherName, profile: otherProfile),
+            seller: Seller(id: myId, name: me.name, profile: me.profile));
+
+        context.read<GetSellerChatListCubit>().addNewChat(chatUser);
+      }
+    } catch (e) {
+      print("Error updating chat list locally: $e");
+    }
+  }
+
   Future<void> _getFromGallery() async {
     FilePickerResult? pickedAttachment = await FilePicker.platform.pickFiles(
       allowMultiple: false,
@@ -849,13 +913,7 @@ class _ChatScreenState extends State<ChatScreen>
                                                 ),
                                               );
                                               totalMessageCount++;
-                                              context
-                                                  .read<GetBuyerChatListCubit>()
-                                                  .fetch(forceRefresh: true);
-                                              context
-                                                  .read<
-                                                      GetSellerChatListCubit>()
-                                                  .fetch(forceRefresh: true);
+                                              _updateChatList();
 
                                               setState(() {});
                                             },

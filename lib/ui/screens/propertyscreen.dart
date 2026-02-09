@@ -289,6 +289,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      systemOverlayStyle: UiUtils.getSystemUiOverlayStyle(
+          context: context, statusBarColor: Colors.black),
       elevation: 0,
       centerTitle: false,
       backgroundColor: context.color.secondaryColor,

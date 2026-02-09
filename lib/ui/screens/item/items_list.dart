@@ -743,7 +743,7 @@ class ItemsListState extends State<ItemsList> {
                               );
 
                             return SizedBox(
-                              height: 30,
+                              height: 34,
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
                                 physics: const BouncingScrollPhysics(),
@@ -780,7 +780,7 @@ class ItemsListState extends State<ItemsList> {
                     SafeArea(
                       child: SizedBox(
                         width: double.infinity,
-                        height: 50,
+                        height: 34,/// parent catrgoey sekect oda chip
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: context.color.territoryColor,
@@ -978,7 +978,7 @@ class ItemsListState extends State<ItemsList> {
                               ),
                             );
                           return SizedBox(
-                              height: 100, // Taller for parent images
+                              height: 77, // Taller for parent images
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
                                 physics: const BouncingScrollPhysics(),
@@ -1077,7 +1077,7 @@ class ItemsListState extends State<ItemsList> {
                                 ),
                                 const SizedBox(height: 12),
                                 SizedBox(
-                                    height: 28,
+                                    height: 34,
                                     child: ListView.separated(
                                       scrollDirection: Axis.horizontal,
                                       physics: const BouncingScrollPhysics(),
@@ -1243,7 +1243,7 @@ class ItemsListState extends State<ItemsList> {
             ],
             Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: 6,
+                horizontal: 12,
               ),
               child: Text(
                 cat.name ?? "",
