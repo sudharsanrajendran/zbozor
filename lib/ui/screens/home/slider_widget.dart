@@ -311,7 +311,7 @@ class _SliderWidgetState extends State<SliderWidget>
                             const EdgeInsets.symmetric(horizontal: sidePadding),
                         width: MediaQuery.of(context).size.width - 16,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(14),
                           color: context.color.secondaryColor,
                         ),
                         child: ClipRRect(
