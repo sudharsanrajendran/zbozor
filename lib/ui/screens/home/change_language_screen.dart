@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:Ebozor/data/cubits/category/fetch_category_cubit.dart';
+import 'package:Ebozor/app/routes.dart';
 
 class LanguagesListScreen extends StatelessWidget {
   const LanguagesListScreen({super.key});
@@ -73,6 +74,9 @@ class LanguagesListScreen extends StatelessWidget {
                 areaId: HiveUtils.getAreaId(),
                 country: HiveUtils.getCountryName(),
                 state: HiveUtils.getStateName());
+            Navigator.pushNamedAndRemoveUntil(
+                context, Routes.main, (route) => false,
+                arguments: {"from": "login"});
           }
         },
         child: ListView.builder(

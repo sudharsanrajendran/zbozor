@@ -780,7 +780,9 @@ class ItemsListState extends State<ItemsList> {
                     SafeArea(
                       child: SizedBox(
                         width: double.infinity,
-                        height: 34,/// parent catrgoey sekect oda chip
+                        height: 34,
+
+                        /// parent catrgoey sekect oda chip
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: context.color.territoryColor,
@@ -1069,7 +1071,8 @@ class ItemsListState extends State<ItemsList> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "${selectedParent?.name}  categories".translate(context),
+                                  "${selectedParent?.name}  categories"
+                                      .translate(context),
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -1587,6 +1590,39 @@ class ItemsListState extends State<ItemsList> {
     return SliverAppBar(
       backgroundColor: context.color.backgroundColor,
       elevation: 0,
+      automaticallyImplyLeading: false,
+      leading: Padding(
+        padding: const EdgeInsetsDirectional.only(start: 16.0),
+        child: Material(
+          clipBehavior: Clip.antiAlias,
+          color: Colors.transparent,
+          type: MaterialType.circle,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(50),
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: Center(
+                child: Directionality(
+                  textDirection: Directionality.of(context),
+                  child: RotatedBox(
+                    quarterTurns:
+                        Directionality.of(context) == TextDirection.rtl
+                            ? 2
+                            : -4,
+                    child: UiUtils.getSvg(AppIcons.arrowLeft,
+                        fit: BoxFit.none,
+                        color: context.color.textDefaultColor),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
       title: Text(
         selectedcategoryName == "" ? widget.categoryName : selectedcategoryName,
         style: TextStyle(color: context.color.textDefaultColor),

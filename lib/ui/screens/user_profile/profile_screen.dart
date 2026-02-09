@@ -782,7 +782,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  UiUtils.getSvg(AppIcons.promoted,
+                  UiUtils.getSvg("assets/svg/myfeaturesads.svg",
                       width: 24,
                       height: 24,
                       color: context.color.territoryColor),

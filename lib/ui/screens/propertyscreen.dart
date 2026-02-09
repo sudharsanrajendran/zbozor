@@ -300,8 +300,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         type: MaterialType.circle,
         child: InkWell(
           onTap: () => Navigator.pop(context),
-          child: Padding(
-            padding: const EdgeInsets.all(18.0),
+          child: Center(
             child: Directionality(
               textDirection: Directionality.of(context),
               child: RotatedBox(

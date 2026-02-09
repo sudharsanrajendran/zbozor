@@ -342,48 +342,52 @@ class CountriesScreenState extends State<CountriesScreen> {
             ),
           )),
       automaticallyImplyLeading: false,
-      title: Text(
-        "locationLbl".translate(context),
-      )
-          .color(context.color.textDefaultColor)
-          .bold(weight: FontWeight.w600)
-          .size(18),
+      centerTitle: false,
+      toolbarHeight: 70, // Increased height to accommodate padding
+      title: Padding(
+        padding: const EdgeInsets.only(top: 0),
+        child: Text(
+          "locationLbl".translate(context),
+        )
+            .color(context.color.textDefaultColor)
+            .bold(weight: FontWeight.w600)
+            .size(18),
+      ),
       leading: Padding(
-        padding: const EdgeInsetsDirectional.only(start: 18.0),
-        child: Material(
-          clipBehavior: Clip.antiAlias,
-          color: Colors.transparent,
-          type: MaterialType.circle,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(50),
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: SizedBox(
-              width: 40,
-              height: 40,
-              child: Center(
+        padding: const EdgeInsets.only(top: 0),
+        child: SizedBox(   // 👈 size control panna
+          width: 48,
+          height: 48,
+          child: Material(
+            clipBehavior: Clip.hardEdge,
+            color: Colors.transparent,
+            shape: const CircleBorder(),   // better than MaterialType.circle
+            child: InkWell(
+              onTap: () => Navigator.pop(context),
+              child: Center(   // icon center agum
                 child: Directionality(
                   textDirection: Directionality.of(context),
                   child: RotatedBox(
                     quarterTurns:
-                        Directionality.of(context) == TextDirection.rtl
-                            ? 2
-                            : -4,
-                    child: UiUtils.getSvg(AppIcons.arrowLeft,
-                        fit: BoxFit.none,
-                        color: context.color.textDefaultColor),
+                    Directionality.of(context) == TextDirection.rtl ? 2 : -4,
+                    child: UiUtils.getSvg(
+                      AppIcons.arrowLeft,
+                      fit: BoxFit.none,
+                      color: context.color.textDefaultColor,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ),
-      actions: [
+      )
+,
+
+        actions: [
         Center(
           child: Padding(
-            padding: const EdgeInsetsDirectional.only(end: 18.0),
+            padding: const EdgeInsetsDirectional.only(end: 18.0, top: 0),
             child: InkWell(
               onTap: clearRecentSearches,
               child: Text("clearAll".translate(context))
@@ -432,11 +436,17 @@ class CountriesScreenState extends State<CountriesScreen> {
       if (state is FetchCountriesSuccess) {
         countriesModel = state.countriesModel;
       }
-      return Scaffold(
-        appBar: appBarWidget(countriesModel),
-        body: bodyData(),
-        bottomNavigationBar: bottomBar(),
-        backgroundColor: context.color.backgroundColor,
+      return AnnotatedRegion(
+        value: UiUtils.getSystemUiOverlayStyle(
+          context: context,
+          statusBarColor: context.color.backgroundColor,
+        ),
+        child: Scaffold(
+          appBar: appBarWidget(countriesModel),
+          body: bodyData(),
+          bottomNavigationBar: bottomBar(),
+          backgroundColor: context.color.backgroundColor,
+        ),
       );
     });
   }
