@@ -13,6 +13,7 @@ import 'package:Ebozor/data/cubits/system/fetch_system_settings_cubit.dart';
 import 'package:Ebozor/data/cubits/system/get_api_keys_cubit.dart';
 
 import 'package:Ebozor/data/cubits/home/fetch_home_all_items_cubit.dart';
+import 'package:Ebozor/data/cubits/system/language_cubit.dart';
 import 'package:Ebozor/data/cubits/home/fetch_home_screen_cubit.dart';
 import 'package:Ebozor/data/cubits/favorite/favorite_cubit.dart';
 import 'package:Ebozor/data/cubits/fetch_notifications_cubit.dart';
@@ -225,6 +226,18 @@ class HomeScreenState extends State<HomeScreen>
             physics: const AlwaysScrollableScrollPhysics(),
             controller: _scrollController,
             slivers: [
+              SliverToBoxAdapter(
+                child: BlocListener<LanguageCubit, LanguageState>(
+                  listener: (context, state) {
+                    if (state is LanguageLoader) {
+                      context.read<FetchCategoryCubit>().fetchCategories();
+                      context.read<SliderCubit>().fetchSlider(context);
+                      _refreshData();
+                    }
+                  },
+                  child: const SizedBox.shrink(),
+                ),
+              ),
               BlocBuilder<FetchHomeScreenCubit, FetchHomeScreenState>(
                 builder: (context, state) {
                   if (state is FetchHomeScreenInProgress) {
@@ -597,8 +610,7 @@ class AllItemsSliverWidget extends StatelessWidget {
                     // Render Row of Items
                     return Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: sidePadding,vertical: 6
-                      ),
+                          horizontal: sidePadding, vertical: 6),
                       child: Row(
                         children: [
                           Expanded(
