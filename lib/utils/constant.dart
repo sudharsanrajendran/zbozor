@@ -36,7 +36,7 @@ class Constant {
   static String nativeAdIdAndroid = 'ca-app-pub-3940256099942544/2247696110';
   static String nativeAdIdIOS = '';
 
-  static const int apiTimeOut = 30; //in seconds
+  static const int apiTimeOut = 20; //in seconds
   static String? fcmToken;
   static String currencySymbol = "";
   static String defaultLatitude = "";

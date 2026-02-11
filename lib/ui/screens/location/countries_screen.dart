@@ -475,7 +475,8 @@ class CountriesScreenState extends State<CountriesScreen> {
                     buttonTitle: "useCurrentLocation".translate(context),
                     buttonColor: context.color.backgroundColor,
                     textColor: context.color.territoryColor,
-                    fontWeight: FontWeight.w100,
+                    fontWeight: FontWeight.w400,
+              fontSize: 14,
                     border: BorderSide(color: context.color.territoryColor),
                     showElevation: false,
                     radius: 8,
@@ -502,6 +503,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                 }
               },
               buttonTitle: "continue".translate(context),
+              fontWeight: FontWeight.w500,
               radius: 8,
               height: 48,
               disabled: selectedCountry == null,
