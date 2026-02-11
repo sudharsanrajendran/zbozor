@@ -2505,37 +2505,57 @@ class ItemsListState extends State<ItemsList> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Expanded(
-                  child: ListView.builder(
+                SizedBox(
+                  height: 50, // Fixed height for horizontal list
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
                     itemCount: options.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: 12),
                     itemBuilder: (context, index) {
                       var option = options[index];
-                      // Single Select: Check if this option is the one selected
-                      // currentSelection should have max 1 item
-                      // bool isSelected = currentSelection.isNotEmpty && currentSelection.first == option; // Unused
-
-                      return RadioListTile(
-                        value: option,
-                        groupValue: currentSelection.isNotEmpty
-                            ? currentSelection.first
-                            : null,
-                        title: Text(option.toString(),
-                            style: TextStyle(
-                                color: context.color.textDefaultColor)),
-                        activeColor: context.color.territoryColor,
-                        onChanged: (val) {
+                      bool isSelected = currentSelection.isNotEmpty &&
+                          currentSelection.first == option;
+                      return GestureDetector(
+                        onTap: () {
                           setSheetState(() {
-                            if (val != null) {
-                              currentSelection.clear();
-                              currentSelection.add(val);
-                            }
+                            currentSelection.clear();
+                            currentSelection.add(option);
                           });
                         },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors
+                                .transparent, // Always transparent like parent category
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isSelected
+                                  ? context.color.textDefaultColor
+                                  : context.color.borderColor,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Text(
+                            option.toString(),
+                            style: TextStyle(
+                              color: isSelected
+                                  ? context.color.textDefaultColor
+                                  : context.color.textDefaultColor
+                                      .withOpacity(0.7),
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
                       );
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   height: 50,
