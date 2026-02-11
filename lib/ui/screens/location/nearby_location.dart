@@ -412,7 +412,6 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                   Position position = await Geolocator.getCurrentPosition(
                     desiredAccuracy: LocationAccuracy.high,
                   );
-
                   setState(() {
                     radius = 1.0; // Reset radius to default
                     latitude = position.latitude;
@@ -450,15 +449,15 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                   border: BorderSide(color: context.color.territoryColor),
                   textColor: context.color.territoryColor,
                   buttonColor: context.color.secondaryColor),
-              const SizedBox(height: 10),
-              UiUtils.buildButton(context, radius: 8,
+
+
+              UiUtils.buildButton(context, radius: 8, fontSize: 14,
                   onPressed: () {
                 print("DEBUG: Apply Button CLICKED in UI");
                 HiveUtils.setNearbyRadius(radius.toInt());
                 applyOnPressed();
               },
                   buttonTitle: "apply".translate(context),
-                  fontWeight: FontWeight.w500,
                   height: 48,
                   textColor: context.color.buttonColor,
                   buttonColor: context.color.territoryColor),

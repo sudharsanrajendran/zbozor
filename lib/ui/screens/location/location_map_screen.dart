@@ -467,13 +467,15 @@ class _LocationMapScreenState extends State<LocationMapScreen> {
                     _getCurrentLocation();
                   },
                   buttonTitle: "Reset".translate(context),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
                   textColor: context.color.territoryColor,
                   buttonColor: context.color.backgroundColor,
                   border: BorderSide(color: context.color.territoryColor),
                   radius: 8,
                   height: 48,
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 10,),
                 UiUtils.buildButton(
                   context,
                   outerPadding: const EdgeInsets.all(5),

@@ -756,7 +756,7 @@ class ItemsListState extends State<ItemsList> {
                                       selectedCategory?.id == cat.id;
                                   // Pass width constraint or handle in card
                                   return SizedBox(
-                                     // Fixed width for horizontal items
+                                    // Fixed width for horizontal items
                                     child: _buildCategoryCard(
                                         context, cat, isSelected, () {
                                       setModalState(() {
@@ -781,6 +781,7 @@ class ItemsListState extends State<ItemsList> {
                       child: SizedBox(
                         width: double.infinity,
                         height: 50,
+
                         /// parent catrgoey sekect oda chip
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
