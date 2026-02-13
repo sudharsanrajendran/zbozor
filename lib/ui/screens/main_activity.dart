@@ -752,9 +752,11 @@ class MainActivityState extends State<MainActivity>
               Text(
                 title,
                 textAlign: TextAlign.center,
-              ).color(currtab == index
-                  ? context.color.territoryColor
-                  : context.color.textLightColor.darken(30)),
+              )
+                  .color(currtab == index
+                      ? context.color.territoryColor
+                      : context.color.textLightColor.darken(30))
+                  .size(context.font.small),
             ],
           ),
         ),

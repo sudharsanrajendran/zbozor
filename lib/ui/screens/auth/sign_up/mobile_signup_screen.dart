@@ -19,6 +19,9 @@ import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/utils/login/lib/login_status.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
 import 'package:Ebozor/data/cubits/auth/authentication_cubit.dart';
+import 'package:Ebozor/data/cubits/auth/login_cubit.dart';
+import 'package:Ebozor/data/cubits/system/user_details.dart';
+import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/utils/login/lib/payloads.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 
@@ -238,52 +241,79 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                 backgroundColor: context.color.backgroundColor,
                 bottomNavigationBar:
                     !isOtpSent ? termAndPolicyTxt() : SizedBox.shrink(),
-                body: BlocListener<AuthenticationCubit, AuthenticationState>(
+                body: BlocListener<LoginCubit, LoginState>(
                   listener: (context, state) {
-                    if (state is AuthenticationSuccess) {
-                      Widgets.hideLoder(context);
-                      Navigator.pushNamed(
-                        context,
-                        Routes.main,
-                        arguments: {
-                          "from": "login",
-                          "isSkipped": false,
-                        },
-                      );
-                    }
-                    if (state is AuthenticationFail) {
-                      Widgets.hideLoder(context);
-                      if (state.error is FirebaseAuthException) {
-                        if ((state.error as FirebaseAuthException).code ==
-                            'invalid-verification-code') {
-                          HelperUtils.showSnackBarMessage(
-                              context, "Entered otp is invalid",
-                              type: MessageType.error);
-                        } else {
-                          HelperUtils.showSnackBarMessage(
-                              context, state.error.toString(),
-                              type: MessageType.error);
-                        }
+                    if (state is LoginSuccess) {
+                      HiveUtils.setUserIsAuthenticated(true);
+                      context
+                          .read<UserDetailsCubit>()
+                          .fill(HiveUtils.getUserDetails());
+
+                      if (HiveUtils.getCityName() != null &&
+                          HiveUtils.getCityName() != "") {
+                        HelperUtils.killPreviousPages(
+                            context, Routes.main, {"from": "login"});
+                      } else {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            Routes.main, (route) => false,
+                            arguments: {"from": "login"});
                       }
+                    } else if (state is LoginFailure) {
+                      Widgets.hideLoder(context);
+                      HelperUtils.showSnackBarMessage(
+                          context, state.errorMessage.toString(),
+                          type: MessageType.error);
                     }
                   },
-                  child: Builder(builder: (context) {
-                    return Form(
-                      key: _formKey,
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 500),
-                        switchInCurve: Curves.easeInOut,
-                        switchOutCurve: Curves.easeInOut,
-                        child: isOtpSent
-                            ? KeyedSubtree(
-                                key: const ValueKey("otp"),
-                                child: verifyOTPWidget())
-                            : KeyedSubtree(
-                                key: const ValueKey("signup"),
-                                child: buildLoginWidget()),
-                      ),
-                    );
-                  }),
+                  child: BlocListener<AuthenticationCubit, AuthenticationState>(
+                    listener: (context, state) {
+                      if (state is AuthenticationSuccess) {
+                        Widgets.hideLoder(context);
+                        context.read<LoginCubit>().login(
+                              phoneNumber: (state.payload as PhoneLoginPayload)
+                                  .phoneNumber,
+                              firebaseUserId: state.credential.user!.uid,
+                              type: state.type.name,
+                              credential: state.credential,
+                              countryCode:
+                                  "+${(state.payload as PhoneLoginPayload).countryCode}",
+                              name: ' ', // Default name as space
+                            );
+                      }
+                      if (state is AuthenticationFail) {
+                        Widgets.hideLoder(context);
+                        if (state.error is FirebaseAuthException) {
+                          if ((state.error as FirebaseAuthException).code ==
+                              'invalid-verification-code') {
+                            HelperUtils.showSnackBarMessage(
+                                context, "Entered otp is invalid",
+                                type: MessageType.error);
+                          } else {
+                            HelperUtils.showSnackBarMessage(
+                                context, state.error.toString(),
+                                type: MessageType.error);
+                          }
+                        }
+                      }
+                    },
+                    child: Builder(builder: (context) {
+                      return Form(
+                        key: _formKey,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 500),
+                          switchInCurve: Curves.easeInOut,
+                          switchOutCurve: Curves.easeInOut,
+                          child: isOtpSent
+                              ? KeyedSubtree(
+                                  key: const ValueKey("otp"),
+                                  child: verifyOTPWidget())
+                              : KeyedSubtree(
+                                  key: const ValueKey("signup"),
+                                  child: buildLoginWidget()),
+                        ),
+                      );
+                    }),
+                  ),
                 ),
               ),
             ),

@@ -251,133 +251,143 @@ class CountriesScreenState extends State<CountriesScreen> {
   PreferredSizeWidget appBarWidget(List<CountriesModel> countriesModel) {
     return AppBar(
       systemOverlayStyle: UiUtils.getSystemUiOverlayStyle(
-          context: context, statusBarColor: context.color.backgroundColor),
+          context: context, statusBarColor: Colors.black),
       bottom: PreferredSize(
           preferredSize: Size.fromHeight(42.rh(context)),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child: Container(
-                    width: double.maxFinite,
-                    height: 42,
-                    margin: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    alignment: AlignmentDirectional.center,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            width:
-                                context.watch<AppThemeCubit>().state.appTheme ==
-                                        AppTheme.dark
-                                    ? 0
-                                    : 1,
-                            color: context.color.borderColor.darken(30)),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(12)),
-                        color: context.color.secondaryColor),
-                    child: TextFormField(
-                        controller: searchController,
-                        textAlignVertical:
-                            TextAlignVertical.center, // Center text vertically
-                        decoration: InputDecoration(
-                          isDense: true, // Reduces height
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10), // Remove vertical padding
-                          border: InputBorder.none,
-                          //OutlineInputBorder()
-                          fillColor:
-                              Theme.of(context).colorScheme.secondaryColor,
-                          hintText:
-                              "${"search".translate(context)}\t${"country".translate(context)}..",
-                          prefixIcon: setSearchIcon(),
-                          prefixIconConstraints: const BoxConstraints(
-                              minHeight: 40,
-                              minWidth:
-                                  40), // Ensure constrained box for centering
-                        ),
-                        enableSuggestions: true,
-                        onEditingComplete: () {
-                          setState(
-                            () {
-                              isFocused = false;
-                            },
-                          );
+          child: SafeArea(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: Container(
+                      width: double.maxFinite,
+                      height: 42,
+                      margin:
+                          EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      alignment: AlignmentDirectional.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: context
+                                          .watch<AppThemeCubit>()
+                                          .state
+                                          .appTheme ==
+                                      AppTheme.dark
+                                  ? 0
+                                  : 1,
+                              color: context.color.borderColor.darken(30)),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12)),
+                          color: context.color.secondaryColor),
+                      child: TextFormField(
+                          controller: searchController,
+                          textAlignVertical: TextAlignVertical
+                              .center, // Center text vertically
+                          decoration: InputDecoration(
+                            isDense: true, // Reduces height
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10), // Remove vertical padding
+                            border: InputBorder.none,
+                            //OutlineInputBorder()
+                            fillColor:
+                                Theme.of(context).colorScheme.secondaryColor,
+                            hintText:
+                                "${"search".translate(context)}\t${"country".translate(context)}..",
+                            prefixIcon: setSearchIcon(),
+                            prefixIconConstraints: const BoxConstraints(
+                                minHeight: 40,
+                                minWidth:
+                                    40), // Ensure constrained box for centering
+                          ),
+                          enableSuggestions: true,
+                          onEditingComplete: () {
+                            setState(
+                              () {
+                                isFocused = false;
+                              },
+                            );
 
-                          FocusScope.of(context).unfocus();
-                        },
-                        onTap: () {
-                          //change prefix icon color to primary
-                          setState(() {
-                            isFocused = true;
-                          });
-                        })),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, Routes.nearbyLocationScreen,
-                      arguments: {"from": widget.from});
-                },
-                child: Container(
-                  width: 42,
-                  height: 42,
-                  margin: EdgeInsetsDirectional.only(end: sidePadding),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        width: 1, color: context.color.borderColor.darken(30)),
-                    color: context.color.secondaryColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child:
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(child: Image.asset("assets/seachfiltericon.png")),
-                      ),
+                            FocusScope.of(context).unfocus();
+                          },
+                          onTap: () {
+                            //change prefix icon color to primary
+                            setState(() {
+                              isFocused = true;
+                            });
+                          })),
                 ),
-              ),
-            ],
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, Routes.nearbyLocationScreen,
+                        arguments: {"from": widget.from});
+                  },
+                  child: Container(
+                    width: 42,
+                    height: 42,
+                    margin: EdgeInsetsDirectional.only(end: sidePadding),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          width: 1,
+                          color: context.color.borderColor.darken(30)),
+                      color: context.color.secondaryColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                          child: Image.asset("assets/seachfiltericon.png")),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           )),
       automaticallyImplyLeading: false,
-      title: Text(
-        "locationLbl".translate(context),
-      )
-          .color(context.color.textDefaultColor)
-          .bold(weight: FontWeight.w600)
-          .size(18),
+      centerTitle: false,
+      toolbarHeight: 70, // Increased height to accommodate padding
+      title: Padding(
+        padding: const EdgeInsets.only(top: 0),
+        child: Text(
+          "locationLbl".translate(context),
+        )
+            .color(context.color.textDefaultColor)
+            .bold(weight: FontWeight.w600)
+            .size(18),
+      ),
       leading: Padding(
-        padding: const EdgeInsetsDirectional.only(start: 18.0),
-        child: Material(
-          clipBehavior: Clip.antiAlias,
-          color: Colors.transparent,
-          type: MaterialType.circle,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(50),
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: SizedBox(
-              width: 40,
-              height: 40,
-              child: Center(
+        padding: const EdgeInsets.only(top: 0),
+        child: SizedBox(   // 👈 size control panna
+          width: 48,
+          height: 48,
+          child: Material(
+            clipBehavior: Clip.hardEdge,
+            color: Colors.transparent,
+            shape: const CircleBorder(),   // better than MaterialType.circle
+            child: InkWell(
+              onTap: () => Navigator.pop(context),
+              child: Center(   // icon center agum
                 child: Directionality(
                   textDirection: Directionality.of(context),
                   child: RotatedBox(
                     quarterTurns:
-                        Directionality.of(context) == TextDirection.rtl
-                            ? 2
-                            : -4,
-                    child: UiUtils.getSvg(AppIcons.arrowLeft,
-                        fit: BoxFit.none,
-                        color: context.color.textDefaultColor),
+                    Directionality.of(context) == TextDirection.rtl ? 2 : -4,
+                    child: UiUtils.getSvg(
+                      AppIcons.arrowLeft,
+                      fit: BoxFit.none,
+                      color: context.color.textDefaultColor,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ),
-      actions: [
+      )
+,
+
+        actions: [
         Center(
           child: Padding(
-            padding: const EdgeInsetsDirectional.only(end: 18.0),
+            padding: const EdgeInsetsDirectional.only(end: 18.0, top: 0),
             child: InkWell(
               onTap: clearRecentSearches,
               child: Text("clearAll".translate(context))
@@ -426,11 +436,17 @@ class CountriesScreenState extends State<CountriesScreen> {
       if (state is FetchCountriesSuccess) {
         countriesModel = state.countriesModel;
       }
-      return Scaffold(
-        appBar: appBarWidget(countriesModel),
-        body: bodyData(),
-        bottomNavigationBar: bottomBar(),
-        backgroundColor: context.color.backgroundColor,
+      return AnnotatedRegion(
+        value: UiUtils.getSystemUiOverlayStyle(
+          context: context,
+          statusBarColor: context.color.backgroundColor,
+        ),
+        child: Scaffold(
+          appBar: appBarWidget(countriesModel),
+          body: bodyData(),
+          bottomNavigationBar: bottomBar(),
+          backgroundColor: context.color.backgroundColor,
+        ),
       );
     });
   }
@@ -459,7 +475,8 @@ class CountriesScreenState extends State<CountriesScreen> {
                     buttonTitle: "useCurrentLocation".translate(context),
                     buttonColor: context.color.backgroundColor,
                     textColor: context.color.territoryColor,
-              fontWeight:FontWeight.w100,
+                    fontWeight: FontWeight.w400,
+              fontSize: 14,
                     border: BorderSide(color: context.color.territoryColor),
                     showElevation: false,
                     radius: 8,
@@ -486,6 +503,7 @@ class CountriesScreenState extends State<CountriesScreen> {
                 }
               },
               buttonTitle: "continue".translate(context),
+              fontWeight: FontWeight.w500,
               radius: 8,
               height: 48,
               disabled: selectedCountry == null,

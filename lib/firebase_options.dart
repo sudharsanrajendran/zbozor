@@ -58,37 +58,6 @@ class DefaultFirebaseOptions {
     storageBucket: 'ebazar-ef30c.firebasestorage.app',  // Storage Bucket
   );
 
-/*
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDmUQcHSujt5ZZC0_ME7stWuMXx1FZR5is',  // API Key from your Firebase configuration
-    appId: '1:36985304599:android:1f681bceb3fcd589d44e52',  // Android App ID from the JSON
-    messagingSenderId: '6343732161',  // Messaging Sender ID
-    projectId: 'Ebozor-bee45',  // Project ID
-    storageBucket: 'Ebozor-bee45.firebasestorage.app',  // Storage Bucket
-  );
-
-
-
-  // static const FirebaseOptions android = FirebaseOptions(
-  //   apiKey: 'AIzaSyApCJcVfUTKAdfiNB2vZ399YgJEFy_d-vk',
-  //   appId: '1:6343732161:android:be9cbc67ef8a19792b5d40',
-  //   messagingSenderId: '6343732161',
-  //   projectId: 'eclassify-wrteam',
-  //   storageBucket: 'Ebozor-bee45.firebasestorage.app',
-  // );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDmUQcHSujt5ZZC0_ME7stWuMXx1FZR5is',
-    appId: '1:6343732161:ios:5cc58a2dcfbbb66b2b5d40',  // You can also use the value from the Dart config
-    messagingSenderId: '6343732161',  // You may want to keep this consistent with the iOS project
-    projectId: 'Ebozor-bee45',
-    storageBucket: 'Ebozor-bee45.firebasestorage.app',
-    androidClientId: '36985304599-o5u3fcsu1ubfdb01qfbu3vntnvcjd07r.apps.googleusercontent.com',  // Same as in your config
-    iosClientId: '36985304599-gh3h4ropppmlirddla2tssa9ofpcnq86.apps.googleusercontent.com',
-    iosBundleId: 'com.cashgatetech.Ebozor',  // Updated Bundle ID from JSON
-  );
-  */
-
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAyObg0okwSIGdKQpHyzWHqk8xSBlwLK7w',  // API Key

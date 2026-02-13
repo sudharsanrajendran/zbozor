@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:Ebozor/ui/screens/widgets/errors/no_data_found.dart';
 import 'package:Ebozor/ui/screens/home/widgets/category_home_card.dart';
+import 'package:Ebozor/ui/screens/home/widgets/jobs_bottom_sheet.dart';
 
 import 'package:shimmer/shimmer.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
@@ -48,6 +49,16 @@ class CategoryWidgetHome extends StatelessWidget {
                   title: category.name!,
                   url: category.url!,
                   onTap: () {
+                    if (category.name?.toLowerCase().contains("job") == true) {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const JobsBottomSheet(),
+                      );
+                      return;
+                    }
+
                     // Check if children exist OR if count > 0 (even if children list is empty)
                     if (category.children!.isNotEmpty ||
                         (category.subcategoriesCount ?? 0) > 0) {
@@ -55,7 +66,8 @@ class CategoryWidgetHome extends StatelessWidget {
                         context,
                         Routes.subCategoryScreen,
                         arguments: {
-                          "categoryList": category.children ??
+                          "categoryList":
+                              category.children ??
                               [], // Pass empty list if null/empty
                           "catName": category.name,
                           "catId": category.id,

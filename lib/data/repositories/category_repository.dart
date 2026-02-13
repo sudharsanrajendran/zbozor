@@ -1,6 +1,7 @@
 import 'package:Ebozor/data/model/category_model.dart';
 import 'package:Ebozor/data/model/data_output.dart';
 import 'package:Ebozor/utils/ApiService/api.dart';
+import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 
 class CategoryRepository {
   // Simple in-memory cache to store category responses
@@ -12,8 +13,15 @@ class CategoryRepository {
     bool forceRefresh = false, // Add forceRefresh to bypass cache if needed
   }) async {
     try {
+      // Get current language code
+      var lang = HiveUtils.getLanguage();
+      String langCode = "en";
+      if (lang != null && lang['code'] != null) {
+        langCode = lang['code'];
+      }
+
       // Generate a unique cache key
-      final String cacheKey = "page:$page-cat:$categoryId";
+      final String cacheKey = "$langCode-page:$page-cat:$categoryId";
 
       // Return cached data if available and not forcing refresh
       if (!forceRefresh && _categoryCache.containsKey(cacheKey)) {

@@ -520,32 +520,38 @@ class LoginScreenState extends State<SignUpMainScreen> {
                             arguments: {"from": "login"});
                       }
                     } else {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.completeProfile,
-                        arguments: {
-                          "from": "login",
-                          "popToCurrent": false,
-                          "type": isMobileNumberField
-                              ? AuthenticationType.phone
-                              : AuthenticationType.email,
-                          "extraData": {
-                            "email": state.credential.user?.email ??
-                                state.apiResponse['email'],
-                            "username": state.apiResponse['name'],
-                            "mobile": state.apiResponse['mobile'],
-                            "countryCode": countryCode
-                          }
-                        },
-                      );
+                      if (isMobileNumberField) {
+                        Navigator.pushNamed(
+                            context, Routes.phoneLoginUserDetailsScreen,
+                            arguments: {
+                              "phone": state.apiResponse['mobile'],
+                              "countryCode": countryCode
+                            });
+                      } else {
+                        Navigator.pushNamed(
+                          context,
+                          Routes.completeProfile,
+                          arguments: {
+                            "from": "login",
+                            "popToCurrent": false,
+                            "type": AuthenticationType.email,
+                            "extraData": {
+                              "email": state.credential.user?.email ??
+                                  state.apiResponse['email'],
+                              "username": state.apiResponse['name'],
+                              "mobile": state.apiResponse['mobile'],
+                              "countryCode": countryCode
+                            }
+                          },
+                        );
+                      }
                     }
                   }
                   if (state is LoginFailure) {
-                    // Logic to handle if login fails (likely new user needing registration)
-                    Navigator.pushNamed(context, Routes.signup, arguments: {
-                      "emailId":
-                          emailMobileTextController.text.toString().trim()
-                    });
+                    Widgets.hideLoder(context);
+                    HelperUtils.showSnackBarMessage(
+                        context, state.errorMessage.toString(),
+                        type: MessageType.error);
                   }
                 },
                 child: BlocListener<AuthenticationCubit, AuthenticationState>(

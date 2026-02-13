@@ -40,6 +40,11 @@ import 'package:Ebozor/utils/helper_utils.dart';
 
 // import 'package:Ebozor/utils/responsiveSize.dart';
 import 'package:Ebozor/ui/screens/widgets/blurred_dialoge_box.dart';
+import 'package:Ebozor/ui/screens/widgets/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:Ebozor/data/cubits/auth/auth_cubit.dart';
+import 'package:Ebozor/data/model/user_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -59,6 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 /*  //bool isGuest = false;
   String username = "";
   String email = "";*/
+  File? fileUserimg;
 
   @override
   void initState() {
@@ -168,6 +174,160 @@ class _ProfileScreenState extends State<ProfileScreen>
       return 'resubmitted'.translate(context);
     } else {
       return '';
+    }
+  }
+
+  void _showProfileBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.color.secondaryColor,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+      ),
+      builder: (context) {
+        return ClipRRect(
+          borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+          child: Container(
+            color: context.color.secondaryColor,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildBottomSheetOption(
+                  context,
+                  "Edit Profile".translate(context),
+                  () async {
+                    Navigator.pop(context);
+                    await Navigator.pushNamed(context, Routes.completeProfile,
+                        arguments: {"from": "profile"});
+                    _showProfileBottomSheet(context);
+                  },
+                ),
+                _buildBottomSheetOption(
+                  context,
+                  "View Photo".translate(context),
+                  () {
+                    Navigator.pop(context);
+                    if ((HiveUtils.getUserDetails().profile ?? "").isNotEmpty) {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              child: InteractiveViewer(
+                                maxScale: 4.0,
+                                child: UiUtils.getImage(
+                                  HiveUtils.getUserDetails().profile!,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            );
+                          });
+                    } else {
+                      HelperUtils.showSnackBarMessage(
+                          context, "No Profile Picture".translate(context));
+                    }
+                  },
+                ),
+                _buildBottomSheetOption(
+                  context,
+                  "Take Photo".translate(context),
+                  () {
+                    Navigator.pop(context);
+                    _imgFromGallery(ImageSource.camera);
+                  },
+                ),
+                _buildBottomSheetOption(
+                  context,
+                  "Choose From Library".translate(context),
+                  () {
+                    Navigator.pop(context);
+                    _imgFromGallery(ImageSource.gallery);
+                  },
+                ),
+                SizedBox(height: MediaQuery.of(context).padding.bottom + 10),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBottomSheetOption(
+      BuildContext context, String title, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: context.color.textDefaultColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _imgFromGallery(ImageSource imageSource) async {
+    CropImage.init(context);
+    final pickedFile = await ImagePicker().pickImage(source: imageSource);
+    if (pickedFile != null) {
+      CroppedFile? croppedFile;
+      croppedFile = await CropImage.crop(
+        filePath: pickedFile.path,
+      );
+      if (croppedFile != null) {
+        fileUserimg = File(croppedFile.path);
+        _updateProfilePicture();
+      }
+    }
+  }
+
+  Future<void> _updateProfilePicture() async {
+    try {
+      // Create a loading dialog or indicator if preferred,
+      // but strictly following user request to just work.
+      // I'll show a simple snackbar indicating process if needed,
+      // but usually context.read<AuthCubit> handles its own state/errors.
+
+      var response = await context.read<AuthCubit>().updateuserdata(context,
+          name: HiveUtils.getUserDetails().name,
+          email: HiveUtils.getUserDetails().email,
+          fileUserimg: fileUserimg,
+          mobile: HiveUtils.getUserDetails()
+              .mobile
+              ?.replaceFirst("+${HiveUtils.getCountryCode()}", ""),
+          countryCode: HiveUtils.getCountryCode(),
+          address: HiveUtils.getUserDetails().address,
+          notification: HiveUtils.getUserDetails().notification.toString(),
+          personalDetail: HiveUtils.getUserDetails().isPersonalDetailShow);
+
+      if (!response[Api.error]) {
+        context
+            .read<UserDetailsCubit>()
+            .copy(UserModel.fromJson(response['data']));
+        HelperUtils.showSnackBarMessage(
+            context, "profileUpdated".translate(context));
+        setState(() {}); // Refresh UI
+      } else {
+        HelperUtils.showSnackBarMessage(context, response['message']);
+      }
+    } catch (e) {
+      HelperUtils.showSnackBarMessage(context, e.toString());
     }
   }
 
@@ -382,9 +542,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           if (HiveUtils.isUserAuthenticated())
                             InkWell(
                               onTap: () {
-                                HelperUtils.goToNextPage(
-                                    Routes.completeProfile, context, false,
-                                    args: {"from": "profile"});
+                                _showProfileBottomSheet(context);
                               },
                               child: Container(
                                 height: 22,
@@ -782,7 +940,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  UiUtils.getSvg(AppIcons.promoted,
+                  UiUtils.getSvg("assets/svg/myfeaturesads.svg",
                       width: 24,
                       height: 24,
                       color: context.color.territoryColor),

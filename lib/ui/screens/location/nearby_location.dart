@@ -405,14 +405,13 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
           padding: const EdgeInsets.symmetric(horizontal: sidePadding),
           child: Column(
             children: [
-              UiUtils.buildButton(context, radius: 8, fontSize: 16,
+              UiUtils.buildButton(context, radius: 8, fontSize: 12,
                   onPressed: () async {
                 try {
                   // Fetch current GPS position
                   Position position = await Geolocator.getCurrentPosition(
                     desiredAccuracy: LocationAccuracy.high,
                   );
-
                   setState(() {
                     radius = 1.0; // Reset radius to default
                     latitude = position.latitude;
@@ -445,12 +444,14 @@ class NearbyLocationScreenState extends State<NearbyLocationScreen>
                 }
               },
                   buttonTitle: "reset".translate(context),
+                  fontWeight: FontWeight.w500,
                   height: 48,
                   border: BorderSide(color: context.color.territoryColor),
                   textColor: context.color.territoryColor,
                   buttonColor: context.color.secondaryColor),
-              const SizedBox(height: 10),
-              UiUtils.buildButton(context, radius: 8, fontSize: 16,
+
+
+              UiUtils.buildButton(context, radius: 8, fontSize: 14,
                   onPressed: () {
                 print("DEBUG: Apply Button CLICKED in UI");
                 HiveUtils.setNearbyRadius(radius.toInt());

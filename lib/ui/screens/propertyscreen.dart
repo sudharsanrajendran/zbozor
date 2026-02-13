@@ -289,6 +289,8 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      systemOverlayStyle: UiUtils.getSystemUiOverlayStyle(
+          context: context, statusBarColor: Colors.black),
       elevation: 0,
       centerTitle: false,
       backgroundColor: context.color.secondaryColor,
@@ -298,8 +300,7 @@ class _PropertyFilterScreenState extends State<PropertyFilterScreen> {
         type: MaterialType.circle,
         child: InkWell(
           onTap: () => Navigator.pop(context),
-          child: Padding(
-            padding: const EdgeInsets.all(18.0),
+          child: Center(
             child: Directionality(
               textDirection: Directionality.of(context),
               child: RotatedBox(

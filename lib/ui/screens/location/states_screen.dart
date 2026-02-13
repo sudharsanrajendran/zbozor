@@ -186,21 +186,19 @@ class StatesScreenState extends State<StatesScreen> {
           onTap: () {
             Navigator.pop(context);
           },
-          child: Padding(
-              padding: EdgeInsetsDirectional.only(
-                start: 18.0,
-              ),
-              child: Directionality(
-                  textDirection: Directionality.of(context),
-                  child: RotatedBox(
-                    quarterTurns:
-                        Directionality.of(context) == TextDirection.rtl
-                            ? 2
-                            : -4,
-                    child: UiUtils.getSvg(AppIcons.arrowLeft,
-                        fit: BoxFit.none,
-                        color: context.color.textDefaultColor),
-                  ))),
+          child: Center(
+            child: Directionality(
+                textDirection: Directionality.of(context),
+                child: RotatedBox(
+                  quarterTurns:
+                      Directionality.of(context) == TextDirection.rtl
+                          ? 2
+                          : -4,
+                  child: UiUtils.getSvg(AppIcons.arrowLeft,
+                      fit: BoxFit.none,
+                      color: context.color.textDefaultColor),
+                )),
+          ),
         ),
       ),
       /*BackButton(

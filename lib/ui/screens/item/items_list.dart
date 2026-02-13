@@ -743,7 +743,7 @@ class ItemsListState extends State<ItemsList> {
                               );
 
                             return SizedBox(
-                              height: 30,
+                              height: 34,
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
                                 physics: const BouncingScrollPhysics(),
@@ -756,8 +756,7 @@ class ItemsListState extends State<ItemsList> {
                                       selectedCategory?.id == cat.id;
                                   // Pass width constraint or handle in card
                                   return SizedBox(
-                                    width:
-                                        110, // Fixed width for horizontal items
+                                    // Fixed width for horizontal items
                                     child: _buildCategoryCard(
                                         context, cat, isSelected, () {
                                       setModalState(() {
@@ -777,10 +776,13 @@ class ItemsListState extends State<ItemsList> {
                     ),
 
                     const SizedBox(height: 24),
+                    ////////////////////////////////////////////////////
                     SafeArea(
                       child: SizedBox(
                         width: double.infinity,
                         height: 50,
+
+                        /// parent catrgoey sekect oda chip
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: context.color.territoryColor,
@@ -978,7 +980,7 @@ class ItemsListState extends State<ItemsList> {
                               ),
                             );
                           return SizedBox(
-                              height: 100, // Taller for parent images
+                              height: 77, // Taller for parent images
                               child: ListView.separated(
                                 scrollDirection: Axis.horizontal,
                                 physics: const BouncingScrollPhysics(),
@@ -1069,7 +1071,8 @@ class ItemsListState extends State<ItemsList> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "${selectedParent?.name}  categories".translate(context),
+                                  "${selectedParent?.name}  categories"
+                                      .translate(context),
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -1077,7 +1080,7 @@ class ItemsListState extends State<ItemsList> {
                                 ),
                                 const SizedBox(height: 12),
                                 SizedBox(
-                                    height: 28,
+                                    height: 34,
                                     child: ListView.separated(
                                       scrollDirection: Axis.horizontal,
                                       physics: const BouncingScrollPhysics(),
@@ -1243,7 +1246,7 @@ class ItemsListState extends State<ItemsList> {
             ],
             Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: 6,
+                horizontal: 12,
               ),
               child: Text(
                 cat.name ?? "",
@@ -1587,6 +1590,39 @@ class ItemsListState extends State<ItemsList> {
     return SliverAppBar(
       backgroundColor: context.color.backgroundColor,
       elevation: 0,
+      automaticallyImplyLeading: false,
+      leading: Padding(
+        padding: const EdgeInsetsDirectional.only(start: 16.0),
+        child: Material(
+          clipBehavior: Clip.antiAlias,
+          color: Colors.transparent,
+          type: MaterialType.circle,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(50),
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: Center(
+                child: Directionality(
+                  textDirection: Directionality.of(context),
+                  child: RotatedBox(
+                    quarterTurns:
+                        Directionality.of(context) == TextDirection.rtl
+                            ? 2
+                            : -4,
+                    child: UiUtils.getSvg(AppIcons.arrowLeft,
+                        fit: BoxFit.none,
+                        color: context.color.textDefaultColor),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
       title: Text(
         selectedcategoryName == "" ? widget.categoryName : selectedcategoryName,
         style: TextStyle(color: context.color.textDefaultColor),
@@ -1603,8 +1639,9 @@ class ItemsListState extends State<ItemsList> {
           children: [
             searchBarWidget(),
             _buildFilterChips(),
+            const SizedBox(height: 10),
             _buildVerifiedToggle(),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -2468,37 +2505,57 @@ class ItemsListState extends State<ItemsList> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Expanded(
-                  child: ListView.builder(
+                SizedBox(
+                  height: 50, // Fixed height for horizontal list
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
                     itemCount: options.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: 12),
                     itemBuilder: (context, index) {
                       var option = options[index];
-                      // Single Select: Check if this option is the one selected
-                      // currentSelection should have max 1 item
-                      // bool isSelected = currentSelection.isNotEmpty && currentSelection.first == option; // Unused
-
-                      return RadioListTile(
-                        value: option,
-                        groupValue: currentSelection.isNotEmpty
-                            ? currentSelection.first
-                            : null,
-                        title: Text(option.toString(),
-                            style: TextStyle(
-                                color: context.color.textDefaultColor)),
-                        activeColor: context.color.territoryColor,
-                        onChanged: (val) {
+                      bool isSelected = currentSelection.isNotEmpty &&
+                          currentSelection.first == option;
+                      return GestureDetector(
+                        onTap: () {
                           setSheetState(() {
-                            if (val != null) {
-                              currentSelection.clear();
-                              currentSelection.add(val);
-                            }
+                            currentSelection.clear();
+                            currentSelection.add(option);
                           });
                         },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors
+                                .transparent, // Always transparent like parent category
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: isSelected
+                                  ? context.color.textDefaultColor
+                                  : context.color.borderColor,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Text(
+                            option.toString(),
+                            style: TextStyle(
+                              color: isSelected
+                                  ? context.color.textDefaultColor
+                                  : context.color.textDefaultColor
+                                      .withOpacity(0.7),
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
                       );
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   height: 50,
