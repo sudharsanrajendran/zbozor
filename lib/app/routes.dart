@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:Ebozor/ui/screens/auth/sign_up/mobile_signup_screen.dart';
+import 'package:Ebozor/ui/screens/auth/sign_up/phone_login_user_details_screen.dart';
 import 'package:Ebozor/ui/screens/home/widgets/categoryFilterScreen.dart';
 import 'package:Ebozor/ui/screens/home/widgets/postedSinceFilter.dart';
 import 'package:Ebozor/ui/screens/home/widgets/subCategoryFilterScreen.dart';
@@ -78,6 +79,7 @@ class Routes {
   static const signupMainScreen = 'signUpMainScreen';
   static const mobileSignUp = 'mobileSignUp';
   static const completeProfile = 'complete_profile';
+  static const phoneLoginUserDetailsScreen = 'phoneLoginUserDetailsScreen';
   static const main = 'main';
   static const home = 'Home';
   static const addItem = 'addItem';
@@ -218,6 +220,8 @@ class Routes {
         return MobileSignUpScreen.route(routeSettings);
       case completeProfile:
         return UserProfileScreen.route(routeSettings);
+      case phoneLoginUserDetailsScreen:
+        return PhoneLoginUserDetailsScreen.route(routeSettings);
 
       case categories:
         return CategoryList.route(routeSettings);

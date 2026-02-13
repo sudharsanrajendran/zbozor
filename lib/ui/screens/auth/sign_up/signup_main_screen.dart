@@ -520,24 +520,31 @@ class LoginScreenState extends State<SignUpMainScreen> {
                             arguments: {"from": "login"});
                       }
                     } else {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.completeProfile,
-                        arguments: {
-                          "from": "login",
-                          "popToCurrent": false,
-                          "type": isMobileNumberField
-                              ? AuthenticationType.phone
-                              : AuthenticationType.email,
-                          "extraData": {
-                            "email": state.credential.user?.email ??
-                                state.apiResponse['email'],
-                            "username": state.apiResponse['name'],
-                            "mobile": state.apiResponse['mobile'],
-                            "countryCode": countryCode
-                          }
-                        },
-                      );
+                      if (isMobileNumberField) {
+                        Navigator.pushNamed(
+                            context, Routes.phoneLoginUserDetailsScreen,
+                            arguments: {
+                              "phone": state.apiResponse['mobile'],
+                              "countryCode": countryCode
+                            });
+                      } else {
+                        Navigator.pushNamed(
+                          context,
+                          Routes.completeProfile,
+                          arguments: {
+                            "from": "login",
+                            "popToCurrent": false,
+                            "type": AuthenticationType.email,
+                            "extraData": {
+                              "email": state.credential.user?.email ??
+                                  state.apiResponse['email'],
+                              "username": state.apiResponse['name'],
+                              "mobile": state.apiResponse['mobile'],
+                              "countryCode": countryCode
+                            }
+                          },
+                        );
+                      }
                     }
                   }
                   if (state is LoginFailure) {
