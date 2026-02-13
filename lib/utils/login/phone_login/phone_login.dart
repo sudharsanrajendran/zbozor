@@ -15,9 +15,18 @@ class PhoneLogin extends LoginSystem {
       emit(MProgress());
       // (state);
 
+      String otp = (payload as PhoneLoginPayload).getOTP() ?? "";
+      if (verificationId == null || verificationId!.isEmpty) {
+        emit(MFail("Verification ID is missing. Please try again."));
+        return null;
+      }
+      if (otp.isEmpty) {
+        emit(MFail("OTP is missing."));
+        return null;
+      }
+
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
-          verificationId: verificationId ?? "",
-          smsCode: (payload as PhoneLoginPayload).getOTP()!);
+          verificationId: verificationId!, smsCode: otp);
 
       UserCredential userCredential =
           await firebaseAuth.signInWithCredential(credential);

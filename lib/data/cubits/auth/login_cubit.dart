@@ -64,7 +64,9 @@ class LoginCubit extends Cubit<LoginState> {
       /*String? token = await getDeviceToken();*/
       String? token = await () async {
         try {
-          return await FirebaseMessaging.instance.getToken();
+          return await FirebaseMessaging.instance
+              .getToken()
+              .timeout(const Duration(seconds: 10));
         } catch (_) {
           return '';
         }

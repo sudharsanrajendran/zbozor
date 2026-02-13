@@ -96,9 +96,18 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
           } else {
             emit(AuthenticationSuccess(type!, credential, payload!));
           }
+        } else {
+          emit(AuthenticationFail("Credential is null"));
         }
       } else {
-        emit(AuthenticationSuccess(type!, credential!, payload!));
+        if (credential != null) {
+          emit(AuthenticationSuccess(type!, credential, payload!));
+        } else {
+          // login() might have emitted MFail already, but we need to stop here
+          if (state is! AuthenticationFail) {
+            emit(AuthenticationFail("Authentication failed"));
+          }
+        }
       }
     } catch (e) {
       print(" ///////////////////////////");

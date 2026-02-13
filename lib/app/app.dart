@@ -33,12 +33,9 @@ void initApp() async {
             );
   }
 
-  if (Firebase.apps.isNotEmpty) {
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
-  } else {
-    await Firebase.initializeApp();
-  }
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   MobileAds.instance.initialize();
 
