@@ -104,7 +104,7 @@ class LoginCubit extends Cubit<LoginState> {
                   name = "";
                 }
               }
-              return name;
+              return (name.trim().isEmpty) ? "User" : name;
             }(),
         profile: credential.user!.providerData[0].photoURL,
         countryCode: countryCode,

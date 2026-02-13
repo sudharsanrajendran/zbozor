@@ -541,11 +541,10 @@ class LoginScreenState extends State<SignUpMainScreen> {
                     }
                   }
                   if (state is LoginFailure) {
-                    // Logic to handle if login fails (likely new user needing registration)
-                    Navigator.pushNamed(context, Routes.signup, arguments: {
-                      "emailId":
-                          emailMobileTextController.text.toString().trim()
-                    });
+                    Widgets.hideLoder(context);
+                    HelperUtils.showSnackBarMessage(
+                        context, state.errorMessage.toString(),
+                        type: MessageType.error);
                   }
                 },
                 child: BlocListener<AuthenticationCubit, AuthenticationState>(
