@@ -86,12 +86,6 @@ class LoginScreenState extends State<SignUpMainScreen> {
           SmsAutoFill().listenForCode();
           isOtpSent = true;
           setState(() {});
-          if (isMobileNumberField) {
-            if (isMobileNumberField) {
-              HelperUtils.showSnackBarMessage(
-                  context, "optsentsuccessflly".translate(context));
-            }
-          }
         }
       }
 
