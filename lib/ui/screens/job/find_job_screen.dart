@@ -299,11 +299,11 @@ class _FindJobScreenState extends State<FindJobScreen> {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 8,
           mainAxisSpacing: 8,
-          childAspectRatio: 0.9),
+          childAspectRatio: (MediaQuery.of(context).size.width / 2) / 220),
       itemCount: 4,
       itemBuilder: (context, index) {
         return Container(
@@ -347,7 +347,7 @@ class _FindJobScreenState extends State<FindJobScreen> {
                         fontSize: 12,
                         color: context.color.textDefaultColor,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 5),
@@ -358,6 +358,7 @@ class _FindJobScreenState extends State<FindJobScreen> {
                         color: jobBlueColor,
                       ),
                     ),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
