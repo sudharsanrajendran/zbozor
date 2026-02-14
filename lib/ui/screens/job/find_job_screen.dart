@@ -68,38 +68,49 @@ class _FindJobScreenState extends State<FindJobScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
+
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Discover Better Opportunities\nEasily with EBOZOR",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w500,
-                color: context.color.textDefaultColor,
-                height: 1.2,
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Discover Better Opportunities\nEasily with EBOZOR",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                      color: context.color.textDefaultColor,
+                      height: 1.2,
+                    ),
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 18),
+                  _buildSearchField(),
+                  const SizedBox(height: 20),
+                  _buildSectionTitle("Popular Jobs"),
+                  const SizedBox(height: 12),
+                  _buildPopularJobsList(),
+                  const SizedBox(height: 16),
+                  _buildSectionTitle("Jobs By Category", onViewAll: () {}),
+                  const SizedBox(height: 12),
+                  _buildCategoryGrid(),
+                  const SizedBox(height: 16),
+                  _buildSectionTitle("Jobs By Qualification in all cities"),
+                  const SizedBox(height: 12),
+                  _buildQualificationGrid(),
+                  const SizedBox(height: 16),
+                  _buildSectionTitle("Jobs By Type in All Cities"),
+                  const SizedBox(height: 12),
+                  _buildJobTypeGrid(),
+
+                ],
               ),
-              maxLines: 2,
             ),
-            const SizedBox(height: 18),
-            _buildSearchField(),
-            const SizedBox(height: 20),
-            _buildSectionTitle("Popular Jobs"),
-            const SizedBox(height: 12),
-            _buildPopularJobsList(),
-            const SizedBox(height: 16),
-            _buildSectionTitle("Jobs By Category", onViewAll: () {}),
-            const SizedBox(height: 12),
-            _buildCategoryGrid(),
-            const SizedBox(height: 16),
-            _buildSectionTitle("Jobs By Qualification in all cities"),
-            const SizedBox(height: 12),
-            _buildQualificationGrid(),
-            const SizedBox(height: 16),
-            _buildSectionTitle("Jobs By Type in All Cities"),
-            const SizedBox(height: 12),
-            _buildJobTypeGrid(),
+            const SizedBox(height: 40),
+            _buildUploadCVSection(),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -445,6 +456,57 @@ class _FindJobScreenState extends State<FindJobScreen> {
           items[index]['count'] as String,
         );
       },
+    );
+  }
+
+  Widget _buildUploadCVSection() {
+    return Container(
+height: 70,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF4F6FA),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              "assets/svg/resumeicon.svg",
+              width: 32,
+              height: 32,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                "Upload your CV to boost your chances of getting hired faster !",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: context.color.blackColor,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: context.color.territoryColor),
+                ),
+                child: Text(
+                  "Upload CV",
+                  style: TextStyle(
+                    color: context.color.territoryColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
