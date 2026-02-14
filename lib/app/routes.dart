@@ -58,6 +58,8 @@ import 'package:Ebozor/ui/screens/subscription/packages_list.dart';
 
 import 'package:Ebozor/ui/screens/subscription/transaction_history_screen.dart';
 
+import 'package:Ebozor/ui/screens/job/find_job_screen.dart';
+
 import 'package:Ebozor/ui/screens/filter_screen.dart';
 import 'package:Ebozor/ui/screens/main_activity.dart';
 import 'package:Ebozor/ui/screens/splash_screen.dart';
@@ -140,6 +142,7 @@ class Routes {
   static const selectOutdoorFacility = '/selectOutdoorFacility';
   static const adDetailsScreen = '/adDetailsScreen';
   static const successItemScreen = '/successItemScreen';
+  static const findJobScreen = '/findJobScreen';
 
   ///Add item screens
   static const selectCategoryScreen = '/selectCategoryScreen';
@@ -325,6 +328,9 @@ class Routes {
 
       /*case payStackWebViewScreen:
         return PaystackWebView.route(routeSettings);*/
+
+      case findJobScreen:
+        return CupertinoPageRoute(builder: (context) => const FindJobScreen());
 
       /*  case myItemsScreen:
         return ItemsScreen.route(routeSettings);*/
