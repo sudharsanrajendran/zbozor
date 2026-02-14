@@ -1,5 +1,6 @@
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/data/cubits/category/newcategoriescubit.dart';
+import 'package:Ebozor/data/model/category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -49,11 +50,18 @@ class NewHomeCategoriesWidget extends StatelessWidget {
                   title: category.name,
                   url: category.image,
                   onTap: () {
+                    CategoryModel categoryModel = CategoryModel(
+                      id: category.id,
+                      name: category.name,
+                      url: category.image,
+                      subcategoriesCount: 0,
+                      children: [],
+                    );
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              NewPropertyScreen(category: category)),
+                              NewPropertyScreen(category: categoryModel)),
                     );
                   },
                 );

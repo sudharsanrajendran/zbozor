@@ -26,10 +26,19 @@ class MockCategoryRepository implements CategoryRepository {
   ];
 
   @override
-  Future<DataOutput<CategoryModel>>fetchCategories({
+  Future<DataOutput<CategoryModel>> fetchCategories({
     required int page,
     int? categoryId,
   }) async {
+    if (shouldFail) {
+      throw Exception("Network Error");
+    }
+    return DataOutput(total: mockCategories.length, modelList: mockCategories);
+  }
+
+  @override
+  Future<DataOutput<CategoryModel>> fetchSubCategories(
+      {required int parentId}) async {
     if (shouldFail) {
       throw Exception("Network Error");
     }
@@ -72,7 +81,7 @@ class MockMultiAuthentication extends MMultiAuthentication {
   MockMultiAuthentication(Map<String, LoginSystem> systems) : super(systems);
 
   @override
-  Future<UserCredential?>login() async {
+  Future<UserCredential?> login() async {
     if (shouldFail) {
       throw Exception("Login Failed");
     }
