@@ -116,7 +116,9 @@ class LoginCubit extends Cubit<LoginState> {
       // Storing data to local database {HIVE}
       HiveUtils.setJWT(result['token']);
 
-      if ((result['data']['name'] == "" || result['data']['name'] == null) ||
+      if ((result['data']['name'] == "" ||
+              result['data']['name'] == null ||
+              result['data']['name'] == "User") ||
           (result['data']['email'] == "" || result['data']['email'] == null)) {
         HiveUtils.setProfileNotCompleted();
 
