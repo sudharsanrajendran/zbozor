@@ -169,7 +169,7 @@ class LoginScreenState extends State<LoginScreen> {
         }
       }
       if (state is MSuccess) {
-        // Widgets.hideLoder(context);
+        if (mounted) Widgets.hideLoder(context);
       }
     });
     getSimCountry().then((value) {
@@ -402,7 +402,7 @@ class LoginScreenState extends State<LoginScreen> {
                       .read<UserDetailsCubit>()
                       .fill(HiveUtils.getUserDetails());
                   // Change: Allow Mobile Users to bypass Profile Completion (fixes "Email Verify" confusion)
-                  if (state.isProfileCompleted || isMobileNumberField) {
+                  if (state.isProfileCompleted) {
                     if (HiveUtils.getCityName() != null &&
                         HiveUtils.getCityName() != "") {
                       HelperUtils.killPreviousPages(
@@ -412,6 +412,13 @@ class LoginScreenState extends State<LoginScreen> {
                           Routes.main, (route) => false,
                           arguments: {"from": "login"});
                     }
+                  } else if (isMobileNumberField) {
+                    Navigator.of(context).pushNamed(
+                        Routes.phoneLoginUserDetailsScreen,
+                        arguments: {
+                          "phone": state.apiResponse['mobile'],
+                          "countryCode": countryCode
+                        });
                   } else {
                     Navigator.pushNamed(
                       context,
@@ -437,7 +444,8 @@ class LoginScreenState extends State<LoginScreen> {
                 if (state is LoginFailure) {
                   ////////
                   debugPrint("Login Failure: ${state.errorMessage}");
-                  // HelperUtils.showSnackBarMessage(context, "Login Failed");
+                  HelperUtils.showSnackBarMessage(
+                      context, "Login Failed: ${state.errorMessage}");
                 }
               },
               child: BlocConsumer<AuthenticationCubit, AuthenticationState>(
@@ -517,7 +525,7 @@ class LoginScreenState extends State<LoginScreen> {
                     return Form(
                       key: _formKey,
                       child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 500),
+                        duration: const Duration(milliseconds: 200),
                         switchInCurve: Curves.easeInOut,
                         switchOutCurve: Curves.easeInOut,
                         child: isOtpSent

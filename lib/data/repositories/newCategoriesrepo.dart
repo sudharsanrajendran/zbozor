@@ -26,8 +26,12 @@ class NewCategoriesRepository {
         return _categoryCache[cacheKey]!;
       }
 
-      Map<String, dynamic> response =
-          await Api.get(url: 'get-parent-category-list');
+      Map<String, dynamic> parameters = {
+        Api.page: page,
+      };
+
+      Map<String, dynamic> response = await Api.get(
+          url: 'get-parent-category-list', queryParameters: parameters);
 
       final result = NewCategoryResponseModel.fromJson(response);
 

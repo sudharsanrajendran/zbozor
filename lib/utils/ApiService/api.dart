@@ -34,7 +34,7 @@ class Api {
           HiveUtils.getLanguage()?['data'] != null) {
         return {
           "Accept": "application/json",
-          "Content-Language": HiveUtils.getLanguage()['code'] ?? ""
+          "Content-Language": (HiveUtils.getLanguage() ?? {})['code'] ?? ""
         };
       } else {
         return {};

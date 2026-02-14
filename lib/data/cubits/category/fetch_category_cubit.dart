@@ -101,7 +101,12 @@ class FetchCategoryCubit extends Cubit<FetchCategoryState> {
 
       // 1. Trigger BOTH fetches concurrently
       final newCategoriesFuture = NewCategoriesRepository()
-          .fetchCategories(page: 1, forceRefresh: forceRefresh ?? false);
+          .fetchCategories(page: 1, forceRefresh: forceRefresh ?? false)
+          .catchError((e) {
+        // Fallback: Return empty/error model so we don't crash
+        return NewCategoryResponseModel(
+            error: true, message: "Fallback", data: [], code: 0);
+      });
       final oldCategoriesFuture = _categoryRepository.fetchCategories(
           page: 1, forceRefresh: forceRefresh ?? false);
 
@@ -114,7 +119,9 @@ class FetchCategoryCubit extends Cubit<FetchCategoryState> {
 
       // 3. Create Map of ID -> Image from New API
       Map<int, String> imageMap = {};
-      if (!newCategoriesResponse.error) {
+      // ignore: unnecessary_type_check
+      if (newCategoriesResponse is NewCategoryResponseModel &&
+          !newCategoriesResponse.error) {
         for (var item in newCategoriesResponse.data) {
           imageMap[item.id] = item.image;
         }
