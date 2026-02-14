@@ -88,15 +88,15 @@ class _FindJobScreenState extends State<FindJobScreen> {
             _buildSectionTitle("Popular Jobs"),
             const SizedBox(height: 12),
             _buildPopularJobsList(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             _buildSectionTitle("Jobs By Category", onViewAll: () {}),
             const SizedBox(height: 12),
             _buildCategoryGrid(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             _buildSectionTitle("Jobs By Qualification in all cities"),
             const SizedBox(height: 12),
             _buildQualificationGrid(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             _buildSectionTitle("Jobs By Type in All Cities"),
             const SizedBox(height: 12),
             _buildJobTypeGrid(),
@@ -296,51 +296,65 @@ class _FindJobScreenState extends State<FindJobScreen> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 0.8,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 0.87,
       ),
       itemCount: 4,
       itemBuilder: (context, index) {
         return Container(
-          padding: const EdgeInsets.all(12),
+          // height: 178, // Removed fixed height to let grid control it
           decoration: BoxDecoration(
             color: context.color.secondaryColor,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: context.color.borderColor),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: context.color.borderColor.darken(30),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 100,
+                height: 110,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  image: DecorationImage(
-                    image: NetworkImage(
-                        "https://picsum.photos/seed/${index + 10}/200"),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(10),
+                  ),
+                  child: Image.network(
+                    "https://picsum.photos/seed/${index + 10}/200",
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                "Sales / Business Development",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  color: context.color.textDefaultColor,
+              Padding(
+                padding: const EdgeInsetsDirectional.only(
+                  start: 8,
+                  end: 8,
+                  top: 10,
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                "200+ Jobs",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: jobBlueColor,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Sales / Business Development",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                        color: context.color.textDefaultColor,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      "200+ Jobs",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: jobBlueColor,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -375,8 +389,8 @@ class _FindJobScreenState extends State<FindJobScreen> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
         childAspectRatio: 1.3,
       ),
       itemCount: items.length,
@@ -419,8 +433,8 @@ class _FindJobScreenState extends State<FindJobScreen> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
         childAspectRatio: 1.3,
       ),
       itemCount: items.length,
