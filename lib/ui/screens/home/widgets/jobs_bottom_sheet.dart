@@ -30,7 +30,7 @@ class JobsBottomSheet extends StatelessWidget {
           // Wait, "bottomsheet top la right and left radious 6 px panniru" - done.
           // "kila oru chinna gray color oru border mathi last ta" - this is the indicator.
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Text(
               "Find Jobs and Hire Talent",
               style: TextStyle(
@@ -45,7 +45,7 @@ class JobsBottomSheet extends StatelessWidget {
           const SizedBox(height: 16), // Gap 16
 
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: _buildOption(
               context,
               title: "Find Jobs",
@@ -116,7 +116,7 @@ class JobsBottomSheet extends StatelessWidget {
                 height: 42,
               ),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
