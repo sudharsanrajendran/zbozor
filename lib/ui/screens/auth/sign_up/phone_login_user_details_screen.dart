@@ -97,7 +97,7 @@ class _PhoneLoginUserDetailsScreenState
     return Scaffold(
       backgroundColor: context.color.primaryColor,
       appBar: UiUtils.buildAppBar(context,
-          title: "completeProfile".translate(context), showBackButton: true),
+          title: "Complete Profile".translate(context), showBackButton: true),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -107,19 +107,19 @@ class _PhoneLoginUserDetailsScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("enterDetailsToContinue".translate(context))
+                  Text("Enter Details To Continue".translate(context))
                       .size(context.font.normal)
                       .color(context.color.textColorDark),
                   SizedBox(height: 20.rh(context)),
                   buildTextField(
                     context,
-                    title: "fullName",
+                    title: "FullName",
                     controller: nameController,
                     validator: CustomTextFieldValidator.nullCheck,
                   ),
                   buildTextField(
                     context,
-                    title: "emailAddress",
+                    title: "Email Address",
                     controller: emailController,
                     validator: CustomTextFieldValidator.email,
                   ),
