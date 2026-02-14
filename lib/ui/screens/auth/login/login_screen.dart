@@ -1060,6 +1060,7 @@ class LoginScreenState extends State<LoginScreen> {
                 setState(() {
                   hasErrorOccurred = false;
                   otp = "";
+                  _pinPutController.clear();
                 });
                 context.read<AuthenticationCubit>().setData(
                       payload: phoneLoginPayload,
