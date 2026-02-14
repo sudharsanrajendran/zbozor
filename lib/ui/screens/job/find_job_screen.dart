@@ -1,6 +1,9 @@
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
+import 'package:Ebozor/utils/ui_utils.dart';
+import 'package:Ebozor/utils/app_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class FindJobScreen extends StatefulWidget {
   const FindJobScreen({super.key});
@@ -18,42 +21,77 @@ class _FindJobScreenState extends State<FindJobScreen> {
         elevation: 0,
         backgroundColor: context.color.backgroundColor,
         leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: context.color.borderColor),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                Icons.arrow_back,
-                color: context.color.textDefaultColor,
+          padding: const EdgeInsets.only(top: 0),
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Material(
+              clipBehavior: Clip.hardEdge,
+              color: Colors.transparent,
+              shape: const CircleBorder(),
+              child: InkWell(
+                onTap: () => Navigator.pop(context),
+                child: Center(
+                  child: Directionality(
+                    textDirection: Directionality.of(context),
+                    child: RotatedBox(
+                      quarterTurns:
+                          Directionality.of(context) == TextDirection.rtl
+                              ? 2
+                              : -4,
+                      child: UiUtils.getSvg(
+                        AppIcons.arrowLeft,
+                        fit: BoxFit.none,
+                        color: context.color.textDefaultColor,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
         ),
         title: Text(
-          "Find Jobs",
+          "Ebozor",
           style: TextStyle(
             color: context.color.textDefaultColor,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
         ),
         centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: context.color.borderColor,
+            height: 1.0,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(
+              "Discover Better Opportunities\nEasily with EBOZOR",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w500,
+                color: context.color.textDefaultColor,
+                height: 1.2,
+              ),
+              maxLines: 2,
+            ),
+            const SizedBox(height: 18),
             _buildSearchField(),
             const SizedBox(height: 20),
             _buildSectionTitle("Popular Jobs"),
             const SizedBox(height: 12),
             _buildPopularJobsList(),
+            const SizedBox(height: 20),
+            _buildSectionTitle("Jobs By Category", onViewAll: () {}),
+            const SizedBox(height: 12),
+            _buildCategoryGrid(),
             const SizedBox(height: 20),
             _buildSectionTitle("Jobs By Qualification in all cities"),
             const SizedBox(height: 12),
@@ -70,44 +108,72 @@ class _FindJobScreenState extends State<FindJobScreen> {
 
   Widget _buildSearchField() {
     return Container(
-      height: 50,
+      height: 46,
       decoration: BoxDecoration(
         color: context.color.secondaryColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: context.color.borderColor),
       ),
       child: TextField(
+        textAlignVertical: TextAlignVertical.center,
         decoration: InputDecoration(
+          isDense: true,
           hintText: "Search skills, company or title ....",
-          hintStyle:
-              TextStyle(color: context.color.textDefaultColor.withOpacity(0.5)),
+          hintStyle: TextStyle(
+              color: context.color.textDefaultColor.withOpacity(0.5),
+              fontWeight: FontWeight.w400,
+              fontSize: 14),
           prefixIcon: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(6.0),
             child: Container(
+                height: 34,
+                width: 34,
                 decoration: BoxDecoration(
                     color: context.color.territoryColor,
                     borderRadius: BorderRadius.circular(8)),
-                child: Icon(
-                  Icons.search,
-                  color: Colors.white,
-                  size: 20,
+                child: Padding(
+                  padding: const EdgeInsets.all(6.0),
+                  child: SvgPicture.asset(
+                    "assets/svg/jobsearchicon.svg",
+                    width: 20,
+                    height: 20,
+                    colorFilter:
+                        const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                  ),
                 )),
           ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
         ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: context.color.textDefaultColor,
-      ),
+  Widget _buildSectionTitle(String title, {VoidCallback? onViewAll}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: context.color.textDefaultColor,
+          ),
+        ),
+        if (onViewAll != null)
+          GestureDetector(
+            onTap: onViewAll,
+            child: Text(
+              "View all",
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.blue,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -133,8 +199,8 @@ class _FindJobScreenState extends State<FindJobScreen> {
                 Row(
                   children: [
                     Container(
-                      width: 40,
-                      height: 40,
+                      width: 32,
+                      height: 32,
                       decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(8),
@@ -144,6 +210,7 @@ class _FindJobScreenState extends State<FindJobScreen> {
                               fit: BoxFit.cover)),
                     ),
                     const SizedBox(width: 12),
+                    ///// side padding
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,7 +233,7 @@ class _FindJobScreenState extends State<FindJobScreen> {
                                 : "200+ Jobs",
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.blue,
+                              color: jobBlueColor,
                             ),
                           ),
                         ],
@@ -174,12 +241,11 @@ class _FindJobScreenState extends State<FindJobScreen> {
                     ),
                   ],
                 ),
-                const Spacer(),
+                const SizedBox(height: 14),
                 if (index == 0) ...[
-                  _buildJobDetailRow(Icons.access_time, "Full Time"),
-                  _buildJobDetailRow(
-                      Icons.monetization_on_outlined, "Negotiable"),
-                  _buildJobDetailRow(Icons.location_on_outlined, "Fujairah"),
+                  _buildJobDetailRow("assets/svg/fulltimejob.svg", "Full Time"),
+                  _buildJobDetailRow("assets/svg/negotiable.svg", "Negotiable"),
+                  _buildJobDetailRow("assets/svg/joblcation.svg", "Fujairah"),
                 ] else ...[
                   Text(
                     "200+ Jobs",
@@ -197,13 +263,20 @@ class _FindJobScreenState extends State<FindJobScreen> {
     );
   }
 
-  Widget _buildJobDetailRow(IconData icon, String text) {
+  Widget _buildJobDetailRow(String iconPath, String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: [
-          Icon(icon,
-              size: 14, color: context.color.textDefaultColor.withOpacity(0.6)),
+          SvgPicture.asset(
+            iconPath,
+            width: 14,
+            height: 14,
+            colorFilter: ColorFilter.mode(
+              context.color.textDefaultColor.withOpacity(0.6),
+              BlendMode.srcIn,
+            ),
+          ),
           const SizedBox(width: 4),
           Text(
             text,
@@ -217,24 +290,84 @@ class _FindJobScreenState extends State<FindJobScreen> {
     );
   }
 
+  Widget _buildCategoryGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.8,
+      ),
+      itemCount: 4,
+      itemBuilder: (context, index) {
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: context.color.secondaryColor,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: context.color.borderColor),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 100,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  image: DecorationImage(
+                    image: NetworkImage(
+                        "https://picsum.photos/seed/${index + 10}/200"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Sales / Business Development",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  color: context.color.textDefaultColor,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                "200+ Jobs",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: jobBlueColor,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildQualificationGrid() {
     final items = [
       {
-        "icon": Icons.menu_book,
+        "icon": "assets/svg/bookjob.svg",
         "title": "High School / Secondary",
         "count": "1100+ Jobs"
       },
       {
-        "icon": Icons.school,
+        "icon": "assets/svg/degree.svg",
         "title": "Bachelors Degree",
         "count": "1100+ Jobs"
       },
       {
-        "icon": Icons.school_outlined,
+        "icon": "assets/svg/masterdegreee.svg",
         "title": "Master Degree",
         "count": "1100+ Jobs"
       },
-      {"icon": Icons.book, "title": "PHD", "count": "1100+ Jobs"},
+      {"icon": "assets/svg/bookjob.svg", "title": "PHD", "count": "1100+ Jobs"},
     ];
 
     return GridView.builder(
@@ -244,12 +377,12 @@ class _FindJobScreenState extends State<FindJobScreen> {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 1.3, // Decreased from 1.4 to give more height
+        childAspectRatio: 1.3,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) {
         return _buildGridItem(
-          items[index]['icon'] as IconData,
+          items[index]['icon'] as String,
           items[index]['title'] as String,
           items[index]['count'] as String,
         );
@@ -259,10 +392,26 @@ class _FindJobScreenState extends State<FindJobScreen> {
 
   Widget _buildJobTypeGrid() {
     final items = [
-      {"icon": Icons.menu_book, "title": "Full Time", "count": "1100+ Jobs"},
-      {"icon": Icons.menu_book, "title": "Part Time", "count": "1100+ Jobs"},
-      {"icon": Icons.menu_book, "title": "Contract", "count": "1100+ Jobs"},
-      {"icon": Icons.menu_book, "title": "Remote", "count": "1100+ Jobs"},
+      {
+        "icon": "assets/svg/bookjob.svg",
+        "title": "Full Time",
+        "count": "1100+ Jobs"
+      },
+      {
+        "icon": "assets/svg/bookjob.svg",
+        "title": "Part Time",
+        "count": "1100+ Jobs"
+      },
+      {
+        "icon": "assets/svg/bookjob.svg",
+        "title": "Contract",
+        "count": "1100+ Jobs"
+      },
+      {
+        "icon": "assets/svg/bookjob.svg",
+        "title": "Remote",
+        "count": "1100+ Jobs"
+      },
     ];
 
     return GridView.builder(
@@ -272,12 +421,12 @@ class _FindJobScreenState extends State<FindJobScreen> {
         crossAxisCount: 2,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 1.3, // Decreased from 1.4
+        childAspectRatio: 1.3,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) {
         return _buildGridItem(
-          items[index]['icon'] as IconData,
+          items[index]['icon'] as String,
           items[index]['title'] as String,
           items[index]['count'] as String,
         );
@@ -285,7 +434,7 @@ class _FindJobScreenState extends State<FindJobScreen> {
     );
   }
 
-  Widget _buildGridItem(IconData icon, String title, String count) {
+  Widget _buildGridItem(String iconPath, String title, String count) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -296,7 +445,15 @@ class _FindJobScreenState extends State<FindJobScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 32, color: context.color.textDefaultColor),
+          SvgPicture.asset(
+            iconPath,
+            width: 32,
+            height: 32,
+            colorFilter: ColorFilter.mode(
+              context.color.textDefaultColor,
+              BlendMode.srcIn,
+            ),
+          ),
           const SizedBox(height: 8),
           Flexible(
             child: Text(

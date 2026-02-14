@@ -15,6 +15,7 @@ Color lightTextColor = const Color(0xFF000000).withOpacity(0.5);
 Color widgetsBorderColorLight = const Color(0xffEEEEEE).withOpacity(0.6);
 Color senderChatColor = const Color.fromARGB(255, 233, 233, 233).darken(22);
 final Color filterBorderColorLight = const Color.fromARGB(121, 46, 102, 245);
+const Color jobBlueColor = Color(0xFF0055FF);
 
 ///Dark Theme Colors
 Color primaryColorDark = const Color(0xff121212);
