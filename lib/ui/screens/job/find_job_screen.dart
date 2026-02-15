@@ -131,11 +131,12 @@ class _FindJobScreenState extends State<FindJobScreen> {
           isDense: true,
           hintText: "Search skills, company or title ....",
           hintStyle: TextStyle(
-              color: context.color.textDefaultColor.withOpacity(0.5),
-              fontWeight: FontWeight.w400,
+              color: context.color.textDefaultColor.withOpacity(0.2),
+              fontWeight: FontWeight.w500,
               fontSize: 14),
           prefixIcon: Padding(
             padding: const EdgeInsets.all(6.0),
+            // seach red color container
             child: Container(
                 height: 34,
                 width: 34,
@@ -212,7 +213,7 @@ class _FindJobScreenState extends State<FindJobScreen> {
                           height: 32,
                           decoration: BoxDecoration(
                               color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(6),
                               image: DecorationImage(
                                   image: NetworkImage(
                                       "https://picsum.photos/seed/${index + 1}/200"),
@@ -274,14 +275,14 @@ class _FindJobScreenState extends State<FindJobScreen> {
         children: [
           SvgPicture.asset(
             iconPath,
-            width: 14,
-            height: 14,
+            width: 18,
+            height: 18,
             colorFilter: ColorFilter.mode(
               context.color.textDefaultColor.withOpacity(0.6),
               BlendMode.srcIn,
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 8),
           Text(
             text,
             style: TextStyle(
@@ -506,10 +507,11 @@ class _FindJobScreenState extends State<FindJobScreen> {
 
   Widget _buildGridItem(String iconPath, String title, String count) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      height: 120,
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: context.color.secondaryColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: context.color.borderColor),
       ),
       child: Column(
