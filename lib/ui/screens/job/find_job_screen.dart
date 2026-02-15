@@ -58,7 +58,6 @@ class _FindJobScreenState extends State<FindJobScreen> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
