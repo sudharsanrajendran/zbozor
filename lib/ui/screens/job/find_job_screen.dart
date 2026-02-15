@@ -299,15 +299,15 @@ class _FindJobScreenState extends State<FindJobScreen> {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          childAspectRatio: (MediaQuery.of(context).size.width / 2) / 220),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        mainAxisExtent: 178,
+      ),
       itemCount: 4,
       itemBuilder: (context, index) {
         return Container(
-          // Removed fixed height to let grid control it
           decoration: BoxDecoration(
             color: context.color.secondaryColor,
             borderRadius: BorderRadius.circular(10),
@@ -350,7 +350,7 @@ class _FindJobScreenState extends State<FindJobScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 8),
                     Text(
                       "200+ Jobs",
                       style: TextStyle(
@@ -358,7 +358,6 @@ class _FindJobScreenState extends State<FindJobScreen> {
                         color: jobBlueColor,
                       ),
                     ),
-                    const SizedBox(height: 10),
                   ],
                 ),
               ),
