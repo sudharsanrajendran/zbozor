@@ -30,6 +30,9 @@ import 'package:Ebozor/ui/screens/location_permission_screen.dart';
 import 'package:Ebozor/ui/screens/my_review_screen.dart';
 import 'package:Ebozor/ui/screens/sold_out_bought_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:Ebozor/data/cubits/report/fetch_item_report_reason_list.dart';
+import 'package:Ebozor/data/cubits/report/item_report_cubit.dart';
 import 'package:Ebozor/ui/screens/advertisement/my_advertisment_screen.dart';
 import 'package:Ebozor/ui/screens/auth/login/login_screen.dart';
 
@@ -59,6 +62,7 @@ import 'package:Ebozor/ui/screens/subscription/packages_list.dart';
 import 'package:Ebozor/ui/screens/subscription/transaction_history_screen.dart';
 
 import 'package:Ebozor/ui/screens/job/find_job_screen.dart';
+import 'package:Ebozor/ui/screens/job/job_details_screen.dart';
 
 import 'package:Ebozor/ui/screens/filter_screen.dart';
 import 'package:Ebozor/ui/screens/main_activity.dart';
@@ -143,6 +147,7 @@ class Routes {
   static const adDetailsScreen = '/adDetailsScreen';
   static const successItemScreen = '/successItemScreen';
   static const findJobScreen = '/findJobScreen';
+  static const jobDetailsScreen = '/jobDetailsScreen';
 
   ///Add item screens
   static const selectCategoryScreen = '/selectCategoryScreen';
@@ -331,6 +336,20 @@ class Routes {
 
       case findJobScreen:
         return CupertinoPageRoute(builder: (context) => const FindJobScreen());
+
+      case jobDetailsScreen:
+        return CupertinoPageRoute(
+            builder: (context) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => FetchItemReportReasonsListCubit(),
+                    ),
+                    BlocProvider(
+                      create: (context) => ItemReportCubit(),
+                    ),
+                  ],
+                  child: const JobDetailsScreen(),
+                ));
 
       /*  case myItemsScreen:
         return ItemsScreen.route(routeSettings);*/

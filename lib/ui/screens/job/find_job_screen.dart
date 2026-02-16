@@ -3,6 +3,7 @@ import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:Ebozor/app/routes.dart';
 import 'package:flutter_svg/svg.dart';
 
 class FindJobScreen extends StatefulWidget {
@@ -196,69 +197,75 @@ class _FindJobScreenState extends State<FindJobScreen> {
           (index) {
             return Padding(
               padding: EdgeInsets.only(right: index == 2 ? 0.0 : 12.0),
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: context.color.secondaryColor,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: context.color.borderColor),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(6),
-                              image: DecorationImage(
-                                  image: NetworkImage(
-                                      "https://picsum.photos/seed/${index + 1}/200"),
-                                  fit: BoxFit.cover)),
-                        ),
-                        const SizedBox(width: 12),
-                        ///// side padding
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                index == 0
-                                    ? "Sale Marketing Executive"
-                                    : "Sales / Business Developer",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: context.color.textDefaultColor,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Text(
-                                index == 0
-                                    ? "Transport & construction"
-                                    : "200+ Jobs",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: jobBlueColor,
-                                ),
-                              ),
-                            ],
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, Routes.jobDetailsScreen);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: context.color.secondaryColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: context.color.borderColor),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(6),
+                                image: DecorationImage(
+                                    image: NetworkImage(
+                                        "https://picsum.photos/seed/${index + 1}/200"),
+                                    fit: BoxFit.cover)),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    _buildJobDetailRow(
-                        "assets/svg/fulltimejob.svg", "Full Time"),
-                    _buildJobDetailRow(
-                        "assets/svg/negotiable.svg", "Negotiable"),
-                    _buildJobDetailRow("assets/svg/joblcation.svg", "Fujairah"),
-                  ],
+                          const SizedBox(width: 12),
+                          ///// side padding
+                          Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  index == 0
+                                      ? "Sale Marketing Executive"
+                                      : "Sales / Business Developer",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: context.color.textDefaultColor,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  index == 0
+                                      ? "Transport & construction"
+                                      : "200+ Jobs",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: jobBlueColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      _buildJobDetailRow(
+                          "assets/svg/fulltimejob.svg", "Full Time"),
+                      _buildJobDetailRow(
+                          "assets/svg/negotiable.svg", "Negotiable"),
+                      _buildJobDetailRow(
+                          "assets/svg/joblcation.svg", "Fujairah"),
+                    ],
+                  ),
                 ),
               ),
             );
