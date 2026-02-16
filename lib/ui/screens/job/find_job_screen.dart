@@ -56,7 +56,7 @@ class _FindJobScreenState extends State<FindJobScreen> {
           "Ebozor",
           style: TextStyle(
             color: context.color.textDefaultColor,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
         ),
         bottom: PreferredSize(

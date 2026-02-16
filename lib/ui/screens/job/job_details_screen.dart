@@ -9,6 +9,7 @@ import 'package:Ebozor/data/cubits/report/fetch_item_report_reason_list.dart';
 import 'package:Ebozor/data/cubits/report/item_report_cubit.dart';
 import 'package:Ebozor/data/model/report_item/reason_model.dart';
 import 'package:Ebozor/ui/screens/native_ads_screen.dart';
+import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/ui/screens/widgets/blurred_dialoge_box.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
@@ -27,308 +28,397 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   final TextEditingController _reportmessageController =
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey();
+  final ScrollController _scrollController = ScrollController();
+  bool _showTitle = false;
 
   @override
   void initState() {
     super.initState();
     context.read<FetchItemReportReasonsListCubit>().fetch();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset > 50) {
+      if (!_showTitle) setState(() => _showTitle = true);
+    } else {
+      if (_showTitle) setState(() => _showTitle = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.color.backgroundColor,
-      appBar: UiUtils.buildAppBar(
-        context,
-        showBackButton: true,
-        title: "",
         backgroundColor: context.color.backgroundColor,
-        hideTopBorder: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Sales Marketing Executive",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: context.color.textDefaultColor,
+        body: NestedScrollView(
+          controller: _scrollController,
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverAppBar(
+                pinned: true,
+                backgroundColor: context.color.backgroundColor,
+                surfaceTintColor: context.color.backgroundColor,
+                elevation: 0,
+                leading: BackButton(color: context.color.textDefaultColor),
+                title: _showTitle
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Sales Marketing Executive",
+                            style: TextStyle(
+                              color: context.color.textDefaultColor,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            "Thoban , Fujeirah", // Location text
+                            style: TextStyle(
+                              color: context.color.textDefaultColor,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      )
+                    : null,
+                centerTitle: false,
+                actions: [
+                  // Favorite Button
+                  Container(
+                    width: 30,
+                    height: 30,
+                    margin: EdgeInsets.symmetric(horizontal: 6),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(28),
+                      onTap: () {
+                        // Dummy logic since no model
+                      },
+                      child: Center(
+                        child: UiUtils.getSvg(
+                          AppIcons.like,
+                          color: Color(0xB2000000),
+                          width: 22,
+                          height: 22,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        "Transport & Construction Communication...",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color:
-                              context.color.textDefaultColor.withOpacity(0.6),
+                    ),
+                  ),
+                  // Share Button
+                  Container(
+                    width: 30,
+                    height: 30,
+                    margin: EdgeInsets.only(right: 16, left: 5),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(28),
+                      onTap: () {
+                        HelperUtils.share(context, "dummy_slug");
+                      },
+                      child: Center(
+                        child: Icon(
+                          Icons.share_outlined,
+                          size: 22,
+                          color: Color(0xB2000000),
                         ),
-                        maxLines: 1,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ];
+          },
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Sales Marketing Executive",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: context.color.textDefaultColor,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Transport & Construction Communication...",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: context.color.textDefaultColor
+                                  .withOpacity(0.6),
+                            ),
+                            maxLines: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Container(
+                      width: 60,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              "https://picsum.photos/seed/job_details/200"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+
+                _buildInfoRow(
+                    context, "assets/svg/negotiable.svg", "Negotiable"),
+                _buildInfoRow(context, "assets/svg/location_icon.svg",
+                    "Thoban , Fujeirah"),
+                _buildInfoRow(
+                    context, "assets/svg/fulltimejob.svg", "Full Time"),
+                _buildInfoRow(
+                    context, "assets/svg/jobexperienceicon.svg", "2-5 Years"),
+                _buildInfoRow(context, "assets/svg/gendericon.svg",
+                    "Any"), // Using profile icon for Gender as placeholder
+
+                const SizedBox(height: 14),
+                // Apply Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF191919), // Dark/Black
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      "Apply",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                // Status
+                RichText(
+                  text: TextSpan(
+                    style: TextStyle(
+                        fontSize: 14, color: context.color.textDefaultColor),
+                    children: [
+                      const TextSpan(
+                        text: "37 Applications . ",
+                        style: TextStyle(fontWeight: FontWeight.w400),
+                      ),
+                      const TextSpan(
+                        text: "Posted 3 Hours Ago",
+                        style: TextStyle(
+                          color: Color(0xFF26A69A), // Teal color
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(height: 30),
+                // Job Details
+                Text(
+                  "Job Details",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: context.color.textDefaultColor,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  "Free Download Intersex 19 SVG Vector File In Monocolor And Multicolor Type For Sketch And Figma From Intersex 19 Vectors Svg Vector Collection. Intersex 19 Vectors SVG Vector Illustration\n\nقم بتنزيل ملف Intersex 19 SVG مجانًا، بنسختيه أحادية اللون ومتعددة الألوان، لاستخدامه في Sketch وFigma. من مجموعة Intersex 19 Vectors. رسم توضيحي بصيغة Intersex 19 لـ SVG.",
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.5,
+                    color: context.color.textDefaultColor.withOpacity(0.7),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                const Text(
+                  "Read More",
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                // Key Value Rows
+                _buildAttributeRow(
+                    context, "Minimum \nEducation Level", "Bachelors Degree"),
+                _buildAttributeRow(context, "Company Size", "51-200 Employees"),
+                _buildAttributeRow(context, "Industry", "Transportation"),
+                _buildAttributeRow(context, "Remote Job", "NO"),
+                const SizedBox(height: 14),
+                Divider(color: Colors.grey.withOpacity(0.3)),
+                const SizedBox(height: 4),
+                setReportAd(),
+                Divider(color: Colors.grey.withOpacity(0.3)),
+                // Illustration
+                if (Constant.isGoogleBannerAdsEnabled == "1") ...[
+                  Container(
+                    height: 90,
+                    alignment: AlignmentDirectional.center,
+                    child: NativeAdWidget(type: TemplateType.small),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+
+                // Footer Card
                 Container(
-                  width: 60,
-                  height: 50,
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          "https://picsum.photos/seed/job_details/200"),
-                      fit: BoxFit.cover,
+                    color: const Color(0xFFF8F9FB),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: context.color.borderColor),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "6 More Steps to get hired faster",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: context.color.textDefaultColor,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          border:
+                              Border.all(color: Colors.grey.withOpacity(0.2)),
+                        ),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              "assets/svg/jobprofileicon.svg",
+                              width: 26,
+                              height: 26,
+                              colorFilter: ColorFilter.mode(
+                                  Color(0xB2000000), BlendMode.srcIn),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                "Add Basic Info",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: context.color.textDefaultColor,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              alignment: Alignment.center,
+                              height: 20,
+                              width: 20,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                      color: Colors.grey.withOpacity(0.3))),
+                              child: const Center(
+                                child: Icon(Icons.add,
+                                    color: Colors.blue, size: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                            6,
+                            (index) => Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 3),
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: index == 0
+                                        ? Colors.grey[600]
+                                        : Colors.grey[300],
+                                  ),
+                                )),
+                      ),
+
+                      //footer appl button
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF191919), // Dark/Black
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      "Apply",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
+                const SizedBox(height: 12),
+                Center(
+                  child: Container(
+                    height: 3.5,
+                    width: 94.3,
+                    decoration: BoxDecoration(
+                      color: context.color.deactivateColor.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(10.50),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
               ],
             ),
-            const SizedBox(height: 14),
-
-            _buildInfoRow(context, "assets/svg/negotiable.svg", "Negotiable"),
-            _buildInfoRow(
-                context, "assets/svg/location_icon.svg", "Thoban , Fujeirah"),
-            _buildInfoRow(context, "assets/svg/fulltimejob.svg", "Full Time"),
-            _buildInfoRow(
-                context, "assets/svg/jobexperienceicon.svg", "2-5 Years"),
-            _buildInfoRow(context, "assets/svg/gendericon.svg",
-                "Any"), // Using profile icon for Gender as placeholder
-
-            const SizedBox(height: 14),
-            // Apply Button
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF191919), // Dark/Black
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
-                ),
-                onPressed: () {},
-                child: const Text(
-                  "Apply",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 14),
-            // Status
-            RichText(
-              text: TextSpan(
-                style: TextStyle(
-                    fontSize: 14, color: context.color.textDefaultColor),
-                children: [
-                  const TextSpan(
-                    text: "37 Applications . ",
-                    style: TextStyle(fontWeight: FontWeight.w400),
-                  ),
-                  const TextSpan(
-                    text: "Posted 3 Hours Ago",
-                    style: TextStyle(
-                      color: Color(0xFF26A69A), // Teal color
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-            // Job Details
-            Text(
-              "Job Details",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: context.color.textDefaultColor,
-              ),
-            ),
-            const SizedBox(height: 14),
-            Text(
-              "Free Download Intersex 19 SVG Vector File In Monocolor And Multicolor Type For Sketch And Figma From Intersex 19 Vectors Svg Vector Collection. Intersex 19 Vectors SVG Vector Illustration\n\nقم بتنزيل ملف Intersex 19 SVG مجانًا، بنسختيه أحادية اللون ومتعددة الألوان، لاستخدامه في Sketch وFigma. من مجموعة Intersex 19 Vectors. رسم توضيحي بصيغة Intersex 19 لـ SVG.",
-              style: TextStyle(
-                fontSize: 14,
-                height: 1.5,
-                color: context.color.textDefaultColor.withOpacity(0.7),
-              ),
-            ),
-            const SizedBox(height: 14),
-            const Text(
-              "Read More",
-              style: TextStyle(
-                color: Colors.blue,
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 14),
-            // Key Value Rows
-            _buildAttributeRow(
-                context, "Minimum \nEducation Level", "Bachelors Degree"),
-            _buildAttributeRow(context, "Company Size", "51-200 Employees"),
-            _buildAttributeRow(context, "Industry", "Transportation"),
-            _buildAttributeRow(context, "Remote Job", "NO"),
-            const SizedBox(height: 14),
-            Divider(color: Colors.grey.withOpacity(0.3)),
-            const SizedBox(height: 4),
-            setReportAd(),
-            Divider(color: Colors.grey.withOpacity(0.3)),
-            // Illustration
-            if (Constant.isGoogleBannerAdsEnabled == "1") ...[
-              Container(
-                height: 90,
-                alignment: AlignmentDirectional.center,
-                child: NativeAdWidget(type: TemplateType.small),
-              ),
-              const SizedBox(height: 10),
-            ],
-
-            // Footer Card
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8F9FB),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: context.color.borderColor),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "6 More Steps to get hired faster",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: context.color.textDefaultColor,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                    ),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
-                          "assets/svg/jobprofileicon.svg",
-                          width: 26,
-                          height: 26,
-                          colorFilter: ColorFilter.mode(
-                              Color(0xB2000000), BlendMode.srcIn),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            "Add Basic Info",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              color: context.color.textDefaultColor,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.center,
-                          height: 20,
-                          width: 20,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: Colors.grey.withOpacity(0.3))),
-                          child: const Center(
-                            child:
-                                Icon(Icons.add, color: Colors.blue, size: 16),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                        6,
-                        (index) => Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 3),
-                              width: 6,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: index == 0
-                                    ? Colors.grey[600]
-                                    : Colors.grey[300],
-                              ),
-                            )),
-                  ),
-
-
-
-                  //footer appl button
-
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF191919), // Dark/Black
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
-                ),
-                onPressed: () {},
-                child: const Text(
-                  "Apply",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Center(
-              child: Container(
-                height: 3.5,
-                width: 94.3,
-                decoration: BoxDecoration(
-                  color: context.color.deactivateColor.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(10.50),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   Widget _buildInfoRow(BuildContext context, String iconPath, String text) {
@@ -523,7 +613,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               children: [
                 ListView.separated(
                   shrinkWrap: true,
-                  itemCount: reasons?.length ?? 0,
+                  itemCount: reasons!.length,
                   physics: const BouncingScrollPhysics(),
                   separatorBuilder: (context, index) {
                     return const SizedBox(height: 10);
@@ -550,7 +640,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(14.0),
                           child: Text(
-                            reasons![index].reason.firstUpperCase() ?? "",
+                            reasons![index].reason.firstUpperCase(),
                           ).color(
                             selectedId == reasons![index].id
                                 ? context.color.territoryColor
