@@ -1,3 +1,4 @@
+import 'dart:ui' as dart_ui;
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
@@ -30,6 +31,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
   bool _showTitle = false;
+  bool _isFavorite = false;
 
   @override
   void initState() {
@@ -100,12 +102,19 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(28),
                       onTap: () {
-                        // Dummy logic since no model
+                        setState(() {
+                          _isFavorite = !_isFavorite;
+                        });
+                        if (_isFavorite) {
+                          _showFavoriteSnackBar(context);
+                        }
                       },
                       child: Center(
                         child: UiUtils.getSvg(
-                          AppIcons.like,
-                          color: Color(0xB2000000),
+                          _isFavorite ? AppIcons.like_fill : AppIcons.like,
+                          color: _isFavorite
+                              ? context.color.territoryColor
+                              : Color(0xB2000000),
                           width: 22,
                           height: 22,
                         ),
@@ -587,6 +596,86 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   return;
                 }
               })),
+    );
+  }
+
+  void _showFavoriteSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: BackdropFilter(
+            filter: dart_ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              height: 74,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: UiUtils.getImage(
+                      "https://via.placeholder.com/50", // Placeholder until real data
+                      width: 42,
+                      height: 42,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Added to all Favourites",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          "Link", // Subtitle/Job Name
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 22),
+                  GestureDetector(
+                    onTap: () {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    },
+                    child: Text(
+                      "CHANGE",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        margin: const EdgeInsets.all(16),
+        padding: EdgeInsets.zero, // Important to let Container handle padding
+        duration: const Duration(seconds: 3),
+      ),
     );
   }
 
