@@ -1627,6 +1627,7 @@ class ItemsListState extends State<ItemsList> {
         selectedcategoryName == "" ? widget.categoryName : selectedcategoryName,
         style: TextStyle(color: context.color.textDefaultColor),
       ),
+      centerTitle: false, // ANTIGRAVITY FIX: Force start alignment on iOS
       iconTheme: IconThemeData(color: context.color.textDefaultColor),
       floating: true,
       snap: true,

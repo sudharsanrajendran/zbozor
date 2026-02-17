@@ -31,8 +31,6 @@ import 'package:Ebozor/utils/network_to_localsvg.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
 import 'dart:ui' as ui;
 
-import 'package:path/path.dart';
-
 class UiUtils {
   static SvgPicture getSvg(String path,
       {Color? color, BoxFit? fit, double? width, double? height}) {
@@ -262,12 +260,21 @@ class UiUtils {
       Color? normalProgressColor,
       bool? showWhite}) {
     if (Constant.useLottieProgress) {
-      return LottieBuilder.asset(
-        "assets/lottie/${showWhite == true ? Constant.progressLottieFileWhite : Constant.loadingSuccessLottieFile}",
-        width: width ?? 70,
-        height: height ?? 70,
-        delegates: const LottieDelegates(values: []),
-      );
+      return Builder(builder: (context) {
+        return LottieBuilder.asset(
+          "assets/lottie/${showWhite == true ? Constant.progressLottieFileWhite : Constant.loadingSuccessLottieFile}",
+          width: width ?? 70,
+          height: height ?? 70,
+          delegates: LottieDelegates(
+            values: [
+              ValueDelegate.color(
+                const ['**'],
+                value: normalProgressColor ?? Colors.red,
+              ),
+            ],
+          ),
+        );
+      });
     } else {
       return SizedBox(
         width: width ?? 70,

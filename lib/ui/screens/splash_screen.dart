@@ -45,6 +45,7 @@ class SplashScreenState extends State<SplashScreen>
   bool isLanguageLoaded = false;
   late StreamSubscription<List<ConnectivityResult>> subscription;
   bool hasInternet = true;
+  bool hasNavigated = false;
 
   @override
   void initState() {
@@ -106,11 +107,14 @@ class SplashScreenState extends State<SplashScreen>
     Timer(const Duration(milliseconds: 500), () {
       isTimerCompleted = true;
       if (mounted) setState(() {});
+      navigateCheck();
     });
   }
 
   void navigateCheck() {
+    if (hasNavigated) return;
     if (isTimerCompleted && isSettingsLoaded && isLanguageLoaded) {
+      hasNavigated = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         navigateToScreen();
       });
@@ -163,7 +167,7 @@ class SplashScreenState extends State<SplashScreen>
       overlays: SystemUiOverlay.values,
     );*/
 
-    navigateCheck();
+    // navigateCheck();
 
     return hasInternet
         ? BlocListener<FetchLanguageCubit, FetchLanguageState>(
@@ -180,6 +184,7 @@ class SplashScreenState extends State<SplashScreen>
                 isLanguageLoaded = true;
                 if (mounted) {
                   setState(() {});
+                  navigateCheck();
                 }
               }
             },
@@ -193,11 +198,13 @@ class SplashScreenState extends State<SplashScreen>
 
                   isSettingsLoaded = true;
                   setState(() {});
+                  navigateCheck();
                 }
                 if (state is FetchSystemSettingsFailure) {
                   // ANTIGRAVITY FIX: Proceed even if settings fail to load to prevent hanging
                   isSettingsLoaded = true;
                   setState(() {});
+                  navigateCheck();
                 }
               },
               child: AnnotatedRegion(

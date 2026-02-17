@@ -45,6 +45,12 @@ final appThemeData = {
       thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
       overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
     ),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      },
+    ),
   ),
   AppTheme.dark: ThemeData(
     brightness: Brightness.dark,
@@ -80,5 +86,11 @@ final appThemeData = {
           }
           return primaryColor_.withOpacity(0.2);
         })),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      },
+    ),
   )
 };

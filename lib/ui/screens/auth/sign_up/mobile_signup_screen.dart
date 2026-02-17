@@ -268,7 +268,7 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                   child: BlocListener<AuthenticationCubit, AuthenticationState>(
                     listener: (context, state) {
                       if (state is AuthenticationSuccess) {
-                        Widgets.hideLoder(context);
+                        // Widgets.hideLoder(context); // Keep loader visible for seamless transition
                         context.read<LoginCubit>().login(
                               phoneNumber: (state.payload as PhoneLoginPayload)
                                   .phoneNumber,

@@ -110,16 +110,19 @@ class _AppState extends State<App> {
                 textScaler: const TextScaler.linear(
                     1.0), //set text scale factor to 1 so that this will not resize app's text while user change their system settings text scale
               ),
-              child: Directionality(
-                textDirection: direction,
-                //This will convert app direction according to language
-                child: DevicePreview(
-                  enabled: false,
+              child: ScrollConfiguration(
+                behavior: GlobalScrollBehavior(),
+                child: Directionality(
+                  textDirection: direction,
+                  //This will convert app direction according to language
+                  child: DevicePreview(
+                    enabled: false,
 
-                  /// Turn on this if you want to test the app in different screen sizes
-                  builder: (context) {
-                    return GlobalInternetListener(child: child!);
-                  },
+                    /// Turn on this if you want to test the app in different screen sizes
+                    builder: (context) {
+                      return GlobalInternetListener(child: child!);
+                    },
+                  ),
                 ),
               ),
             ); /*MediaQuery(
