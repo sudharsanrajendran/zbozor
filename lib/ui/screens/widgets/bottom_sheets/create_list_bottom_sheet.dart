@@ -31,8 +31,8 @@ class _CreateListBottomSheetState extends State<CreateListBottomSheet> {
       decoration: BoxDecoration(
         color: context.color.secondaryColor,
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
         ),
       ),
       child: Column(
@@ -47,13 +47,19 @@ class _CreateListBottomSheetState extends State<CreateListBottomSheet> {
               color: context.color.textDefaultColor,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 14),
           Text(
             "Favorite lists help to keep saved ads organised",
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey,
+              fontWeight: FontWeight.w400
             ),
+          ),
+          const SizedBox(height: 8),
+
+          Divider(
+            color: Colors.grey.withOpacity(0.3),
           ),
           const SizedBox(height: 24),
           TextFormField(
@@ -63,29 +69,30 @@ class _CreateListBottomSheetState extends State<CreateListBottomSheet> {
               hintStyle: TextStyle(
                 color: Colors.grey.withOpacity(0.7),
                 fontSize: 16,
+                fontWeight: FontWeight.w400,
               ),
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                borderSide: BorderSide(color: Colors.grey.withOpacity(0.3),width: 1.25),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                  borderSide: BorderSide(color: Colors.grey.withOpacity(0.3),width: 1.25)
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
-                borderSide: BorderSide(color: context.color.territoryColor),
+                  borderSide: BorderSide(color: Colors.grey.withOpacity(0.3),width: 1.25)
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Row(
             children: [
               SizedBox(
-                height: 24,
-                width: 24,
+                height: 16,
+                width: 16,
                 child: Checkbox(
                   value: _emailMe,
                   onChanged: (value) {
@@ -100,7 +107,7 @@ class _CreateListBottomSheetState extends State<CreateListBottomSheet> {
                       color: Colors.grey.withOpacity(0.5), width: 1.5),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Text(
                 "Email me with similar ads",
                 style: TextStyle(
@@ -111,57 +118,67 @@ class _CreateListBottomSheetState extends State<CreateListBottomSheet> {
             ],
           ),
           const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.grey.withOpacity(0.4)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+
+          Divider(
+            color: Colors.grey.withOpacity(0.3),
+          ),
+          SizedBox(height: 8,),
+          Container(
+width: double.infinity,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.grey.withOpacity(0.4)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: Text(
-                    "Cancel",
-                    style: TextStyle(
-                      color: context.color.textDefaultColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Logic to create list
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey.withOpacity(
-                        0.2), // Disabled look initially or grey as per design? Design shows grey "Create" button
-                    foregroundColor: Colors.black,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: const Text(
-                    "Create",
-                    style: TextStyle(
-                      color: Colors
-                          .grey, // Text color looks grey in design until active
-                      fontWeight: FontWeight.w500,
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(
+                        color: context.color.textDefaultColor,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Logic to create list
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.withOpacity(
+                          0.2), // Disabled look initially or grey as per design? Design shows grey "Create" button
+                      foregroundColor: Colors.black,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: const Text(
+                      "Create",
+                      style: TextStyle(
+                        color: Colors
+                            .grey, // Text color looks grey in design until active
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
