@@ -57,15 +57,15 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: context.color.backgroundColor,
+        backgroundColor: context.color.secondaryColor,
         body: NestedScrollView(
           controller: _scrollController,
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               SliverAppBar(
                 pinned: true,
-                backgroundColor: context.color.backgroundColor,
-                surfaceTintColor: context.color.backgroundColor,
+                backgroundColor: context.color.secondaryColor,
+                surfaceTintColor: context.color.secondaryColor,
                 elevation: 0,
                 leading: BackButton(color: context.color.textDefaultColor),
                 title: _showTitle
@@ -305,7 +305,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8F9FB),
+
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: context.color.borderColor),
                   ),
@@ -325,7 +325,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 10),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.color.backgroundColor,
                           borderRadius: BorderRadius.circular(8),
                           border:
                               Border.all(color: Colors.grey.withOpacity(0.2)),
@@ -374,8 +374,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                             (index) => Container(
                                   margin:
                                       const EdgeInsets.symmetric(horizontal: 3),
-                                  width: 6,
-                                  height: 6,
+                                  width: index ==0?8:6,
+                                  height: index ==0?8:6,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: index == 0

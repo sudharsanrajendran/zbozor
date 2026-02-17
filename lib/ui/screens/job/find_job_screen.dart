@@ -179,7 +179,7 @@ class _FindJobScreenState extends State<FindJobScreen> {
               "View all",
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.blue,
+                color: jobBlueColor,
                 fontWeight: FontWeight.w500,
               ),
             ),
