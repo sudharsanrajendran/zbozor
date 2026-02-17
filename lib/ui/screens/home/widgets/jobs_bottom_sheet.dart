@@ -59,7 +59,7 @@ class JobsBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: _buildOption(
               context,
               title: "Hire Talent",

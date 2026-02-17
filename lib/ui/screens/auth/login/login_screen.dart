@@ -394,6 +394,7 @@ class LoginScreenState extends State<LoginScreen> {
             body: BlocListener<LoginCubit, LoginState>(
               listener: (context, state) {
                 if (state is LoginSuccess) {
+                  // if (mounted) Widgets.hideLoder(context); // Hide loader before navigation
                   HiveUtils.setUserIsAuthenticated(true);
                   //GuestChecker.set(isGuest: false);
                   //context.read<AuthCubit>().updateFCM(context);
@@ -401,6 +402,11 @@ class LoginScreenState extends State<LoginScreen> {
                   context
                       .read<UserDetailsCubit>()
                       .fill(HiveUtils.getUserDetails());
+
+                  if (mounted)
+                    Widgets.hideLoder(
+                        context); // Hide loader immediately before navigation
+
                   // Change: Allow Mobile Users to bypass Profile Completion (fixes "Email Verify" confusion)
                   if (state.isProfileCompleted) {
                     if (HiveUtils.getCityName() != null &&
@@ -442,6 +448,8 @@ class LoginScreenState extends State<LoginScreen> {
                 }
 
                 if (state is LoginFailure) {
+                  if (mounted)
+                    Widgets.hideLoder(context); // Hide loader on failure
                   ////////
                   debugPrint("Login Failure: ${state.errorMessage}");
                   HelperUtils.showSnackBarMessage(
@@ -451,7 +459,7 @@ class LoginScreenState extends State<LoginScreen> {
               child: BlocConsumer<AuthenticationCubit, AuthenticationState>(
                 listener: (context, state) {
                   if (state is AuthenticationSuccess) {
-                    if (mounted) Widgets.hideLoder(context);
+                    // if (mounted) Widgets.hideLoder(context); // Keep loader for continuous UX
 
                     if (state.type == AuthenticationType.email) {
                       //FirebaseAuth.instance.currentUser?.sendEmailVerification();
@@ -469,6 +477,9 @@ class LoginScreenState extends State<LoginScreen> {
                       } else {
                         /*HelperUtils.showSnackBarMessage(
                             context, "Please Verify Your email first");*/
+                        if (mounted)
+                          Widgets.hideLoder(
+                              context); // Hide loader if stopping here
                       }
                     } else if (state.type == AuthenticationType.phone) {
                       context.read<LoginCubit>().login(
