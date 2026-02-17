@@ -14,6 +14,8 @@ import 'package:Ebozor/utils/app_icon.dart';
 import 'package:Ebozor/ui/screens/widgets/blurred_dialoge_box.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
+import 'package:Ebozor/ui/screens/widgets/bottom_sheets/favorite_bottom_sheet.dart';
+import 'package:Ebozor/ui/screens/job/find_job_application_screen.dart';
 
 class JobDetailsScreen extends StatefulWidget {
   const JobDetailsScreen({super.key});
@@ -219,7 +221,15 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                       ),
                       elevation: 0,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const FindJobApplicationScreen(),
+                        ),
+                      );
+                    },
                     child: const Text(
                       "Apply",
                       style: TextStyle(
@@ -305,7 +315,6 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: context.color.borderColor),
                   ),
@@ -374,8 +383,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                             (index) => Container(
                                   margin:
                                       const EdgeInsets.symmetric(horizontal: 3),
-                                  width: index ==0?8:6,
-                                  height: index ==0?8:6,
+                                  width: index == 0 ? 8 : 6,
+                                  height: index == 0 ? 8 : 6,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: index == 0
@@ -401,7 +410,15 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                       ),
                       elevation: 0,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const FindJobApplicationScreen(),
+                        ),
+                      );
+                    },
                     child: const Text(
                       "Apply",
                       style: TextStyle(
@@ -654,6 +671,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   GestureDetector(
                     onTap: () {
                       ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const FavoriteBottomSheet(),
+                      );
                     },
                     child: Text(
                       "CHANGE",

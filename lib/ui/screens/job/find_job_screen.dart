@@ -4,6 +4,7 @@ import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/utils/app_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:Ebozor/app/routes.dart';
+import 'package:Ebozor/ui/screens/job/find_job_categories_screen.dart';
 import 'package:flutter_svg/svg.dart';
 
 class FindJobScreen extends StatefulWidget {
@@ -94,7 +95,14 @@ class _FindJobScreenState extends State<FindJobScreen> {
                     const SizedBox(height: 12),
                     _buildPopularJobsList(),
                     const SizedBox(height: 16),
-                    _buildSectionTitle("Jobs By Category", onViewAll: () {}),
+                    _buildSectionTitle("Jobs By Category", onViewAll: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const FindJobCategoriesScreen(),
+                        ),
+                      );
+                    }),
                     const SizedBox(height: 12),
                     _buildCategoryGrid(),
                     const SizedBox(height: 16),
