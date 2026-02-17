@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'package:Ebozor/ui/screens/home/home_screen.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:Ebozor/ui/screens/home/home_screen.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
@@ -81,13 +82,18 @@ class _SellerVerificationCompleteScreenState
     }
   }
 
+  bool _isNavigating = false;
+
   void _navigateBackToProfile() {
+    if (_isNavigating) return;
+    _isNavigating = true;
+
     if (mounted)
       Future.delayed(Duration(milliseconds: 500), () {
         if (mounted) {
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context,'refresh');
+          if (Navigator.canPop(context)) Navigator.pop(context);
+          if (Navigator.canPop(context)) Navigator.pop(context);
+          if (Navigator.canPop(context)) Navigator.pop(context, 'refresh');
         }
       });
   }
@@ -109,7 +115,8 @@ class _SellerVerificationCompleteScreenState
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Flexible(
-                child: Lottie.asset("assets/lottie/${Constant.successItemLottieFile}",
+                child: Lottie.asset(
+                    "assets/lottie/${Constant.successItemLottieFile}",
                     repeat: false),
               ),
               SlideTransition(
