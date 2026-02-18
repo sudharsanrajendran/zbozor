@@ -152,12 +152,12 @@ class SplashScreenState extends State<SplashScreen>
               HiveUtils.getUserDetails().name == "") ||
           (HiveUtils.getUserDetails().email == null ||
               HiveUtils.getUserDetails().email == "")) {
+        // If name or email is empty, it means the user didn't complete the sign-up flow.
+        // We force them to login again.
+        HiveUtils.logoutUser(context, onLogout: () {}, isRedirect: false);
         Navigator.pushReplacementNamed(
           context,
-          Routes.completeProfile,
-          arguments: {
-            "from": "login",
-          },
+          Routes.login,
         );
       } else {
         if (mounted) {
