@@ -357,6 +357,7 @@ class UiUtils {
       List<Widget>? bottom,
       double? bottomHeight,
       bool? hideTopBorder,
+      bool? hideBottomBorder,
       VoidCallback? onBackPress,
       Color? backgroundColor}) {
     return PreferredSize(
@@ -371,8 +372,8 @@ class UiUtils {
               borderWidth: 1.5,
               contentBackgroundColor:
                   backgroundColor ?? context.color.secondaryColor,
-              bottomLeft: true,
-              bottomRight: true,
+              bottomLeft: !(hideBottomBorder ?? false),
+              bottomRight: !(hideBottomBorder ?? false),
               topLeft: false,
               topRight: false,
               child: Container(

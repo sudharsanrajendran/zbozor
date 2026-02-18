@@ -25,6 +25,7 @@ class FindJobCategoriesScreen extends StatelessWidget {
         context,
         title: "Jobs",
         showBackButton: true,
+        hideBottomBorder: true,
       ),
       body: ListView(
         children: [
@@ -37,7 +38,7 @@ class FindJobCategoriesScreen extends StatelessWidget {
                 style: TextStyle(
                   color: context.color.textDefaultColor,
                   fontWeight: FontWeight.w500,
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
               ),
               iconColor: context.color.textDefaultColor,
@@ -45,13 +46,20 @@ class FindJobCategoriesScreen extends StatelessWidget {
               children: categories.map((category) {
                 return Column(
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Divider(
+                        height: 2,
+                        color: Colors.grey.withOpacity(0.3),
+                      ),
+                    ),
                     ListTile(
                       title: Text(
                         category,
                         style: TextStyle(
                           color:
                               context.color.textDefaultColor.withOpacity(0.7),
-                          fontSize: 15,
+                          fontSize: 14,
                         ),
                       ),
                       onTap: () {
@@ -65,19 +73,19 @@ class FindJobCategoriesScreen extends StatelessWidget {
                         );
                       },
                       contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16),
+                          const EdgeInsets.only(left: 16, right: 16, top: 14),
                       dense: true,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Divider(
-                        height: 1,
-                        color: Colors.grey.withOpacity(0.1),
-                      ),
                     ),
                   ],
                 );
               }).toList(),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Divider(
+              height: 2,
+              color: Colors.grey.withOpacity(0.3),
             ),
           ),
           Theme(
@@ -88,7 +96,7 @@ class FindJobCategoriesScreen extends StatelessWidget {
                 style: TextStyle(
                   color: context.color.textDefaultColor,
                   fontWeight: FontWeight.w500,
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
               ),
               iconColor: context.color.textDefaultColor,
@@ -99,7 +107,7 @@ class FindJobCategoriesScreen extends StatelessWidget {
                     "Other Jobs",
                     style: TextStyle(
                       color: context.color.textDefaultColor.withOpacity(0.7),
-                      fontSize: 15,
+                      fontSize: 14,
                     ),
                   ),
                   onTap: () {

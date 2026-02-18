@@ -70,7 +70,31 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 backgroundColor: context.color.secondaryColor,
                 surfaceTintColor: context.color.secondaryColor,
                 elevation: 0,
-                leading: BackButton(color: context.color.textDefaultColor),
+                leading: Material(
+                  clipBehavior: Clip.antiAlias,
+                  color: Colors.transparent,
+                  type: MaterialType.circle,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: Directionality(
+                        textDirection: Directionality.of(context),
+                        child: RotatedBox(
+                          quarterTurns: Directionality.of(context) ==
+                                  dart_ui.TextDirection.rtl
+                              ? 2
+                              : -4,
+                          child: UiUtils.getSvg(AppIcons.arrowLeft,
+                              fit: BoxFit.none,
+                              color: context.color.textDefaultColor),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 title: _showTitle
                     ? Column(
                         mainAxisSize: MainAxisSize.min,
@@ -489,7 +513,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
               style: TextStyle(
                 fontSize: 14,
                 color: context.color.textDefaultColor,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w400,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -516,7 +540,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: context.color.textDefaultColor,
                   ),
                 ),
@@ -550,7 +574,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
       child: Column(
         children: [
           SizedBox(
-            height: 10,
+            height: 5,
           ),
           InkWell(
             onTap: () {
@@ -580,7 +604,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             ),
           ),
           SizedBox(
-            height: 12,
+            height: 6,
           ),
         ],
       ),
