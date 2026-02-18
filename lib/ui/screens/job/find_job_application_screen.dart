@@ -79,6 +79,7 @@ class _FindJobApplicationScreenState extends State<FindJobApplicationScreen> {
                   const SizedBox(height: 16),
                   _buildLabel("Email Id"),
                   _buildTextField(_emailController, "Cliff Clavin12@gmail.com"),
+
                   _buildHelperText(
                       "This wont affect your login credentials for ebozor"),
                   const SizedBox(height: 16),
@@ -134,7 +135,7 @@ class _FindJobApplicationScreenState extends State<FindJobApplicationScreen> {
 
   Widget _buildLabel(String label) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Text(
         label,
         style: TextStyle(
@@ -148,13 +149,11 @@ class _FindJobApplicationScreenState extends State<FindJobApplicationScreen> {
 
   Widget _buildHelperText(String text) {
     return Padding(
-      padding: const EdgeInsets.only(top: 4.0),
+      padding: const EdgeInsets.only(top: 8),
       child: Text(
         text,
         style: TextStyle(
-          fontSize: 12,
-          color: Colors.grey,
-        ),
+            fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w400),
       ),
     );
   }
@@ -171,16 +170,19 @@ class _FindJobApplicationScreenState extends State<FindJobApplicationScreen> {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+          borderRadius: BorderRadius.circular(6),
+          borderSide:
+              BorderSide(color: Colors.grey.withOpacity(0.6), width: 1.25),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+          borderRadius: BorderRadius.circular(6),
+          borderSide:
+              BorderSide(color: Colors.grey.withOpacity(0.6), width: 1.25),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: context.color.territoryColor),
+          borderRadius: BorderRadius.circular(6),
+          borderSide:
+              BorderSide(color: Colors.grey.withOpacity(0.6), width: 1.25),
         ),
         filled: true,
         fillColor: Colors.white, // As per screenshot, fields look white
@@ -197,14 +199,14 @@ class _FindJobApplicationScreenState extends State<FindJobApplicationScreen> {
         });
       },
       child: Container(
+        height: 50,
         padding: const EdgeInsets.symmetric(vertical: 14),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(7),
           border: Border.all(
             color: isSelected ? Colors.black : Colors.grey.withOpacity(0.3),
           ),
-          color: isSelected ? Colors.grey.withOpacity(0.1) : Colors.white,
         ),
         child: Text(
           title,
@@ -221,54 +223,62 @@ class _FindJobApplicationScreenState extends State<FindJobApplicationScreen> {
 
   Widget _buildBottomBar() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: context.color.secondaryColor,
-        border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.1))),
+        // border: Border(top: BorderSide(color: Colors.grey.withOpacity(0.1))), // Removed border
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-            child: OutlinedButton(
-              onPressed: _clearAll,
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: context.color.textDefaultColor),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+            flex: 1,
+            child: SizedBox(
+              height: 38,
+              child: OutlinedButton(
+                onPressed: _clearAll,
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: context.color.textDefaultColor),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  padding: EdgeInsets.zero,
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: Text(
-                "Clear All",
-                style: TextStyle(
-                  color: context.color.textDefaultColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                child: Text(
+                  "Clear All",
+                  style: TextStyle(
+                    color: context.color.textDefaultColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Expanded(
-            flex: 2, // Save & Apply is wider
-            child: ElevatedButton(
-              onPressed: () {
-                // Apply logic
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+            flex: 2,
+            child: SizedBox(
+              height: 38,
+              child: ElevatedButton(
+                onPressed: () {
+                  // Apply logic
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  padding: EdgeInsets.zero,
+                  elevation: 0,
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                elevation: 0,
-              ),
-              child: const Text(
-                "Save & Apply",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                child: const Text(
+                  "Save & Apply",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
                 ),
               ),
             ),

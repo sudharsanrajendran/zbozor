@@ -15,6 +15,7 @@ import 'package:Ebozor/ui/screens/widgets/blurred_dialoge_box.dart';
 import 'package:Ebozor/utils/constant.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/ui/screens/widgets/bottom_sheets/favorite_bottom_sheet.dart';
+import 'package:Ebozor/ui/screens/widgets/bottom_sheets/create_list_bottom_sheet.dart';
 import 'package:Ebozor/ui/screens/job/find_job_application_screen.dart';
 
 class JobDetailsScreen extends StatefulWidget {
@@ -212,7 +213,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 // Apply Button
                 SizedBox(
                   width: double.infinity,
-                  height: 48,
+                  height: 38,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF191919), // Dark/Black
@@ -401,7 +402,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 const SizedBox(height: 14),
                 SizedBox(
                   width: double.infinity,
-                  height: 48,
+                  height: 38,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF191919), // Dark/Black
@@ -616,6 +617,31 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
     );
   }
 
+  void _showCreateListBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => CreateListBottomSheet(
+        onCancel: () {
+          Navigator.pop(context); // Close CreateListBottomSheet
+          // Re-open FavoriteBottomSheet
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => FavoriteBottomSheet(
+              onCreateListTap: () {
+                Navigator.pop(context);
+                _showCreateListBottomSheet(context);
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   void _showFavoriteSnackBar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -675,7 +701,12 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
-                        builder: (context) => const FavoriteBottomSheet(),
+                        builder: (context) => FavoriteBottomSheet(
+                          onCreateListTap: () {
+                            Navigator.pop(context);
+                            _showCreateListBottomSheet(context);
+                          },
+                        ),
                       );
                     },
                     child: Text(

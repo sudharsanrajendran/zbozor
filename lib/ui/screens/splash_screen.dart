@@ -96,6 +96,8 @@ class SplashScreenState extends State<SplashScreen>
       }
     } catch (e) {
       log("Error while load default language $e");
+      isLanguageLoaded = true;
+      setState(() {});
     }
   }
 
@@ -181,6 +183,15 @@ class SplashScreenState extends State<SplashScreen>
 
                 HiveUtils.storeLanguage(map);
                 context.read<LanguageCubit>().emit(LanguageLoader(map));
+                isLanguageLoaded = true;
+                if (mounted) {
+                  setState(() {});
+                  navigateCheck();
+                }
+              }
+              if (state is FetchLanguageFailure) {
+                // Handle failure: proceed with default language so app doesn't freeze
+                log("FetchLanguageFailure: ${state.errorMessage}");
                 isLanguageLoaded = true;
                 if (mounted) {
                   setState(() {});

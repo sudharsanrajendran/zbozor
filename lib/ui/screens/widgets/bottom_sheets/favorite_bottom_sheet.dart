@@ -5,7 +5,8 @@ import 'package:Ebozor/utils/ui_utils.dart';
 import 'package:Ebozor/ui/screens/widgets/bottom_sheets/create_list_bottom_sheet.dart';
 
 class FavoriteBottomSheet extends StatelessWidget {
-  const FavoriteBottomSheet({super.key});
+  final VoidCallback? onCreateListTap;
+  const FavoriteBottomSheet({super.key, this.onCreateListTap});
 
   @override
   Widget build(BuildContext context) {
@@ -91,12 +92,17 @@ class FavoriteBottomSheet extends StatelessWidget {
                       ),
                       TextButton.icon(
                         onPressed: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            backgroundColor: Colors.transparent,
-                            builder: (context) => const CreateListBottomSheet(),
-                          );
+                          if (onCreateListTap != null) {
+                            onCreateListTap!.call();
+                          } else {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) =>
+                                  const CreateListBottomSheet(),
+                            );
+                          }
                         },
                         icon: Icon(Icons.add,
                             size: 16,
