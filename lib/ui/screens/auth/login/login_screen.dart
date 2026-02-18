@@ -426,30 +426,47 @@ class LoginScreenState extends State<LoginScreen> {
                           "countryCode": countryCode
                         });
                   } else {
-                    Navigator.pushNamed(
-                      context,
-                      Routes.completeProfile,
-                      arguments: {
-                        "from": "login",
-                        "popToCurrent": false,
-                        "type": isMobileNumberField
-                            ? AuthenticationType.phone
-                            : AuthenticationType.email,
-                        "extraData": {
-                          "email": state.credential.user?.email ??
-                              state.apiResponse['email'],
-                          "username": state.apiResponse['name'],
-                          "mobile": state.apiResponse['mobile'],
-                          "countryCode": countryCode
-                        }
-                      },
-                    );
+                    if (FirebaseAuth.instance.currentUser?.emailVerified ??
+                        false) {
+                      if (HiveUtils.getCityName() != null &&
+                          HiveUtils.getCityName() != "") {
+                        HelperUtils.killPreviousPages(
+                            context, Routes.main, {"from": "login"});
+                      } else {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            Routes.main, (route) => false,
+                            arguments: {"from": "login"});
+                      }
+                    } else {
+                      Navigator.pushNamed(
+                        context,
+                        Routes.completeProfile,
+                        arguments: {
+                          "from": "login",
+                          "popToCurrent": false,
+                          "type": isMobileNumberField
+                              ? AuthenticationType.phone
+                              : AuthenticationType.email,
+                          "extraData": {
+                            "email": state.credential.user?.email ??
+                                state.apiResponse['email'],
+                            "username": state.apiResponse['name'],
+                            "mobile": state.apiResponse['mobile'],
+                            "countryCode": countryCode
+                          }
+                        },
+                      );
+                    }
                   }
                 }
 
                 if (state is LoginFailure) {
                   if (mounted)
                     Widgets.hideLoder(context); // Hide loader on failure
+
+                  // Fix: Suppress error if we are actually logged in (Race condition or phantom error)
+                  if (HiveUtils.isUserAuthenticated()) return;
+
                   ////////
                   debugPrint("Login Failure: ${state.errorMessage}");
                   HelperUtils.showSnackBarMessage(

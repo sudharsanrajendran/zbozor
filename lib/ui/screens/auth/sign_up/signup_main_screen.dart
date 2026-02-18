@@ -503,7 +503,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
                         .fill(HiveUtils.getUserDetails());
 
                     // Change: Allow Mobile Users to bypass Profile Completion
-                    if (state.isProfileCompleted || isMobileNumberField) {
+                    if (state.isProfileCompleted) {
                       if (HiveUtils.getCityName() != null &&
                           HiveUtils.getCityName() != "") {
                         HelperUtils.killPreviousPages(

@@ -4,6 +4,8 @@ import 'package:Ebozor/data/cubits/system/user_details.dart';
 import 'package:Ebozor/ui/screens/widgets/custom_text_form_field.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
+import 'package:Ebozor/data/repositories/auth_repository.dart';
+import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/utils/helper_utils.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
@@ -92,57 +94,86 @@ class _PhoneLoginUserDetailsScreenState
     }
   }
 
+  final AuthRepository _authRepository = AuthRepository();
+
+  void _onBackPress() {
+    _authRepository.deleteUser().then((value) {
+      HiveUtils.setUserIsAuthenticated(false);
+      HiveUtils.clear();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        Routes.login,
+        (route) => false,
+      );
+    }).catchError((e) {
+      HiveUtils.setUserIsAuthenticated(false);
+      HiveUtils.clear();
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        Routes.login,
+        (route) => false,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: context.color.primaryColor,
-      appBar: UiUtils.buildAppBar(context,
-          title: "Complete Profile".translate(context), showBackButton: true),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(20.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Enter Details To Continue".translate(context))
-                      .size(context.font.normal)
-                      .color(context.color.textColorDark),
-                  SizedBox(height: 20.rh(context)),
-                  buildTextField(
-                    context,
-                    title: "FullName",
-                    controller: nameController,
-                    validator: CustomTextFieldValidator.nullCheck,
-                  ),
-                  buildTextField(
-                    context,
-                    title: "Email Address",
-                    controller: emailController,
-                    validator: CustomTextFieldValidator.email,
-                  ),
-                  SizedBox(height: 30.rh(context)),
-                  UiUtils.buildButton(
-                    context,
-                    onPressed: () {
-                      validateAndSubmit();
-                    },
-                    height: 48.rh(context),
-                    buttonTitle: "continue".translate(context),
-                  ),
-                ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        _onBackPress();
+      },
+      child: Scaffold(
+        backgroundColor: context.color.primaryColor,
+        appBar: UiUtils.buildAppBar(context,
+            title: "Complete Profile".translate(context),
+            showBackButton: true,
+            onBackPress: _onBackPress),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(20.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Enter Details To Continue".translate(context))
+                        .size(context.font.normal)
+                        .color(context.color.textColorDark),
+                    SizedBox(height: 20.rh(context)),
+                    buildTextField(
+                      context,
+                      title: "FullName",
+                      controller: nameController,
+                      validator: CustomTextFieldValidator.nullCheck,
+                    ),
+                    buildTextField(
+                      context,
+                      title: "Email Address",
+                      controller: emailController,
+                      validator: CustomTextFieldValidator.email,
+                    ),
+                    SizedBox(height: 30.rh(context)),
+                    UiUtils.buildButton(
+                      context,
+                      onPressed: () {
+                        validateAndSubmit();
+                      },
+                      height: 48.rh(context),
+                      buttonTitle: "continue".translate(context),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          if (isLoading)
-            Center(
-              child: UiUtils.progress(
-                normalProgressColor: context.color.territoryColor,
+            if (isLoading)
+              Center(
+                child: UiUtils.progress(
+                  normalProgressColor: context.color.territoryColor,
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

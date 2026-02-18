@@ -50,8 +50,8 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
         desiredAccuracy: LocationAccuracy.high);
 
     // Use geocoding to get the address details.
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude, position.longitude);
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
 
     if (placemarks.isNotEmpty) {
       Placemark placemark = placemarks[0];
@@ -102,7 +102,8 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
             ElevatedButton(
               onPressed: _getCurrentLocation,
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.black, backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.white,
                 side: BorderSide(color: Colors.grey),
                 padding: EdgeInsets.all(16),
               ),
@@ -118,7 +119,8 @@ class _SelectLocationScreenState extends State<SelectLocationScreen> {
             ElevatedButton(
               onPressed: _navigateToCountryScreen,
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.black, backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.white,
                 side: BorderSide(color: Colors.grey),
                 padding: EdgeInsets.all(16),
               ),
