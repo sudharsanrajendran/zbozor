@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:Ebozor/ui/screens/job/job_filter_screen.dart';
 import 'package:Ebozor/utils/app_icon.dart';
+import 'package:flutter/rendering.dart';
 
 class JobCategoriesItemScreen extends StatefulWidget {
   final String categoryName;
@@ -16,47 +17,82 @@ class JobCategoriesItemScreen extends StatefulWidget {
 }
 
 class _JobCategoriesItemScreenState extends State<JobCategoriesItemScreen> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isFabVisible = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (_isFabVisible) {
+          setState(() {
+            _isFabVisible = false;
+          });
+        }
+      } else if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (!_isFabVisible) {
+          setState(() {
+            _isFabVisible = true;
+          });
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        height: 42,
-        width: 80,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(6),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(6),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  "assets/svg/savefiltericon.svg",
-                  width: 20,
-                  height: 20,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  "Save",
-                  style: TextStyle(
-                    color: context.color.textDefaultColor,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
+      floatingActionButton: AnimatedSlide(
+        duration: const Duration(milliseconds: 300),
+        offset: _isFabVisible ? Offset.zero : const Offset(0, 2),
+        child: Container(
+          height: 42,
+          width: 80,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(6),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: InkWell(
+            onTap: () {},
+            borderRadius: BorderRadius.circular(6),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    "assets/svg/savefiltericon.svg",
+                    width: 20,
+                    height: 20,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 6),
+                  Text(
+                    "Save",
+                    style: TextStyle(
+                      color: context.color.textDefaultColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -140,6 +176,7 @@ class _JobCategoriesItemScreenState extends State<JobCategoriesItemScreen> {
         ),
       ),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           children: [
             // Filter Row

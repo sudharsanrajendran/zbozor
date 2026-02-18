@@ -1,6 +1,9 @@
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
+import 'package:Ebozor/utils/ui_utils.dart';
+import 'package:Ebozor/utils/app_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class JobFilterScreen extends StatefulWidget {
   const JobFilterScreen({super.key});
@@ -27,16 +30,46 @@ class _JobFilterScreenState extends State<JobFilterScreen> {
     return Scaffold(
       backgroundColor: context.color.secondaryColor,
       appBar: AppBar(
+        centerTitle: false,
         backgroundColor: context.color.secondaryColor,
         elevation: 0,
-        leading: BackButton(color: context.color.textDefaultColor),
-        centerTitle: true,
+        leading: Padding(
+          padding: const EdgeInsets.only(top: 0),
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: Material(
+              clipBehavior: Clip.hardEdge,
+              color: Colors.transparent,
+              shape: const CircleBorder(),
+              child: InkWell(
+                onTap: () => Navigator.pop(context),
+                child: Center(
+                  child: Directionality(
+                    textDirection: Directionality.of(context),
+                    child: RotatedBox(
+                      quarterTurns:
+                          Directionality.of(context) == TextDirection.rtl
+                              ? 2
+                              : -4,
+                      child: UiUtils.getSvg(
+                        AppIcons.arrowLeft,
+                        fit: BoxFit.none,
+                        color: context.color.textDefaultColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
         title: Text(
           "Filter",
           style: TextStyle(
             color: context.color.textDefaultColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
           ),
         ),
         actions: [
@@ -44,11 +77,11 @@ class _JobFilterScreenState extends State<JobFilterScreen> {
             onPressed: () {
               // Reset logic here
             },
-            child: const Text(
+            child: Text(
               "Reset",
               style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
+                color: context.color.territoryColor,
+                fontWeight: FontWeight.w700,
                 fontSize: 14,
               ),
             ),
@@ -113,13 +146,12 @@ class _JobFilterScreenState extends State<JobFilterScreen> {
                   Row(
                     children: [
                       _buildBoxFilter("Ads With\nVideo",
-                          Icons.videocam_outlined, adsWithVideo, () {
+                          "assets/svg/morefiltericon.svg", adsWithVideo, () {
                         setState(() => adsWithVideo = !adsWithVideo);
                       }),
                       const SizedBox(width: 12),
-                      _buildBoxFilter(
-                          "Ads With\n360 Tour", Icons.threesixty, adsWith360,
-                          () {
+                      _buildBoxFilter("Ads With\n360 Tour",
+                          "assets/svg/morefiltericon.svg", adsWith360, () {
                         setState(() => adsWith360 = !adsWith360);
                       }),
                     ],
@@ -133,13 +165,13 @@ class _JobFilterScreenState extends State<JobFilterScreen> {
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
               width: double.infinity,
-              height: 48,
+              height: 38,
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Using red as per design
+                  backgroundColor: context.color.territoryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -149,8 +181,8 @@ class _JobFilterScreenState extends State<JobFilterScreen> {
                   "Show 10,642 Results",
                   style: TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
                   ),
                 ),
               ),
@@ -168,7 +200,7 @@ class _JobFilterScreenState extends State<JobFilterScreen> {
         title,
         style: TextStyle(
           fontSize: 16,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w700,
           color: context.color.textDefaultColor,
         ),
       ),
@@ -177,38 +209,44 @@ class _JobFilterScreenState extends State<JobFilterScreen> {
 
   Widget _buildChipGroup(
       List<String> options, String selected, Function(String) onSelect) {
-    return Wrap(
-      spacing: 8.0,
-      runSpacing: 8.0,
-      children: options.map((option) {
-        final isSelected = option == selected;
-        return GestureDetector(
-          onTap: () => onSelect(option),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: context.color.secondaryColor,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: isSelected
-                    ? context.color.textDefaultColor
-                    : Colors.grey.withOpacity(0.3),
-                width: isSelected ? 1.5 : 1,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: options.map((option) {
+          final isSelected = option == selected;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: GestureDetector(
+              onTap: () => onSelect(option),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: context.color.secondaryColor,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isSelected
+                        ? context.color.textDefaultColor
+                        : Colors.grey.withOpacity(0.3),
+                    width: isSelected ? 1.5 : 1,
+                  ),
+                ),
+                child: Text(
+                  option,
+                  style: TextStyle(
+                    color: isSelected
+                        ? context.color.textDefaultColor
+                        : Colors.grey.withOpacity(0.5),
+                    fontSize: 13,
+                    fontWeight:
+                        isSelected ? FontWeight.w500 : FontWeight.normal,
+                  ),
+                ),
               ),
             ),
-            child: Text(
-              option,
-              style: TextStyle(
-                color: isSelected
-                    ? context.color.textDefaultColor
-                    : Colors.grey.withOpacity(0.5),
-                fontSize: 13,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-              ),
-            ),
-          ),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -226,9 +264,12 @@ class _JobFilterScreenState extends State<JobFilterScreen> {
             color: Colors.grey.withOpacity(0.5),
             fontSize: 14,
           ),
-          prefixIcon: Icon(
-            Icons.search,
-            color: Colors.grey.withOpacity(0.5),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: UiUtils.getSvg(
+              AppIcons.search,
+              color: Colors.grey.withOpacity(0.5),
+            ),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 14),
@@ -238,7 +279,7 @@ class _JobFilterScreenState extends State<JobFilterScreen> {
   }
 
   Widget _buildBoxFilter(
-      String title, IconData icon, bool isSelected, VoidCallback onTap) {
+      String title, dynamic icon, bool isSelected, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -256,11 +297,19 @@ class _JobFilterScreenState extends State<JobFilterScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: Colors.grey,
-              size: 28,
-            ),
+            icon is String
+                ? SvgPicture.asset(
+                    icon,
+                    width: 28,
+                    height: 28,
+                    colorFilter:
+                        const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+                  )
+                : Icon(
+                    icon,
+                    color: Colors.grey,
+                    size: 28,
+                  ),
             const SizedBox(height: 8),
             Text(
               title,
