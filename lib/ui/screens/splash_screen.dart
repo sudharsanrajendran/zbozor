@@ -111,9 +111,21 @@ class SplashScreenState extends State<SplashScreen>
       if (mounted) setState(() {});
       navigateCheck();
     });
+    // Watchdog to prevent splash freeze
+    Timer(const Duration(seconds: 4), () {
+      if (!hasNavigated && mounted) {
+        log("Watchdog Triggered: Timer:$isTimerCompleted, Settings:$isSettingsLoaded, Lang:$isLanguageLoaded");
+        if (!isSettingsLoaded) isSettingsLoaded = true;
+        if (!isLanguageLoaded) isLanguageLoaded = true;
+        isTimerCompleted = true;
+        setState(() {});
+        navigateCheck();
+      }
+    });
   }
 
   void navigateCheck() {
+    log("NavigateCheck: Timer:$isTimerCompleted, Settings:$isSettingsLoaded, Lang:$isLanguageLoaded, Navigated:$hasNavigated");
     if (hasNavigated) return;
     if (isTimerCompleted && isSettingsLoaded && isLanguageLoaded) {
       hasNavigated = true;

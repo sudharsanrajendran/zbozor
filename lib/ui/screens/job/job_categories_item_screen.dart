@@ -59,7 +59,7 @@ class _JobCategoriesItemScreenState extends State<JobCategoriesItemScreen> {
           height: 42,
           width: 80,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.color.secondaryColor,
             borderRadius: BorderRadius.circular(6),
             boxShadow: [
               BoxShadow(

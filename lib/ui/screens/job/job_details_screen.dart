@@ -122,10 +122,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                 centerTitle: false,
                 actions: [
                   // Favorite Button
+                  // Favorite Button
                   Container(
                     width: 30,
                     height: 30,
-                    margin: EdgeInsets.symmetric(horizontal: 6),
+                    margin: const EdgeInsets.symmetric(horizontal: 6),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(28),
                       onTap: () {
@@ -141,7 +142,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                           _isFavorite ? AppIcons.like_fill : AppIcons.like,
                           color: _isFavorite
                               ? context.color.territoryColor
-                              : Color(0xB2000000),
+                              : context.color.textDefaultColor.withOpacity(0.7),
                           width: 22,
                           height: 22,
                         ),
@@ -152,7 +153,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                   Container(
                     width: 30,
                     height: 30,
-                    margin: EdgeInsets.only(right: 16, left: 5),
+                    margin: const EdgeInsetsDirectional.only(end: 16, start: 5),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(28),
                       onTap: () {
@@ -162,7 +163,8 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         child: Icon(
                           Icons.share_outlined,
                           size: 22,
-                          color: Color(0xB2000000),
+                          color:
+                              context.color.textDefaultColor.withOpacity(0.7),
                         ),
                       ),
                     ),

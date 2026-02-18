@@ -74,7 +74,8 @@ class _FindJobScreenState extends State<FindJobScreen> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, top: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16)
+                    .copyWith(top: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -185,7 +185,7 @@ class _FindJobApplicationScreenState extends State<FindJobApplicationScreen> {
               BorderSide(color: Colors.grey.withOpacity(0.6), width: 1.25),
         ),
         filled: true,
-        fillColor: Colors.white, // As per screenshot, fields look white
+        fillColor: context.color.secondaryColor,
       ),
     );
   }

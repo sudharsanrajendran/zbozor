@@ -72,8 +72,8 @@ class FindJobCategoriesScreen extends StatelessWidget {
                           ),
                         );
                       },
-                      contentPadding:
-                          const EdgeInsets.only(left: 16, right: 16, top: 14),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16)
+                          .copyWith(top: 14),
                       dense: true,
                     ),
                   ],
