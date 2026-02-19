@@ -15,7 +15,6 @@ import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/LocalStoreage/hive_utils.dart';
 import 'package:Ebozor/utils/responsiveSize.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
-import 'package:Ebozor/data/repositories/system_repository.dart';
 
 // import 'package:flutter/services.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
@@ -46,24 +45,44 @@ class SplashScreenState extends State<SplashScreen>
   late StreamSubscription<List<ConnectivityResult>> subscription;
   bool hasInternet = true;
   bool hasNavigated = false;
+  bool isBootstrapping = false;
 
   @override
   void initState() {
     //locationPermission();
     super.initState();
+    checkInitialConnectivity();
 
     subscription = Connectivity().onConnectivityChanged.listen((result) {
-      setState(() {
-        hasInternet = (!result.contains(ConnectivityResult.none));
-        //hasInternet = result != ConnectivityResult.none;
-      });
-      if (hasInternet) {
-        getDefaultLanguage();
-
-        checkIsUserAuthenticated();
-        startTimer();
+      bool connected = !result.contains(ConnectivityResult.none);
+      if (mounted) {
+        setState(() {
+          hasInternet = connected;
+        });
+      }
+      if (connected && !isBootstrapping) {
+        bootstrap();
       }
     });
+  }
+
+  void checkInitialConnectivity() async {
+    var result = await Connectivity().checkConnectivity();
+    bool connected = !result.contains(ConnectivityResult.none);
+    if (mounted) {
+      setState(() {
+        hasInternet = connected;
+      });
+    }
+    if (connected && !isBootstrapping) {
+      bootstrap();
+    }
+  }
+
+  void bootstrap() {
+    isBootstrapping = true;
+    checkIsUserAuthenticated();
+    startTimer();
   }
 
   @override
@@ -77,29 +96,6 @@ class SplashScreenState extends State<SplashScreen>
       await Permission.location.request();
     }
   }*/
-
-  Future getDefaultLanguage() async {
-    try {
-      Map result = await SystemRepository().fetchSystemSettings();
-
-      var code = (result['data']['default_language']);
-
-      if (HiveUtils.getLanguage() == null ||
-          HiveUtils.getLanguage()?['data'] == null) {
-        context.read<FetchLanguageCubit>().getLanguage(code);
-      } else if (HiveUtils.isUserFirstTime() == true &&
-          code != HiveUtils.getLanguage()?['code']) {
-        context.read<FetchLanguageCubit>().getLanguage(code);
-      } else {
-        isLanguageLoaded = true;
-        setState(() {});
-      }
-    } catch (e) {
-      log("Error while load default language $e");
-      isLanguageLoaded = true;
-      setState(() {});
-    }
-  }
 
   void checkIsUserAuthenticated() async {
     context.read<FetchSystemSettingsCubit>().fetchSettings(forceRefresh: true);
@@ -219,6 +215,21 @@ class SplashScreenState extends State<SplashScreen>
                       .read<FetchSystemSettingsCubit>()
                       .getSetting(SystemSetting.demoMode);
 
+                  // ANTIGRAVITY FIX: Optimize language loading by chaining it here
+                  var settings = state.settings['data'];
+                  var code = settings['default_language'];
+
+                  if (HiveUtils.getLanguage() == null ||
+                      HiveUtils.getLanguage()?['data'] == null) {
+                    context.read<FetchLanguageCubit>().getLanguage(code);
+                  } else if (HiveUtils.isUserFirstTime() == true &&
+                      code != HiveUtils.getLanguage()?['code']) {
+                    context.read<FetchLanguageCubit>().getLanguage(code);
+                  } else {
+                    isLanguageLoaded = true;
+                    if (mounted) setState(() {});
+                  }
+
                   isSettingsLoaded = true;
                   setState(() {});
                   navigateCheck();
@@ -226,6 +237,8 @@ class SplashScreenState extends State<SplashScreen>
                 if (state is FetchSystemSettingsFailure) {
                   // ANTIGRAVITY FIX: Proceed even if settings fail to load to prevent hanging
                   isSettingsLoaded = true;
+                  isLanguageLoaded =
+                      true; // Ensure language is marked loaded if settings fail
                   setState(() {});
                   navigateCheck();
                 }

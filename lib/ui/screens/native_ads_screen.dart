@@ -21,11 +21,14 @@ class NativeAdWidget extends StatefulWidget {
 class _NativeAdWidgetState extends State<NativeAdWidget> {
   NativeAd? _nativeAd;
   bool _isAdLoaded = false;
+  double _opacity = 0.0;
 
   @override
   void initState() {
     super.initState();
-    _loadNativeAd();
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) _loadNativeAd();
+    });
   }
 
   void _loadNativeAd() {
@@ -45,6 +48,7 @@ class _NativeAdWidgetState extends State<NativeAdWidget> {
         onAdLoaded: (ad) {
           setState(() {
             _isAdLoaded = true;
+            _opacity = 1.0;
           });
         },
         onAdFailedToLoad: (ad, error) {
@@ -69,17 +73,21 @@ class _NativeAdWidgetState extends State<NativeAdWidget> {
   @override
   Widget build(BuildContext context) {
     if (_isAdLoaded) {
-      return Container(
-        constraints: const BoxConstraints(
-          minWidth: 200, // minimum recommended width
-          minHeight: 200, // minimum recommended height
-          maxWidth: 250,
-          maxHeight: 200,
-        ),
-        margin: EdgeInsets.symmetric(horizontal: sidePadding, vertical: 10),
-        //padding: EdgeInsets.all(15),
+      return AnimatedOpacity(
+        duration: const Duration(milliseconds: 500),
+        opacity: _opacity,
+        child: Container(
+          constraints: const BoxConstraints(
+            minWidth: 200, // minimum recommended width
+            minHeight: 200, // minimum recommended height
+            maxWidth: 250,
+            maxHeight: 200,
+          ),
+          margin: EdgeInsets.symmetric(horizontal: sidePadding, vertical: 10),
+          //padding: EdgeInsets.all(15),
 
-        child: AdWidget(ad: _nativeAd!),
+          child: AdWidget(ad: _nativeAd!),
+        ),
       );
     }
 
