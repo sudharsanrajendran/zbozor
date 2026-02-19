@@ -625,26 +625,6 @@ class UserProfileScreenState extends State<UserProfileScreen> {
             child: getProfileImage(),
           ),
         ),
-        PositionedDirectional(
-          bottom: 0,
-          end: 0,
-          child: InkWell(
-            onTap: showPicker,
-            child: Container(
-                height: 37.rh(context),
-                width: 37.rw(context),
-                alignment: AlignmentDirectional.center,
-                decoration: BoxDecoration(
-                    border: Border.all(
-                        color: context.color.buttonColor, width: 1.5),
-                    shape: BoxShape.circle,
-                    color: context.color.territoryColor),
-                child: SizedBox(
-                    width: 15.rw(context),
-                    height: 15.rh(context),
-                    child: UiUtils.getSvg(AppIcons.edit))),
-          ),
-        )
       ],
     );
   }
