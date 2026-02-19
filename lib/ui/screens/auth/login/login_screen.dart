@@ -96,6 +96,7 @@ class LoginScreenState extends State<LoginScreen> {
     getSignature();
 
     context.read<AuthenticationCubit>().init();
+    context.read<LoginCubit>().init();
     context.read<FetchSystemSettingsCubit>().fetchSettings();
     _authListenerCancel =
         context.read<AuthenticationCubit>().listen((MLoginState state) {

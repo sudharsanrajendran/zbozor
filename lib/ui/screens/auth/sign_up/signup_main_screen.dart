@@ -77,6 +77,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
       if (mounted) setState(() => shouldSuppressErrors = false);
     });
     context.read<AuthenticationCubit>().init();
+    context.read<LoginCubit>().init();
     context.read<FetchSystemSettingsCubit>().fetchSettings();
     _authListenerCancel =
         context.read<AuthenticationCubit>().listen((MLoginState state) {

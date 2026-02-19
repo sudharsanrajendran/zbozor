@@ -58,6 +58,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   final MMultiAuthentication mMultiAuthentication;
 
   void init() {
+    emit(AuthenticationInitial());
     mMultiAuthentication.init();
   }
 

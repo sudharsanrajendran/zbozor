@@ -40,6 +40,10 @@ class LoginCubit extends Cubit<LoginState> {
 
   final AuthRepository _authRepository = AuthRepository();
 
+  void init() {
+    emit(LoginInitial());
+  }
+
   Future<String?> getDeviceToken() async {
     String? token;
     if (Platform.isIOS) {

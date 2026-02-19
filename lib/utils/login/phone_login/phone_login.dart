@@ -8,6 +8,14 @@ import 'package:Ebozor/utils/login/lib/login_system.dart';
 
 class PhoneLogin extends LoginSystem {
   String? verificationId;
+  int _currentSession = 0; // Track current verification session
+
+  @override
+  void init() {
+    verificationId = null;
+    _currentSession++; // Increment session to ignore old callbacks
+    super.init();
+  }
 
   @override
   Future<UserCredential?> login() async {
@@ -46,12 +54,16 @@ class PhoneLogin extends LoginSystem {
 
   @override
   Future<void> requestVerification() async {
+    _currentSession++; // New session for this request
+    final int sessionId = _currentSession;
+
     _hasError = false;
     _timer?.cancel();
     emit(MOtpSendInProgress());
 
     // Start a timeout timer
     _timer = Timer(Duration(seconds: Constant.otpTimeOutSecond + 10), () {
+      if (sessionId != _currentSession) return;
       if (!_hasError) {
         _hasError = true;
         emit(MFail("Verification Timed Out. Please try again."));
@@ -66,6 +78,7 @@ class PhoneLogin extends LoginSystem {
           phoneNumber:
               "+${(payload as PhoneLoginPayload).countryCode}${(payload as PhoneLoginPayload).phoneNumber}",
           verificationCompleted: (PhoneAuthCredential credential) async {
+            if (sessionId != _currentSession) return;
             _timer?.cancel();
             try {
               await firebaseAuth.signInWithCredential(credential);
@@ -75,11 +88,13 @@ class PhoneLogin extends LoginSystem {
             }
           },
           verificationFailed: (FirebaseAuthException e) {
+            if (sessionId != _currentSession) return;
             _timer?.cancel();
             _hasError = true;
             emit(MFail(e));
           },
           codeSent: (String verificationId, int? resendToken) {
+            if (sessionId != _currentSession) return;
             _timer?.cancel();
             if (_hasError) return;
             super.requestVerification();
@@ -87,6 +102,7 @@ class PhoneLogin extends LoginSystem {
             this.verificationId = verificationId;
           },
           codeAutoRetrievalTimeout: (String verificationId) {
+            if (sessionId != _currentSession) return;
             _timer?.cancel();
             this.verificationId = verificationId;
             // Ensure we don't emit infinite loading if auto-retrieval times out without code
