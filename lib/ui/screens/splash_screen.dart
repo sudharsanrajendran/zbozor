@@ -106,7 +106,7 @@ class SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> startTimer() async {
-    Timer(const Duration(milliseconds: 500), () {
+    Timer(const Duration(milliseconds: 0), () {
       isTimerCompleted = true;
       if (mounted) setState(() {});
       navigateCheck();

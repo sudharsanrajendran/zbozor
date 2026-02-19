@@ -1,6 +1,7 @@
 flutter_icons:
   android: true
-  ios: false
+  ios: true
+  remove_alpha_ios: true
   image_path: "assets/svg/Logo/splashlogo.png"
   adaptive_icon_background: "#F8FAFE"
   adaptive_icon_foreground: "assets/svg/Logo/icon_transparent.png"
