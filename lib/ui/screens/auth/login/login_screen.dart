@@ -71,6 +71,7 @@ class LoginScreenState extends State<LoginScreen> {
   bool sendMailClicked = false;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
+  bool shouldSuppressErrors = true; // Added to suppress phantom errors
 
   bool isObscure = true;
   late PhoneLoginPayload phoneLoginPayload =
@@ -88,7 +89,12 @@ class LoginScreenState extends State<LoginScreen> {
         numberOrEmail = Constant.demoMobileNumber;
       }
     }
+    // Enable error highlighting after a short delay (suppress initial errors)
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) setState(() => shouldSuppressErrors = false);
+    });
     getSignature();
+
     context.read<AuthenticationCubit>().init();
     context.read<FetchSystemSettingsCubit>().fetchSettings();
     _authListenerCancel =
@@ -394,6 +400,8 @@ class LoginScreenState extends State<LoginScreen> {
             body: BlocListener<LoginCubit, LoginState>(
               listener: (context, state) {
                 if (state is LoginSuccess) {
+                  ScaffoldMessenger.of(context)
+                      .removeCurrentSnackBar(); // Clear potential error snackbars
                   // if (mounted) Widgets.hideLoder(context); // Hide loader before navigation
                   HiveUtils.setUserIsAuthenticated(true);
                   //GuestChecker.set(isGuest: false);
@@ -425,6 +433,8 @@ class LoginScreenState extends State<LoginScreen> {
                           "phone": state.apiResponse['mobile'],
                           "countryCode": countryCode
                         });
+                    // Suppress errors after navigation to prevent toast on next screen
+                    shouldSuppressErrors = true;
                   } else {
                     if (FirebaseAuth.instance.currentUser?.emailVerified ??
                         false) {
@@ -469,8 +479,10 @@ class LoginScreenState extends State<LoginScreen> {
 
                   ////////
                   debugPrint("Login Failure: ${state.errorMessage}");
-                  HelperUtils.showSnackBarMessage(
-                      context, "Login Failed: ${state.errorMessage}");
+                  // Ignore if errors are suppressed
+                  if (!shouldSuppressErrors)
+                    HelperUtils.showSnackBarMessage(
+                        context, "Login Failed: ${state.errorMessage}");
                 }
               },
               child: BlocConsumer<AuthenticationCubit, AuthenticationState>(

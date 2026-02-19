@@ -67,8 +67,9 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
       PhoneLoginPayload(widget.mobile!, widget.countryCode!);
   bool isBack = false;
   String signature = "";
-
-  bool hasErrorOccurred = false;
+  // Added to suppress phantom errors
+  bool shouldSuppressErrors = true;
+  bool hasErrorOccurred = false; // Added missing variable
   VoidCallback? _authListenerCancel;
 
   @override
@@ -76,47 +77,72 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
     super.initState();
     getSignature();
     //mobileTextController.text = widget.mobile!;
+    // Enable error highlighting after a short delay (suppress initial errors)
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) setState(() => shouldSuppressErrors = false);
+    });
 
     context.read<AuthenticationCubit>().init();
     context.read<FetchSystemSettingsCubit>().fetchSettings();
     _authListenerCancel =
         context.read<AuthenticationCubit>().listen((MLoginState state) {
+      if (state is MOtpSendInProgress) {
+        if (mounted) Widgets.showLoader(context);
+      }
+
+      if (state is MVerificationPending) {
+        if (mounted) {
+          if (hasErrorOccurred) return;
+          Widgets.hideLoder(context);
+          SmsAutoFill().listenForCode();
+          isOtpSent = true;
+          setState(() {});
+        }
+      }
+
       if (state is MFail) {
         hasErrorOccurred = true;
-        Widgets.hideLoder(context);
-        String errorMessage = state.error.toString();
-        if (state.error is FirebaseAuthException) {
-          if ((state.error as FirebaseAuthException).code ==
-              'too-many-requests') {
-            errorMessage = "Too many attempts. Please try again in some time.";
-          } else if ((state.error as FirebaseAuthException)
-                  .message
-                  ?.contains("blocked all requests") ==
-              true) {
-            errorMessage = "Too many attempts. Please try again in some time.";
+        if (mounted) Widgets.hideLoder(context);
+        if (state.error == "google-cancelled") {
+          return;
+        }
+
+        if (mounted) ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        if (isOtpSent && (otp == null || otp!.trim().isEmpty)) {
+          if (mounted) {
+            HelperUtils.showSnackBarMessage(
+                context, "otpSendFailed".translate(context),
+                type: MessageType.error);
+          }
+        } else {
+          debugPrint("Signup Error (MFail): ${state.error}");
+          if (state.error is FirebaseAuthException) {
+            final e = state.error as FirebaseAuthException;
+            String errorMessage = "loginFailed".translate(context);
+
+            if (e.code == 'too-many-requests' ||
+                e.message?.contains("blocked all requests") == true ||
+                e.message?.contains("24 hours") == true) {
+              errorMessage = "tooManyAttempts".translate(context);
+            } else if (e.code == 'invalid-phone-number') {
+              errorMessage = "invalidPhone".translate(context);
+            } else if (e.code == 'invalid-verification-code') {
+              errorMessage = "invalidOtp".translate(context);
+            }
+
+            if (!shouldSuppressErrors)
+              HelperUtils.showSnackBarMessage(context, errorMessage,
+                  type: MessageType.error);
+          } else {
+            if (!shouldSuppressErrors)
+              HelperUtils.showSnackBarMessage(
+                  context, "loginFailed".translate(context),
+                  type: MessageType.error);
           }
         }
-        HelperUtils.showSnackBarMessage(context, errorMessage,
-            type: MessageType.error);
-      }
-      if (state is MVerificationPending) {
-        if (hasErrorOccurred) return;
-        Widgets.hideLoder(context);
-        isOtpSent = true;
-        HelperUtils.showSnackBarMessage(context, "otpSent".translate(context),
-            type: MessageType.success);
-        setState(() {});
       }
       if (state is MSuccess) {
-        Widgets.hideLoder(context);
-        Navigator.pushNamed(
-          context,
-          Routes.main,
-          arguments: {
-            "from": "login",
-            "isSkipped": false,
-          },
-        );
+        // Widgets.hideLoder(context);
       }
     });
   }
@@ -244,6 +270,8 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                 body: BlocListener<LoginCubit, LoginState>(
                   listener: (context, state) {
                     if (state is LoginSuccess) {
+                      ScaffoldMessenger.of(context)
+                          .removeCurrentSnackBar(); // Clear potential error snackbars
                       HiveUtils.setUserIsAuthenticated(true);
                       context
                           .read<UserDetailsCubit>()
@@ -259,10 +287,13 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
                             arguments: {"from": "login"});
                       }
                     } else if (state is LoginFailure) {
+                      if (HiveUtils.isUserAuthenticated())
+                        return; // Don't show failure if background login worked
                       Widgets.hideLoder(context);
-                      HelperUtils.showSnackBarMessage(
-                          context, state.errorMessage.toString(),
-                          type: MessageType.error);
+                      if (!shouldSuppressErrors)
+                        HelperUtils.showSnackBarMessage(
+                            context, state.errorMessage.toString(),
+                            type: MessageType.error);
                     }
                   },
                   child: BlocListener<AuthenticationCubit, AuthenticationState>(

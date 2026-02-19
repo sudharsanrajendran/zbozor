@@ -61,6 +61,7 @@ class LoginScreenState extends State<SignUpMainScreen> {
   bool isMobileNumberField = false;
   String numberOrEmail = "";
   final _formKey = GlobalKey<FormState>();
+  bool shouldSuppressErrors = true; // Added to suppress phantom errors
 
   late PhoneLoginPayload phoneLoginPayload =
       PhoneLoginPayload(emailMobileTextController.text, countryCode!);
@@ -71,6 +72,10 @@ class LoginScreenState extends State<SignUpMainScreen> {
     super.initState();
 
     getSignature();
+    // Enable error highlighting after a short delay (suppress initial errors)
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) setState(() => shouldSuppressErrors = false);
+    });
     context.read<AuthenticationCubit>().init();
     context.read<FetchSystemSettingsCubit>().fetchSettings();
     _authListenerCancel =
@@ -359,7 +364,9 @@ class LoginScreenState extends State<SignUpMainScreen> {
           },
               buttonTitle: "submit".translate(context),
               radius: 10,
-              disabled: false,
+              disabled: context.watch<LoginCubit>().state is LoginInProgress ||
+                  context.watch<AuthenticationCubit>().state
+                      is AuthenticationInProcess,
               disabledColor: context.color.territoryColor),
           const SizedBox(
             height: 10,
@@ -497,6 +504,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
               return BlocListener<LoginCubit, LoginState>(
                 listener: (context, state) {
                   if (state is LoginSuccess) {
+                    ScaffoldMessenger.of(context)
+                        .removeCurrentSnackBar(); // Clear potential error snackbars
                     HiveUtils.setUserIsAuthenticated(true);
                     context
                         .read<UserDetailsCubit>()
@@ -521,6 +530,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
                               "phone": state.apiResponse['mobile'],
                               "countryCode": countryCode
                             });
+                        // Suppress errors after navigation to prevent toast on next screen
+                        shouldSuppressErrors = true;
                       } else {
                         Navigator.pushNamed(
                           context,
@@ -542,6 +553,10 @@ class LoginScreenState extends State<SignUpMainScreen> {
                     }
                   }
                   if (state is LoginFailure) {
+                    if (shouldSuppressErrors)
+                      return; // Ignore errors if suppressed
+                    if (HiveUtils.isUserAuthenticated())
+                      return; // Don't show failure if background login worked
                     Widgets.hideLoder(context);
                     HelperUtils.showSnackBarMessage(
                         context, state.errorMessage.toString(),
