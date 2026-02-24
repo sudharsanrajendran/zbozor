@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
 import 'package:Ebozor/utils/extensions/extensions.dart';
 import 'package:Ebozor/utils/ui_utils.dart';
+import 'package:Ebozor/ui/screens/job/hiretalent/hire_talent_job_categories.dart';
 
 class JobsBottomSheet extends StatelessWidget {
   const JobsBottomSheet({super.key});
@@ -68,6 +69,12 @@ class JobsBottomSheet extends StatelessWidget {
               iconBgColor: context.color.territoryColor.withOpacity(0.1),
               onTap: () {
                 Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HiretalentJobCategoriesScreen(),
+                  ),
+                );
               },
             ),
           ),
