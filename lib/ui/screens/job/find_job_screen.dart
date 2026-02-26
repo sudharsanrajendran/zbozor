@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/screens/job/find_job_categories_screen.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
 
 class FindJobScreen extends StatefulWidget {
   const FindJobScreen({super.key});
@@ -310,7 +311,9 @@ class _FindJobScreenState extends State<FindJobScreen> {
       ),
     );
   }
+////
 
+  //jbs by catrgoeys grid
   Widget _buildCategoryGrid() {
     return GridView.builder(
       shrinkWrap: true,
@@ -325,12 +328,18 @@ class _FindJobScreenState extends State<FindJobScreen> {
       itemBuilder: (context, index) {
         return Container(
           decoration: BoxDecoration(
-            color: context.color.secondaryColor,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: context.color.borderColor.darken(30),
-            ),
-          ),
+              color: context.color.secondaryColor,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey.withOpacity(0.1)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 0,
+                  blurRadius: 14,
+                  offset: const Offset(0,
+                      4), // offset in y direction adds shadow to the bottom (backside)
+                )
+              ]),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -475,7 +484,7 @@ class _FindJobScreenState extends State<FindJobScreen> {
         color: const Color(0xFFF4F6FA),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
             SvgPicture.asset(

@@ -219,9 +219,14 @@ class _JobCategoriesItemScreenState extends State<JobCategoriesItemScreen> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    _buildFilterChip("City"),
-                    _buildFilterChip("Category"),
-                    _buildFilterChip("Salary"),
+                    _buildFilterChip("City",
+                        onTap: () => _showTopFilterSheet(
+                            "City", ["Dubai", "Abu Dhabi", "Sharjah"])),
+                    _buildFilterChip("Category",
+                        onTap: () => _showTopFilterSheet(
+                            "Category", ["Finance", "Engineering"])),
+                    _buildFilterChip("Salary",
+                        onTap: () => _showSalaryFilterSheet()),
                   ],
                 ),
               ),
@@ -235,7 +240,7 @@ class _JobCategoriesItemScreenState extends State<JobCategoriesItemScreen> {
               child: Container(
                 height: 55,
                 decoration: BoxDecoration(
-                    color: Color(0xFFF4F6FA).withOpacity(0.3),
+                    color: Color(0xFFF4F6FA),
                     borderRadius: BorderRadius.circular(4)),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -299,34 +304,186 @@ class _JobCategoriesItemScreenState extends State<JobCategoriesItemScreen> {
     );
   }
 
-  Widget _buildFilterChip(String label) {
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: context.color.secondaryColor,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.withOpacity(0.4)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: context.color.textDefaultColor,
-              fontWeight: FontWeight.w500,
+  Widget _buildFilterChip(String label, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: context.color.secondaryColor,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.withOpacity(0.4)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: context.color.textDefaultColor,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(width: 4),
-          Icon(
-            Icons.keyboard_arrow_down,
-            size: 16,
-            color: context.color.textDefaultColor,
-          ),
-        ],
+            const SizedBox(width: 4),
+            Icon(
+              Icons.keyboard_arrow_down,
+              size: 16,
+              color: context.color.textDefaultColor,
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  void _showTopFilterSheet(String title, List<String> options) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.only(
+            top: 24,
+            left: 24,
+            right: 24,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+          ),
+          decoration: BoxDecoration(
+            color: context.color.secondaryColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: context.color.textDefaultColor,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ...options.map((option) => ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      option,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: context.color.textDefaultColor,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  )),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSalaryFilterSheet() {
+    double minSalary = 0;
+    double maxSalary = 10000;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setSheetState) {
+          return Container(
+            padding: EdgeInsets.only(
+              top: 24,
+              left: 24,
+              right: 24,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+            ),
+            decoration: BoxDecoration(
+              color: context.color.secondaryColor,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(20)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Salary Range",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: context.color.textDefaultColor,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                RangeSlider(
+                  values: RangeValues(minSalary, maxSalary),
+                  min: 0,
+                  max: 20000,
+                  divisions: 20,
+                  activeColor: context.color.territoryColor,
+                  labels: RangeLabels(
+                    "AED ${minSalary.toInt()}",
+                    "AED ${maxSalary.toInt()}",
+                  ),
+                  onChanged: (RangeValues values) {
+                    setSheetState(() {
+                      minSalary = values.start;
+                      maxSalary = values.end;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Min: AED ${minSalary.toInt()}",
+                        style:
+                            TextStyle(color: context.color.textDefaultColor)),
+                    Text("Max: AED ${maxSalary.toInt()}",
+                        style:
+                            TextStyle(color: context.color.textDefaultColor)),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 46,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.color.territoryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      "Apply",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+      },
     );
   }
 
@@ -374,6 +531,7 @@ class _JobCategoriesItemScreenState extends State<JobCategoriesItemScreen> {
                         fontWeight: FontWeight.w600,
                         color: context.color.textDefaultColor,
                       ),
+                      maxLines: 2,
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -386,22 +544,13 @@ class _JobCategoriesItemScreenState extends State<JobCategoriesItemScreen> {
                   ],
                 ),
               ),
-              const SizedBox(width: 16),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: UiUtils.getImage(
-                  "https://picsum.photos/seed/job_item/200",
-                  width: 60,
-                  height: 50,
-                  fit: BoxFit.cover,
-                ),
-              ),
+              const SizedBox(width: 76),
             ],
           ),
           const SizedBox(height: 12),
           _buildInfoRow(
               "assets/svg/negotiable.svg", "AED 4,000 - 5,999 Per Month"),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Row(
             children: [
               Expanded(
@@ -411,7 +560,7 @@ class _JobCategoriesItemScreenState extends State<JobCategoriesItemScreen> {
                   child: _buildInfoRow("assets/svg/gendericon.svg", "Any")),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -438,19 +587,22 @@ class _JobCategoriesItemScreenState extends State<JobCategoriesItemScreen> {
                 icon,
                 width: 24,
                 height: 24,
-                colorFilter: ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(
+                  Color(0xB2000000),
+                  BlendMode.srcIn,
+                ),
               )
             : Icon(
                 icon,
                 size: 16,
-                color: Colors.grey,
+                color: const Color(0xB2000000),
               ),
         const SizedBox(width: 6),
         Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 15,
-            color: Colors.grey[700],
+            color: Color(0xB2000000),
           ),
         ),
       ],
