@@ -105,10 +105,9 @@ class PhoneLogin extends LoginSystem {
             if (sessionId != _currentSession) return;
             _timer?.cancel();
             this.verificationId = verificationId;
-            // Ensure we don't emit infinite loading if auto-retrieval times out without code
-            // super.requestVerification() typically emits MVerificationPending which might invoke spinner?
-            // Let's assume safely handling it here or letting the user input code is fine.
-            super.requestVerification();
+            // Removed super.requestVerification() as it re-emits MVerificationPending
+            // which causes redundant toasts in the UI. The state is already in
+            // MVerificationPending after codeSent.
           },
           forceResendingToken: forceResendingToken,
         )

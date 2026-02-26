@@ -428,6 +428,7 @@ class LoginScreenState extends State<LoginScreen> {
                           arguments: {"from": "login"});
                     }
                   } else if (isMobileNumberField) {
+                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
                     Navigator.of(context).pushNamed(
                         Routes.phoneLoginUserDetailsScreen,
                         arguments: {
