@@ -220,26 +220,27 @@ class UserProfileScreenState extends State<UserProfileScreen> {
                                 SizedBox(
                                   height: 10.rh(context),
                                 ),
+                                /*
                                 Text(
                                   "notification".translate(context),
                                 ),
                                 SizedBox(
                                   height: 10.rh(context),
                                 ),
-                                buildNotificationEnableDisableSwitch(context),
+                                //buildNotificationEnableDisableSwitch(context),
                                 SizedBox(
                                   height: 10.rh(context),
                                 ),
-                                Text(
-                                  "showContactInfo".translate(context),
-                                ),
+                                //Text("showContactInfo".translate(context)),
                                 SizedBox(
                                   height: 10.rh(context),
                                 ),
-                                buildPersonalDetailEnableDisableSwitch(context),
+                                //buildPersonalDetailEnableDisableSwitch(context),
                                 SizedBox(
                                   height: 25.rh(context),
                                 ),
+
+                                 */
                                 UiUtils.buildButton(
                                   context,
                                   onPressed: () {
@@ -443,6 +444,8 @@ class UserProfileScreenState extends State<UserProfileScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text((isNotificationsEnabled
@@ -459,6 +462,8 @@ class UserProfileScreenState extends State<UserProfileScreen> {
               setState(() {});
             },
           )
+
+
         ],
       ),
     );

@@ -193,10 +193,11 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                               fontWeight: FontWeight.bold,
                               color: context.color.textDefaultColor,
                             ),
+                            maxLines: 2,
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            "Transport & Construction Communication...",
+                            "Transport & Construction Communication",
                             style: TextStyle(
                               fontSize: 14,
                               color: context.color.textDefaultColor
@@ -207,7 +208,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 76),
                     Container(
                       width: 60,
                       height: 50,
@@ -493,7 +494,7 @@ class _JobDetailsScreenState extends State<JobDetailsScreen> {
             text,
             style: TextStyle(
               fontSize: 15,
-              color: context.color.textDefaultColor.withOpacity(0.8),
+              color:Color(0xB2000000),
               fontWeight: FontWeight.w400,
             ),
           ),

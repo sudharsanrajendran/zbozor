@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:Ebozor/app/routes.dart';
 import 'package:Ebozor/ui/screens/home/home_screen.dart';
 import 'package:Ebozor/ui/theme/theme.dart';
@@ -150,15 +151,15 @@ class SellerProfileScreenState extends State<SellerProfileScreen>
 
               expandedHeight: (widget.model.createdAt != null &&
                       widget.model.createdAt != '')
-                  ? context.screenHeight / 2.3
-                  : context.screenHeight / 2.9,
+                  ? context.screenHeight / 2.1
+                  : context.screenHeight / 2.6,
               backgroundColor: context.color.secondaryColor,
               flexibleSpace: FlexibleSpaceBar(
                 background: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(
-                        height: 100.rh(context),
+                        height: 50.rh(context),
                       ),
                       SizedBox(
                           height: 95.rh(context),
@@ -988,7 +989,7 @@ class SellerProfileScreenState extends State<SellerProfileScreen>
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(
-                        height: 100.rh(context),
+                        height: 50.rh(context),
                       ),
                       SizedBox(
                           height: 95.rh(context),
